@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "name": "project-name",
+  "description": "Project Name",
+  "icons": {
+    "60": "/img/favicon/firefox_app_60x60.png",
+    "128": "/img/favicon/firefox_app_128x128.png",
+    "512": "/img/favicon/firefox_app_512x512.png"
+  },
+  "developer": {
+    "name": "unexcelledx",
+    "url": null
+  }
+}
