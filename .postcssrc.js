@@ -11,15 +11,15 @@ module.exports = {
           // Translates CSS into CommonJS
           'css-loader',
           // Compiles Sass to CSS
-          'sass-loader',
-        ],
-      },
-    ],
+          'sass-loader'
+        ]
+      }
+    ]
   },
-  "plugins": {
-    "postcss-import": {},
-    "postcss-url": {},
+  'plugins': {
+    'postcss-import': {},
+    'postcss-url': {},
     // to edit target browsers: use "browserslist" field in package.json
-    "autoprefixer": {}
+    'autoprefixer': {}
   }
 }

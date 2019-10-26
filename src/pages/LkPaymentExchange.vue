@@ -4,7 +4,7 @@
   		<div class="exchange-block_currency">
   			<div class="arrows" v-on:click="toggleCurrency();" v-bind:class="{active: dir}">
   				<img src="@/assets/images/exchange-arrs.svg" alt title>
-  			</div>	  			
+  			</div>
 	  		<div class="left">
 	  			<div class="title">Exchange</div>
 	  			<div class="select">
@@ -33,7 +33,7 @@
 		  							<span>0.97750993 BTC</span>
 		  							<span>1.63 USD</span>
 		  						</div>
-		  					</div>	  					
+		  					</div>
 	  					</div>
 	  					<div class="select-item">
 		  					<div class="icon"><img src="@/assets/images/eth.png" alt title></div>
@@ -43,7 +43,7 @@
 		  							<span>0.97750993 ETH</span>
 		  							<span>1.63 USD</span>
 		  						</div>
-		  					</div>	  					
+		  					</div>
 	  					</div>
 	  					<div class="select-item">
 		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
@@ -53,7 +53,7 @@
 		  							<span>0.97750993 BTC</span>
 		  							<span>1.63 USD</span>
 		  						</div>
-		  					</div>	  					
+		  					</div>
 	  					</div>
 	  					<div class="select-item">
 		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
@@ -63,7 +63,7 @@
 		  							<span>0.97750993 BTC</span>
 		  							<span>1.63 USD</span>
 		  						</div>
-		  					</div>	  					
+		  					</div>
 	  					</div>
 	  				</div>
 	  			</div>
@@ -88,7 +88,7 @@
 	  		</div>
 	  		<div class="right">
 	  			<div class="title">Receive</div>
-	  			<div class="select"">
+	  			<div class="select">
 	  				<div v-on:click="receiveModal = !receiveModal; exchangeModal = false;" class="select-title">
 	  					<div class="icon"><img :src="receiveCurrency.icon" alt title></div>
 	  					<div class="amount">
@@ -114,7 +114,7 @@
 		  							<span>0.97750993 BTC</span>
 		  							<span>1.63 USD</span>
 		  						</div>
-		  					</div>	  					
+		  					</div>
 	  					</div>
 	  					<div class="select-item">
 		  					<div class="icon"><img src="@/assets/images/eth.png" alt title></div>
@@ -124,7 +124,7 @@
 		  							<span>0.97750993 ETH</span>
 		  							<span>1.63 USD</span>
 		  						</div>
-		  					</div>	  					
+		  					</div>
 	  					</div>
 	  					<div class="select-item">
 		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
@@ -134,7 +134,7 @@
 		  							<span>0.97750993 BTC</span>
 		  							<span>1.63 USD</span>
 		  						</div>
-		  					</div>	  					
+		  					</div>
 	  					</div>
 	  					<div class="select-item">
 		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
@@ -144,7 +144,7 @@
 		  							<span>0.97750993 BTC</span>
 		  							<span>1.63 USD</span>
 		  						</div>
-		  					</div>	  					
+		  					</div>
 	  					</div>
 	  				</div>
 	  			</div>
@@ -200,24 +200,61 @@
   		</div>
 
   		<div class="exchange-block_button">
-  			<button>Exchange</button>
+  			<button @click="exchangePopup = !exchangePopup">Exchange</button>
   			<p class="info">1 BTC = 52 545454 ETH</p>
   		</div>
+
+      <lk-pop-up v-if="exchangePopup" class="exchange-popup">
+        <div slot='title' class="exchange-popup_title">
+          <img src="@/assets/images/eth.png" alt title>
+          <p class="question">Are you sure you want to</p>
+          <p class="transaction">Exchange $0.95USD?</p>
+        </div>
+        <div slot='body' class="exchange-popup_body">
+          <div class="exchange">
+            <p class="title">Exchange</p>
+            <p class="number">0.134083 ETH</p>
+          </div>
+          <div class="recipient">
+            <p class="title">Recipient</p>
+            <p class="number">0.138 BTC</p>
+          </div>
+          <div class="commission">
+            <p class="title">Commission</p>
+            <p class="number">0.85 USD</p>
+          </div>
+        </div>
+        <div slot='buttons' class="exchange-popup_buttons">
+          <div class="buttons">
+            <div class="btn-border-wrapper">
+              <button class="btn" @click="exchangePopup = false">Back</button>
+            </div>
+            <div class="btn-border-wrapper">
+              <button class="btn btn-exchange">
+                Exchange
+              </button>
+            </div>
+          </div>
+        </div>
+      </lk-pop-up>
   	</div>
   </lk-layout>
 </template>
 
 <script>
-import LkLayout from '@/layout/LkLayout';
+import LkLayout from '@/layout/LkLayout'
+import LkPopUp from '@/layout/LkPopUp'
 export default {
   name: 'LkPaymentExchange',
   components: {
-    LkLayout
+    LkLayout,
+    LkPopUp
   },
-  data() {
+  data () {
   	return {
-  		receiveModal:false,
-  		exchangeModal:false,
+  		receiveModal: false,
+  		exchangeModal: false,
+      exchangePopup: false,
   		exchangeBtn: 0,
   		receiveBtn: 0,
   		dir: 0,
@@ -235,7 +272,7 @@ export default {
   },
     methods: {
     	toggleCurrency: function() {
-    		let c = this.exchangeCurrency; 
+    		let c = this.exchangeCurrency;
     		this.exchangeCurrency = this.receiveCurrency;
     		this.receiveCurrency = c;
     		this.dir = !this.dir;
