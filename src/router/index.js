@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import LkPayment from '@/pages/LkPayment'
-import LkPaymentList from '@/pages/LkPaymentList'
+import LkPaymentWallet from '@/pages/LkPaymentWallet'
 import LkPaymentWallets from '@/pages/LkPaymentWallets'
-import LkPaymentSend from '@/pages/LkPaymentSend'
+import LkPaymentWalletSend from '@/pages/LkPaymentWalletSend'
+import LkPaymentWalletReceive from '@/pages/LkPaymentWalletReceive'
 import LkPaymentExchange from '@/pages/LkPaymentExchange'
-import LkPaymentSendEth from '@/pages/LkPaymentSendEth'
-import LkPaymentWalletsWalletsList from '@/pages/LkPaymentWalletsWalletsList'
+// import LkPaymentSendEth from '@/pages/LkPaymentSendEth'
+import LkPaymentWalletsCreate from '@/pages/LkPaymentWalletsCreate'
 import LkPaymentAccountsCards from '@/pages/LkPaymentAccountsCards'
 
 import Login from '@/pages/Login'
@@ -38,8 +38,7 @@ export default new Router({
   routes: [
     {
     	path:'/',
-    	name: 'LkPaymentList',
-    	component: LkPaymentList,
+    	component: LkPaymentWallets,
      	beforeEnter: ifAuthenticated
     },
     {
@@ -55,54 +54,47 @@ export default new Router({
         beforeEnter: ifNotAuthenticated,
     },
     {
-    	path:'/payments',
-    	name: 'LkPaymentList',
-    	component: LkPaymentList,
-     	beforeEnter: ifAuthenticated
-    },
-    {
-    	path:'/payments/address',
-    	name: 'LkPayment',
-    	component: LkPayment,
-     	beforeEnter: ifAuthenticated
-    },
-    {
-    	path:'/payments/send/btc',
-    	name: 'LkPaymentSend',
-    	component: LkPaymentSend,
-     	beforeEnter: ifAuthenticated,
-      	props: true
-    },
-    {
-    	path:'/payments/send/eth',
-    	name: 'LkPaymentSend',
-    	component: LkPaymentSendEth,
-     	beforeEnter: ifAuthenticated,
-      	props: true
-    },
-    {
     	path:'/exchange',
     	name: 'LkPaymentExchange',
     	component: LkPaymentExchange,
      	beforeEnter: ifAuthenticated,
       	props: true
     },
+
+    // WALLETS
     {
-    	path:'/wallets',
-    	name: 'LkPaymentWallets',
-    	component: LkPaymentWallets,
-     	beforeEnter: ifAuthenticated
+      path:'/wallets',
+      name: 'LkPaymentWallets',
+      component: LkPaymentWallets,
+      beforeEnter: ifAuthenticated,
     },
     {
-    	path:'/wallets/wallets-list',
-    	name: 'LkPaymentWalletsWalletsList',
-    	component: LkPaymentWalletsWalletsList,
-     	beforeEnter: ifAuthenticated
+      path:'/wallets/accounts-and-cards',
+      name: 'LkPaymentAccountsCards',
+      component: LkPaymentAccountsCards,
+       beforeEnter: ifAuthenticated
     },
     {
-    	path:'/wallets/accounts-and-cards',
-    	name: 'LkPaymentAccountsCards',
-    	component: LkPaymentAccountsCards,
+      path:'/wallets/create-wallet',
+      component: LkPaymentWalletsCreate,
+      beforeEnter: ifAuthenticated
+    },
+    {
+      name: 'LkPaymentWallet',
+      path: '/wallets/:currency/:address',
+      component: LkPaymentWallet,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      name: 'LkPaymentWalletSend',
+      path: '/wallets/:currency/:address/send',
+      component: LkPaymentWalletSend,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+    	name: 'LkPaymentWalletReceive',
+    	path:'/wallets/:currency/:address/receive',
+    	component: LkPaymentWalletReceive,
      	beforeEnter: ifAuthenticated
     },
   ]
