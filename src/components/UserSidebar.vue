@@ -3,7 +3,7 @@
 		<ul>
 			<li><router-link to="/dashboard"><span class="icon dashboard-icon"></span> Dashboard</router-link></li>
 			<li><router-link to="/wallets"><span class="icon wallets-icon"></span> Wallets and accounts</router-link></li>
-			<li><router-link to="/payments"><span class="icon payments-icon"></span> Payments and transfers</router-link></li>
+			<li><router-link to="/payments-and-transfer"><span class="icon payments-icon"></span> Payments and transfers</router-link></li>
 			<li><router-link to="/exchange"><span class="icon exchange-icon"></span> Exchange</router-link></li>
 			<li><router-link to="/marketplace"><span class="icon marketplace-icon"></span> Marketplace</router-link></li>
 			<li><router-link to="/dapp"><span class="icon dapp-icon"></span> Dapp</router-link></li>

@@ -22,7 +22,7 @@
                   <span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
                 </div>
                 <div class="progress green">
-                  <p>{{ percentage[wallet.currency]['1h'] | percentage }}</p>
+                  <p>{{ percentage[wallet.currency] | percentage }}</p>
                   <div class="image">
                     <!-- TODO: Используйте computed свойство percentage для построения графиков -->
                     <img src="@/assets/images/graph-green.svg" alt title>
@@ -175,7 +175,7 @@ export default {
     this.$store.dispatch('wallet/GET_OPERATIONS');
   },
   filters: {
-    percentage: value => `${value.toFixed(2)}%`,
+    percentage: value => value ? `${value['1h'].toFixed(2)}%` : '',
   },
   methods: {
     copyToClipboard() {
