@@ -3,10 +3,10 @@
   	<div class="send-block eth">
   		<div class="block-title">
   			<div class="select">
-  				Send Ethereum 
+  				Send Ethereum
   			</div>
   			<img src="@/assets/images/eth.png" alt title>
-  			<router-link to="/payments" class="close"><img src="@/assets/images/path.svg" alt title></router-link>			
+  			<router-link to="/payments" class="close"><img src="@/assets/images/path.svg" alt title></router-link>
   		</div>
   		<div class="send-form">
   			<div class="send-form-input">
@@ -52,7 +52,7 @@
 <script>
 import LkLayout from '@/layout/LkLayout';
 export default {
-  name: 'LkPaymentSend',
+  // name: 'LkPaymentSend',
   components: {
     LkLayout
   },

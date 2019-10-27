@@ -28,8 +28,8 @@
 				</div>
 				<div class="login-form-button">
 					<button type="submit" class="btn">Login</button>
-				</div>		
-				{{error}}		
+				</div>
+				{{error}}
 			</form>
 		</div>
   	</div>
@@ -57,25 +57,25 @@ export default {
     methods: {
     	checkLoginType() {
     		var pattern = /^[\d\(\)\ \- \+ \_]{0,100}$/;
-    		this.loginType = pattern.test(this.user);    
-    		var im = new Inputmask("+9 (999) 999 99-99");	
+    		this.loginType = pattern.test(this.user);
+    		var im = new Inputmask("+9 (999) 999 99-99");
     		if(this.loginType && this.user && this.user != '+') {
     			im.mask(document.getElementById('login'));
     		} else {
     			if(document.getElementById('login').inputmask) {
-    				document.getElementById('login').inputmask.remove();    				
+    				document.getElementById('login').inputmask.remove();
     			}
     		}
-    	}, 
+    	},
 		login: function () {
 		    const { user, password, loginType } = this;
-		    const params = new URLSearchParams();		    
+		    const params = new URLSearchParams();
 		    if(loginType) {
 		    	const phone = user.replace(/[^0-9]/gim,'');
-		   		params.append('Phone', phone); 
+		   		params.append('Phone', phone);
 		   		params.append('Email', '');
-		   	} else { 
-		   		params.append('Email', user); 
+		   	} else {
+		   		params.append('Email', user);
 		   		params.append('Phone', '');
 		   	}
 		   	params.append('Password', sha512(password));

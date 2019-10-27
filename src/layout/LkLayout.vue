@@ -1,5 +1,5 @@
 <template>
-	<div class="lk-wrapper">    
+	<div class="lk-wrapper">
 		<lk-header></lk-header>
 		<div id="container">
 			<user-sidebar></user-sidebar>

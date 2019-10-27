@@ -20,7 +20,7 @@ Vue.directive('click-outside', {
 		    }
 		}
         document.body.addEventListener('click', function(e){
-        	if (el == e.target || isChildOf(e.target, el)) { 
+        	if (el == e.target || isChildOf(e.target, el)) {
 			} else {
         		eval(binding.value);
         	}
@@ -30,6 +30,25 @@ Vue.directive('click-outside', {
         document.body.removeEventListener('click', binding.value);
     }
 });
+
+Vue.mixin({
+  methods: {
+    formatCurrency(value, symbol, afterDot) {
+      value = value || '';
+      symbol = symbol || '';
+      afterDot = afterDot || 2;
+
+      const num = (parseFloat(value) || 0).toFixed(afterDot).toString();
+      const whole = num.split('.')[0];
+      const fractal = num.split('.')[1];
+      const result = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + fractal;
+
+      return result.slice(0, 1) === '-'
+        ? `-${symbol}${result.slice(1)}`
+        : symbol + result;
+    }
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({
