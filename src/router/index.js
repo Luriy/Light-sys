@@ -87,13 +87,15 @@ export default new Router({
     },
     {
       name: 'LkPaymentWalletSend',
-      path: '/wallets/:currency/:address/send',
+      path: '/payments-and-transfer/transfer/send/:currency/:address',
+      // path: '/wallets/:currency/:address/send',
       component: LkPaymentWalletSend,
       beforeEnter: ifAuthenticated,
     },
     {
     	name: 'LkPaymentWalletReceive',
-    	path:'/wallets/:currency/:address/receive',
+    	path:'/payments-and-transfer/transfer/receive/:currency/:address',
+    	// path:'/wallets/:currency/:address/receive',
     	component: LkPaymentWalletReceive,
      	beforeEnter: ifAuthenticated
     },
