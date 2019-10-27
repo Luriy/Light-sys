@@ -289,7 +289,7 @@
             </div>
             <div class="balance">
               <p class="title">Remaining balance</p>
-              <p class="btc-value">0 BTC</p>icon exchange-icon
+              <p class="btc-value">0 BTC</p>
               <p>$0.00</p>
             </div>
           </div>

@@ -224,6 +224,7 @@ export default {
       line-height: 21px;
       &::placeholder {
         color: #ffffff;
+        font-size: 14px;
       }
     }
   }
