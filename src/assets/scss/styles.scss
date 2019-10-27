@@ -1236,6 +1236,10 @@ $eth: #7d8ef6;
 	background:url(../images/transfer.svg) no-repeat center;
 }
 
+.checked-icon {
+  background:url(../images/checked.svg) no-repeat center;
+}
+
 .dashboard-icon {
 	background:url(../images/dashboard.svg) no-repeat center;
 }
@@ -2136,130 +2140,4 @@ $eth: #7d8ef6;
 		color: #fff;
 		font-weight: 600;
 	}
-}
-
-.popup-body {
-  position: fixed;
-  z-index: 100;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(38,8,72, .5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  .exchange-popup_title {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    .question {
-      width: 164px;
-      height: 21px;
-      opacity: 0.5;
-      color: #ffffff;
-      font-size: 14px;
-      line-height: 21px;
-      margin: 15px 0;
-    }
-    .transaction {
-      width: 366px;
-      height: 50px;
-      padding-top: 15px;
-      color: #ffffff;
-      font-size: 36px;
-      font-weight: 600;
-      line-height: 21px;
-    }
-  }
-
-  .exchange, .recipient, .commission {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
-  }
-
-  .title {
-    width: 65px;
-    opacity: 0.5;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 21px;
-  }
-
-  .number {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 21px;
-  }
-
-  .exchange {
-    .number {
-      color: #7d8ef6;
-    }
-  }
-
-  .recipient {
-    .number {
-      color: #fda50c;
-    }
-  }
-
-  .commission {
-    .number {
-      color: #ffffff;
-    }
-  }
-
-  .exchange-popup_body {
-    width: 477px;
-    height: 118px;
-    border-radius: 14px;
-    background: #4d3779;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-  }
-  .popup-wrapper {
-    width: 597px;
-    height: 464px;
-    border-radius: 8px;
-    background: #3b2665;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-  }
-  .exchange-popup_buttons {
-    .buttons {
-      position:relative;
-      text-align:center;
-      display: table;
-      margin:0 auto;
-      .btn-border-wrapper {
-        padding:1px;
-        display: inline-block;
-        width: 232px;
-        border-radius:28px;
-        height: 50px;
-        background: linear-gradient(to left, #8e6ee4, #d268bc);
-        margin:0 10px;
-      }
-      .btn {
-        width: 230px;
-        height: 48px;
-        background:#260848;
-        font-size: 16px;
-        color: #fff;
-        border-radius:28px;
-        position:relative;
-        border: solid 1px transparent;
-      }
-      .btn-exchange {
-        background-image: linear-gradient(to left, #8e6ee4, #d268bc);
-      }
-    }
-  }
 }

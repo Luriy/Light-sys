@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="12px" viewBox="0 0 16 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>Path</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Main" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Payment-5--Success-window-2" transform="translate(-830.000000, -364.000000)" fill="#61DB53">
+            <g id="Group-24-Copy" transform="translate(665.000000, 317.000000)">
+                <g id="Group-21-Copy">
+                    <g id="Group-15">
+                        <g id="Group-26" transform="translate(151.000000, 31.000000)">
+                            <path d="M21.2425549,27.4526884 C20.517144,28.1824372 19.340102,28.1824372 18.6150412,27.4526884 L14.5440581,23.3573609 C13.8186473,22.6279643 13.8186473,21.4438835 14.5440581,20.714487 C15.2691188,19.9847382 16.4461609,19.9847382 17.1715717,20.714487 L19.5970767,23.1541442 C19.7801799,23.3379901 20.0774162,23.3379901 20.2608696,23.1541442 L26.8284283,16.5473116 C27.553489,15.8175628 28.7305311,15.8175628 29.4559419,16.5473116 C29.8042931,16.8977459 30,17.3732097 30,17.8687485 C30,18.3642874 29.8042931,18.8397511 29.4559419,19.1901855 L21.2425549,27.4526884 Z" id="Path"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

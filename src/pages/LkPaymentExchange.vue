@@ -204,35 +204,130 @@
   			<p class="info">1 BTC = 52 545454 ETH</p>
   		</div>
 
-      <lk-pop-up v-if="exchangePopup" class="exchange-popup">
+      <lk-pop-up
+        v-if="exchangePopup"
+        class="exchange-popup"
+        @closeModal="closeModal"
+      >
         <div slot='title' class="exchange-popup_title">
           <img src="@/assets/images/eth.png" alt title>
-          <p class="question">Are you sure you want to</p>
-          <p class="transaction">Exchange $0.95USD?</p>
+          <p class="transaction">Conformation <br> exchange $0.95 USD</p>
+          <p class="question">We sent an SMS conformation to the number</p>
+          <div class="number-block">
+            <p class="number">+7 (952) 219 28 65</p>
+            <router-link class="link" to="/">Wrong number?</router-link>
+          </div>
+        </div>
+        <div slot='smsNumber' class="exchange-popup_sms-number">
+            <input
+              class="number-input"
+              @keyup="$event.target.nextElementSibling.focus()"
+              placeholder="_"
+              type="text"
+              maxLength="1"
+              size="1"
+              min="0"
+              max="9" pattern="[0-9]{1}" />
+            <input
+              class="number-input"
+              @keyup="$event.target.nextElementSibling.focus()"
+              placeholder="_"
+              maxLength="1"
+              size="1"
+              min="0"
+              max="9" pattern="[0-9]{1}" />
+            <input
+              class="number-input"
+              @keyup="$event.target.nextElementSibling.focus()"
+              placeholder="_"
+              maxLength="1"
+              size="1"
+              min="0"
+              max="9" pattern="[0-9]{1}" />
+            <input
+              class="number-input"
+              @keyup="$event.target.nextElementSibling.focus()"
+              placeholder="_"
+              maxLength="1"
+              size="1"
+              min="0"
+              max="9" pattern="[0-9]{1}" />
+            <input
+              class="number-input"
+              @keyup="$event.target.nextElementSibling.focus()"
+              placeholder="_"
+              maxLength="1"
+              size="1"
+              min="0"
+              max="9" pattern="[0-9]{1}" />
+            <input
+              class="number-input"
+              @keyup="send"
+              placeholder="_"
+              type="text"
+              maxLength="1"
+              size="1"
+              min="0"
+              max="9" pattern="[0-9]{1}" />
+
+          <div class="timer-body">
+            <div class="title">Resend code:</div>
+            <div class="timer">00:59 Sec</div>
+          </div>
         </div>
         <div slot='body' class="exchange-popup_body">
-          <div class="exchange">
-            <p class="title">Exchange</p>
-            <p class="number">0.134083 ETH</p>
+          <div class="exchange-popup_info">
+            <p class="from">0.000945 BTC</p>
+            <img src="@/assets/images/exchange-arrs.svg" alt title>
+            <p class="to">0.9454954 ETH</p>
           </div>
-          <div class="recipient">
-            <p class="title">Recipient</p>
-            <p class="number">0.138 BTC</p>
-          </div>
-          <div class="commission">
-            <p class="title">Commission</p>
-            <p class="number">0.85 USD</p>
+          <div class="exchange-block_fee">
+            <div class="network-fee">
+              <p class="title">Ethereum Network Fee</p>
+              <p class="btc-value">0.00021 BTC</p>
+              <p>$0.04</p>
+            </div>
+            <div class="balance">
+              <p class="title">Remaining balance</p>
+              <p class="btc-value">0 BTC</p>icon exchange-icon
+              <p>$0.00</p>
+            </div>
           </div>
         </div>
         <div slot='buttons' class="exchange-popup_buttons">
-          <div class="buttons">
-            <div class="btn-border-wrapper">
-              <button class="btn" @click="exchangePopup = false">Back</button>
+          <button class="back" @click="exchangePopup = false">Back</button>
+        </div>
+      </lk-pop-up>
+      <lk-pop-up
+        v-if="sucessPopup"
+        class="exchange-popup"
+        :popup-size="{width: '346px', height: '387px'}"
+        @closeModal="closeModal"
+      >
+        <div slot='title' class="success-popup_title">
+          <div class="icon-wrapper">
+            <i class="icon checked-icon">Success icon</i>
+          </div>
+          <p class="status">Success</p>
+        </div>
+        <div slot='body' class="success-popup_body">
+          <p class="from">0.00956785 BTC</p>
+          <div class="images">
+            <img src="@/assets/images/btc.png" alt title>
+            <img class="success_arrows" src="@/assets/images/exchange-arrs.svg" alt title>
+            <img src="@/assets/images/eth.png" alt title>
+          </div>
+          <p class="to">0.00956785 ETH</p>
+          <div class="transaction-info">
+            <div class="network-fee">
+              <p class="title">Bitcoin Network Fee</p>
+              <p>0.00021 BTC</p>
+              <p>$0.04</p>
             </div>
-            <div class="btn-border-wrapper">
-              <button class="btn btn-exchange">
-                Exchange
-              </button>
+            <div class="balance">
+              <p class="title">Remaining balance</p>
+              <p>0 BTC</p>
+              <p>$0.00</p>
             </div>
           </div>
         </div>
@@ -255,6 +350,7 @@ export default {
   		receiveModal: false,
   		exchangeModal: false,
       exchangePopup: false,
+      sucessPopup: false,
   		exchangeBtn: 0,
   		receiveBtn: 0,
   		dir: 0,
@@ -270,13 +366,35 @@ export default {
   		}
   	}
   },
-    methods: {
-    	toggleCurrency: function() {
-    		let c = this.exchangeCurrency;
-    		this.exchangeCurrency = this.receiveCurrency;
-    		this.receiveCurrency = c;
-    		this.dir = !this.dir;
-    	}
+  methods: {
+    send() {
+      this.exchangePopup = false;
+      this.sucessPopup = true;
     },
+    toggleCurrency: function() {
+      let c = this.exchangeCurrency;
+      this.exchangeCurrency = this.receiveCurrency;
+      this.receiveCurrency = c;
+      this.dir = !this.dir;
+    },
+    getWalletsList() {
+      this.$store.dispatch('wallet/GET_WALLETS');
+    },
+    closeModal() {
+      this.exchangePopup = false;
+      this.sucessPopup = false;
+    }
+  },
+  computed: {
+    wallets() {
+      return this.$store.getters['wallet/WALLETS'] || [];
+    }
+  },
+  created() {
+    this.getWalletsList();
+  }
 }
 </script>
+<style>
+
+</style>
