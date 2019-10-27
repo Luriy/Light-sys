@@ -6,13 +6,13 @@ const state = { status: '', profile: {} }
 
 const getters = {
   getProfile: state => state.profile,
-  isProfileLoaded: state => !!state.profile.name,
+  isProfileLoaded: state => !!state.profile.name
 }
 
 const actions = {
-  [USER_REQUEST]: ({commit, dispatch}) => {
-  	
-  },
+  [USER_REQUEST]: ({ commit, dispatch }) => {
+
+  }
 }
 
 const mutations = {
@@ -35,5 +35,5 @@ export default {
   state,
   getters,
   actions,
-  mutations,
+  mutations
 }

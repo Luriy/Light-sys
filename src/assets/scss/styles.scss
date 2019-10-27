@@ -69,11 +69,11 @@ $eth: #7d8ef6;
 }
 
 .add-token {
-	position:absolute;  
+	position:absolute;
 	width: 160px;
     height: 50px;
-	border-top-left-radius: 14px;  
-	border-top-right-radius: 14px;  
+	border-top-left-radius: 14px;
+	border-top-right-radius: 14px;
 	font-size: 14px;
   	font-weight: 600;
   	color: rgba(255,255,255,.5);
@@ -134,7 +134,7 @@ $eth: #7d8ef6;
 
   	&_info {
   		position:relative;
-  		height: 82px;  
+  		height: 82px;
   		border-radius: 14px;
   		width:520px;
 		background-color: #4d3779;
@@ -252,7 +252,7 @@ $eth: #7d8ef6;
   					}
   					input {
   						border-bottom:1px solid $eth;
-  					}  					
+  					}
   				}
   				input::placeholder {
   					color: #fff;
@@ -261,11 +261,11 @@ $eth: #7d8ef6;
 					width:100%;
 					background:none;
 					border:none;
-  					padding-bottom:10px;	
+  					padding-bottom:10px;
   					font-size: 16px;
   					font-weight: 600;
-  					color: #fff;		
-  					border-bottom:1px solid #fff;	
+  					color: #fff;
+  					border-bottom:1px solid #fff;
 				}
   			}
   		}
@@ -319,7 +319,7 @@ $eth: #7d8ef6;
 				left: 0;
 
 				.select-item {
-					display: flex;  
+					display: flex;
 					align-items:center;
 					padding:8px 9px;
 					height: 56px;
@@ -355,7 +355,7 @@ $eth: #7d8ef6;
 				height: 20px;
 				border-radius: 9px;
 				background-color: #684e9c;
-				&:before {					
+				&:before {
 					display: inline-block;
 					content: '';
 					border: 3px solid transparent;
@@ -482,7 +482,7 @@ $eth: #7d8ef6;
 
 				span {
 					width:100%;
-					display: block;  
+					display: block;
 					opacity: 0.5;
 					font-size: 14px;
 					font-weight: 600;
@@ -512,7 +512,7 @@ $eth: #7d8ef6;
 			}
 			.status {
 				p {
-					color: #fff;  
+					color: #fff;
 					font-size: 14px;
 					line-height: 21px;
   					font-weight: 600;
@@ -605,7 +605,7 @@ $eth: #7d8ef6;
 						width: 266px;
 						padding:0;
 						.value {
-							text-align: right;  
+							text-align: right;
 							font-size: 16px;
 							color: #af89ff;
   							font-weight: 600;
@@ -691,14 +691,14 @@ $eth: #7d8ef6;
 											}
 										}
 									}
-									div {	
+									div {
 										width: 18px;
 										height: 18px;
 										border-radius: 6px;
 										border: solid 2px #7751c0;
-										position:relative;		
-										margin-right: 6px;								
-									}	
+										position:relative;
+										margin-right: 6px;
+									}
 
 									span {
 										font-size: 14px;
@@ -804,7 +804,7 @@ $eth: #7d8ef6;
 					position:relative;
 					cursor: pointer;
 					transition: .3s;
-					&:before {						
+					&:before {
 						content: '';
 						border: 3px solid transparent;
 						border-top: 3px solid #cfc0ed;
@@ -859,7 +859,7 @@ $eth: #7d8ef6;
 	}
 
 	&_table {
-   		border-collapse: separate; 
+   		border-collapse: separate;
 		width:100%;
 		border-color: #260848;
 		th {
@@ -1153,7 +1153,7 @@ $eth: #7d8ef6;
 		align-items:center;
 		justify-content: space-between;
 		margin-bottom: 15px;
-		.toggle {  
+		.toggle {
 			width: 27px;
 			height: 27px;
 			border-radius: 8px;
@@ -1361,7 +1361,7 @@ $eth: #7d8ef6;
 			    border-top: 3px solid #9b84ca;
 			    right: -12px;
 			    top: calc(50% - 1px);
-			    position: absolute;				
+			    position: absolute;
 			}
 		}
 
@@ -1386,7 +1386,7 @@ $eth: #7d8ef6;
 			}
 		}
 
-		.lang {  
+		.lang {
 			margin-left: 30px;
 			width: 44px;
 			line-height: 35px;
@@ -1543,7 +1543,7 @@ $eth: #7d8ef6;
 				background-color: #654d95;
 			    left: calc(50% - 30px);
 			    top: 35px;
-				&:before {					
+				&:before {
 					display: inline-block;
 					content: '';
 					border: 6px solid transparent;
@@ -1721,7 +1721,7 @@ $eth: #7d8ef6;
 						    border-top: 3px solid #9b84ca;
 						    left: calc(50% - 3px);
 						    top: calc(50% - 1px);
-						    position: absolute;							
+						    position: absolute;
 						}
 					}
 					.text {
@@ -1756,7 +1756,7 @@ $eth: #7d8ef6;
 								font-size: 16px;
 								font-weight: 600;
 							}
-							span { 
+							span {
 								line-height: 21px;
 								opacity: .5;
 								font-size: 14px;
@@ -1798,7 +1798,7 @@ $eth: #7d8ef6;
 	}
 	.wallet-send-amount {
 		margin-bottom: 30px;
-		.wallet-send-amount--crypto {			
+		.wallet-send-amount--crypto {
 			font-size: 36px;
 			line-height: 21px;
 			color: #7d8ef6;
@@ -1873,35 +1873,35 @@ $eth: #7d8ef6;
 			    border-top: 4.5px solid #fff;
 			    right: -16px;
 			    top: calc(50% - 1px);
-			    position: absolute;						
+			    position: absolute;
 			}
 		}
 	}
 
 	&.btc {
 		.send-form .send-form-input--amount .btns span {
-			color:#fda50c;			
+			color:#fda50c;
 		}
-		
+
 		.send-form .send-form-input--amount input, .send-form .send-form-input--amount input::placeholder {
 			color: #fda50c;
 		}
 
-		.send-form .send-form-input--amount input { 
+		.send-form .send-form-input--amount input {
 			border-bottom:1px solid #fda50c;
 		}
 	}
 
 	&.eth {
 		.send-form .send-form-input--amount .btns span {
-			color:#8a93cf;			
+			color:#8a93cf;
 		}
 
 		.send-form .send-form-input--amount input, .send-form .send-form-input--amount input::placeholder {
 			color: #8a93cf;
 		}
 
-		.send-form .send-form-input--amount input { 
+		.send-form .send-form-input--amount input {
 			border-bottom:1px solid #8a93cf;
 		}
 	}
@@ -1949,13 +1949,13 @@ $eth: #7d8ef6;
 			.current-balance {
 				input {
 					background:none;
-					border:none;	
+					border:none;
 					font-size: 16px;
 					color: #fff;
 					font-weight: 600;
 					&::placeholder {
 						color: #fff;
-					}		
+					}
 				}
 			}
 			.currency-balance {
@@ -2002,7 +2002,7 @@ $eth: #7d8ef6;
 				}
 				span {
 					text-align:center;
-				}			
+				}
 			}
 		}
 		.send-form-input {
@@ -2136,4 +2136,130 @@ $eth: #7d8ef6;
 		color: #fff;
 		font-weight: 600;
 	}
+}
+
+.popup-body {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(38,8,72, .5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .exchange-popup_title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .question {
+      width: 164px;
+      height: 21px;
+      opacity: 0.5;
+      color: #ffffff;
+      font-size: 14px;
+      line-height: 21px;
+      margin: 15px 0;
+    }
+    .transaction {
+      width: 366px;
+      height: 50px;
+      padding-top: 15px;
+      color: #ffffff;
+      font-size: 36px;
+      font-weight: 600;
+      line-height: 21px;
+    }
+  }
+
+  .exchange, .recipient, .commission {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  .title {
+    width: 65px;
+    opacity: 0.5;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 21px;
+  }
+
+  .number {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 21px;
+  }
+
+  .exchange {
+    .number {
+      color: #7d8ef6;
+    }
+  }
+
+  .recipient {
+    .number {
+      color: #fda50c;
+    }
+  }
+
+  .commission {
+    .number {
+      color: #ffffff;
+    }
+  }
+
+  .exchange-popup_body {
+    width: 477px;
+    height: 118px;
+    border-radius: 14px;
+    background: #4d3779;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
+  .popup-wrapper {
+    width: 597px;
+    height: 464px;
+    border-radius: 8px;
+    background: #3b2665;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .exchange-popup_buttons {
+    .buttons {
+      position:relative;
+      text-align:center;
+      display: table;
+      margin:0 auto;
+      .btn-border-wrapper {
+        padding:1px;
+        display: inline-block;
+        width: 232px;
+        border-radius:28px;
+        height: 50px;
+        background: linear-gradient(to left, #8e6ee4, #d268bc);
+        margin:0 10px;
+      }
+      .btn {
+        width: 230px;
+        height: 48px;
+        background:#260848;
+        font-size: 16px;
+        color: #fff;
+        border-radius:28px;
+        position:relative;
+        border: solid 1px transparent;
+      }
+      .btn-exchange {
+        background-image: linear-gradient(to left, #8e6ee4, #d268bc);
+      }
+    }
+  }
 }
