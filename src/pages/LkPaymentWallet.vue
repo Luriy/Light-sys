@@ -6,7 +6,9 @@
         <img v-if="isShowLogotype('eth')" src="@/assets/images/eth.png" alt title>
       </div>
       <div class="wallet-send-amount">
-        <p class="wallet-send-amount--crypto">{{ formatCurrency(wallet.balance, '', 8) }} <span>{{ wallet.currency }}</span></p>
+        <p :class="{
+          'wallet-send-amount--crypto': true,
+          'btc': $route.params.currency.toUpperCase() === 'BTC'}">{{ formatCurrency(wallet.balance, '', 8) }} <span>{{ wallet.currency }}</span></p>
         <p class="wallet-send-amount--fiat">{{ formatCurrency(wallet.balanceUSD, '$') }} <span>USD</span></p>
       </div>
       <div class="buttons">

@@ -10,7 +10,7 @@ export default {
       balance: 0,
       balanceUSD: 0,
     },
-    wallets: [],
+    wallets: JSON.parse(localStorage.getItem('stateWalletsWallets')) || [],
     types: {},
     percentage: {},
     operations: [],
@@ -24,7 +24,10 @@ export default {
   },
   mutations: {
     SET_PAGE_DETAIL: (state, payload) => state.pageDetail = payload,
-    SET_WALLETS: (state, payload) => state.wallets = payload,
+    SET_WALLETS: (state, payload) => {
+      state.wallets = payload;
+      localStorage.setItem('stateWalletsWallets', JSON.stringify(payload));
+    },
     SET_TYPES: (state, payload) => state.types = payload,
     SET_PERCENTAGE: (state, payload) => state.percentage = payload,
     SET_OPERATIONS: (state, payload) => state.operations = payload,
