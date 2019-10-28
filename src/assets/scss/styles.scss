@@ -308,6 +308,27 @@ $eth: #7d8ef6;
 			background-color: #4d3779;
 			padding:9px;
 			cursor: pointer;
+      .select-wrapper {
+        overflow-y: auto;
+        max-height: 454px;
+        padding-right: 20px;
+        scrollbar-width: thin;
+        scrollbar-color: #2e0e52 transparent;
+
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+        &::-webkit-scrollbar-track {
+          background:transparent;
+        }
+        &::-webkit-scrollbar-thumb,
+        &::-webkit-scrollbar-thumb:hover {
+          width: 4px;
+          margin: 15px 0;
+          border-radius: 2.5px;
+          background-color: #2e0e52;
+        }
+      }
 			.select-body {
 				width:100%;
 				top: 66px;

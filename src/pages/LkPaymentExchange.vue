@@ -8,63 +8,35 @@
 	  		<div class="left">
 	  			<div class="title">Exchange</div>
 	  			<div class="select">
-	  				<div v-on:click="exchangeModal = !exchangeModal; receiveModal = false;" class="select-title">
+	  				<div @click="exchangeAction" class="select-title">
 	  					<div class="icon"><img :src="exchangeCurrency.icon" alt title></div>
 	  					<div class="amount">
-	  						<div class="code" v-bind:class="exchangeCurrency.code">{{exchangeCurrency.fullName}}</div>
+	  						<div class="code" :class="exchangeCurrency.code">{{exchangeCurrency.fullName}}</div>
 	  						<div class="value">
-	  							<span>0.97750993 BTC</span>
-	  							<span>1.63 USD</span>
+	  							<span>{{exchangeCurrency.balance}} BTC</span>
+	  							<span>{{exchangeCurrency.balanceUSD}} USD</span>
 	  						</div>
 	  					</div>
 	  					<div class="toggle"></div>
 	  				</div>
 
 	  				<div class="select-body" v-if="exchangeModal">
-	  					<div class="search-input">
-	  						<input type="" name="" placeholder="Search">
-	  						<span></span>
-	  					</div>
-	  					<div class="select-item">
-		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
-		  					<div class="amount">
-		  						<div class="code btc">BTC Bitcoin</div>
-		  						<div class="value">
-		  							<span>0.97750993 BTC</span>
-		  							<span>1.63 USD</span>
-		  						</div>
-		  					</div>
-	  					</div>
-	  					<div class="select-item">
-		  					<div class="icon"><img src="@/assets/images/eth.png" alt title></div>
-		  					<div class="amount">
-		  						<div class="code eth">ETH Etherium</div>
-		  						<div class="value">
-		  							<span>0.97750993 ETH</span>
-		  							<span>1.63 USD</span>
-		  						</div>
-		  					</div>
-	  					</div>
-	  					<div class="select-item">
-		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
-		  					<div class="amount">
-		  						<div class="code btc">BTC Bitcoin</div>
-		  						<div class="value">
-		  							<span>0.97750993 BTC</span>
-		  							<span>1.63 USD</span>
-		  						</div>
-		  					</div>
-	  					</div>
-	  					<div class="select-item">
-		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
-		  					<div class="amount">
-		  						<div class="code btc">BTC Bitcoin</div>
-		  						<div class="value">
-		  							<span>0.97750993 BTC</span>
-		  							<span>1.63 USD</span>
-		  						</div>
-		  					</div>
-	  					</div>
+              <div class="select-wrapper">
+                <div class="search-input">
+                  <input type="text" v-model="search" name="" placeholder="Search">
+                  <span></span>
+                </div>
+                <div class="select-item" v-for="(wallet, index) of filteredWallets" :key="index">
+                  <div class="icon"><img :src="wallet.icon" alt title></div>
+                  <div class="amount">
+                    <div class="code btc">{{wallet.fullName}}</div>
+                    <div class="value">
+                      <span>{{wallet.balance}} {{wallet.currency}}</span>
+                      <span>{{wallet.balanceUSD}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 	  				</div>
 	  			</div>
 
@@ -89,63 +61,35 @@
 	  		<div class="right">
 	  			<div class="title">Receive</div>
 	  			<div class="select">
-	  				<div v-on:click="receiveModal = !receiveModal; exchangeModal = false;" class="select-title">
+	  				<div @click="receiveAction" class="select-title">
 	  					<div class="icon"><img :src="receiveCurrency.icon" alt title></div>
 	  					<div class="amount">
 	  						<div class="code" v-bind:class="receiveCurrency.code">{{receiveCurrency.fullName}}</div>
 	  						<div class="value">
-	  							<span>0.97750993 BTC</span>
-	  							<span>1.63 USD</span>
+                  <span>{{exchangeCurrency.balance}} BTC</span>
+                  <span>{{exchangeCurrency.balanceUSD}} USD</span>
 	  						</div>
 	  					</div>
 	  					<div class="toggle"></div>
 	  				</div>
 
 	  				<div class="select-body" v-if="receiveModal">
-	  					<div class="search-input">
-	  						<input type="" name="" placeholder="Search">
-	  						<span></span>
-	  					</div>
-	  					<div class="select-item">
-		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
-		  					<div class="amount">
-		  						<div class="code btc">BTC Bitcoin</div>
-		  						<div class="value">
-		  							<span>0.97750993 BTC</span>
-		  							<span>1.63 USD</span>
-		  						</div>
-		  					</div>
-	  					</div>
-	  					<div class="select-item">
-		  					<div class="icon"><img src="@/assets/images/eth.png" alt title></div>
-		  					<div class="amount">
-		  						<div class="code eth">ETH Etherium</div>
-		  						<div class="value">
-		  							<span>0.97750993 ETH</span>
-		  							<span>1.63 USD</span>
-		  						</div>
-		  					</div>
-	  					</div>
-	  					<div class="select-item">
-		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
-		  					<div class="amount">
-		  						<div class="code btc">BTC Bitcoin</div>
-		  						<div class="value">
-		  							<span>0.97750993 BTC</span>
-		  							<span>1.63 USD</span>
-		  						</div>
-		  					</div>
-	  					</div>
-	  					<div class="select-item">
-		  					<div class="icon"><img src="@/assets/images/btc.png" alt title></div>
-		  					<div class="amount">
-		  						<div class="code btc">BTC Bitcoin</div>
-		  						<div class="value">
-		  							<span>0.97750993 BTC</span>
-		  							<span>1.63 USD</span>
-		  						</div>
-		  					</div>
-	  					</div>
+              <div class="select-wrapper">
+                <div class="search-input">
+                  <input type="" name="" v-model="search" placeholder="Search">
+                  <span></span>
+                </div>
+                <div class="select-item" v-for="(wallet, index) of filteredWallets" :key="index">
+                  <div class="icon"><img :src="wallet.icon" alt title></div>
+                  <div class="amount">
+                    <div class="code btc">{{wallet.fullName}}</div>
+                    <div class="value">
+                      <span>{{wallet.balance}} {{wallet.currency}}</span>
+                      <span>{{wallet.balanceUSD}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 	  				</div>
 	  			</div>
 
@@ -347,8 +291,9 @@ export default {
   },
   data () {
   	return {
-  		receiveModal: false,
-  		exchangeModal: false,
+      receiveModal: false,
+      exchangeModal: false,
+      search: '',
       exchangePopup: false,
       sucessPopup: false,
   		exchangeBtn: 0,
@@ -371,6 +316,22 @@ export default {
       this.exchangePopup = false;
       this.sucessPopup = true;
     },
+    setData() {
+      if (this.wallets && this.wallets.length) {
+        this.exchangeCurrency = this.wallets.filter(({currency}) => currency === 'BTC')[0];
+        this.receiveCurrency = this.wallets.filter(({currency}) => currency === 'ETH')[0];
+      }
+    },
+    exchangeAction() {
+      this.exchangeModal = !this.exchangeModal;
+      this.receiveModal = false;
+      this.search = '';
+    },
+    receiveAction() {
+      this.receiveModal = !this.receiveModal;
+      this.exchangeModal = false;
+      this.search = '';
+    },
     toggleCurrency: function() {
       let c = this.exchangeCurrency;
       this.exchangeCurrency = this.receiveCurrency;
@@ -387,11 +348,29 @@ export default {
   },
   computed: {
     wallets() {
-      return this.$store.getters['wallet/WALLETS'] || [];
+      const data = this.$store.getters['wallet/WALLETS'].map((item) => {
+        return {
+          ...item,
+          // todo Здесь хреново немного поскольку валют может быть много на будущее нада сделать рендер функцию в utils которая будет возвращать нужное значение
+          fullName: (item.currency === 'BTC') ? 'BTC Bitcoin' : (item.currency === 'ETH') ? 'ETH Ethereum' : item.currency,
+          icon: (item.currency === 'BTC') ? require('@/assets/images/btc.png')  : (item.currency === 'ETH') ? require('@/assets/images/eth.png') : item.currency
+        }
+      }) || [];
+      return data
+    },
+    filteredWallets() {
+      return this.wallets.filter(wallet => {
+        return wallet.fullName.toLowerCase().includes(this.search)
+      })
     }
   },
   created() {
     this.getWalletsList();
+  },
+  watch: {
+    wallets() {
+      this.setData()
+    }
   }
 }
 </script>
