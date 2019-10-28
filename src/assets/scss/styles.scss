@@ -396,145 +396,7 @@ $eth: #7d8ef6;
   	}
 }
 
-.operations-history {
-	padding-bottom:15px;
-	margin-top: 30px;
-	.title {
-		p {
-			font-size: 16px;
-			color: #fff;
-			line-height:21px;
-			margin-bottom: 20px;
-		}
 
-		span {
-			font-size:12px;
-			line-height: 21px;
-			color: #fff;
-			opacity: .5;
-		}
-	}
-	&-list {
-		max-height: 300px;
-		overflow-y: auto;
-		scrollbar-width: thin;
-		scrollbar-color: #1e0639 transparent;
-		padding-right:20px;
-
-		&::-webkit-scrollbar {
-			width: 4px;
-		}
-		&::-webkit-scrollbar-track {
-			background:transparent;
-		}
-	   	&::-webkit-scrollbar-thumb,
-	   	&::-webkit-scrollbar-thumb:hover {
-			width: 4px;
-			border-radius: 2.5px;
-			background-color:#1e0639;
-	    }
-
-		&-item {
-			padding:15px 0;
-			display: flex;
-			justify-content: space-between;
-			align-items:center;
-			border-bottom:1px solid #3b2665;
-			&:last-child {
-				border-bottom: none;
-			}
-			> * {
-				width: 25%;
-			}
-			.left {
-				display: flex;
-				align-items:center;
-			}
-			.type {
-				width: 43px;
-				height: 43px;
-				border-radius: 17px;
-				background-color: #3b2665;
-				display: flex;
-				align-items:center;
-				justify-content: center;
-				margin-right: 15px;
-			}
-			.address {
-				font-size: 14px;
-				font-weight: 600;
-				line-height: 21px;
-				color: #ffffff;
-				opacity: .5;
-			}
-			.amount {
-				text-align: right;
-				display: flex;
-				flex-wrap: wrap;
-				align-item:center;
-				p {
-					width: 100%;
-					font-size: 16px;
-					font-weight: 600;
-					line-height:21px;
-					color: #db5353;
-				}
-
-				span {
-					width:100%;
-					display: block;
-					opacity: 0.5;
-					font-size: 14px;
-					font-weight: 600;
-					line-height: 21px;
-					color: #ffffff;
-				}
-			}
-			.code {
-				display: flex;
-				align-items:center;
-				img {
-					max-height:24px;
-					margin-right: 6px;
-				}
-				span {
-					font-size: 14px;
-					line-height: 21px;
-					color: #fff;
-					font-weight: 600;
-					&.btc {
-						color: #fda50c;
-					}
-					&.eth {
-						color: #7d8ef6
-					}
-				}
-			}
-			.status {
-				p {
-					color: #fff;
-					font-size: 14px;
-					line-height: 21px;
-  					font-weight: 600;
-				}
-
-				span {
-					font-size: 14px;
-					opacity: .5;
-					line-height: 21px;
-					color: #fff;
-					font-weight: 600;
-				}
-			}
-			&.plus-trans {
-				.amount p {color: #61db53;}
-				.type img {
-					transform: rotate(90deg);
-				}
-			}
-		}
-	}
-}
 
 .accounts-list {
 	.title {
@@ -938,24 +800,25 @@ $eth: #7d8ef6;
 	border-top-left-radius:50px;
 	background:#1e0639;
 	position:relative;
-	width: calc(100% + 60px);
-    padding: 40px 60px 0 40px;
+	width: calc(100% + 5vw);
+    padding: 5.2vh 2.9vw 0 3.2vw;
 	display: flex;
 	justify-content: space-between;
-	height: 543px;
+	height: 49.3vh;
 
 	.wallets-list_item {
-		width:calc(50% - 50px);
+		width:calc(50% - 1.6vw);
     	overflow: hidden;
 		.wallets-list_item_body {
 			overflow-y: auto;
     		max-height: calc(100% - 54px);
-		    padding-right: 20px;
+		    padding-right: 0.1vw;
   			scrollbar-width: thin;
   			scrollbar-color: #2e0e52 transparent;
 
 			&::-webkit-scrollbar {
-				width: 4px;
+				width: 0 !important;
+
 			}
 			&::-webkit-scrollbar-track {
 				background:transparent;
@@ -971,10 +834,10 @@ $eth: #7d8ef6;
 			}
 			.wallet {
 				width: 100%;
-				height: 61px;
+				height: 6vh;
 				border-radius: 17px;
 				background-color: #3b2665;
-				padding:12px;
+				padding: 0.9vw;
 				display: flex;
 				align-items:center;
 				justify-content: space-between;
@@ -983,13 +846,13 @@ $eth: #7d8ef6;
 				&.fiat-wallet {
 					height: auto;
 					cursor: pointer;
-					min-height:61px;
+					min-height: 6vh;
 					display: block;
 					&.active {
 						.wallet-last-transactions {
 							opacity: 1;
-							max-height: 500px;
-							margin-top:10px;
+							max-height: 65vh;
+							margin-top: 1.3vh;
 						}
 						.wallet-toggle {
 							transform: rotate(180deg);
@@ -1000,38 +863,46 @@ $eth: #7d8ef6;
 						transition: .3s;
 						opacity: 0;
 						max-height: 0;
+
 						&-item {
 							border-top:1px solid #4f387f;
-							padding:10px 0;
+							padding: 10px 0;
 							display: flex;
 							justify-content: space-between;
 							align-items:center;
 							.from {
 								display: flex;
-								align-items:center;
+									justify-content: left;
+									width: 240px;
+									align-items:center;
 								.image {
-									width: 36px;
-									height: 24px;
-									margin-right: 12px;
+									width: 2.7vw;
+									height: 4.8vh;
+									display: flex;
+									justify-content: center;
+									align-items:center;
+									
+									margin-right: 1vw;	
 								}
 								span {
 									color: #fff;
-									font-size: 14px;
+									font-size: 0.875rem;
 								}
 							}
-
 							.info {
 								display: flex;
 								align-items:center;
 								.amount {
-									font-size: 14px;
+									margin-right: 2vw;
+									white-space: nowrap;
+									width: 190%;
+									font-size: 0.875rem;
 									color: #fff;
 									font-weight: 600;
 								}
-
 								.type {
 									width: 20px;
-									margin-left: 28px;
+									margin-left: auto;
 								}
 							}
 						}
@@ -1044,25 +915,30 @@ $eth: #7d8ef6;
 
 						.code {
 							.image.fiat {
-								font-size: 16px;
+								display: flex;
+								align-items:center;
+								justify-content: center;
+								font-size: 1rem;
   								font-weight: 600;
-  								line-height: 37px;
+  								line-height: 21px;
   								text-align:center;
   								color: #fff;
+
 							}
 						}
 
 						.right {
 							display: flex;
 							align-items:center;
+							justify-content:center;
 							.balance {
-								font-size: 14px;
+								font-size: 0.875rem;
 								line-height: 21px;
 								color: #fff;
 								font-weight: 600;
 							}
 							.wallet-toggle {
-								margin-left: 36px;
+								margin-left: 1.9vw;
 								position:relative;
 								width: 20px;
 								height: 20px;
@@ -1088,17 +964,17 @@ $eth: #7d8ef6;
 					.balance {
 						text-transform: uppercase;
 						text-align: right;
-						margin-right: 16px;
+						margin-right: 1vw;
 						p {
-							font-size: 14px;
+							font-size: 0.385rem;
 							font-weight: 600;
 							color: #fff;
-							line-height: 1.2;
+							line-height: 1.2vh;
 							margin-bottom: 1px;
 						}
 
 						span {
-							font-size: 12px;
+							font-size: 0.75rem;
   							font-weight: 600;
   							color: #fff;
   							opacity: .5;
@@ -1107,9 +983,9 @@ $eth: #7d8ef6;
 
 					.progress {
 						text-align: right;
-						line-height: 1.2;
+						line-height: 1.2vh;
 						font-weight: 600;
-						font-size: 12px;
+						font-size: 0.75rem;
 						text-transform: uppercase;
 						color: #db5353;
 						&.green {
@@ -1125,13 +1001,13 @@ $eth: #7d8ef6;
 					display: flex;
 					align-items:center;
 					.image {
-						width: 37px;
-						height: 37px;
-						border-radius: 14px;
-						margin-right: 10px;
+						width: 2.9vw;
+						height: 3.9vh;
+						border-radius: 11px;
+						margin-right: 0.7vw;
 						background-color: #fda50c;
 					    text-align: center;
-					    line-height: 40px;
+					    line-height: 5.2vh;
 						&.eth {
 							background:#7b83c4;
 						}
@@ -1140,7 +1016,7 @@ $eth: #7d8ef6;
 						}
 					}
 					span {
-						font-size: 16px;
+						font-size: 0.875rem;
 						color: #fff;
   						font-weight: 600;
 					}
@@ -1153,9 +1029,9 @@ $eth: #7d8ef6;
 		align-items:center;
 		justify-content: space-between;
 		margin-bottom: 15px;
-		.toggle {
-			width: 27px;
-			height: 27px;
+		.toggle {  
+			width: 2vw;
+			height: 2.6vh;
 			border-radius: 8px;
 			cursor: pointer;
 			position:relative;
@@ -1181,6 +1057,448 @@ $eth: #7d8ef6;
 	        font-size: 14px;
 		}
 	}
+}
+
+.lk-wrapper .sidebar {
+	padding: 143px 60px 0 30px;
+	width: 314px;
+	ul {
+		li {
+			position: relative;
+			padding-left:41px;
+			margin-bottom: 25px;
+			&:last-child {
+				border-top: 1px solid #3d266a;
+				span {
+					margin-top: 12.5px;
+				}
+				a {
+					padding-top: 25px;
+				}
+			}
+			span {
+				position:absolute;
+				left: 0;
+				display: block;
+				width: 17px;
+				height: 17px;
+				top: calc(50% - 8.5px);
+			}
+			a {
+				display: block;
+				font-size: 14px;
+				line-height: 21px;
+				color: #fff;
+				opacity: .5;
+				text-decoration: none;
+				font-weight:600;
+				&.router-link-active {
+					opacity: 1;
+				}
+			}
+		}
+	}
+}
+.operations-history {
+	padding-bottom: 2vh;
+	margin-top: 3.9vh;
+	.title {
+		p {
+			font-size: 1rem;
+			color: #fff;
+			line-height:2.7vh;
+			margin-bottom: 2vh;
+		}
+
+		span {
+			font-size: 0.75rem;
+			line-height: 21px;
+			color: #fff;
+			opacity: .5;
+		}
+	}
+	&-list {
+		
+
+		&-item {
+			padding:15px 0;
+			display: flex;
+			justify-content: space-between;
+			align-items:center;
+			margin-right: -2vw;
+			border-bottom:1px solid #3b2665;
+			&:last-child {
+				border-bottom: none;
+			}
+			> * {
+				width: 25%;
+			}
+			.left {
+				display: flex;
+				align-items:center;
+			}
+			.type {
+				width: 3.4vw;
+				height: 4.5vh;
+				border-radius: 17px;
+				background-color: #3b2665;
+				display: flex;
+				align-items:center;
+				justify-content: center;
+				margin-right: 0.9vw;
+			}
+			.address {
+				font-size: 0.75rem;
+				font-weight: 600;
+				line-height: 21px;
+				color: #ffffff;
+				opacity: .5;
+			}
+			.amount {
+				text-align: right;
+				display: flex;
+				flex-wrap: wrap;
+				align-item:center;
+
+				p {
+					width: 100%;
+					font-size: 0.875rem;
+					font-weight: 600;
+					line-height:21px;
+					color: #db5353;
+				}
+
+				span {
+					width:100%;
+					display: block;  
+					opacity: 0.5;
+					font-size: 0.75rem;
+					font-weight: 600;
+					line-height: 21px;
+					color: #ffffff;
+				}
+			}
+			.code {
+				display: flex;
+				align-items:center;
+				img {
+					max-height:24px;
+					margin-right: 0.68vw;
+				}
+				span {
+					font-size: 0.8125rem;
+					line-height: 21px;
+					color: #fff;
+					font-weight: 600;
+					&.btc {
+						color: #fda50c;
+					}
+					&.eth {
+						color: #7d8ef6
+					}
+				}
+			}
+				.status {
+					p {
+						color: #fff;  
+						font-size: 0.8125rem;
+						line-height: 21px;
+	  					font-weight: 600;
+					}
+
+					span {
+						font-size: 0.75rem;
+						opacity: .5;
+						line-height: 21px;
+						color: #fff;
+						font-weight: 600;
+					}
+				}
+				&.plus-trans {
+					.amount p {color: #61db53;}
+					.type img {
+						transform: rotate(90deg);
+					}
+				}
+			}
+		}
+	}
+.line{
+	position: absolute;
+	margin-top: -4.3vh !important;
+	width: 60%;
+	height: 4.2vh;
+	background-image: linear-gradient(180deg, rgba(30, 6, 57, 0) 0%, #1e0639 100%);
+	margin-left: 3.2vw;
+}
+	@media(min-width: 1112px){
+  		.line{
+			width: 65%;
+			}
+  		}
+  	@media(min-width: 1280px){
+  		.line{
+			width: 68%;
+			}
+  		}
+  	@media(min-width: 1407px){
+  		.line{
+			width: 72%;
+			}
+  		}
+  	@media(min-width: 1630px){
+  		.line{
+			width: 75%;
+			}
+  		}
+
+  	@media(min-width: 1364px){
+  		.wallets-list {
+			width: calc(100% + 5vw);
+			height: 70.7vh;
+
+			.wallets-list_item {
+				width:calc(50% - 2vw);
+
+				.wallets-list_item_body {
+					padding-right: 1.5vw;
+
+					&::-webkit-scrollbar {
+						width: 4px !important;
+				}
+				.wallet {
+				height: 61px;
+
+				&.fiat-wallet {
+					min-height: 61px;
+
+					.wallet-last-transactions {
+						&-item {
+							height: 61px;
+							padding: 10px 0;
+
+							.info {
+								.amount {
+									font-size: .875rem;
+
+								}
+							}
+						}
+					}
+				}
+
+				.info {
+					display: flex;
+					.balance {
+						text-transform: uppercase;
+						text-align: right;
+						margin-right: 1vw;
+						p {
+							font-size: 0.875rem;
+	
+						}
+					}
+
+					.progress {
+
+						font-size: 0.75rem;
+					}
+				}
+
+				.code {
+					display: flex;
+					align-items:center;
+					.image {
+						display: flex;
+						justify-content: center;
+						align-items:center;
+						width: 37px;
+						height: 37px;
+					}
+					span {
+						font-size: 1rem;
+					}
+				}
+			}
+		}
+	}
+
+
+}
+.operations-history {
+
+	.title {
+
+	}
+	&-list {
+		
+
+		&-item {
+
+			.type {
+				width: 43px;
+				height: 43px;
+			}
+			.address {
+				font-size: 0.875rem;
+			}
+			.amount {
+
+				p {
+					width: 100%;
+					font-size: 1rem;
+				}
+
+				span {
+					font-size: 0.875rem;
+				}
+			}
+			.code {
+
+				span {
+					font-size: 0.875rem;
+					line-height: 21px;
+				}
+			}
+			.status {
+				p {
+					color: #fff;  
+					font-size: 0.875rem;
+				}
+
+				span {
+					font-size: 0.875rem;
+				}
+			}
+		}
+	}
+}
+
+}
+
+  	@media(min-width: 1800px){
+  		.wallets-list {
+			width: 77.4vw;
+			height: 45.6vh;
+			border-radius: 50px;
+
+			.wallets-list_item {
+				width:calc(50% - 3.3vw);
+
+				.wallets-list_item_body {
+					padding-right: 1.5vw;
+				.wallet-info {
+						display: flex;
+						align-items:center;
+						justify-content: space-between;
+						width: 100%;
+
+						.code {
+							.image.fiat {
+								display: flex;
+								align-items:center;
+								justify-content: center;
+								font-size: 1rem;
+  								font-weight: 600;
+  								line-height: 21px;
+  								text-align:center;
+  								color: #fff;
+
+							}
+						}
+
+						.right {
+							.balance {
+								margin-right: 2vw;
+								font-size: 0.875rem;
+							}
+		
+						}
+					}
+				.wallet {
+						&.fiat-wallet {
+					min-height: 61px;
+
+					.wallet-last-transactions {
+						&-item {
+							padding: 10px 0;
+									.from {
+										display: flex;
+										justify-content: left;
+										width: 240px;
+										align-items:center;
+									
+								.image {
+									margin-left: 0vw;
+									margin-right: 0.2vw;
+									
+								}
+								span {
+									
+									color: #fff;
+									font-size: 0.875rem;
+								}
+							}
+							.info {
+								.amount {
+									margin-right: 3.8vw;
+									font-size: .875rem;
+
+								}
+							}
+						}
+					}
+				}
+					.info {
+					display: flex;
+					.balance {
+						margin-right: 3.8vw;
+					}
+				}
+
+
+			}
+		}
+	}
+
+
+}
+.operations-history {
+
+	.title {
+
+	}
+	&-list {
+		
+
+		&-item {
+
+			.code {
+
+				span {
+					font-size: 0.875rem;
+					line-height: 21px;
+				}
+			}.amount {
+				margin-right: 2.8vw;
+			}
+			.status {
+				p {
+					color: #fff;  
+					font-size: 0.875rem;
+				}
+
+				span {
+					font-size: 0.875rem;
+				}
+			}
+		}
+	}
+}
+	.line{
+		width: 72%;
+	}
+
 }
 
 .lk-wrapper .sidebar {
