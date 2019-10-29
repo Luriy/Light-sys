@@ -14,6 +14,7 @@ export default {
     types: {},
     percentage: {},
     operations: [],
+    transferInfo: {}
   },
   getters: {
     PAGE_DETAIL: state => state.pageDetail,
@@ -21,6 +22,7 @@ export default {
     TYPES: state => state.types,
     PERCENTAGE: state => state.percentage,
     OPERATIONS: state => state.operations,
+    TRANSFERINFO: state => state.transferInfo,
   },
   mutations: {
     SET_PAGE_DETAIL: (state, payload) => state.pageDetail = payload,
@@ -31,6 +33,7 @@ export default {
     SET_TYPES: (state, payload) => state.types = payload,
     SET_PERCENTAGE: (state, payload) => state.percentage = payload,
     SET_OPERATIONS: (state, payload) => state.operations = payload,
+    SET_TRANSFER_INFO: (state, payload) => state.transferInfo = payload
   },
   actions: {
     GET_PAGE_DETAIL: (store, { currency, address }) => {
@@ -85,6 +88,20 @@ export default {
         return store.commit('SET_WALLETS', result);
       });
     },
+
+    GET_TRANSFER_INFO: ({commit}, {exchange, receive}) => {
+      return Axios({
+        url: 'https://apidomenpyth.ru',
+        method: 'GET',
+        params: {
+          Comand: `TransferInfo${exchange}${receive}`,
+        }
+      }).then(({data}) => {
+        const {Result: result} = parsePythonArray(data)['1'].return;
+        return commit('SET_TRANSFER_INFO', result);
+      });
+    },
+
     GET_TYPES: async store => {
       const { data } = await Axios({
         url: 'https://apidomenpyth.ru',
