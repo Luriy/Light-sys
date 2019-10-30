@@ -4,7 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-import styles from './assets/scss/styles.scss'
+import './assets/scss/styles.scss'
+import vuetify from './plugins/vuetify';
+import 'vuetify/dist/vuetify.min.css'
 
 Vue.config.productionTip = false
 
@@ -56,5 +58,6 @@ new Vue({
   router,
   store,
   components: { App },
+  vuetify,
   template: '<App/>'
 });
