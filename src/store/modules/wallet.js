@@ -30,6 +30,13 @@ export default {
       state.wallets = payload;
       localStorage.setItem('stateWalletsWallets', JSON.stringify(payload));
     },
+    UPDATE_WALLET({wallets}, {wallet, amount}) {
+      wallets.find(item => {
+        if (item.address === wallet) {
+          item.balance = item.balance + amount
+        }
+      })
+    },
     SET_TYPES: (state, payload) => state.types = payload,
     SET_PERCENTAGE: (state, payload) => state.percentage = payload,
     SET_OPERATIONS: (state, payload) => state.operations = payload,
@@ -46,6 +53,7 @@ export default {
       }
 
       return Axios({
+        // todo Вынести домен в константы
         url: 'https://apidomenpyth.ru',
         method: 'POST',
         params: {
@@ -102,6 +110,45 @@ export default {
       });
     },
 
+    GET_TRANSFER_TOKEN: ({commit}, user) => {
+      return Axios({
+        url: 'https://apidomenpyth.ru',
+        method: 'POST',
+        params: {
+          Comand: 'TransferToken',
+          ...user
+        }
+      }).then(({data}) => {
+
+      });
+    },
+    POST_TRANSFER: ({commit}, {transferData, pair: {exchange, receive}}) => {
+      return Axios({
+        url: 'https://apidomenpyth.ru',
+        method: 'POST',
+        params: {
+          Comand: `${exchange}${receive}Transfer`,
+          ...transferData
+        }
+      }).then((resp) => {
+        resp = eval("("+resp['data']+")");
+        if (!resp[0]['Errors']['1007'] &&
+          !resp[0]['Errors']['1010'] &&
+          !resp[0]['Errors']['1011'] &&
+          !resp[0]['Errors']['1012'] &&
+          !resp[0]['Errors']['1013'] &&
+          !resp[0]['Errors']['1014']
+        ) {
+          commit('UPDATE_WALLET', {wallet: transferData.To, amount: transferData.Amount});
+          // const {Result: result} = parsePythonArray(resp)['1'].return;
+          console.log(resp);
+        } else {
+          const err = resp[0]['Errors'],
+                errKey = Object.keys(resp[0]['Errors'])[0];
+          console.log(err[errKey]);
+        }
+      });
+    },
     GET_TYPES: async store => {
       const { data } = await Axios({
         url: 'https://apidomenpyth.ru',

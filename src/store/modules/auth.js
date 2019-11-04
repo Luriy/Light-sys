@@ -1,12 +1,12 @@
 import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth'
-import { USER_REQUEST } from '../actions/user'
+import { USER_REQUEST, USER_SUCCESS } from '../actions/user'
 import axios from 'axios';
 import qs from 'querystring';
 import sha512 from 'js-sha512';
 
 const state = {
 	token: localStorage.getItem('Data') || '',
-	status: ''
+	status: '',
 }
 
 const getters = {
@@ -32,9 +32,8 @@ const actions = {
               password: userObj.Password,
               token: sha512(resp[1]['return']['Token: ']),
             }));
-
-		        commit(AUTH_SUCCESS, user)
-		        resolve(resp)
+		        commit(AUTH_SUCCESS, user);
+            resolve(resp)
       		} else {
       			let err = 'Неизвестная ошибка';
       			commit(AUTH_ERROR, err)

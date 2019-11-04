@@ -223,9 +223,12 @@ $eth: #7d8ef6;
   			margin-bottom: 20px;
   		}
   		.exchange-amount {
+        .v-text-field {
+          margin: 0;
+          padding: 0;
+        }
   			&_input {
   				position:relative;
-  				margin-bottom: 10px;
           .dollar {
             left: 0;
             font-size: 16px;
@@ -233,7 +236,29 @@ $eth: #7d8ef6;
             line-height: 15px;
           }
           .dollars_input {
-            margin-left: 11px;
+            background-color: transparent;
+
+            .v-input__control {
+              .v-input__slot {
+                padding: 0;
+                background: transparent;
+                box-shadow: none!important;
+                -webkit-box-shadow: none!important;
+                min-height: 0;
+
+                .v-input__icon {
+                  width: initial;
+                  min-width: 0;
+                  display: block;
+                }
+
+                input, i {
+                  color: white;
+                  font-size: 16px;
+                  line-height: 15px;
+                }
+              }
+            }
           }
   				span {
   					right: 0;
@@ -251,7 +276,7 @@ $eth: #7d8ef6;
   						color: #fda50c;
   					}
   					input, input::placeholder {
-  						color: #fda50c;
+  						color: #fda50c!important;
   					}
   					input {
   						border-bottom:1px solid #fda50c;
@@ -262,7 +287,7 @@ $eth: #7d8ef6;
   						color: $eth;
   					}
   					input, input::placeholder {
-  						color: $eth;
+  						color: $eth!important;
   					}
   					input {
   						border-bottom:1px solid $eth;

@@ -53,25 +53,23 @@
 
 	  			<div class="exchange-amount">
 	  				<div class="exchange-amount_input" :class="exchangeCurrency.currency.toLowerCase()">
-	  					<input
-                type="text"
+              <v-text-field
                 v-model="exchangeAmount"
-                name=""
-                @input="exchangeChange($event.target.value)"
-                :placeholder="exchangeCurrency.balance"
-              >
+                @input="exchangeChange"
+                placeholder="0"
+                required
+              ></v-text-field>
 	  					<span>{{exchangeCurrency.currency}}</span>
 	  				</div>
 
 	  				<div class="exchange-amount_input">
-              <span class="dollar">$</span>
-	  					<input
-                type="text"
-                name=""
-                class="dollars_input"
+              <v-text-field
                 v-model="exchangeUSD"
+                class="dollars_input"
+                solo
+                prepend-inner-icon="$"
                 placeholder="0"
-              >
+              ></v-text-field>
 	  					<span>USD</span>
 	  				</div>
 	  			</div>
@@ -118,25 +116,22 @@
 
 	  			<div class="exchange-amount">
 	  				<div class="exchange-amount_input" :class="receiveCurrency.currency.toLowerCase()">
-	  					<input
-                type="text"
+              <v-text-field
                 v-model="receiveAmount"
-                name=""
-                :placeholder="receiveCurrency.balance"
-              >
+                placeholder="0"
+                required
+              ></v-text-field>
 	  					<span>{{receiveCurrency.currency}}</span>
 	  				</div>
 
 	  				<div class="exchange-amount_input">
-              <span class="dollar">$</span>
-	  					<input
-                type="text"
+              <v-text-field
+                v-model="exchangeUSD"
                 class="dollars_input"
-                name=""
-                v-model="receiveUSD"
-                @input="receiveChange($event.target.value)"
+                solo
+                prepend-inner-icon="$"
                 placeholder="0"
-              >
+              ></v-text-field>
 	  					<span>USD</span>
 	  				</div>
 	  			</div>
@@ -154,7 +149,7 @@
   						<img :src="exchangeCurrency.icon" alt title>
   					</div>
 					<div class="text">
-						<p>{{receiveAmount.toFixed(5)}} {{exchangeCurrency.currency}}</p>
+						<p>{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
 						<span>${{exchangeUSD.toFixed(5)}}USD</span>
 					</div>
   				</div>
@@ -174,7 +169,7 @@
   		</div>
 
   		<div class="exchange-block_button">
-  			<button @click="exchangePopup = !exchangePopup">Exchange</button>
+  			<button @click="exchange">Exchange</button>
   			<p class="info">1 {{exchangeCurrency.currency}} = {{transferInfo.rate}} {{receiveCurrency.currency}}</p>
   		</div>
 
@@ -184,65 +179,36 @@
         @closeModal="closeModal"
       >
         <div slot='title' class="exchange-popup_title">
-          <img src="@/assets/images/eth.png" alt title>
-          <p class="transaction">Conformation <br> exchange $0.95 USD</p>
-          <p class="question">We sent an SMS conformation to the number</p>
-          <div class="number-block">
-            <p class="number">+7 (952) 219 28 65</p>
-            <router-link class="link" to="/">Wrong number?</router-link>
+          <img :src="exchangeCurrency.icon" alt title>
+          <p class="transaction">Conformation <br> exchange {{exchangeUSD.toFixed(3)}} USD</p>
+          <div class="phone-question" v-if="user.Phone">
+            <p class="question">We sent an SMS conformation to the number</p>
+            <div class="number-block">
+              <p class="number">{{user.Phone}}</p>
+              <router-link class="link" to="/">Wrong number?</router-link>
+            </div>
+          </div>
+          <div class="email-question" v-else>
+            <p class="question">We sent an email conformation to the email</p>
+            <div class="number-block">
+              <p class="number">{{user.Email}}</p>
+              <router-link class="link" to="/">Wrong email?</router-link>
+            </div>
           </div>
         </div>
         <div slot='smsNumber' class="exchange-popup_sms-number">
-            <input
-              class="number-input"
-              @keyup="$event.target.nextElementSibling.focus()"
-              placeholder="_"
-              type="text"
-              maxLength="1"
-              size="1"
-              min="0"
-              max="9" pattern="[0-9]{1}" />
-            <input
-              class="number-input"
-              @keyup="$event.target.nextElementSibling.focus()"
-              placeholder="_"
-              maxLength="1"
-              size="1"
-              min="0"
-              max="9" pattern="[0-9]{1}" />
-            <input
-              class="number-input"
-              @keyup="$event.target.nextElementSibling.focus()"
-              placeholder="_"
-              maxLength="1"
-              size="1"
-              min="0"
-              max="9" pattern="[0-9]{1}" />
-            <input
-              class="number-input"
-              @keyup="$event.target.nextElementSibling.focus()"
-              placeholder="_"
-              maxLength="1"
-              size="1"
-              min="0"
-              max="9" pattern="[0-9]{1}" />
-            <input
-              class="number-input"
-              @keyup="$event.target.nextElementSibling.focus()"
-              placeholder="_"
-              maxLength="1"
-              size="1"
-              min="0"
-              max="9" pattern="[0-9]{1}" />
-            <input
-              class="number-input"
-              @keyup="send"
-              placeholder="_"
-              type="text"
-              maxLength="1"
-              size="1"
-              min="0"
-              max="9" pattern="[0-9]{1}" />
+          <input
+            class="number-input"
+            v-for="(input, index) in smsCodes"
+            v-model="input[index]"
+            @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : send()"
+            placeholder="_"
+            type="text"
+            maxLength="1"
+            size="1"
+            min="0"
+            max="9" pattern="[0-9]{1}"
+          />
 
           <div class="timer-body">
             <div class="title">Resend code:</div>
@@ -251,20 +217,20 @@
         </div>
         <div slot='body' class="exchange-popup_body">
           <div class="exchange-popup_info">
-            <p class="from">0.000945 BTC</p>
+            <p class="from">{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
             <img src="@/assets/images/exchange-arrs.svg" alt title>
-            <p class="to">0.9454954 ETH</p>
+            <p class="to">{{receiveAmount.toFixed(5)}} {{receiveCurrency.currency}}</p>
           </div>
           <div class="exchange-block_fee">
             <div class="network-fee">
-              <p class="title">Ethereum Network Fee</p>
-              <p class="btc-value">0.00021 BTC</p>
-              <p>$0.04</p>
+              <p class="title"><span>{{exchangeCurrency.name}}</span> Network Fee</p>
+              <p class="btc-value">{{types[exchangeCurrency.name].minerFee}} {{exchangeCurrency.currency}}</p>
+              <p>${{(types[exchangeCurrency.name].price * transferInfo.minerFee).toFixed(3)}}</p>
             </div>
             <div class="balance">
               <p class="title">Remaining balance</p>
-              <p class="btc-value">0 BTC</p>
-              <p>$0.00</p>
+              <p class="btc-value">{{exchangeCurrency.balance}} {{exchangeCurrency.currency}}</p>
+              <p>${{exchangeCurrency.balanceUSD}}</p>
             </div>
           </div>
         </div>
@@ -314,6 +280,9 @@
 import LkLayout from '@/layout/LkLayout'
 import LkPopUp from '@/layout/LkPopUp';
 import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
+import currencyList from '@/settings/currensyList'
+import { getAuthParams } from '@/functions/auth';
+
 export default {
   name: 'LkPaymentExchange',
   components: {
@@ -325,6 +294,16 @@ export default {
       receiveModal: false,
       exchangeModal: false,
       search: '',
+      smsCodes: [
+        {0: ''},
+        {1: ''},
+        {2: ''},
+        {3: ''},
+        {4: ''},
+        {5: ''},
+      ],
+      errorMessages: '',
+      formHasErrors: false,
       exchangePopup: false,
       sucessPopup: false,
   		exchangeBtn: 0,
@@ -339,23 +318,41 @@ export default {
         currency: 'BTC',
         balance: 0,
         balanceUSD: 0,
-  			icon: require('@/assets/images/btc.png'),
-  			fullName: 'BTC Bitcoin'
+        ...currencyList['BTC']
   		},
   		receiveCurrency: {
   			code: 'eth',
         currency: 'ETH',
         balance: 0,
         balanceUSD: 0,
-        icon: require('@/assets/images/eth.png'),
-  			fullName: 'ETH Ethereum'
+        ...currencyList['ETH']
   		}
   	}
   },
   methods: {
     send() {
       this.exchangePopup = false;
-      this.sucessPopup = true;
+      const token = this.smsCodes.map((smsCode, index) =>smsCode[index]).join('');
+      this.$store.dispatch('wallet/POST_TRANSFER', {
+        transferData: {
+          From: this.exchangeCurrency.address,
+          To: this.receiveCurrency.address,
+          Amount: this.exchangeAmount,
+          Token: token,
+          ...getAuthParams()
+        },
+        pair: {
+          exchange: capitalizeFirstLetter(this.exchangeCurrency.currency.toLowerCase()),
+          receive: capitalizeFirstLetter(this.receiveCurrency.currency.toLowerCase())
+        }
+      }).then(() => {
+        this.smsCodes.forEach((smsCode, index) =>smsCode[index] = '')
+      });
+      // this.sucessPopup = true;
+    },
+    exchange() {
+      this.exchangePopup = !this.exchangePopup;
+      this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams());
     },
     setData() {
       if (this.wallets && this.wallets.length) {
@@ -438,14 +435,12 @@ export default {
       this.receiveChange(this.receiveAmount);
       this.exchangeBtn = 3;
     },
-    exchangeChange(value) {
-      const getCurrencyName = this.exchangeCurrency.fullName.split(' ')[1].toLowerCase();
-      const price = this.types[getCurrencyName].price;
-      this.exchangeUSD = value * price;
+    exchangeChange() {
+      const price = this.types[this.exchangeCurrency.name].price;
+      this.exchangeUSD = this.exchangeAmount * price;
     },
     receiveChange(value) {
-      const getCurrencyName = this.receiveCurrency.fullName.split(' ')[1].toLowerCase();
-      const price = this.types[getCurrencyName].price;
+      const price = this.types[this.receiveCurrency.name].price;
       this.receiveUSD = value * price;
     }
   },
@@ -454,12 +449,31 @@ export default {
       const data = this.$store.getters['wallet/WALLETS'].map((item) => {
         return {
           ...item,
-          // todo Здесь хреново немного поскольку валют может быть много на будущее нада сделать функцию в utils которая будет возвращать нужное значение
-          fullName: (item.currency === 'BTC') ? 'BTC Bitcoin' : (item.currency === 'ETH') ? 'ETH Ethereum' : item.currency,
-          icon: (item.currency === 'BTC') ? require('@/assets/images/btc.png')  : (item.currency === 'ETH') ? require('@/assets/images/eth.png') : item.currency
+          ...currencyList[item.currency]
         }
       }) || [];
-      return data;
+      data.push(
+        {
+          code: 'btc',
+          currency: 'BTC',
+          address: '3PQhzGATmPfBcswJCxj4QqSipDMiEsnNih',
+          balance: 10,
+          balanceUSD: 1055550,
+          ...currencyList['BTC']
+        },
+        {
+          code: 'eth',
+          currency: 'ETH',
+          address: '3Jbk3LDY23bW3xcRWku921M5xDZVXC1bCj',
+          balance: 150,
+          balanceUSD: 1055,
+          ...currencyList['ETH']
+        },
+      );
+      return data
+    },
+    user() {
+      return {...getAuthParams()}
     },
     transferInfo() {
       return this.$store.getters['wallet/TRANSFERINFO']

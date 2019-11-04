@@ -240,6 +240,10 @@ export default {
 
     .title {
       flex-grow: 1;
+
+      span {
+        text-transform: capitalize;
+      }
     }
 
     .btc-value {
