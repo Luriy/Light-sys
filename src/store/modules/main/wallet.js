@@ -119,7 +119,8 @@ export default {
           ...user
         }
       }).then(({data}) => {
-
+        const {Phone} = parsePythonArray(data)['1'].return;
+        $store.dispatch('additional/setNotification', {message: Phone, status: 'error'})
       });
     },
     POST_TRANSFER: ({commit}, {transferData, pair: {exchange, receive}}) => {
@@ -146,6 +147,7 @@ export default {
           const err = resp[0]['Errors'],
                 errKey = Object.keys(resp[0]['Errors'])[0];
           console.log(err[errKey]);
+          commit('setError', {message: err[errKey], status: 'error'})
         }
       });
     },

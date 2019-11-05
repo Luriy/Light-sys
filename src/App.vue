@@ -1,6 +1,18 @@
 <template>
   <div id="app">
     <router-view v-if="isReady"></router-view>
+    <template v-if="error && error.message">
+      <v-snackbar
+        :timeout="5000"
+        :multi-line="true"
+        :color="error.message"
+        @input="closeError"
+        :value="true"
+      >
+        {{error.message}}
+        <v-btn flat dark @click.native="closeError">Close</v-btn>
+      </v-snackbar>
+    </template>
   </div>
 </template>
 
@@ -12,6 +24,16 @@ export default {
   data: () => ({
     isReady: false,
   }),
+  methods: {
+    closeError () {
+      this.$store.dispatch('alerts','clearError')
+    }
+  },
+  computed: {
+    error () {
+      return this.$store.getters['alerts/error']
+    }
+  },
   created() {
     this.$store.dispatch(AUTH_REQUEST, localStorage.getItem('Data'))
       .then(() => {
