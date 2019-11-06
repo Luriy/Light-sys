@@ -1,5 +1,5 @@
-import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../../actions/auth'
-import { USER_REQUEST, USER_SUCCESS } from '../../actions/user'
+import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth'
+import { USER_REQUEST, USER_SUCCESS } from '../actions/user'
 import axios from 'axios';
 import qs from 'querystring';
 import sha512 from 'js-sha512';

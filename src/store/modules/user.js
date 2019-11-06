@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from '../../actions/user'
-import { AUTH_LOGOUT } from '../../actions/auth'
+import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from '../actions/user'
+import { AUTH_LOGOUT } from '../actions/auth'
 
 const state = { status: '', profile: {} }
 

@@ -14,9 +14,18 @@ export default {
     types: {},
     percentage: {},
     operations: [],
-    transferInfo: {}
+    transferInfo: {},
+    loading: false,
+    notification: null
   },
   getters: {
+    //todo убрать в отдельный стор
+    loading (state) {
+      return state.loading
+    },
+    notification (state) {
+      return state.notification
+    },
     PAGE_DETAIL: state => state.pageDetail,
     WALLETS: state => state.wallets,
     TYPES: state => state.types,
@@ -25,6 +34,16 @@ export default {
     TRANSFERINFO: state => state.transferInfo,
   },
   mutations: {
+    //todo убрать в отдельный стор
+    setLoading (state, payload) {
+      state.loading = payload
+    },
+    setNotification (state, payload) {
+      state.notification = payload
+    },
+    clearNotification (state) {
+      state.notification = null
+    },
     SET_PAGE_DETAIL: (state, payload) => state.pageDetail = payload,
     SET_WALLETS: (state, payload) => {
       state.wallets = payload;
@@ -43,6 +62,16 @@ export default {
     SET_TRANSFER_INFO: (state, payload) => state.transferInfo = payload
   },
   actions: {
+    //todo убрать в отдельный стор
+    setLoading ({commit}, payload) {
+      commit('setLoading', payload)
+    },
+    setNotification ({commit}, payload) {
+      commit('setNotification', payload)
+    },
+    clearNotification ({commit}) {
+      commit('clearNotification')
+    },
     GET_PAGE_DETAIL: (store, { currency, address }) => {
       let Comand;
 
@@ -71,7 +100,7 @@ export default {
         });
       });
     },
-    GET_WALLETS: store => {
+    GET_WALLETS: ({commit}) => {
       return Axios({
         url: 'https://apidomenpyth.ru',
         method: 'POST',
@@ -80,6 +109,10 @@ export default {
           ...getAuthParams(),
         }
       }).then(({data}) => {
+        // commit('setNotification', {message: 'wallets added', status: 'info-status', icon: 'error_outline'});
+        // commit('setNotification', {message: 'wallets added', status: 'error-status', icon: 'close'});
+        // commit('setNotification', {message: 'wallets added', status: 'sucess-status', icon: 'done'});
+        // commit('setNotification', {message: 'wallets added', status: 'warning-status', icon: 'warning'});
         const returnData = parsePythonArray(data)['1'].return;
 
         const result = Object.keys(returnData).reduce((acc, walletCurrency) => {
@@ -93,7 +126,7 @@ export default {
           return acc;
         }, []);
 
-        return store.commit('SET_WALLETS', result);
+        return commit('SET_WALLETS', result);
       });
     },
 
@@ -119,8 +152,11 @@ export default {
           ...user
         }
       }).then(({data}) => {
-        const {Phone} = parsePythonArray(data)['1'].return;
-        $store.dispatch('additional/setNotification', {message: Phone, status: 'error'})
+        const {Email, Phone} = parsePythonArray(data)['1'].return;
+        commit('setNotification', {message: Email ? Email : Phone, status: 'info-status', icon: 'error_outline'});
+        // commit('setNotification', {message: Email ? Email : Phone, status: 'error-status', icon: 'close'});
+        // commit('setNotification', {message: Email ? Email : Phone, status: 'sucess-status', icon: 'done'});
+        // commit('setNotification', {message: Email ? Email : Phone, status: 'warning-status', icon: 'warning'});
       });
     },
     POST_TRANSFER: ({commit}, {transferData, pair: {exchange, receive}}) => {
