@@ -4,26 +4,29 @@
       <div class="wallets-block wallets-list_item"> 
         <div class="toggler">
           <p>Wallets</p>
-          <div class="flex">
-            <div class="toggle none" @click="handleMoving('wallets')">
+          <div class="flex toggler__panel">
+            <div class="toggle none" :class="{ active: isWalletsMoving }" @click="handleMoving('wallets')">
               <img src="@/assets/images/arrows.svg" width="15" height="15" fill="#fff" />
             </div>
-            <div class="toggle minus" @click="handleDeleting('wallets')"></div>
+            <div class="toggle minus" :class="{ active: isWalletsDeleting }" @click="handleDeleting('wallets')"></div>
             <router-link to="/wallets/create-wallet"><div class="toggle"></div></router-link>
           </div>
         </div>
-        <wallets-list :isWalletsMoving="isWalletsMoving" :percentage="percentage" :wallets="wallets" :isWalletsDeleting="isWalletsDeleting"></wallets-list>
+        <wallets-list :isWalletsMoving="isWalletsMoving" :isWalletsDeleting="isWalletsDeleting"></wallets-list>
       </div>
 
       <div class="fiat-block wallets-list_item">
         <div class="toggler">
           <p>Account and Cards</p>
-          <div class="flex">
-            <div class="toggle minus" @click="handleDeleting('cards')"></div>
+          <div class="flex toggler_panel">
+            <div class="toggle none" :class="{ active: isCardsMoving }" @click="handleMoving('cards')">
+              <img src="@/assets/images/arrows.svg" width="15" height="15" fill="#fff" />
+            </div>
+            <div class="toggle minus" :class="{ active: isCardsDeleting }" @click="handleDeleting('cards')"></div>
             <router-link to="/wallets/accounts-and-cards"><div class="toggle"></div></router-link>
           </div>
         </div>
-        <cards-list @delete-item="" :isCardsDeleting="isCardsDeleting" :trans="trans"></cards-list>
+        <cards-list :isCardsDeleting="isCardsDeleting" :isCardsMoving="isCardsMoving" :trans="trans"></cards-list>
       </div>
     </div>
     <div class="operations-history">
@@ -46,7 +49,7 @@
   }
 </style>
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters } from 'vuex';
 import wallet from '@/store/modules/wallet';
 import LkLayout from '@/layout/LkLayout';
 import OperationsHistoryListItem from '@/components/OperationsHistoryListItem';
@@ -63,59 +66,22 @@ export default {
   },
   data() {
     return {
-      trans: [
-        {
-          code: 'Japanese yen',
-          balance: '87.34円',
-          ico: '₴',
-          isactive: false
-        },
-        {
-          code: 'Russian ruble',
-          balance: '25494.11₽',
-          ico: '₽',
-          isactive: false
-        },
-        {
-          code: 'U.S. dollar',
-          balance: ' 1234.70$',
-          ico: '$',
-          isactive: false
-        },
-        {
-          code: 'European Euro',
-          balance: '301.23€',
-          ico: '€',
-          isactive: false
-        },
-        {
-          code: 'Russian ruble',
-          balance: '25494.11₽',
-          ico: '₽',
-          isactive: false
-        },
-        {
-          code: 'Russian ruble',
-          balance: '25494.11₽',
-          ico: '₽',
-          isactive: false
-        },
-      ],
       isWalletsDeleting: false,
       isWalletsMoving: false,
       isCardsDeleting: false,
+      isCardsMoving: false,
     }
   },
   computed: {
     ...mapGetters({
-      wallets: 'wallet/WALLETS',
-      operations: 'wallet/OPERATIONS',
-      percentage: 'wallet/PERCENTAGE',
+      operations: ['wallet/OPERATIONS']
     }),
   },
   async mounted() {
     this.$store.dispatch('wallet/GET_TYPES');
-    await this.$store.dispatch('wallet/GET_WALLETS');
+    if (!localStorage.getItem('stateWalletsWallets')) {
+      await this.$store.dispatch('wallet/GET_WALLETS');
+    }
     this.$store.dispatch('wallet/GET_OPERATIONS');
   },
   methods: {
@@ -130,7 +96,7 @@ export default {
     handleMoving(type) {
       switch(type) {
         case 'cards':
-          return this.isCardsDeleting = !this.isCardsDeleting;
+          return this.isCardsMoving = !this.isCardsMoving;
         case 'wallets':
           return this.isWalletsMoving = !this.isWalletsMoving;
       }

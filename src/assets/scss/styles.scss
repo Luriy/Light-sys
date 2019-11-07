@@ -1090,7 +1090,9 @@ $eth: #7d8ef6;
 		justify-content: space-between;
     margin-bottom: 15px;
     margin-left: 10px;
+    padding-top: 8px;
 		.toggle {
+      transition: .3s;
 			width: 27px;
 			height: 27px;
 			border-radius: 8px;
@@ -1112,6 +1114,9 @@ $eth: #7d8ef6;
 			&:after {
 				transform: rotate(90deg);
 			}
+    }
+    .toggle.active {
+      box-shadow: 0 0 4px #ccc;
     }
     .toggle.minus {
       &:before {
@@ -2566,10 +2571,12 @@ $eth: #7d8ef6;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  cursor: pointer;
 }
 .wallets-list_item_body {
   .list__item {
     position: relative;
+    cursor: pointer;
 
     .btn-remove {
       position: absolute;
@@ -2578,4 +2585,20 @@ $eth: #7d8ef6;
       transform: translateY(-50%);
     }
   }
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .6s;
+}
+.slide-fade-enter, .slide-fade-leave-to {
+  margin-left: -50px;
+  opacity: 0;
 }

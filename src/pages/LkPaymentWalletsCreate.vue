@@ -118,28 +118,15 @@ export default {
         this.showOptions = false;
       },
     addWallet(code) {
-      let Comand;
-
-      switch(code) {
-        case 'BTC': Comand = 'AddBTCwallet'; break;
-        case 'ETH': Comand = 'AddETHwallet'; break;
-        default: throw 'Code not found';
-      }
-
-      Axios({
-        url: 'https://apidomenpyth.ru',
-        method: 'POST',
-        params: {
-          Comand,
-          ...getAuthParams(),
-        },
-      }).then(({data}) => {
-        console.log(data);
-        alert('Кошелек успешно добавлен!');
-        this.$router.push('/wallets');
-      }).catch(reason => {
-        console.log(reason);
-      });
+      this.$store.dispatch('wallet/CREATE_WALLET', code)
+        .then((resp) => {
+            console.log(resp)
+            alert('Кошелек успешно добавлен!')
+            // this.$router.push('/wallets')
+          })
+        .catch(reason => {
+          console.log(reason)
+        })
     }
   },
   components: {

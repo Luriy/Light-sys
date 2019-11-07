@@ -1,10 +1,12 @@
 <template>
-  <draggable v-model="draggableWalletsList" v-if="isWalletsMoving" class="wallets-list_item_body" v-bind="dragOptions">
+  <draggable v-model="draggableWalletsList" v-if="isWalletsMoving" class="wallets-list_item_body">
     <div v-for="(wallet, idx) in wallets"
-    @click.native.prevent="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)" class="list__item" :key="wallet.address">
-      <div class="btn-remove" v-show="isWalletsDeleting" @click="handleDeleteItem(idx)">
-        <img src="@/assets/images/cross.svg" />
-      </div>
+    @click="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)" class="list__item" :key="wallet.address">
+      <transition name="fade">
+        <div class="btn-remove" v-if="isWalletsDeleting" @click="handleDeleteItem(wallet.address)" key="idx">
+          <img src="@/assets/images/cross.svg" />
+        </div>
+      </transition>
       <div class="wallet">
         <div class="code">
           <div :class="['image', wallet.currency.toLowerCase()]">
@@ -30,70 +32,73 @@
     </div>
   </draggable>
   <div v-else class="wallets-list_item_body">
-    <router-link event="" v-for="(wallet, idx) in wallets" :to='`/wallets/${wallet.currency}/${wallet.address}`'
-    @click.native.prevent="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)" class="list__item" :key="wallet.address">
-      <div class="btn-remove" v-show="isWalletsDeleting" @click="handleDeleteItem(idx)">
-        <img src="@/assets/images/cross.svg" />
-      </div>
-      <div class="wallet">
-        <div class="code">
-          <div :class="['image', wallet.currency.toLowerCase()]">
-            <img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title>
-            <img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title>
+    <transition-group name="slide-fade">
+      <div v-for="(wallet, idx) in wallets"
+      @click="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)" class="list__item" :key="wallet.address">
+        <transition name="fade">
+          <div class="btn-remove" v-show="isWalletsDeleting" @click="handleDeleteItem(wallet.address, wallet.address)">
+            <img src="@/assets/images/cross.svg" />
           </div>
-          <span>{{ wallet.currency }}</span>
-        </div>
-        <div class="info">
-          <div class="balance">
-            <p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
-            <span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
+        </transition>
+        <div class="wallet">
+          <div class="code">
+            <div :class="['image', wallet.currency.toLowerCase()]">
+              <img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title>
+              <img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title>
+            </div>
+            <span>{{ wallet.currency }}</span>
           </div>
-          <div class="progress green">
-            <p>{{ percentage[wallet.currency] | percentage }}</p>
-            <div class="image">
-              <!-- TODO: Используйте computed свойство percentage для построения графиков -->
-              <img src="@/assets/images/graph-green.svg" alt title>
+          <div class="info">
+            <div class="balance">
+              <p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
+              <span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
+            </div>
+            <div class="progress green">
+              <p>{{ percentage[wallet.currency] | percentage }}</p>
+              <div class="image">
+                <!-- TODO: Используйте computed свойство percentage для построения графиков -->
+                <img src="@/assets/images/graph-green.svg" alt title>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </router-link>
+    </transition-group>
   </div>
 </template>
+<style scoped>
+  
+</style>
 <script>
-  import draggable from 'vuedraggable'
+  import draggable from 'vuedraggable';
+  import { VueNestable, VueNestableHandle } from 'vue-nestable'
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'WalletsList',
-    props: ['wallets', 'percentage', 'isWalletsDeleting', 'isWalletsMoving'],
-    data () {
-      return {
-        dragOptions: {
-          animation: 0,
-          group: "description",
-          disabled: false,
-          ghostClass: "ghost"
-        }
-      }
-    },
+    props: ['isWalletsDeleting', 'isWalletsMoving'],
     components: {
-        draggable,
+      draggable,
     },
     filters: {
       percentage: value => value ? `${value['1h'].toFixed(2)}%` : '',
     },
     methods: {
-      handleWalletRouter(route) {
+      handleWalletRouter(route, e) {
         if (this.isWalletsDeleting || this.isWalletsMoving) {
           return false;
+          
         }
         else {
           this.$router.push(route);
         }
       },
-      handleDeleteItem(id) {
-        this.$store.commit('wallet/SET_WALLETS', this.wallets.filter((wallet, index) => index !== id))
-      }
+      handleDeleteItem(address) {
+        this.$store.dispatch('wallet/DELETE_WALLET', this.wallets.find(wallet => wallet.address === address))
+          .then(() => {
+            this.$store.commit('wallet/SET_WALLETS', this.wallets.filter(wallet => wallet.address !== address))
+          })
+      },
     },
     computed: {
       draggableWalletsList: {
@@ -103,7 +108,11 @@
         set(value) {
           return this.$store.commit('wallet/SET_WALLETS', value)
         }
-      }
+      },
+      ...mapGetters({
+        wallets: 'wallet/WALLETS',
+        percentage: 'wallet/PERCENTAGE',
+      }),
     }
   }
 </script>

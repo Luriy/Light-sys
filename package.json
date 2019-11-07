@@ -18,6 +18,7 @@
     "qrcode": "^1.4.2",
     "vue": "^2.5.2",
     "vue-clipboard2": "^0.3.1",
+    "vue-nestable": "^2.4.5",
     "vue-range-slider": "^0.6.0",
     "vue-router": "^3.0.1",
     "vue-styled-components": "^1.4.13",

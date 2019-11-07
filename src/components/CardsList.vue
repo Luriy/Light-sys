@@ -4,12 +4,14 @@
       class="wallet fiat-wallet list__item" 
       v-for="(item, idx) in trans"
       :class="{active: item.isactive}" 
-      @click="item.isactive = !item.isactive" 
+      @click="handleClick(item)" 
       :key="idx"
      >
+     <transition name="fade">
       <div class="btn-remove" v-show="isCardsDeleting" @click="handleDeleteItem(idx)">
         <img src="@/assets/images/cross.svg"/>
       </div>
+     </transition>
       <div class="wallet-info">
         <div class="code">
           <div class="image fiat">{{item.ico}}</div>
@@ -64,12 +66,70 @@
   </div>
 </template>
 <script>
+  import { mapGetters } from 'vuex';
   export default {
     name: 'CardsList',
-    props: ['trans', 'isCardsDeleting'],
+    props: ['isCardsDeleting', 'isCardsMoving'],
+    data() {
+      return {
+        trans: [
+          {
+            code: 'Japanese yen',
+            balance: '87.34円',
+            ico: '₴',
+            isactive: false
+          },
+          {
+            code: 'Russian ruble',
+            balance: '25494.11₽',
+            ico: '₽',
+            isactive: false
+          },
+          {
+            code: 'U.S. dollar',
+            balance: ' 1234.70$',
+            ico: '$',
+            isactive: false
+          },
+          {
+            code: 'European Euro',
+            balance: '301.23€',
+            ico: '€',
+            isactive: false
+          },
+          {
+            code: 'Russian ruble',
+            balance: '25494.11₽',
+            ico: '₽',
+            isactive: false
+          },
+          {
+            code: 'Russian ruble',
+            balance: '25494.11₽',
+            ico: '₽',
+            isactive: false
+          },
+        ],
+      }
+    },
+    computed: {
+      ...mapGetters({
+        accounts: 'account/CARDS'
+      })
+    },
     methods: {
       handleDeleteItem(id) {
-        this.$store.commit('wallet/SET_WALLETS', this.wallets.filter((wallet, index) => index !== id))
+        console.log(this.accounts);
+        console.log(id);
+        // this.$store.commit('wallet/DELETE_WALLET', this.wallets.find(wallet => wallet.address === address))
+        // this.$store.commit('wallet/SET_WALLETS', this.wallets.filter(wallet => wallet.address !== address))
+      },
+      handleClick(item) {
+        if (isCardsDeleting || isCardsDeleting) {
+          return false;
+        } else {
+          item.isactive = !item.isactive
+        }
       }
     }
   }

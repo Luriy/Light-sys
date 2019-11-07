@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import { parsePythonArray } from '@/functions/helpers'
 import { getAuthParams } from '@/functions/auth'
+import { API_URL } from '@/constants'
 
 export default {
   namespaced: true,
@@ -29,7 +30,6 @@ export default {
     SET_WALLETS: (state, payload) => {
       state.wallets = payload
       localStorage.setItem('stateWalletsWallets', JSON.stringify(payload))
-      console.log(state.wallets)
     },
     UPDATE_WALLET: ({ wallets }, { wallet, amount }) => {
       wallets.find(item => {
@@ -59,8 +59,7 @@ export default {
       }
 
       return Axios({
-        // todo Вынести домен в константы
-        url: 'https://apidomenpyth.ru',
+        url: API_URL,
         method: 'POST',
         params: {
           Comand,
@@ -69,17 +68,36 @@ export default {
       }).then(({ data }) => {
         const returnData = parsePythonArray(data)['1'].return
 
-        console.log(returnData)
-
         return store.commit('SET_PAGE_DETAIL', {
           currency: currency.toUpperCase(),
           balance: returnData.BalanceBTC
         })
       })
     },
+    CREATE_WALLET: (store, type) => {
+      return Axios({
+        url: API_URL,
+        method: 'POST',
+        params: {
+          Comand: `Add${type}wallet`,
+          ...getAuthParams()
+        }
+      })
+    },
+    DELETE_WALLET: (state, payload) => {
+      return Axios({
+        url: API_URL,
+        method: 'POST',
+        params: {
+          Comand: `FrozenWalet${payload.currency}`,
+          Walet: payload.address,
+          ...getAuthParams()
+        }
+      })
+    },
     GET_WALLETS: store => {
       return Axios({
-        url: 'https://apidomenpyth.ru',
+        url: API_URL,
         method: 'POST',
         params: {
           Comand: 'AllWalets',
@@ -99,7 +117,23 @@ export default {
             }))
           )
           return acc
-        }, [])
+        }, []).filter(({ status }) => status !== 'Frozen')
+
+        console.log(result)
+
+        // DEVELOPMENT CODE FOR UNFREEZE WALLETS
+
+        // result.forEach(item => {
+        //   return Axios({
+        //     url: API_URL,
+        //     method: 'POST',
+        //     params: {
+        //       Comand: `UnFrozenWalet${item.currency}`, 
+        //       Walet: item.address,
+        //       ...getAuthParams()
+        //     }
+        //   })
+        // })
 
         return store.commit('SET_WALLETS', result)
       })
@@ -107,7 +141,7 @@ export default {
 
     GET_TRANSFER_INFO: ({ commit }, { exchange, receive }) => {
       return Axios({
-        url: 'https://apidomenpyth.ru',
+        url: API_URL,
         method: 'GET',
         params: {
           Comand: `TransferInfo${exchange}${receive}`
@@ -120,7 +154,7 @@ export default {
 
     GET_TRANSFER_TOKEN: ({ commit }, user) => {
       return Axios({
-        url: 'https://apidomenpyth.ru',
+        url: API_URL,
         method: 'POST',
         params: {
           Comand: 'TransferToken',
@@ -130,7 +164,7 @@ export default {
     },
     POST_TRANSFER: ({ commit }, { transferData, pair: { exchange, receive } }) => {
       return Axios({
-        url: 'https://apidomenpyth.ru',
+        url: API_URL,
         method: 'POST',
         params: {
           Comand: `${exchange}${receive}Transfer`,
@@ -148,17 +182,15 @@ export default {
         ) {
           commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount })
           // const {Result: result} = parsePythonArray(resp)['1'].return;
-          console.log(resp)
         } else {
           const err = resp[0]['Errors']
           const errKey = Object.keys(resp[0]['Errors'])[0]
-          console.log(err[errKey])
         }
       })
     },
     GET_TYPES: async store => {
       const { data } = await Axios({
-        url: 'https://apidomenpyth.ru',
+        url: API_URL,
         method: 'GET',
         params: {
           Comand: 'InfoCrypts'
@@ -235,15 +267,13 @@ export default {
           }
 
           const { data } = await Axios({
-            url: 'https://apidomenpyth.ru',
+            url: API_URL,
             method: 'POST',
             params: {
               Comand,
               Wallet: wallet.address
             }
           })
-
-          console.log(parsePythonArray(data)[1].return)
 
           return Object.values(parsePythonArray(data)[1].return).map(item => ({
             source: item,
@@ -257,15 +287,11 @@ export default {
         })
       )).flat()
 
-      // console.log(transactions);
-
-      transactions.forEach(item => console.log(item.currency))
-
       return store.commit('SET_OPERATIONS', transactions)
     }
     // SEND: (store, { currency, from, to, amount }) => {
     //   Axios({
-    //     url: 'https://apidomenpyth.ru',
+    //     url: API_URL,
     //     method: 'POST',
     //     params: {
     //       Comand: 'TransferToken',
