@@ -37,45 +37,45 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-    	path:'/',
-    	component: LkPaymentWallets,
-     	beforeEnter: ifAuthenticated
+      path: '/',
+      component: LkPaymentWallets,
+      beforeEnter: ifAuthenticated
     },
     {
-    	path:'/login',
-    	name: 'Login',
-    	component: Login,
-        beforeEnter: ifNotAuthenticated,
+      path: '/login',
+      name: 'Login',
+      component: Login,
+      beforeEnter: ifNotAuthenticated
     },
     {
-    	path:'/register',
-    	name: 'Register',
-    	component: Register,
-        beforeEnter: ifNotAuthenticated,
+      path: '/register',
+      name: 'Register',
+      component: Register,
+      beforeEnter: ifNotAuthenticated
     },
     {
-    	path:'/exchange',
-    	name: 'LkPaymentExchange',
-    	component: LkPaymentExchange,
-     	beforeEnter: ifAuthenticated,
-      	props: true
+      path: '/exchange',
+      name: 'LkPaymentExchange',
+      component: LkPaymentExchange,
+      beforeEnter: ifAuthenticated,
+      props: true
     },
 
     // WALLETS
     {
-      path:'/wallets',
+      path: '/wallets',
       name: 'LkPaymentWallets',
       component: LkPaymentWallets,
-      beforeEnter: ifAuthenticated,
+      beforeEnter: ifAuthenticated
     },
     {
-      path:'/wallets/accounts-and-cards',
+      path: '/wallets/accounts-and-cards',
       name: 'LkPaymentAccountsCards',
       component: LkPaymentAccountsCards,
-       beforeEnter: ifAuthenticated
+      beforeEnter: ifAuthenticated
     },
     {
-      path:'/wallets/create-wallet',
+      path: '/wallets/create-wallet',
       component: LkPaymentWalletsCreate,
       beforeEnter: ifAuthenticated
     },
@@ -83,21 +83,21 @@ export default new Router({
       name: 'LkPaymentWallet',
       path: '/wallets/:currency/:address',
       component: LkPaymentWallet,
-      beforeEnter: ifAuthenticated,
+      beforeEnter: ifAuthenticated
     },
     {
       name: 'LkPaymentWalletSend',
       path: '/payments-and-transfer/transfer/send/:currency/:address',
       // path: '/wallets/:currency/:address/send',
       component: LkPaymentWalletSend,
-      beforeEnter: ifAuthenticated,
+      beforeEnter: ifAuthenticated
     },
     {
-    	name: 'LkPaymentWalletReceive',
-    	path:'/payments-and-transfer/transfer/receive/:currency/:address',
-    	// path:'/wallets/:currency/:address/receive',
-    	component: LkPaymentWalletReceive,
-     	beforeEnter: ifAuthenticated
-    },
+      name: 'LkPaymentWalletReceive',
+      path: '/payments-and-transfer/transfer/receive/:currency/:address',
+      // path:'/wallets/:currency/:address/receive',
+      component: LkPaymentWalletReceive,
+      beforeEnter: ifAuthenticated
+    }
   ]
 })
