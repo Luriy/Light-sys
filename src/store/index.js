@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import user from './modules/user'
 import auth from './modules/auth'
 import wallet from './modules/wallet'
-import alerts from './modules/alerts'
+import account from './modules/account'
 import {BASE_URL} from '@/settings/config'
 Vue.use(Vuex)
 
@@ -14,6 +14,7 @@ export default new Vuex.Store({
     auth,
     user,
     wallet,
+    account,
     alerts
   },
   state: {
@@ -21,5 +22,5 @@ export default new Vuex.Store({
       base: BASE_URL,
     }
   },
-  strict: debug,
+  strict: debug
 })

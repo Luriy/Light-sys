@@ -1,183 +1,106 @@
 <template>
   <lk-layout>
     <div class="wallets-list">
-      <div class="wallets-block wallets-list_item">
+      <div class="wallets-block wallets-list_item"> 
         <div class="toggler">
           <p>Wallets</p>
-          <router-link to="/wallets/create-wallet"><div class="toggle"></div></router-link>
-        </div>
-        <div class="wallets-list_item_body">
-          <router-link :to='`/wallets/${wallet.currency}/${wallet.address}`' v-for="wallet in wallets" :key="wallet.address">
-            <div class="wallet">
-              <div class="code">
-                <div :class="['image', wallet.currency.toLowerCase()]">
-                  <img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title>
-                  <img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title>
-                </div>
-                <span>{{ wallet.currency }}</span>
-              </div>
-              <div class="info">
-                <div class="balance">
-                  <p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
-                  <span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
-                </div>
-                <div class="progress green">
-                  <p>{{ percentage[wallet.currency] | percentage }}</p>
-                  <div class="image">
-                    <!-- TODO: Используйте computed свойство percentage для построения графиков -->
-                    <img src="@/assets/images/graph-green.svg" alt title>
-                  </div>
-                </div>
-              </div>
+          <div class="flex toggler__panel">
+            <div class="toggle none" :class="{ active: isWalletsMoving }" @click="handleMoving('wallets')">
+              <img src="@/assets/images/arrows.svg" width="15" height="15" fill="#fff" />
             </div>
-          </router-link>
+            <div class="toggle minus" :class="{ active: isWalletsDeleting }" @click="handleDeleting('wallets')"></div>
+            <router-link to="/wallets/create-wallet"><div class="toggle"></div></router-link>
+          </div>
         </div>
+        <wallets-list :isWalletsMoving="isWalletsMoving" :isWalletsDeleting="isWalletsDeleting"></wallets-list>
       </div>
 
       <div class="fiat-block wallets-list_item">
         <div class="toggler">
           <p>Account and Cards</p>
-          <router-link to="/wallets/accounts-and-cards"><div class="toggle"></div></router-link>
-        </div>
-        <div class="wallets-list_item_body">
-          <div class="wallet fiat-wallet" :class="{active: item.isactive}" @click="item.isactive = !item.isactive" v-for="(item, idx) in trans" :key="idx">
-            <div class="wallet-info">
-              <div class="code">
-                <div class="image fiat">{{item.ico}}</div>
-                <span>{{item.code}}</span>
-              </div>
-              <div class="right">
-                <div class="balance">
-                  {{item.balance}}
-                </div>
-                <div class="wallet-toggle"></div>
-              </div>
+          <div class="flex toggler_panel">
+            <div class="toggle none" :class="{ active: isCardsMoving }" @click="handleMoving('cards')">
+              <img src="@/assets/images/arrows.svg" width="15" height="15" fill="#fff" />
             </div>
-            <div class="wallet-last-transactions">
-              <div class="wallet-last-transactions-item">
-                <div class="from">
-                  <div class="image">
-                    <img src="@/assets/images/lightnet.png" alt title>
-                  </div>
-                  <span>NEO bank</span>
-                </div>
-                <div class="info">
-                  <div class="amount">12, 500{{item.ico}}</div>
-                  <div class="type"><img src="@/assets/images/cloud.svg" alt title></div>
-                </div>
-              </div>
-              <div class="wallet-last-transactions-item">
-                <div class="from">
-                  <div class="image">
-                    <img src="@/assets/images/lightnet.png" alt title>
-                  </div>
-                  <span>NEO bank</span>
-                </div>
-                <div class="info">
-                  <div class="amount">17, 352{{item.ico}}</div>
-                  <div class="type"><img src="@/assets/images/left-arrow-purple.svg" alt title></div>
-                </div>
-              </div>
-              <div class="wallet-last-transactions-item">
-                <div class="from">
-                  <div class="image">
-                    <img src="@/assets/images/lightnet.png" alt title>
-                  </div>
-                  <span>NEO bank</span>
-                </div>
-                <div class="info">
-                  <div class="amount">1, 547{{item.ico}}</div>
-                  <div class="type"><img src="@/assets/images/cloud.svg" alt title></div>
-                </div>
-              </div>
-            </div>
+            <div class="toggle minus" :class="{ active: isCardsDeleting }" @click="handleDeleting('cards')"></div>
+            <router-link to="/wallets/accounts-and-cards"><div class="toggle"></div></router-link>
           </div>
         </div>
+        <cards-list :isCardsDeleting="isCardsDeleting" :isCardsMoving="isCardsMoving" :trans="trans"></cards-list>
       </div>
     </div>
-
     <div class="operations-history">
       <div class="title">
         <p>Operations history</p>
         <span>Sep 09, 2019</span>
       </div>
-
       <div class="operations-history-list">
         <operations-history-list-item v-for="(operation, idx) in operations" :key="idx" v-bind="operation"></operations-history-list-item>
       </div>
     </div>
   </lk-layout>
 </template>
-
+<style scoped>
+  .minus {
+    margin-right: 5px;
+  }
+  .toggler {
+    padding-right: 1.7vw;
+  }
+</style>
 <script>
 import { mapGetters } from 'vuex';
+import wallet from '@/store/modules/wallet';
 import LkLayout from '@/layout/LkLayout';
 import OperationsHistoryListItem from '@/components/OperationsHistoryListItem';
+import WalletsList from '@/components/WalletsList';
+import CardsList from '@/components/CardsList';
 
 export default {
   name: 'LkPaymentWallets',
   components: {
     LkLayout,
     OperationsHistoryListItem,
+    WalletsList,
+    CardsList,
   },
   data() {
     return {
-      trans: [
-        {
-          code: 'Japanese yen',
-          balance: '87.34円',
-          ico: '円',
-          isactive: false
-        },
-        {
-          code: 'Russian ruble',
-          balance: '25494.11₽',
-          ico: '₽',
-          isactive: false
-        },
-        {
-          code: 'U.S. dollar',
-          balance: ' 1234.70$',
-          ico: '$',
-          isactive: false
-        },
-        {
-          code: 'European Euro',
-          balance: '301.23€',
-          ico: '€',
-          isactive: false
-        },
-        {
-          code: 'Russian ruble',
-          balance: '25494.11₽',
-          ico: '₽',
-          isactive: false
-        },
-        {
-          code: 'Russian ruble',
-          balance: '25494.11₽',
-          ico: '₽',
-          isactive: false
-        },
-      ]
+      isWalletsDeleting: false,
+      isWalletsMoving: false,
+      isCardsDeleting: false,
+      isCardsMoving: false,
     }
   },
   computed: {
     ...mapGetters({
-      wallets: 'wallet/WALLETS',
-      operations: 'wallet/OPERATIONS',
-      percentage: 'wallet/PERCENTAGE',
-    })
+      operations: ['wallet/OPERATIONS']
+    }),
   },
   async mounted() {
     this.$store.dispatch('wallet/GET_TYPES');
-    await this.$store.dispatch('wallet/GET_WALLETS');
+    if (!localStorage.getItem('stateWalletsWallets')) {
+      await this.$store.dispatch('wallet/GET_WALLETS');
+    }
     this.$store.dispatch('wallet/GET_OPERATIONS');
   },
-  filters: {
-    percentage: value => value ? `${value['1h'].toFixed(2)}%` : '',
-  },
   methods: {
+    handleDeleting(type) {
+      switch(type) {
+        case 'cards':
+          return this.isCardsDeleting = !this.isCardsDeleting;
+        case 'wallets':
+          return this.isWalletsDeleting = !this.isWalletsDeleting;
+      }
+    },
+    handleMoving(type) {
+      switch(type) {
+        case 'cards':
+          return this.isCardsMoving = !this.isCardsMoving;
+        case 'wallets':
+          return this.isWalletsMoving = !this.isWalletsMoving;
+      }
+    },
     copyToClipboard() {
       var elem = document.getElementById("wallet");
       var targetId = "_hiddenCopyText_";
