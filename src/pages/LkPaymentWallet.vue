@@ -28,8 +28,8 @@
       <div class="title">Description</div>
       <div class="text">
         Ethereum is a decentralized computing platform that runs smart contracts, which are contracts thah execute withou human intervention.
-      ETH popularized the idea programmable transactions instead of only for money transfers. The platform is user for crowdfuundin (ICOs) ,
-      the cretion of new digital assets, and more.
+        ETH popularized the idea programmable transactions instead of only for money transfers. The platform is user for crowdfuundin (ICOs) ,
+        the cretion of new digital assets, and more.
       </div>
     </div>
 

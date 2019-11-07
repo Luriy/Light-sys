@@ -860,7 +860,7 @@ $eth: #7d8ef6;
 	background:#1e0639;
 	position:relative;
 	width: calc(100% + 5vw);
-    padding: 5.2vh 2.9vw 0 3.2vw;
+    padding: 5.2vh 2.5vw 0 1.5vw;
 	display: flex;
 	justify-content: space-between;
 	height: 49.3vh;
@@ -1028,7 +1028,7 @@ $eth: #7d8ef6;
 							font-size: 0.385rem;
 							font-weight: 600;
 							color: #fff;
-							line-height: 1.2vh;
+							// line-height: 1.2vh;
 							margin-bottom: 1px;
 						}
 
@@ -1042,7 +1042,7 @@ $eth: #7d8ef6;
 
 					.progress {
 						text-align: right;
-						line-height: 1.2vh;
+						// line-height: 1.2vh;
 						font-weight: 600;
 						font-size: 0.75rem;
 						text-transform: uppercase;
@@ -1082,15 +1082,17 @@ $eth: #7d8ef6;
 				}
 			}
 		}
-	}
+  }
+  
 	.toggler {
 		display: flex;
 		align-items:center;
 		justify-content: space-between;
-		margin-bottom: 15px;
+    margin-bottom: 15px;
+    margin-left: 10px;
 		.toggle {
-			width: 2vw;
-			height: 2.6vh;
+			width: 27px;
+			height: 27px;
 			border-radius: 8px;
 			cursor: pointer;
 			position:relative;
@@ -1110,7 +1112,24 @@ $eth: #7d8ef6;
 			&:after {
 				transform: rotate(90deg);
 			}
-		}
+    }
+    .toggle.minus {
+      &:before {
+        display: none;
+      }
+    }
+    .toggle.none {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 5px;
+      &:before {
+        display: none;
+      }
+      &:after {
+        display: none;
+      }
+    }
 		p {
 			color: #fff;
 	        font-size: 14px;
@@ -1320,7 +1339,8 @@ $eth: #7d8ef6;
 				width:calc(50% - 2vw);
 
 				.wallets-list_item_body {
-					padding-right: 1.5vw;
+          padding-right: 1.5vw;
+          padding-left: 10px;
 
 					&::-webkit-scrollbar {
 						width: 4px !important;
@@ -2517,4 +2537,45 @@ $eth: #7d8ef6;
 		color: #fff;
 		font-weight: 600;
 	}
+}
+
+/* common styles */
+
+.flex {
+  display: flex;
+  flex: 0 1 auto !important;
+}
+.flex-column {
+  flex-direction: column;
+}
+.justify-content-between {
+  justify-content: between;
+}
+.justify-content-center {
+  justify-content: center;
+}
+.align-items-center {
+  align-items: center;
+}
+.btn-remove {
+  width: 29px;
+  height: 29px;
+  border-radius: 9px;
+  background-color: #654d95;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.wallets-list_item_body {
+  .list__item {
+    position: relative;
+
+    .btn-remove {
+      position: absolute;
+      left: -10px;
+      top: 30px;
+      transform: translateY(-50%);
+    }
+  }
 }
