@@ -15,7 +15,8 @@ export default {
     types: {},
     percentage: {},
     operations: [],
-    transferInfo: {}
+    transferInfo: {},
+    walletsOrder: JSON.parse(localStorage.getItem('stateWalletsOrder')) || {}
   },
   getters: {
     PAGE_DETAIL: state => state.pageDetail,
@@ -54,8 +55,11 @@ export default {
         case 'ETH':
           Comand = 'BalanceETH'
           break
+        case 'LTC':
+          Comand = 'BalanceETC'
+          break
         default:
-          throw 'Unknown currency'
+          throw new Error('Unknown currency')
       }
 
       return Axios({
@@ -106,18 +110,20 @@ export default {
       }).then(({ data }) => {
         const returnData = parsePythonArray(data)['1'].return
 
-        const result = Object.keys(returnData).reduce((acc, walletCurrency) => {
-          acc.push(
-            ...Object.values(returnData[walletCurrency]).map(item => ({
-              address: item.Walet,
-              status: item.Status,
-              currency: walletCurrency,
-              balance: item.Balance,
-              balanceUSD: item.BalanceUsd
-            }))
-          )
-          return acc
-        }, []).filter(({ status }) => status !== 'Frozen')
+        const result = Object.keys(returnData)
+          .reduce((acc, walletCurrency) => {
+            acc.push(
+              ...Object.values(returnData[walletCurrency]).map(item => ({
+                address: item.Walet,
+                status: item.Status,
+                currency: walletCurrency,
+                balance: item.Balance,
+                balanceUSD: item.BalanceUsd
+              }))
+            )
+            return acc
+          }, [])
+          .filter(({ status }) => status !== 'Frozen')
 
         console.log(result)
 
@@ -128,7 +134,7 @@ export default {
         //     url: API_URL,
         //     method: 'POST',
         //     params: {
-        //       Comand: `UnFrozenWalet${item.currency}`, 
+        //       Comand: `UnFrozenWalet${item.currency}`,
         //       Walet: item.address,
         //       ...getAuthParams()
         //     }
@@ -262,8 +268,11 @@ export default {
             case 'ETH':
               Comand = 'AllTransactionsEth'
               break
+            case 'LTC':
+              Comand = 'AllTransactionsLtc'
+              break
             default:
-              throw 'Unknown currency'
+              throw new Error('Unknown currency')
           }
 
           const { data } = await Axios({
@@ -274,6 +283,8 @@ export default {
               Wallet: wallet.address
             }
           })
+
+          console.log(data)
 
           return Object.values(parsePythonArray(data)[1].return).map(item => ({
             source: item,

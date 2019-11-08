@@ -1,5 +1,6 @@
 <template>
   <draggable v-model="draggableWalletsList" v-if="isWalletsMoving" class="wallets-list_item_body">
+  <transition-group name="slide-fade">
     <div v-for="(wallet, idx) in wallets"
     @click="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)" class="list__item" :key="wallet.address">
       <transition name="fade">
@@ -30,6 +31,7 @@
         </div>
       </div>
     </div>
+  </transition-group>
   </draggable>
   <div v-else class="wallets-list_item_body">
     <transition-group name="slide-fade">

@@ -26,7 +26,7 @@
             <router-link to="/wallets/accounts-and-cards"><div class="toggle"></div></router-link>
           </div>
         </div>
-        <cards-list :isCardsDeleting="isCardsDeleting" :isCardsMoving="isCardsMoving" :trans="trans"></cards-list>
+        <cards-list :isCardsDeleting="isCardsDeleting" :isCardsMoving="isCardsMoving"></cards-list>
       </div>
     </div>
     <div class="operations-history">
@@ -79,9 +79,7 @@ export default {
   },
   async mounted() {
     this.$store.dispatch('wallet/GET_TYPES');
-    if (!localStorage.getItem('stateWalletsWallets')) {
-      await this.$store.dispatch('wallet/GET_WALLETS');
-    }
+    await this.$store.dispatch('wallet/GET_WALLETS');
     this.$store.dispatch('wallet/GET_OPERATIONS');
   },
   methods: {

@@ -122,8 +122,9 @@ export default {
         .then((resp) => {
             console.log(resp)
             alert('Кошелек успешно добавлен!')
-            // this.$router.push('/wallets')
+            this.$router.push('/wallets')
           })
+        .then(async () => await this.$store.dispatch('wallet/GET_WALLETS'))
         .catch(reason => {
           console.log(reason)
         })
