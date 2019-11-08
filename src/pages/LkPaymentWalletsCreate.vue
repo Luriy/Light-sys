@@ -65,6 +65,7 @@
                 <div class="icon">
                   <img v-if="type.codeMarkup === 'btc'" src="@/assets/images/btc.png" alt title>
                   <img v-if="type.codeMarkup === 'eth'" src="@/assets/images/eth.png" alt title>
+                  <img v-if="type.codeMarkup === 'ltc'" src="@/assets/images/ltc.svg" alt title>
                 </div>
                 <div :class="['text', type.codeMarkup]">
                   <p>{{ type.name }}</p>

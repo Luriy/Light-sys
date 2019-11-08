@@ -13,6 +13,7 @@
           <div :class="['image', wallet.currency.toLowerCase()]">
             <img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title>
             <img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title>
+            <img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc.svg" alt title>
           </div>
           <span>{{ wallet.currency }}</span>
         </div>
@@ -47,6 +48,7 @@
             <div :class="['image', wallet.currency.toLowerCase()]">
               <img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title>
               <img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title>
+              <img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc-ico.svg" width="12" alt title>
             </div>
             <span>{{ wallet.currency }}</span>
           </div>
