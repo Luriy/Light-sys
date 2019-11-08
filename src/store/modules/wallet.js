@@ -21,7 +21,7 @@ export default {
     exchangeSucces: false
   },
   getters: {
-    //todo убрать в отдельный стор
+    // todo убрать в отдельный стор
     loading (state) {
       return state.loading
     },
@@ -34,10 +34,10 @@ export default {
     PERCENTAGE: state => state.percentage,
     OPERATIONS: state => state.operations,
     TRANSFER_INFO: state => state.transferInfo,
-    EXCHANGE_SUCCES: state => state.exchangeSucces,
+    EXCHANGE_SUCCES: state => state.exchangeSucces
   },
   mutations: {
-    //todo убрать в отдельный стор
+    // todo убрать в отдельный стор
     setLoading (state, payload) {
       state.loading = payload
     },
@@ -47,7 +47,7 @@ export default {
     clearNotification (state) {
       state.notification = null
     },
-    SET_PAGE_DETAIL: (state, payload) => state.pageDetail = payload,
+    SET_PAGE_DETAIL: (state, payload) => (state.pageDetail = payload),
     SET_WALLETS: (state, payload) => {
       state.wallets = payload
       localStorage.setItem('stateWalletsWallets', JSON.stringify(payload))
@@ -59,21 +59,21 @@ export default {
         }
       })
     },
-    SET_TYPES: (state, payload) => state.types = payload,
-    SET_PERCENTAGE: (state, payload) => state.percentage = payload,
-    SET_OPERATIONS: (state, payload) => state.operations = payload,
-    SET_TRANSFER_INFO: (state, payload) => state.transferInfo = payload,
-    SET_EXCHANGE_SUCCES: (state, payload) => state.exchangeSucces = payload
+    SET_TYPES: (state, payload) => (state.types = payload),
+    SET_PERCENTAGE: (state, payload) => (state.percentage = payload),
+    SET_OPERATIONS: (state, payload) => (state.operations = payload),
+    SET_TRANSFER_INFO: (state, payload) => (state.transferInfo = payload),
+    SET_EXCHANGE_SUCCES: (state, payload) => (state.exchangeSucces = payload)
   },
   actions: {
-    //todo убрать в отдельный стор
-    setLoading ({commit}, payload) {
+    // todo убрать в отдельный стор
+    setLoading ({ commit }, payload) {
       commit('setLoading', payload)
     },
-    setNotification ({commit}, payload) {
+    setNotification ({ commit }, payload) {
       commit('setNotification', payload)
     },
-    clearNotification ({commit}) {
+    clearNotification ({ commit }) {
       commit('clearNotification')
     },
     GET_PAGE_DETAIL: (store, { currency, address }) => {
@@ -86,8 +86,11 @@ export default {
         case 'ETH':
           Comand = 'BalanceETH'
           break
+        case 'LTC':
+          Comand = 'BalanceETC'
+          break
         default:
-          throw 'Unknown currency'
+          throw new Error('Unknown currency')
       }
 
       return Axios({
@@ -127,7 +130,7 @@ export default {
         }
       })
     },
-    GET_WALLETS: ({commit}) => {
+    GET_WALLETS: ({ commit }) => {
       return Axios({
         url: API_URL,
         method: 'POST',
@@ -138,18 +141,20 @@ export default {
       }).then(({ data }) => {
         const returnData = parsePythonArray(data)['1'].return
 
-        const result = Object.keys(returnData).reduce((acc, walletCurrency) => {
-          acc.push(
-            ...Object.values(returnData[walletCurrency]).map(item => ({
-              address: item.Walet,
-              status: item.Status,
-              currency: walletCurrency,
-              balance: item.Balance,
-              balanceUSD: item.BalanceUsd
-            }))
-          )
-          return acc
-        }, []).filter(({ status }) => status !== 'Frozen')
+        const result = Object.keys(returnData)
+          .reduce((acc, walletCurrency) => {
+            acc.push(
+              ...Object.values(returnData[walletCurrency]).map(item => ({
+                address: item.Walet,
+                status: item.Status,
+                currency: walletCurrency,
+                balance: item.Balance,
+                balanceUSD: item.BalanceUsd
+              }))
+            )
+            return acc
+          }, [])
+          .filter(({ status }) => status !== 'Frozen')
 
         // DEVELOPMENT CODE FOR UNFREEZE WALLETS
 
@@ -165,8 +170,8 @@ export default {
         //   })
         // })
 
-        return commit('SET_WALLETS', result);
-      });
+        return commit('SET_WALLETS', result)
+      })
     },
 
     GET_TRANSFER_INFO: ({ commit }, { exchange, receive }) => {
@@ -190,10 +195,14 @@ export default {
           Comand: 'TransferToken',
           ...user
         }
-      }).then(({data}) => {
-        const {Email, Phone} = parsePythonArray(data)['1'].return;
-        commit('setNotification', {message: Email ? Email : Phone, status: 'info-status', icon: 'error_outline'});
-      });
+      }).then(({ data }) => {
+        const { Email, Phone } = parsePythonArray(data)['1'].return
+        commit('setNotification', {
+          message: Email || Phone,
+          status: 'info-status',
+          icon: 'error_outline'
+        })
+      })
     },
     POST_TRANSFER: ({ commit }, { transferData, pair: { exchange, receive } }) => {
       return Axios({
@@ -203,23 +212,31 @@ export default {
           Comand: `${exchange}${receive}Transfer`,
           ...transferData
         }
-      }).then(({data}) => {
-        const response = parsePythonArray(data),
-          {Errors} = response[0],
-          responseData = response[1];
+      }).then(({ data }) => {
+        const response = parsePythonArray(data)
+        const { Errors } = response[0]
+        const responseData = response[1]
         if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
-          commit('UPDATE_WALLET', {wallet: transferData.To, amount: transferData.Amount});
-          commit('SET_EXCHANGE_SUCCES', true);
+          commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount })
+          commit('SET_EXCHANGE_SUCCES', true)
         } else if (Object.keys(Errors).length) {
-          const errKey = Object.keys(Errors)[0];
-          commit('setNotification', {message: Errors[errKey], status: 'error-status', icon: 'close'});
+          const errKey = Object.keys(Errors)[0]
+          commit('setNotification', {
+            message: Errors[errKey],
+            status: 'error-status',
+            icon: 'close'
+          })
         } else {
-          commit('setNotification', {message: 'Unknown error', status: 'error-status', icon: 'close'});
+          commit('setNotification', {
+            message: 'Unknown error',
+            status: 'error-status',
+            icon: 'close'
+          })
         }
-      });
+      })
     },
-    SET_SUCCES({commit}, value) {
-      commit('SET_EXCHANGE_SUCCES', value);
+    SET_SUCCES ({ commit }, value) {
+      commit('SET_EXCHANGE_SUCCES', value)
     },
     GET_TYPES: async store => {
       const { data } = await Axios({
@@ -295,8 +312,11 @@ export default {
             case 'ETH':
               Comand = 'AllTransactionsEth'
               break
+            case 'LTC':
+              Comand = 'AllTransactionsLtc'
+              break
             default:
-              throw 'Unknown currency'
+              throw new Error('Unknown currency')
           }
 
           const { data } = await Axios({
@@ -307,6 +327,8 @@ export default {
               Wallet: wallet.address
             }
           })
+
+          console.log(data)
 
           return Object.values(parsePythonArray(data)[1].return).map(item => ({
             source: item,

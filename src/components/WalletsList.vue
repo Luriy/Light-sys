@@ -1,5 +1,6 @@
 <template>
   <draggable v-model="draggableWalletsList" v-if="isWalletsMoving" class="wallets-list_item_body">
+  <transition-group name="slide-fade">
     <div v-for="(wallet, idx) in wallets"
     @click="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)" class="list__item" :key="wallet.address">
       <transition name="fade">
@@ -12,6 +13,7 @@
           <div :class="['image', wallet.currency.toLowerCase()]">
             <img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title>
             <img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title>
+            <img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc.svg" alt title>
           </div>
           <span>{{ wallet.currency }}</span>
         </div>
@@ -30,6 +32,7 @@
         </div>
       </div>
     </div>
+  </transition-group>
   </draggable>
   <div v-else class="wallets-list_item_body">
     <transition-group name="slide-fade">
@@ -45,6 +48,7 @@
             <div :class="['image', wallet.currency.toLowerCase()]">
               <img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title>
               <img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title>
+              <img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc-ico.svg" width="12" alt title>
             </div>
             <span>{{ wallet.currency }}</span>
           </div>

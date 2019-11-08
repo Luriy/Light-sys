@@ -67,6 +67,7 @@
 </template>
 <script>
   import { mapGetters } from 'vuex';
+
   export default {
     name: 'CardsList',
     props: ['isCardsDeleting', 'isCardsMoving'],
@@ -125,7 +126,7 @@
         // this.$store.commit('wallet/SET_WALLETS', this.wallets.filter(wallet => wallet.address !== address))
       },
       handleClick(item) {
-        if (isCardsDeleting || isCardsDeleting) {
+        if (this.isCardsDeleting || this.isCardsDeleting) {
           return false;
         } else {
           item.isactive = !item.isactive
