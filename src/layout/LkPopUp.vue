@@ -137,6 +137,7 @@ export default {
 
     .number-block {
       display: flex;
+      justify-content: space-evenly;
 
       .number {
         color: #ffffff;
@@ -171,6 +172,12 @@ export default {
   .exchange-popup_info {
     display: flex;
     justify-content: space-between;
+    position: relative;
+
+    img {
+      position: absolute;
+      left: 48%;
+    }
 
     .from {
       margin-left: 15px;
@@ -237,6 +244,10 @@ export default {
     color: #ffffff;
     font-size: 12px;
     line-height: 21px;
+
+    .middle-text {
+      margin: 0 5px;
+    }
 
     .title {
       flex-grow: 1;

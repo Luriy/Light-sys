@@ -4,16 +4,24 @@ import user from './modules/user'
 import auth from './modules/auth'
 import wallet from './modules/wallet'
 import account from './modules/account'
+import alerts from './modules/alerts'
+import {BASE_URL} from '@/settings/config'
 Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production'
 
 export default new Vuex.Store({
   modules: {
-    user,
     auth,
+    user,
     wallet,
-    account
+    account,
+    alerts
+  },
+  state: {
+    urls: {
+      base: BASE_URL,
+    }
   },
   strict: debug
 })

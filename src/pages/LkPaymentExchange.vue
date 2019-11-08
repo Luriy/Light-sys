@@ -239,7 +239,7 @@
         </div>
       </lk-pop-up>
       <lk-pop-up
-        v-if="sucessPopup"
+        v-if="exchangeSucces"
         class="exchange-popup"
         :popup-size="{width: '346px', height: '387px'}"
         @closeModal="closeModal"
@@ -251,23 +251,23 @@
           <p class="status">Success</p>
         </div>
         <div slot='body' class="success-popup_body">
-          <p class="from">0.00956785 BTC</p>
+          <p class="from">{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
           <div class="images">
-            <img src="@/assets/images/btc.png" alt title>
+            <img :src="exchangeCurrency.icon" alt title>
             <img class="success_arrows" src="@/assets/images/exchange-arrs.svg" alt title>
-            <img src="@/assets/images/eth.png" alt title>
+            <img :src="receiveCurrency.icon" alt title>
           </div>
-          <p class="to">0.00956785 ETH</p>
+          <p class="to">{{receiveAmount}} {{receiveCurrency.currency}}</p>
           <div class="transaction-info">
             <div class="network-fee">
               <p class="title">Bitcoin Network Fee</p>
-              <p>0.00021 BTC</p>
+              <p class="middle-text">0.00021 BTC</p>
               <p>$0.04</p>
             </div>
             <div class="balance">
               <p class="title">Remaining balance</p>
-              <p>0 BTC</p>
-              <p>$0.00</p>
+              <p class="middle-text">{{exchangeCurrency.balance ? exchangeCurrency.balance.toFixed(3) : 0}} {{exchangeCurrency.currency}} </p>
+              <p> ${{exchangeCurrency.balanceUSD.toFixed(3)}} </p>
             </div>
           </div>
         </div>
@@ -305,7 +305,6 @@ export default {
       errorMessages: '',
       formHasErrors: false,
       exchangePopup: false,
-      sucessPopup: false,
   		exchangeBtn: 0,
   		receiveBtn: 0,
   		dir: 0,
@@ -348,7 +347,6 @@ export default {
       }).then(() => {
         this.smsCodes.forEach((smsCode, index) =>smsCode[index] = '')
       });
-      // this.sucessPopup = true;
     },
     exchange() {
       this.exchangePopup = !this.exchangePopup;
@@ -404,7 +402,9 @@ export default {
     },
     closeModal() {
       this.exchangePopup = false;
-      this.sucessPopup = false;
+      if (this.exchangeSucces) {
+        this.$store.dispatch('wallet/SET_SUCCES', false);
+      }
     },
     selectAll() {
       if (this.exchangeCurrency.balance > this.transferInfo.limit) {
@@ -476,7 +476,7 @@ export default {
       return {...getAuthParams()}
     },
     transferInfo() {
-      return this.$store.getters['wallet/TRANSFERINFO']
+      return this.$store.getters['wallet/TRANSFER_INFO']
     },
     types() {
       return this.$store.getters['wallet/TYPES']
@@ -490,6 +490,9 @@ export default {
       return this.wallets
         .filter(({currency})=> currency !== this.exchangeCurrency.currency)
         .filter(({fullName}) => (fullName.toLowerCase().includes(this.search)))
+    },
+    exchangeSucces() {
+      return this.$store.getters['wallet/EXCHANGE_SUCCES'];
     }
   },
   created() {
