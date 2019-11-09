@@ -1,7 +1,7 @@
 <template>
   <lk-layout>
     <payments-and-transfer>
-      1
+      Pay for
     </payments-and-transfer>
   </lk-layout>
 </template>
@@ -13,11 +13,10 @@
   import PaymentsAndTransfer from '@/layout/LkPaymentsAndTransfer'
 
   export default {
-    name: 'LkPaymentsAndTransfers',
+    name: 'LkPayFor',
     components: {
       PaymentsAndTransfer,
       LkLayout
-
     },
   }
 </script>

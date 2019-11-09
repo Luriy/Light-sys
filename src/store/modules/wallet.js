@@ -102,7 +102,6 @@ export default {
         }
       }).then(({ data }) => {
         const returnData = parsePythonArray(data)['1'].return
-
         return store.commit('SET_PAGE_DETAIL', {
           currency: currency.toUpperCase(),
           balance: returnData.BalanceBTC
@@ -195,13 +194,6 @@ export default {
           Comand: 'TransferToken',
           ...user
         }
-      }).then(({ data }) => {
-        const { Email, Phone } = parsePythonArray(data)['1'].return
-        commit('setNotification', {
-          message: Email || Phone,
-          status: 'info-status',
-          icon: 'error_outline'
-        })
       })
     },
     POST_TRANSFER: ({ commit }, { transferData, pair: { exchange, receive } }) => {

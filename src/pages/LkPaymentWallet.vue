@@ -16,7 +16,7 @@
           <router-link :to="{ name: 'LkPaymentWalletSend' }"><button class="btn">Send</button></router-link>
         </div>
         <div class="btn-border-wrapper">
-          <router-link :to="{ name: 'LkPaymentWalletReceive' }"><button class="btn">Receive</button></router-link>
+          <router-link :to="{ name: 'LkPaymentWalletReceive'}"><button class="btn">Receive</button></router-link>
         </div>
         <div class="btn-border-wrapper btn-exchange">
           <router-link to="/exchange"><button class="btn"><img src="@/assets/images/exchange.svg" alt title></button></router-link>

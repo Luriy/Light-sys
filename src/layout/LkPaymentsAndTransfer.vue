@@ -1,16 +1,17 @@
 <template>
-  <lk-layout>
+  <div>
     <div class="tabs-bar">
-      <button class="tab" v-for="link in links" :to="link.to" :class="{ active: link.name === activeTab}" @click="handleClickTab(link.name, link.to)">
+      <button class="tab" v-for="link in links" :to="link.to" :class="{ active: $router.history.current.path.includes(link.activeString)}" @click="handleClickTab(link.name, link.to)">
         {{ link.name }}
       </button>
     </div>
     <slot></slot>
-  </lk-layout>
+  </div>
 </template>
 <style scoped>
   .tabs-bar {
     display: flex;
+    margin-bottom: 25px;
   }
   .tab {
     padding: 10px 15px;
@@ -29,24 +30,20 @@
   }
 </style>
 <script>
-  import LkLayout from '@/layout/LkLayout'
-
   export default {
     name: 'LkPaymentsAndTransfers',
-    components: {
-      LkLayout,
-    },
     data() {
       return {
-        activeTab: 'Pay for',
         links: [
           {
             name: 'Transfer',
-            to: 'payments-and-transfer/transfer/send/BTC/',
+            to: '/payments-and-transfer/send/BTC',
+            activeString: '/payments-and-transfer/send',
           },
           {
             name: 'Pay for',
-            to: '/pay-for',
+            to: '/payments-and-transfer/pay-for',
+            activeString: '/payments-and-transfer/pay-for',
           },
         ]
       }

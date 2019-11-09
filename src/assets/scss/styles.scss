@@ -1849,7 +1849,7 @@ $eth: #7d8ef6;
 	background:#260848;
 	border-radius:50px;
 	min-height: 100vh;
-	padding:125px 60px 0;
+	padding:115px 60px 0;
 
 	.block-title {
 		text-align: center;
@@ -2409,7 +2409,11 @@ $eth: #7d8ef6;
 					border-radius:9px;
 					background:none;
 					color: rgba(255,255,255,.5);
-				}
+        }
+        button.active {
+          color: rgba(255,255,255, 1);
+          border-color: #fff;
+        }
 				span {
 					text-align:center;
 				}

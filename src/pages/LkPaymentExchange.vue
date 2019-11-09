@@ -350,7 +350,15 @@ export default {
     },
     exchange() {
       this.exchangePopup = !this.exchangePopup;
-      this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams());
+      this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams())
+        .then(({ data }) => {
+          const { Email, Phone } = parsePythonArray(data)['1'].return
+          commit('setNotification', {
+            message: Email || Phone,
+            status: 'info-status',
+            icon: 'error_outline'
+          })
+        })
     },
     setData() {
       if (this.wallets && this.wallets.length) {
