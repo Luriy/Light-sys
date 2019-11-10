@@ -212,7 +212,7 @@
 
           <div class="timer-body">
             <div class="title">Resend code:</div>
-            <div class="timer">00:59 Sec</div>
+            <div class="timer">00:{{countdown}} Sec</div>
           </div>
         </div>
         <div slot='body' class="exchange-popup_body">
@@ -293,6 +293,8 @@ export default {
   	return {
       receiveModal: false,
       exchangeModal: false,
+      countdown: 59,
+      timer: null,
       search: '',
       smsCodes: [
         {0: ''},
@@ -350,7 +352,11 @@ export default {
     },
     exchange() {
       this.exchangePopup = !this.exchangePopup;
-      this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams());
+      this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
+        this.timer = setInterval(() => {
+          this.countdown--
+        }, 1000)
+      });
     },
     setData() {
       if (this.wallets && this.wallets.length) {
@@ -503,6 +509,18 @@ export default {
   watch: {
     wallets() {
       this.setData()
+    },
+    countdown(value) {
+      if (value === 0) {
+        this.countdown = 59;
+        this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams());
+      }
+    },
+    exchangePopup(status) {
+      if (!status) {
+        clearInterval(this.timer);
+        this.countdown = 59;
+      }
     }
   }
 }
