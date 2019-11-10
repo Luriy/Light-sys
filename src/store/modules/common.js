@@ -25,7 +25,6 @@ export default {
         }
       }).then(({ data }) => {
         const returnData = parsePythonArray(data)['1'].return.AllBalance
-        console.log(returnData)
         return store.commit('SET_ALL_BALANCE', returnData)
       })
     }

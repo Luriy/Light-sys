@@ -104,7 +104,7 @@ export default {
     },
   computed: {
     ...mapGetters({
-      pageDetail: 'wallet/PAGE_DETAIL',
+      types: 'wallet/TYPES',
     })
   },
   filters: {

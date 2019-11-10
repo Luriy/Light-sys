@@ -130,6 +130,7 @@ export default {
       })
     },
     GET_WALLETS: ({ commit }) => {
+      console.log('f');
       return Axios({
         url: API_URL,
         method: 'POST',
@@ -154,6 +155,8 @@ export default {
             return acc
           }, [])
           .filter(({ status }) => status !== 'Frozen')
+
+        console.log(result)
 
         // DEVELOPMENT CODE FOR UNFREEZE WALLETS
 
@@ -319,8 +322,6 @@ export default {
               Wallet: wallet.address
             }
           })
-
-          console.log(data)
 
           return Object.values(parsePythonArray(data)[1].return).map(item => ({
             source: item,

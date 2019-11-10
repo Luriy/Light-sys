@@ -37,7 +37,7 @@
         links: [
           {
             name: 'Transfer',
-            to: '/payments-and-transfer/send/BTC',
+            to: '/payments-and-transfer/send/BTC/none',
             activeString: '/payments-and-transfer/send',
           },
           {
