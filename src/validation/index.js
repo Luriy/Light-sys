@@ -6,7 +6,9 @@ export const VALIDATE_AMOUNT_TRANSFER_EXCHANGE = (value, balance) => {
   } else return null
 }
 export const VALIDATE_ADDRESS = (address, currencyName) => {
-  if (address < 5) {
+  if (address === null) {
+    return `Enter ${currencyName} address.`
+  } else if (address.length < 5) {
     return `Enter valid ${currencyName} address.`
   } else return null
 }
