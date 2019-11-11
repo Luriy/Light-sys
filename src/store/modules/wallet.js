@@ -237,7 +237,8 @@ export default {
           ...getAuthParams(),
           From: from,
           To: to,
-          Token: token
+          Token: token,
+          Amount: amount
         }
       }).then(({ data }) => {
         const response = parsePythonArray(data)

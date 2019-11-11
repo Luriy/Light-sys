@@ -33,6 +33,7 @@
           <div class="send-form-input--amount">
           <input type="number" v-model="cryptoCurrencyAmount" @input="handleCryptoCurrencyAmount" :placeholder="cryptoCurrencyAmountPlaceholder" @click.once="isCryptoCurrencyAmountInputClicked = true">
           <div class="btns">
+            <button class="btn" :class="{ active: activeButton === 'Min'}" @click="handleButton('Min')">Min</button>
             <button class="btn" :class="{ active: activeButton === 'Half'}" @click="handleButton('Half')">Half</button>
             <button class="btn" :class="{ active: activeButton === 'All'}" @click="handleButton('All')">All</button>
             <span>{{ currency }}</span>
@@ -73,8 +74,9 @@
       </div>
       <lk-pop-up
         v-if="sendPopup"
-        class="exchange-popup"
+        class="transfer-popup"
         @closeModal="closeModal"
+        :popupSize="{ width: '650px', height: '500px' }"
       >
         <div slot='title' class="exchange-popup_title">
           <img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title>
@@ -101,7 +103,7 @@
             class="number-input"
             v-for="(input, index) in smsCodes"
             v-model="input[index]"
-            @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : send()"
+            @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : onSend()"
             placeholder="_"
             type="text"
             maxLength="1"
@@ -117,20 +119,23 @@
         </div>
         <div slot='body' class="exchange-popup_body">
           <div class="exchange-popup_info">
-            <p class="from" :class="currency.toLowerCase()">{{ formatCurrency(cryptoCurrencyAmount, '', 8) }} {{ currency }} &nbsp;&nbsp;&nbsp;${{ formatCurrency(currencyAmount) }}</p>
+            <div class="flex">
+              <p class="from" :class="currency.toLowerCase()">{{ formatCurrency(cryptoCurrencyAmount, '', 8) }} {{ currency }}</p>
+              <p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
+            </div>
             <img src="@/assets/images/send-arrow.svg" alt title>
-            <p class="to">{{ paymentAddress }}</p>
+            <p class="payment-address">{{ paymentAddress }}</p>
           </div>
           <div class="exchange-block_fee">
             <div class="network-fee">
               <p class="title"><span>{{ currency }}</span> Network Fee</p>
               <p class="btc-value">{{ 1 }} {{currency}}</p>
-              <p>${{ 1 }}</p>
+              <p class="fixed-value">${{ 0.12 }}</p>
             </div>
             <div class="balance">
               <p class="title">Remaining balance</p>
               <p class="btc-value">{{ remainingCryptoCurrency }} {{ currency }}</p>
-              <p>${{ remainingCurrency }}</p>
+              <p class="fixed-value">${{ remainingCurrency }}</p>
             </div>
           </div>
         </div>
@@ -154,6 +159,35 @@
   }
   .current-balance input[name='balance'] {
     width: 90%;
+  }
+  .transfer-popup .payment-address {
+    margin-right: 15px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .transfer-popup .from {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .transfer-popup .payment-usd {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-left: 9px;
+  }
+  .transfer-popup .fixed-value {
+    width: 90px;
+    text-align: right;
+  }
+  .transfer-popup .btc-value {
+    margin-right: 0 !important;
+  }
+  .exchange-popup_info img {
+    left: 38% !important;
+  }
+  .exchange-popup_body {
+    width: 570px !important;
   }
 </style>
 <script>
@@ -206,7 +240,6 @@ export default {
     },
     ...mapGetters({
       wallets: 'wallet/WALLETS',
-      
     }),
     currentWallet() {
       if (this.$route.params.address === 'none') {
@@ -222,6 +255,25 @@ export default {
     },
     currency() {
       return this.$route.params.currency
+    },
+    minAmount() {
+      switch (this.currency) {
+        case 'BTC':
+          return {
+            toShow: 0.0005,
+            toPay: 0.0006
+          }
+        case 'ETH':
+          return {
+            toShow: 0.00035,
+            toPay: 0.0004
+          }
+        case 'LTC':
+          return {
+            toShow: 0.004,
+            toPay: 0.003
+          }
+      }
     },
     initialBalance() {
       return {
@@ -272,29 +324,45 @@ export default {
       }
     },
     cryptoToCurrency(crypto) {
-      return this.formatCurrency(Number(crypto) * this.initialBalance.course);
+      return (Number(crypto) * this.initialBalance.course).toFixed(2);
     },
     currencyToCrypto(currency) {
-      return Number(currency) / this.initialBalance.course;
+      return (Number(currency) / this.initialBalance.course).toFixed(8);
     },
     handleCurrencyAmount() {
-      console.log(this.formatCurrency(this.initialBalance.currency - this.currencyAmount))
-      this.remainingCurrency = this.formatCurrency(this.initialBalance.currency - this.currencyAmount);
-      this.remainingCryptoCurrency = this.formatCurrency(this.currencyToCrypto(this.initialBalance.currency - this.currencyAmount), '', 8);
-      this.cryptoCurrencyAmount = this.formatCurrency(this.currencyToCrypto(this.currencyAmount), '', 8);
-    },
-    handleCryptoCurrencyAmount() {
-      this.remainingCryptoCurrency = this.formatCurrency(Number(this.initialBalance.cryptoCurrency) - Number(this.cryptoCurrencyAmount), '', 8);
+      const remainingCurrency = (this.initialBalance.currency - this.currencyAmount).toFixed(2);
+      this.remainingCurrency = remainingCurrency < 0 ? 0 : remainingCurrency;
 
-      if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency) {
+      const remainingCryptoCurrency = this.currencyToCrypto(this.initialBalance.currency - this.currencyAmount)
+      this.remainingCryptoCurrency = remainingCryptoCurrency < 0 ? 0 : remainingCryptoCurrency
+
+      if (this.currencyAmount == this.initialBalance.currency.toFixed(2)) {
         this.activeButton = 'All';
+      }
+      else if (this.currencyAmount == (this.initialBalance.currency / 2).toFixed(2)) {
+        this.activeButton = 'Half';
+      }
+      else if (this.cryptoToCurrency(this.currencyAmount) == this.minAmount.toPay) {
+        this.activeButton = 'Min';
       }
       else {
         this.activeButton = null;
       }
 
-      if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency / 2) {
+      this.cryptoCurrencyAmount = this.currencyToCrypto(this.currencyAmount);
+    },
+    handleCryptoCurrencyAmount() {
+      this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency - this.cryptoCurrencyAmount).toFixed(8);
+      this.remainingCurrency = (this.initialBalance.currency - this.currencyAmount).toFixed(2);
+
+      if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency) {
+        this.activeButton = 'All';
+      }
+      else if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency / 2) {
         this.activeButton = 'Half';
+      }
+      else if (this.cryptoCurrencyAmount == this.minAmount.toPay) {
+        this.activeButton = 'Min';
       }
       else {
         this.activeButton = null;
@@ -309,16 +377,22 @@ export default {
       else {
         this.activeButton = null;
       }
+
       if (name === 'All') {
-        this.cryptoCurrencyAmount = this.formatCurrency(this.initialBalance.cryptoCurrency, '', 8);
-        this.currencyAmount = this.formatCurrency(this.initialBalance.currency);
-        this.remainingCryptoCurrency = this.formatCurrency(0, '', 8);
-        this.remainingCurrency = this.formatCurrency(0);
+        this.cryptoCurrencyAmount = this.initialBalance.cryptoCurrency.toFixed(8);
+        this.currencyAmount = this.initialBalance.currency.toFixed(2);
+        this.remainingCryptoCurrency = 0;
+        this.remainingCurrency = 0;
       } else if (name === 'Half') {
-        this.cryptoCurrencyAmount = this.formatCurrency(this.initialBalance.cryptoCurrency / 2, '', 8);
-        this.currencyAmount = this.formatCurrency(this.initialBalance.currency / 2);
-        this.remainingCryptoCurrency = this.formatCurrency(this.initialBalance.cryptoCurrency / 2, '', 8);
-        this.remainingCurrency = this.formatCurrency(this.initialBalance.currency / 2);
+        this.cryptoCurrencyAmount = (this.initialBalance.cryptoCurrency / 2).toFixed(8);
+        this.currencyAmount =(this.initialBalance.currency / 2).toFixed(2);
+        this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency / 2).toFixed(8);
+        this.remainingCurrency = (this.initialBalance.currency / 2).toFixed(2);
+      } else if (name === 'Min') {
+        this.cryptoCurrencyAmount = this.minAmount.toPay;
+        this.currencyAmount = this.cryptoToCurrency(this.minAmount.toPay);
+        this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency - this.minAmount.toPay).toFixed(8);
+        this.remainingCurrency = (this.initialBalance.currency - this.cryptoToCurrency(this.minAmount.toPay)).toFixed(2);
       }
     },
     handleSelectWallet(currency, address) {
@@ -331,33 +405,41 @@ export default {
       clearInterval(this.timer);
     },
     onSendSms() {
-      console.log(this.paymentAddress)
-      const validateErrorAmount = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(this.cryptoCurrencyAmount, this.initialBalance.cryptoCurrency);
+      const validateErrorAmount = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(this.cryptoCurrencyAmount, this.initialBalance.cryptoCurrency, this.minAmount.toShow, this.currency);
       const validateErrorAddress = VALIDATE_ADDRESS(this.paymentAddress, this.currencyName(this.currency));
 
       if (validateErrorAmount === null && validateErrorAddress === null) {
         this.error = null;
         this.sendPopup = true;
 
-        this.timer = setInterval(() => {
-          this.countdown--
-        }, 1000)
-
-        // this.$store.dispatch("wallet/GET_TRANSFER_TOKEN", ...getAuthParams())
+        // this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
+          this.timer = setInterval(() => {
+            this.countdown--
+          }, 1000)
+        // });
       } else {
-        console.log(validateErrorAmount, validateErrorAddress)
         this.error = validateErrorAmount || validateErrorAddress;
-      }  
+      } 
     },
     onSend() {
-        // this.$store.dispatch('wallet/SEND', {
-        //   currency: this.$route.params.currency.toUpperCase(),
-        //   from: '',
-        //   to: '',
-        //   amount: 123,
-        // });
-        // this.$store.dispatch()
+      const token = this.smsCodes.map((smsCode, index) =>smsCode[index]).join('');
+      this.$store.dispatch('wallet/POST_TRANSFER_CRYPTO', {
+        currency: this.$route.params.currency,
+        from: this.$route.params.address,
+        to: this.paymentAddress,
+        amount: this.cryptoCurrencyAmount,
+        token
+      });
+      this.clearData();
     }
   },
+  watch: {
+    countdown(value) {
+      if (value === 0) {
+        this.countdown = 59;
+        this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams());
+      }
+    }
+  }
 }
 </script>
