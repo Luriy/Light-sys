@@ -199,26 +199,6 @@ export default {
   },
   mounted() {
     this.$store.dispatch('wallet/GET_WALLETS');
-    Axios({
-        url: API_URL,
-        method: 'POST',
-        params: {
-          Comand: 'PasswordInstall',
-          Phone: '',
-          Password: '123456qqww12',
-          Email: 'iivozniuk@gmail.com',
-        },
-      }).then(data => console.log(data))
-    // Axios({
-    //   url: API_URL,
-    //   method: 'POST',
-    //   params: {
-    //     Comand: 'AccountActivationPhone',
-    //     Email: 'iivozniuk@gmail.com',
-    //     Phone: '',
-    //     Pin: '112211'
-    //   }
-    // })
   },
   computed: {
     user() {
@@ -351,11 +331,12 @@ export default {
       clearInterval(this.timer);
     },
     onSendSms() {
+      console.log(this.paymentAddress)
       const validateErrorAmount = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(this.cryptoCurrencyAmount, this.initialBalance.cryptoCurrency);
-      const validateErrorAddress = VALIDATE_ADDRESS(paymentAddress, currencyName);
+      const validateErrorAddress = VALIDATE_ADDRESS(this.paymentAddress, this.currencyName(this.currency));
 
-      if (validateErrorAmount === null && validateErrorAddress) {
-        this.error = validateErrorAmount || validateErrorAddress;
+      if (validateErrorAmount === null && validateErrorAddress === null) {
+        this.error = null;
         this.sendPopup = true;
 
         this.timer = setInterval(() => {
@@ -364,7 +345,8 @@ export default {
 
         // this.$store.dispatch("wallet/GET_TRANSFER_TOKEN", ...getAuthParams())
       } else {
-        this.error = validateError;
+        console.log(validateErrorAmount, validateErrorAddress)
+        this.error = validateErrorAmount || validateErrorAddress;
       }  
     },
     onSend() {
