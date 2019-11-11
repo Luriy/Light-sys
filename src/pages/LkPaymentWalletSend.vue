@@ -22,7 +22,7 @@
           </div>
           <img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title>
           <img v-if="currency === 'ETH'" src="@/assets/images/eth.png" alt title>
-          <img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" alt title>
+          <img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" height="65" alt title>
           <router-link :to="{ name: 'LkPaymentWallet' }" class="close"><img src="@/assets/images/path.svg" alt title></router-link>
         </div>
         <div class="send-form">
@@ -43,11 +43,16 @@
           <div class="currency-balance">USD</div>
         </div>
         <div class="send-form-button">
-          <button @click="onSend">Send</button>
+          <button @click="onSendSms">Send</button>
+          <div class="send-form__error-block">
+            <transition name="fade">
+              <p class="send-form__error" v-show="error">
+                {{ error }}
+              </p>
+            </transition>
+          </div>
         </div>
-        <p class="send-form__error">
-          {{ error }}
-        </p>
+        
         <div class="send-form-totals">
           <div class="send-form-totals-total">
             <div class="text">{{ currencyName(currency) }} Network Fee</div>
@@ -66,6 +71,73 @@
         </div>
         </div>
       </div>
+      <lk-pop-up
+        v-if="sendPopup"
+        class="exchange-popup"
+        @closeModal="closeModal"
+      >
+        <div slot='title' class="exchange-popup_title">
+          <img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title>
+          <img v-if="currency === 'ETH'" src="@/assets/images/eth.png" alt title>
+          <img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" alt title>
+          <p class="transaction">Confirmation <br> exchange {{ currencyAmount }} USD</p>
+          <div class="phone-question" v-if="user.Phone">
+            <p class="question">We sent an SMS confirmation to the number</p>
+            <div class="number-block">
+              <p class="number">{{user.Phone}}</p>
+              <router-link class="link" to="/">Wrong number?</router-link>
+            </div>
+          </div>
+          <div class="email-question" v-else>
+            <p class="question">We sent an email confirmation to the email</p>
+            <div class="number-block">
+              <p class="number">{{user.Email}}</p>
+              <router-link class="link" to="/">Wrong email?</router-link>
+            </div>
+          </div>
+        </div>
+        <div slot='smsNumber' class="exchange-popup_sms-number">
+          <input
+            class="number-input"
+            v-for="(input, index) in smsCodes"
+            v-model="input[index]"
+            @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : send()"
+            placeholder="_"
+            type="text"
+            maxLength="1"
+            size="1"
+            min="0"
+            max="9" pattern="[0-9]{1}"
+          />
+
+          <div class="timer-body">
+            <div class="title">Resend code:</div>
+            <div class="timer">00:{{countdown}} Sec</div>
+          </div>
+        </div>
+        <div slot='body' class="exchange-popup_body">
+          <div class="exchange-popup_info">
+            <p class="from" :class="currency.toLowerCase()">{{ formatCurrency(cryptoCurrencyAmount, '', 8) }} {{ currency }} &nbsp;&nbsp;&nbsp;${{ formatCurrency(currencyAmount) }}</p>
+            <img src="@/assets/images/send-arrow.svg" alt title>
+            <p class="to">{{ paymentAddress }}</p>
+          </div>
+          <div class="exchange-block_fee">
+            <div class="network-fee">
+              <p class="title"><span>{{ currency }}</span> Network Fee</p>
+              <p class="btc-value">{{ 1 }} {{currency}}</p>
+              <p>${{ 1 }}</p>
+            </div>
+            <div class="balance">
+              <p class="title">Remaining balance</p>
+              <p class="btc-value">{{ remainingCryptoCurrency }} {{ currency }}</p>
+              <p>${{ remainingCurrency }}</p>
+            </div>
+          </div>
+        </div>
+        <div slot='buttons' class="exchange-popup_buttons">
+          <button class="back" @click="closeModal">Back</button>
+        </div>
+      </lk-pop-up>
     </payments-and-transfer>
   </lk-layout>
 </template>
@@ -90,12 +162,15 @@ import PaymentsAndTransfer from '@/layout/LkPaymentsAndTransfer'
 import Axios from 'axios';
 import { mapGetters } from 'vuex';
 import { API_URL } from '../constants'
-import { VALIDATE_AMOUNT_TRANSFER_EXCHANGE } from '../validation';
+import { VALIDATE_AMOUNT_TRANSFER_EXCHANGE, VALIDATE_ADDRESS } from '../validation';
+import { getAuthParams } from '@/functions/auth';
+import LkPopUp from '@/layout/LkPopUp';
 
 export default {
   components: {
     LkLayout,
-    PaymentsAndTransfer
+    PaymentsAndTransfer,
+    LkPopUp
   },
   data() {
     return {
@@ -108,16 +183,50 @@ export default {
       isCryptoCurrencyAmountInputClicked: false,
       isCurrencyAmountInputClicked: false,
       isSelectWalletOpened: false,
-      error: 1,
+      error: null,
       sendPopup: false,
+      smsCodes: [
+        {0: ''},
+        {1: ''},
+        {2: ''},
+        {3: ''},
+        {4: ''},
+        {5: ''},
+      ],
+      timer: null,
+      countdown: 59,
     }
   },
   mounted() {
-    this.$store.dispatch('wallet/GET_WALLETS')
+    this.$store.dispatch('wallet/GET_WALLETS');
+    Axios({
+        url: API_URL,
+        method: 'POST',
+        params: {
+          Comand: 'PasswordInstall',
+          Phone: '',
+          Password: '123456qqww12',
+          Email: 'iivozniuk@gmail.com',
+        },
+      }).then(data => console.log(data))
+    // Axios({
+    //   url: API_URL,
+    //   method: 'POST',
+    //   params: {
+    //     Comand: 'AccountActivationPhone',
+    //     Email: 'iivozniuk@gmail.com',
+    //     Phone: '',
+    //     Pin: '112211'
+    //   }
+    // })
   },
   computed: {
+    user() {
+      return {...getAuthParams()}
+    },
     ...mapGetters({
       wallets: 'wallet/WALLETS',
+      
     }),
     currentWallet() {
       if (this.$route.params.address === 'none') {
@@ -159,6 +268,18 @@ export default {
       this.isCryptoCurrencyAmountInputClicked = false;
       this.isCurrencyAmountInputClicked = false;
       this.isSelectWalletOpened = false;
+      this.error = null;
+      this.sendPopup = false;
+      this.smsCodes = [
+        {0: ''},
+        {1: ''},
+        {2: ''},
+        {3: ''},
+        {4: ''},
+        {5: ''},
+      ],
+      this.timer = null;
+      this.countdown = 59;
     },
     currencyName(currency) {
       let currencyName;
@@ -177,6 +298,7 @@ export default {
       return Number(currency) / this.initialBalance.course;
     },
     handleCurrencyAmount() {
+      console.log(this.formatCurrency(this.initialBalance.currency - this.currencyAmount))
       this.remainingCurrency = this.formatCurrency(this.initialBalance.currency - this.currencyAmount);
       this.remainingCryptoCurrency = this.formatCurrency(this.currencyToCrypto(this.initialBalance.currency - this.currencyAmount), '', 8);
       this.cryptoCurrencyAmount = this.formatCurrency(this.currencyToCrypto(this.currencyAmount), '', 8);
@@ -223,24 +345,37 @@ export default {
       this.clearData();
       this.$router.push(`/payments-and-transfer/send/${currency}/${address}`);
     },
-    async onSend() {
-      // this.$store.dispatch('wallet/SEND', {
-      //   currency: this.$route.params.currency.toUpperCase(),
-      //   from: '',
-      //   to: '',
-      //   amount: 123,
-      // });
-      // this.$store.dispatch()
+    closeModal() {
+      this.sendPopup = false;
+      this.timeout = 59;
+      clearInterval(this.timer);
+    },
+    onSendSms() {
+      const validateErrorAmount = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(this.cryptoCurrencyAmount, this.initialBalance.cryptoCurrency);
+      const validateErrorAddress = VALIDATE_ADDRESS(paymentAddress, currencyName);
 
-      const validateError = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(this.cryptoCurrency, initialBalance.cryptoCurrency);
+      if (validateErrorAmount === null && validateErrorAddress) {
+        this.error = validateErrorAmount || validateErrorAddress;
+        this.sendPopup = true;
 
-      if (validateError === null) {
-        this.error = null;
-        console.log(submitted);
+        this.timer = setInterval(() => {
+          this.countdown--
+        }, 1000)
+
+        // this.$store.dispatch("wallet/GET_TRANSFER_TOKEN", ...getAuthParams())
       } else {
         this.error = validateError;
-      }
+      }  
     },
+    onSend() {
+        // this.$store.dispatch('wallet/SEND', {
+        //   currency: this.$route.params.currency.toUpperCase(),
+        //   from: '',
+        //   to: '',
+        //   amount: 123,
+        // });
+        // this.$store.dispatch()
+    }
   },
 }
 </script>

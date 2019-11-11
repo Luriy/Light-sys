@@ -130,7 +130,7 @@ export default {
       })
     },
     GET_WALLETS: ({ commit }) => {
-      console.log('f');
+      console.log('f')
       return Axios({
         url: API_URL,
         method: 'POST',
@@ -155,8 +155,6 @@ export default {
             return acc
           }, [])
           .filter(({ status }) => status !== 'Frozen')
-
-        console.log(result)
 
         // DEVELOPMENT CODE FOR UNFREEZE WALLETS
 
@@ -214,6 +212,38 @@ export default {
         if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
           commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount })
           commit('SET_EXCHANGE_SUCCES', true)
+        } else if (Object.keys(Errors).length) {
+          const errKey = Object.keys(Errors)[0]
+          commit('setNotification', {
+            message: Errors[errKey],
+            status: 'error-status',
+            icon: 'close'
+          })
+        } else {
+          commit('setNotification', {
+            message: 'Unknown error',
+            status: 'error-status',
+            icon: 'close'
+          })
+        }
+      })
+    },
+    POST_TRANSFER_CRYPTO: ({ commit }, { amount, from, to, token, currency }) => {
+      return Axios({
+        url: API_URL,
+        method: 'POST',
+        params: {
+          Comand: `${currency}Transfer`,
+          ...getAuthParams(),
+          From: from,
+          To: to,
+          Token: token
+        }
+      }).then(({ data }) => {
+        const response = parsePythonArray(data)
+        const { Errors } = response[0]
+        const responseData = response[1]
+        if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
         } else if (Object.keys(Errors).length) {
           const errKey = Object.keys(Errors)[0]
           commit('setNotification', {

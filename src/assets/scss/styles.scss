@@ -2383,7 +2383,7 @@ $eth: #7d8ef6;
   
   &.ltc {
     .send-form .send-form-input--amount input {
-			border-bottom:1px sold #d3d3d3;
+			border-bottom:1px solid #d3d3d3;
 		}
     .send-form .send-form-input--amount .btns span {
 			color: #d3d3d3;
@@ -2399,10 +2399,13 @@ $eth: #7d8ef6;
 		border-radius:14px;
     padding:25px;
     &__error {
-      margin-top: 25px;
       color: #db5353;
       font-size: 12px;
       text-align: center;
+    }
+    &__error-block {
+      height: 12px;
+      margin-top: 17px;
     }
 		.send-form-button {
 			text-align:center;
