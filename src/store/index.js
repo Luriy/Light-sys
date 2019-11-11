@@ -5,7 +5,8 @@ import auth from './modules/auth'
 import wallet from './modules/wallet'
 import account from './modules/account'
 import alerts from './modules/alerts'
-import {BASE_URL} from '@/settings/config'
+import common from './modules/common'
+import { BASE_URL } from '@/settings/config'
 Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production'
@@ -16,11 +17,12 @@ export default new Vuex.Store({
     user,
     wallet,
     account,
-    alerts
+    alerts,
+    common
   },
   state: {
     urls: {
-      base: BASE_URL,
+      base: BASE_URL
     }
   },
   strict: debug

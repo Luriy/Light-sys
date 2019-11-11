@@ -180,7 +180,7 @@
       >
         <div slot='title' class="exchange-popup_title">
           <img :src="exchangeCurrency.icon" alt title>
-          <p class="transaction">Conformation <br> exchange {{exchangeUSD.toFixed(3)}} USD</p>
+          <p class="transaction">Confirmation <br> exchange {{exchangeUSD.toFixed(3)}} USD</p>
           <div class="phone-question" v-if="user.Phone">
             <p class="question">We sent an SMS conformation to the number</p>
             <div class="number-block">
@@ -189,7 +189,7 @@
             </div>
           </div>
           <div class="email-question" v-else>
-            <p class="question">We sent an email conformation to the email</p>
+            <p class="question">We sent an email confirmation to the email</p>
             <div class="number-block">
               <p class="number">{{user.Email}}</p>
               <router-link class="link" to="/">Wrong email?</router-link>

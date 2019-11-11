@@ -9,6 +9,8 @@ import LkPaymentExchange from '@/pages/LkPaymentExchange'
 // import LkPaymentSendEth from '@/pages/LkPaymentSendEth'
 import LkPaymentWalletsCreate from '@/pages/LkPaymentWalletsCreate'
 import LkPaymentAccountsCards from '@/pages/LkPaymentAccountsCards'
+import LkPaymentsAndTransfer from '@/pages/LkPaymentsAndTransfer'
+import LkPayFor from '@/pages/LkPayFor'
 
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
@@ -86,17 +88,27 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
     {
+      name: 'LkPaymentsAndTransfer',
+      path: '/payments-and-transfer',
+      component: LkPaymentsAndTransfer,
+      beforeEnter: ifAuthenticated
+    },
+    {
       name: 'LkPaymentWalletSend',
-      path: '/payments-and-transfer/transfer/send/:currency/:address',
-      // path: '/wallets/:currency/:address/send',
+      path: '/payments-and-transfer/send/:currency/:address',
       component: LkPaymentWalletSend,
       beforeEnter: ifAuthenticated
     },
     {
       name: 'LkPaymentWalletReceive',
-      path: '/payments-and-transfer/transfer/receive/:currency/:address',
-      // path:'/wallets/:currency/:address/receive',
+      path: '/payments-and-transfer/receive/:currency/:address',
       component: LkPaymentWalletReceive,
+      beforeEnter: ifAuthenticated
+    },
+    {
+      name: 'LkPayFor',
+      path: '/payments-and-transfer/pay-for',
+      component: LkPayFor,
       beforeEnter: ifAuthenticated
     }
   ]

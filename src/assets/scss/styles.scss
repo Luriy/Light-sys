@@ -63,9 +63,11 @@ $eth: #7d8ef6;
 .btc {
 	color: #fda50c !important;
 }
-
 .eth {
 	color: #7d8ef6 !important;
+}
+.ltc {
+  color: #d3d3d3;
 }
 
 .add-token {
@@ -1849,7 +1851,7 @@ $eth: #7d8ef6;
 	background:#260848;
 	border-radius:50px;
 	min-height: 100vh;
-	padding:125px 60px 0;
+	padding:115px 60px 0;
 
 	.block-title {
 		text-align: center;
@@ -2268,23 +2270,86 @@ $eth: #7d8ef6;
 		display: flex;
 		justify-content: center;
 		align-items:center;
-		margin-bottom: 17px;
+    margin-bottom: 17px;
+    position: relative;
 		.select {
 			cursor: pointer;
 			font-size: 24px;
 			line-height: 21px;
 			color: #fff;
 			position:absolute;
-			left: 0;
-			&:after {
-				display: inline-block;
+      left: 0;
+      &__title:after {
+        display: inline-block;
 				content: '';
 			    border: 4.5px solid transparent;
 			    border-top: 4.5px solid #fff;
 			    right: -16px;
 			    top: calc(50% - 1px);
 			    position: absolute;
-			}
+      }
+      &__modal {
+        position: absolute;
+        width: 300px;
+        
+        background-color: #785bb3;
+        top: 35px;
+        z-index: 15;
+        margin: 10px 6px 10px 0;
+        max-height: 270px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #947dc1 transparent;
+
+        &::-webkit-scrollbar {
+          width: 16px;
+        }
+        &::-webkit-scrollbar-track {
+          background:transparent;
+        }
+        &::-webkit-scrollbar-thumb,
+        &::-webkit-scrollbar-thumb:hover {
+          border-radius: 1px;
+          background-color: #947dc1;
+          width: 16px;
+        }
+        &::-webkit-scrollbar-thumb {
+          box-shadow: inset -3px 0 0 6px #785bb3;
+          -webkit-box-shadow: inset -3px 0 0 6px #785bb3;
+        } 
+        &-item {
+          padding: 0 5px 0 13px;
+          height: 40px;
+          display: flex;
+          // justify-content: space-between;
+          align-items: center;
+          margin-right: 5px;
+          position: relative;
+        }
+        &-item:hover, &-item.active {
+          background-color: #634997;
+        }
+        &-currency {
+          width: 85px;
+          margin-left: 6px;
+          color: #ffffff;
+          font-size: 14px;
+          font-weight: 500;
+          text-align: left;
+
+        }
+        &-balance {
+          font-size: 12px;
+          font-weight: 500;
+          width: 70px;
+        }
+        &-balance-usd {
+          font-size: 12px;
+          font-weight: 500;
+          opacity: .5;
+          margin-left: 10px;
+        }
+      }
 		}
 	}
 
@@ -2314,12 +2379,34 @@ $eth: #7d8ef6;
 		.send-form .send-form-input--amount input {
 			border-bottom:1px solid #8a93cf;
 		}
-	}
+  }
+  
+  &.ltc {
+    .send-form .send-form-input--amount input {
+			border-bottom:1px solid #d3d3d3;
+		}
+    .send-form .send-form-input--amount .btns span {
+			color: #d3d3d3;
+		}
+
+		.send-form .send-form-input--amount input, .send-form .send-form-input--amount input::placeholder {
+			color: #d3d3d3;
+		}
+  }
 
 	.send-form {
 		background:#3b2665;
 		border-radius:14px;
-		padding:25px;
+    padding:25px;
+    &__error {
+      color: #db5353;
+      font-size: 12px;
+      text-align: center;
+    }
+    &__error-block {
+      height: 12px;
+      margin-top: 17px;
+    }
 		.send-form-button {
 			text-align:center;
 			margin-bottom: 50px;
@@ -2333,7 +2420,8 @@ $eth: #7d8ef6;
 				font-size: 16px;
 				font-weight: 600;
 			}
-		}
+    }
+    
 		.send-form-totals {
 			.send-form-totals-total {
 				margin-bottom: 11px;
@@ -2409,7 +2497,11 @@ $eth: #7d8ef6;
 					border-radius:9px;
 					background:none;
 					color: rgba(255,255,255,.5);
-				}
+        }
+        button.active {
+          color: rgba(255,255,255, 1);
+          border-color: #fff;
+        }
 				span {
 					text-align:center;
 				}

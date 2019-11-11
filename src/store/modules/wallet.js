@@ -102,7 +102,6 @@ export default {
         }
       }).then(({ data }) => {
         const returnData = parsePythonArray(data)['1'].return
-
         return store.commit('SET_PAGE_DETAIL', {
           currency: currency.toUpperCase(),
           balance: returnData.BalanceBTC
@@ -131,6 +130,7 @@ export default {
       })
     },
     GET_WALLETS: ({ commit }) => {
+      console.log('f')
       return Axios({
         url: API_URL,
         method: 'POST',
@@ -195,13 +195,6 @@ export default {
           Comand: 'TransferToken',
           ...user
         }
-      }).then(({ data }) => {
-        const { Email, Phone } = parsePythonArray(data)['1'].return
-        commit('setNotification', {
-          message: Email || Phone,
-          status: 'info-status',
-          icon: 'error_outline'
-        })
       })
     },
     POST_TRANSFER: ({ commit }, { transferData, pair: { exchange, receive } }) => {
@@ -219,6 +212,38 @@ export default {
         if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
           commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount })
           commit('SET_EXCHANGE_SUCCES', true)
+        } else if (Object.keys(Errors).length) {
+          const errKey = Object.keys(Errors)[0]
+          commit('setNotification', {
+            message: Errors[errKey],
+            status: 'error-status',
+            icon: 'close'
+          })
+        } else {
+          commit('setNotification', {
+            message: 'Unknown error',
+            status: 'error-status',
+            icon: 'close'
+          })
+        }
+      })
+    },
+    POST_TRANSFER_CRYPTO: ({ commit }, { amount, from, to, token, currency }) => {
+      return Axios({
+        url: API_URL,
+        method: 'POST',
+        params: {
+          Comand: `${currency}Transfer`,
+          ...getAuthParams(),
+          From: from,
+          To: to,
+          Token: token
+        }
+      }).then(({ data }) => {
+        const response = parsePythonArray(data)
+        const { Errors } = response[0]
+        const responseData = response[1]
+        if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
         } else if (Object.keys(Errors).length) {
           const errKey = Object.keys(Errors)[0]
           commit('setNotification', {
@@ -327,8 +352,6 @@ export default {
               Wallet: wallet.address
             }
           })
-
-          console.log(data)
 
           return Object.values(parsePythonArray(data)[1].return).map(item => ({
             source: item,
