@@ -1,6 +1,6 @@
-export const VALIDATE_AMOUNT_TRANSFER_EXCHANGE = (value, balance) => {
-  if (value <= 0) {
-    return 'Amount must be more than 0.'
+export const VALIDATE_AMOUNT_TRANSFER_EXCHANGE = (value, balance, minAmount, currencyName) => {
+  if (value <= minAmount) {
+    return `Amount must be more than ${minAmount} ${currencyName}`
   } else if (value > balance) {
     return 'Amount must be less than balance of your wallet.'
   } else return null

@@ -33,6 +33,7 @@
           <div class="send-form-input--amount">
           <input type="number" v-model="cryptoCurrencyAmount" @input="handleCryptoCurrencyAmount" :placeholder="cryptoCurrencyAmountPlaceholder" @click.once="isCryptoCurrencyAmountInputClicked = true">
           <div class="btns">
+            <button class="btn" :class="{ active: activeButton === 'Min'}" @click="handleButton('Min')">Min</button>
             <button class="btn" :class="{ active: activeButton === 'Half'}" @click="handleButton('Half')">Half</button>
             <button class="btn" :class="{ active: activeButton === 'All'}" @click="handleButton('All')">All</button>
             <span>{{ currency }}</span>
@@ -239,7 +240,6 @@ export default {
     },
     ...mapGetters({
       wallets: 'wallet/WALLETS',
-      
     }),
     currentWallet() {
       if (this.$route.params.address === 'none') {
@@ -255,6 +255,25 @@ export default {
     },
     currency() {
       return this.$route.params.currency
+    },
+    minAmount() {
+      switch (this.currency) {
+        case 'BTC':
+          return {
+            toShow: 0.0005,
+            toPay: 0.0006
+          }
+        case 'ETH':
+          return {
+            toShow: 0.00035,
+            toPay: 0.0004
+          }
+        case 'LTC':
+          return {
+            toShow: 0.004,
+            toPay: 0.003
+          }
+      }
     },
     initialBalance() {
       return {
@@ -317,6 +336,19 @@ export default {
       const remainingCryptoCurrency = this.currencyToCrypto(this.initialBalance.currency - this.currencyAmount)
       this.remainingCryptoCurrency = remainingCryptoCurrency < 0 ? 0 : remainingCryptoCurrency
 
+      if (this.currencyAmount == this.initialBalance.currency.toFixed(2)) {
+        this.activeButton = 'All';
+      }
+      else if (this.currencyAmount == (this.initialBalance.currency / 2).toFixed(2)) {
+        this.activeButton = 'Half';
+      }
+      else if (this.cryptoToCurrency(this.currencyAmount) == this.minAmount.toPay) {
+        this.activeButton = 'Min';
+      }
+      else {
+        this.activeButton = null;
+      }
+
       this.cryptoCurrencyAmount = this.currencyToCrypto(this.currencyAmount);
     },
     handleCryptoCurrencyAmount() {
@@ -326,12 +358,11 @@ export default {
       if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency) {
         this.activeButton = 'All';
       }
-      else {
-        this.activeButton = null;
-      }
-
-      if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency / 2) {
+      else if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency / 2) {
         this.activeButton = 'Half';
+      }
+      else if (this.cryptoCurrencyAmount == this.minAmount.toPay) {
+        this.activeButton = 'Min';
       }
       else {
         this.activeButton = null;
@@ -346,6 +377,7 @@ export default {
       else {
         this.activeButton = null;
       }
+
       if (name === 'All') {
         this.cryptoCurrencyAmount = this.initialBalance.cryptoCurrency.toFixed(8);
         this.currencyAmount = this.initialBalance.currency.toFixed(2);
@@ -356,6 +388,11 @@ export default {
         this.currencyAmount =(this.initialBalance.currency / 2).toFixed(2);
         this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency / 2).toFixed(8);
         this.remainingCurrency = (this.initialBalance.currency / 2).toFixed(2);
+      } else if (name === 'Min') {
+        this.cryptoCurrencyAmount = this.minAmount.toPay;
+        this.currencyAmount = this.cryptoToCurrency(this.minAmount.toPay);
+        this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency - this.minAmount.toPay).toFixed(8);
+        this.remainingCurrency = (this.initialBalance.currency - this.cryptoToCurrency(this.minAmount.toPay)).toFixed(2);
       }
     },
     handleSelectWallet(currency, address) {
@@ -368,7 +405,7 @@ export default {
       clearInterval(this.timer);
     },
     onSendSms() {
-      const validateErrorAmount = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(this.cryptoCurrencyAmount, this.initialBalance.cryptoCurrency);
+      const validateErrorAmount = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(this.cryptoCurrencyAmount, this.initialBalance.cryptoCurrency, this.minAmount.toShow, this.currency);
       const validateErrorAddress = VALIDATE_ADDRESS(this.paymentAddress, this.currencyName(this.currency));
 
       if (validateErrorAmount === null && validateErrorAddress === null) {
