@@ -76,7 +76,7 @@
         v-if="sendPopup"
         class="transfer-popup"
         @closeModal="closeModal"
-        :popupSize="{ width: '650px', height: '500px' }"
+        :popupSize="{ width: '680px', height: '500px' }"
       >
         <div slot='title' class="exchange-popup_title">
           <img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title>
@@ -184,10 +184,10 @@
     margin-right: 0 !important;
   }
   .exchange-popup_info img {
-    left: 38% !important;
+    left: 35% !important;
   }
   .exchange-popup_body {
-    width: 570px !important;
+    width: 620px !important;
   }
 </style>
 <script>
@@ -263,13 +263,13 @@ export default {
       switch (this.currency) {
         case 'BTC':
           return {
-            toShow: 0.0005,
-            toPay: 0.0006
+            toShow: 0.00035,
+            toPay: 0.0004
           }
         case 'ETH':
           return {
-            toShow: 0.00035,
-            toPay: 0.0004
+            toShow: 0.0005,
+            toPay: 0.0006
           }
         case 'LTC':
           return {
@@ -313,6 +313,7 @@ export default {
         {4: ''},
         {5: ''},
       ],
+      clearInterval(this.timer);
       this.timer = null;
       this.countdown = 59;
     },
@@ -406,6 +407,7 @@ export default {
       this.sendPopup = false;
       this.timeout = 59;
       clearInterval(this.timer);
+      this.clearData();
     },
     onSendSms() {
       const validateErrorAmount = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(this.cryptoCurrencyAmount, this.initialBalance.cryptoCurrency, this.minAmount.toShow, this.currency);

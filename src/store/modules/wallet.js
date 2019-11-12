@@ -248,7 +248,7 @@ export default {
           commit('setNotification', {
             message: 'Transfer done',
             status: 'success-status',
-            icon: 'close'
+            icon: 'done'
           })
         } else if (Object.keys(Errors).length) {
           const errKey = Object.keys(Errors)[0]
