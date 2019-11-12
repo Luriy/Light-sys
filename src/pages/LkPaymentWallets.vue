@@ -5,28 +5,22 @@
         <div class="toggler">
           <p>Wallets</p>
           <div class="flex toggler__panel">
-            <div class="toggle none" :class="{ active: isWalletsMoving }" @click="handleMoving('wallets')">
-              <img src="@/assets/images/arrows.svg" width="15" height="15" fill="#fff" />
-            </div>
-            <div class="toggle minus" :class="{ active: isWalletsDeleting }" @click="handleDeleting('wallets')"></div>
+            <div class="toggle minus" :class="{ active: isWalletsMovingAndDeleting }" @click="handleMovingAndDeleting('wallets')"></div>
             <router-link to="/wallets/create-wallet"><div class="toggle"></div></router-link>
           </div>
         </div>
-        <wallets-list :isWalletsMoving="isWalletsMoving" :isWalletsDeleting="isWalletsDeleting"></wallets-list>
+        <wallets-list :isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"></wallets-list>
       </div>
 
       <div class="fiat-block wallets-list_item">
         <div class="toggler">
           <p>Account and Cards</p>
           <div class="flex toggler_panel">
-            <div class="toggle none" :class="{ active: isCardsMoving }" @click="handleMoving('cards')">
-              <img src="@/assets/images/arrows.svg" width="15" height="15" fill="#fff" />
-            </div>
-            <div class="toggle minus" :class="{ active: isCardsDeleting }" @click="handleDeleting('cards')"></div>
+            <div class="toggle minus" :class="{ active: isCardsMovingAndDeleting }" @click="handleMovingAndDeleting('cards')"></div>
             <router-link to="/wallets/accounts-and-cards"><div class="toggle"></div></router-link>
           </div>
         </div>
-        <cards-list :isCardsDeleting="isCardsDeleting" :isCardsMoving="isCardsMoving"></cards-list>
+        <cards-list :isCardsMovingAndDeleting="isCardsMovingAndDeleting"></cards-list>
       </div>
     </div>
     <div class="operations-history">
@@ -66,10 +60,8 @@ export default {
   },
   data() {
     return {
-      isWalletsDeleting: false,
-      isWalletsMoving: false,
-      isCardsDeleting: false,
-      isCardsMoving: false,
+      isWalletsMovingAndDeleting: false,
+      isCardsMovingAndDeleting: false,
     }
   },
   computed: {
@@ -83,20 +75,12 @@ export default {
     this.$store.dispatch('wallet/GET_OPERATIONS');
   },
   methods: {
-    handleDeleting(type) {
+    handleMovingAndDeleting(type) {
       switch(type) {
         case 'cards':
-          return this.isCardsDeleting = !this.isCardsDeleting;
+          return this.isCardsMovingAndDeleting = !this.isCardsMovingAndDeleting;
         case 'wallets':
-          return this.isWalletsDeleting = !this.isWalletsDeleting;
-      }
-    },
-    handleMoving(type) {
-      switch(type) {
-        case 'cards':
-          return this.isCardsMoving = !this.isCardsMoving;
-        case 'wallets':
-          return this.isWalletsMoving = !this.isWalletsMoving;
+          return this.isWalletsMovingAndDeleting = !this.isWalletsMovingAndDeleting;
       }
     },
     copyToClipboard() {
