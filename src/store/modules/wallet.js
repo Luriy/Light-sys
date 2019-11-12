@@ -245,6 +245,11 @@ export default {
         const { Errors } = response[0]
         const responseData = response[1]
         if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
+          commit('setNotification', {
+            message: 'Transfer done',
+            status: 'success-status',
+            icon: 'done'
+          })
         } else if (Object.keys(Errors).length) {
           const errKey = Object.keys(Errors)[0]
           commit('setNotification', {
