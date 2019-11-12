@@ -199,6 +199,8 @@ import { API_URL } from '../constants'
 import { VALIDATE_AMOUNT_TRANSFER_EXCHANGE, VALIDATE_ADDRESS } from '../validation';
 import { getAuthParams } from '@/functions/auth';
 import LkPopUp from '@/layout/LkPopUp';
+import capitalizeFirstLetter from "@/functions/capitalizeFirstLetter"
+
 
 export default {
   components: {
@@ -229,6 +231,7 @@ export default {
       ],
       timer: null,
       countdown: 59,
+      isTransferSuccess: false,
     }
   },
   mounted() {
@@ -412,11 +415,11 @@ export default {
         this.error = null;
         this.sendPopup = true;
 
-        // this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
+        this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
           this.timer = setInterval(() => {
             this.countdown--
           }, 1000)
-        // });
+        });
       } else {
         this.error = validateErrorAmount || validateErrorAddress;
       } 
@@ -424,13 +427,14 @@ export default {
     onSend() {
       const token = this.smsCodes.map((smsCode, index) =>smsCode[index]).join('');
       this.$store.dispatch('wallet/POST_TRANSFER_CRYPTO', {
-        currency: this.$route.params.currency,
+        currency: capitalizeFirstLetter(this.$route.params.currency.toLowerCase()),
         from: this.$route.params.address,
         to: this.paymentAddress,
-        amount: this.cryptoCurrencyAmount,
+        amount: Number(this.cryptoCurrencyAmount).toFixed(8),
         token
+      }).then((data) => {
+        this.clearData()
       });
-      this.clearData();
     }
   },
   watch: {

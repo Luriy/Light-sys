@@ -68,7 +68,7 @@ export default {
   .error-status {
     color: #ff4200;
   }
-  .sucess-status {
+  .success-status {
     color: #61db53;
   }
   .warning-status {
