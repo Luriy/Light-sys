@@ -1793,7 +1793,7 @@ $eth: #7d8ef6;
 			position:relative;
 			text-align: center;
 			background:#3b2665;
-			border-radius:50%;
+      border-radius:50%;
 			span {
 				display:block;
 				width: 8px;
@@ -2540,7 +2540,7 @@ $eth: #7d8ef6;
 	display: flex;
 	justify-content: center;
     min-height: 100vh;
-	align-items:center;
+	// align-items:center;
 	p {
 		font-size: 16px;
  		color: #fff;
@@ -2549,7 +2549,7 @@ $eth: #7d8ef6;
 	}
 	.login-form {
 		position:relative;
-		width: 550px;
+		width: 100%;
 		background:#3b2665;
 		padding:35px;
 		border-radius:14px;
@@ -2596,11 +2596,14 @@ $eth: #7d8ef6;
 				border-bottom:1px dashed #fff;
 				padding-bottom:4px;
 			}
-		}
+    }
+    &-container {
+      width: 550px;
+      margin-top: 140px;
+    }
 		&-togglers {
-			position:absolute;
-			top: -62px;
-			left: 64px;
+			margin-bottom: 35px;
+			margin-left: 35px;
 			a {
 				font-size: 24px;
 				line-height: 21px;
@@ -2685,6 +2688,13 @@ $eth: #7d8ef6;
   transition: opacity .5s;
 }
 .fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+.fade-long-enter-active, .fade-long-leave-active {
+  transition: opacity 1s;
+}
+.fade-long-enter, .fade-long-leave-to {
+  transition: 0s;
   opacity: 0;
 }
 .slide-fade-enter-active {
@@ -2945,11 +2955,48 @@ $eth: #7d8ef6;
 }
 .error-block {
   height: 12px;
-  margin-top: 17px;
+  margin-top: 20px;
 }
 .wallets-list_item_body .group-toggler {
   width: 100%;
   height: 3px;
   background: #3b2665;
   display: none;
+}
+.login-form {
+  .transaction {
+    margin-bottom: 0;
+  }
+  .error {
+    margin-bottom: 0;
+  }
+  .validation-block {
+    margin: 0 0 20px;
+  }
+  .validation-block .flex {
+    margin-bottom: 12px;
+  }
+  .validation-block .flex:last-of-type {
+    margin-bottom: 0;
+  }
+  .validation-text {
+    margin: 0 0 0 12px;
+    font-size: 13px;
+    color: #db5353;
+    opacity: 1;
+  }
+  .validation-text.valid {
+    opacity: 0.8;
+    color: #ffffff;
+    margin: 0 0 0 9px;
+  }
+  .invalid-icon {
+    width: 9px;
+    height: 9px;
+    border-radius: 4px;
+    background-color: #ff3f3f;
+  }
+}
+.notification-message {
+  margin: 0 14px 0 18px;
 }

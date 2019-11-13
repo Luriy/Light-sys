@@ -11,6 +11,7 @@ import LkPaymentWalletsCreate from '@/pages/LkPaymentWalletsCreate'
 import LkPaymentAccountsCards from '@/pages/LkPaymentAccountsCards'
 import LkPaymentsAndTransfer from '@/pages/LkPaymentsAndTransfer'
 import LkPayFor from '@/pages/LkPayFor'
+import PasswordRecovery from '@/pages/PasswordRecovery'
 
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
@@ -110,6 +111,11 @@ export default new Router({
       path: '/payments-and-transfer/pay-for',
       component: LkPayFor,
       beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/password-recovery',
+      component: PasswordRecovery,
+      beforeEnter: ifNotAuthenticated
     }
   ]
 })
