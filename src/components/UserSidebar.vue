@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import user_sidebar_links from '@/data/user_sidebar_links';
+import user_sidebar_links from '@/data/sidebar/user_sidebar_links';
 
 export default {
 	name: 'UserSidebar',

@@ -8,7 +8,7 @@ import LkPaymentWalletReceive from '@/pages/LkPaymentWalletReceive';
 import LkPaymentExchange from '@/pages/LkPaymentExchange';
 // import LkPaymentSendEth from '@/pages/LkPaymentSendEth'
 import LkPaymentWalletsCreate from '@/pages/LkPaymentWalletsCreate';
-import LkPaymentAccountsCards from '@/pages/LkPaymentAccountsCards';
+import LkPaymentAccountsCards from '@/pages/LkPaymentAccountsCards/index';
 import LkPayFor from '@/pages/LkPayFor';
 import PasswordRecovery from '@/pages/PasswordRecovery';
 

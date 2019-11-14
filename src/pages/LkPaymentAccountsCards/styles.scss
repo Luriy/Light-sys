@@ -1,0 +1,133 @@
+.banks {
+	margin-left: 19px;
+	display: flex;
+}
+.image-plate {
+	width: 36px;
+	height: 36px;
+	border-radius: 14px;
+	background-color: #614990;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 6px;
+
+	&:last-of-type {
+		margin-right: 0;
+	}
+}
+.accounts-list_wrapper_tab.add-new-card-header {
+	background-color: #684e9c;
+	border-radius: 17px;
+}
+.add-cart-action-button.apply,
+.button-wrapper {
+	width: 70px;
+	height: 30px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: 600;
+	border-radius: 8px;
+}
+.button-wrapper {
+	margin-right: 6px;
+}
+.add-cart-action-button.cancel {
+	background-color: #684e9c;
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
+	border-radius: 8px;
+	margin: 1px 0 0 1px;
+	z-index: 10;
+}
+.button-gradient {
+	background-image: linear-gradient(270deg, #8e6ee4 0%, #d268bc 100%);
+}
+.left-side-container {
+	max-width: 515px;
+	width: 100%;
+}
+.add-card-form {
+	border-radius: 8px;
+	border: 1px solid #7e64b3;
+	padding: 20px 25px;
+	width: 100%;
+	margin-right: 25px;
+	margin-bottom: 20px;
+
+	&__line {
+		margin-top: 10px;
+		width: 100%;
+		height: 1px;
+		background-color: #937ac6;
+	}
+
+	&__input {
+		color: #fff;
+		font-size: 14px;
+		font-weight: 600;
+	}
+	&__input::placeholder {
+		color: #c4bada;
+		font-weight: 600;
+	}
+
+	&__inputs-block {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 20px;
+	}
+}
+.virtual-card {
+	max-width: 190px !important;
+	width: 100%;
+	border-radius: 12px;
+	background-color: #422d6a;
+	padding: 12px 12px 16px;
+
+	&__number-and-date {
+		margin: 22px 0 10px;
+	}
+
+	&__paragraph {
+		color: #fff;
+		font-size: 12px;
+		height: 12px;
+	}
+
+	&__currency {
+		font-size: 10px;
+		font-weight: 600;
+		color: #fff;
+		height: 10px;
+	}
+}
+.select {
+	width: 100%;
+	margin-bottom: 10px;
+	&:last-of-type {
+		margin-bottom: 0;
+	}
+
+	&__header {
+		border-radius: 13px;
+		background-color: #7a5db4;
+		padding: 8px 12px 8px 8px;
+	}
+	.image-container {
+		width: 30px;
+		height: 30px;
+		border-radius: 11px;
+		background-color: #9a81ca;
+	}
+	&__title {
+		font-size: 14px;
+		font-weight: 600;
+		color: #fff;
+		margin-left: 10px;
+	}
+
+	.toggle {
+		background-color: #9a81ca;
+	}
+}

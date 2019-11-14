@@ -9,7 +9,7 @@
             </span>
             <transition name="fade">
               <div class="select__modal" v-show="isSelectWalletOpened">
-                <div class="select__modal-item" v-for="wallet in wallets" :class="{ active: wallet.address == $route.params.address }" @click="handleSelectWallet(wallet.currency, wallet.address)">
+                <div class="select__modal-item" v-for="wallet in wallets" :key="wallet.address" :class="{ active: wallet.address == $route.params.address }" @click="handleSelectWallet(wallet.currency, wallet.address)">
                   <img v-if="wallet.currency === 'BTC'" width="17" src="@/assets/images/btc.png" />
                   <img v-if="wallet.currency === 'ETH'" width="17" src="@/assets/images/eth.png" />
                   <img v-if="wallet.currency === 'LTC'" width="17" src="@/assets/images/ltc.svg" />
