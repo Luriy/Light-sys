@@ -1,10 +1,10 @@
 <template>
-  <draggable v-model="draggableWalletsList" v-if="isWalletsMoving" class="wallets-list_item_body">
+  <draggable v-model="draggableWalletsList" v-if="isWalletsMovingAndDeleting" class="wallets-list_item_body">
   <transition-group name="slide-fade">
     <div v-for="(wallet, idx) in wallets"
     @click="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)" class="list__item" :key="wallet.address">
       <transition name="fade">
-        <div class="btn-remove" v-if="isWalletsDeleting" @click="handleDeleteItem(wallet.address)" key="idx">
+        <div class="btn-remove" v-if="isWalletsMovingAndDeleting" @click="handleDeleteItem(wallet.address)" key="idx">
           <img src="@/assets/images/cross.svg" />
         </div>
       </transition>
@@ -39,7 +39,7 @@
       <div v-for="(wallet, idx) in wallets"
       @click="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)" class="list__item" :key="wallet.address">
         <transition name="fade">
-          <div class="btn-remove" v-show="isWalletsDeleting" @click="handleDeleteItem(wallet.address, wallet.address)">
+          <div class="btn-remove" v-show="isWalletsMovingAndDeleting" @click="handleDeleteItem(wallet.address, wallet.address)">
             <img src="@/assets/images/cross.svg" />
           </div>
         </transition>
@@ -66,12 +66,14 @@
             </div>
           </div>
         </div>
+        <div class="group-toggler">
+
+        </div>
       </div>
     </transition-group>
   </div>
 </template>
 <style scoped>
-  
 </style>
 <script>
   import draggable from 'vuedraggable';
@@ -80,18 +82,22 @@
 
   export default {
     name: 'WalletsList',
-    props: ['isWalletsDeleting', 'isWalletsMoving'],
+    props: ['isWalletsMovingAndDeleting'],
     components: {
       draggable,
+    },
+    data() {
+      return {
+        groupTogglerActiveId: null,
+      }
     },
     filters: {
       percentage: value => value ? `${value['1h'].toFixed(2)}%` : '',
     },
     methods: {
       handleWalletRouter(route, e) {
-        if (this.isWalletsDeleting || this.isWalletsMoving) {
+        if (this.isWalletsMovingAndDeleting) {
           return false;
-          
         }
         else {
           this.$router.push(route);
@@ -117,6 +123,7 @@
         wallets: 'wallet/WALLETS',
         percentage: 'wallet/PERCENTAGE',
       }),
+
     }
   }
 </script>

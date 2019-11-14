@@ -45,9 +45,9 @@
         </div>
         <div class="send-form-button">
           <button @click="onSendSms">Send</button>
-          <div class="send-form__error-block">
+          <div class="error-block">
             <transition name="fade">
-              <p class="send-form__error" v-show="error">
+              <p class="error" v-show="error">
                 {{ error }}
               </p>
             </transition>
