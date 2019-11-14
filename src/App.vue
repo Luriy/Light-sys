@@ -4,7 +4,7 @@
     <template v-if="notification && notification.message">
       <v-snackbar
         v-model="notification"
-        :timeout="3000"
+        :timeout="15000"
         :multi-line="true"
         right="right"
         top="top"
@@ -12,7 +12,7 @@
         @input="closeNotification"
       >
         <i :class="`material-icons status ${notification.status}`">{{notification.icon}}</i>
-        {{notification.message}}
+        <p class="notification-message">{{notification.message}}</p>
         <i class="material-icons close-action" @click="closeNotification">close</i>
       </v-snackbar>
     </template>

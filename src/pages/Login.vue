@@ -1,37 +1,41 @@
 <template>
   <login-layout>
   	<div class="login-form-wrapper">
-		<div class="login-form">
-			<div class="login-form-togglers">
-				<router-link to="/register">Sign in</router-link>
-				<router-link to="/login">Login in</router-link>
-			</div>
-			<form @submit.prevent="login">
-				<div class="login-form-input">
-					<input type="" id="login" name="login" v-model="user" v-on:input="checkLoginType" placeholder="Email/phone number" required="">
-				</div>
-				<div class="login-form-input">
-					<input type="password" required="" v-model="password" name="password" placeholder="Password">
-				</div>
-				<div class="login-form-helpers">
-					<div class="login-form-remember">
-						<label class="checkbox">
-							<input type="checkbox" name="">
-							<div></div>
-							<span class="text">Remember me</span>
-						</label>
-					</div>
+      <div class="login-form-container">
+  			<div class="login-form-togglers">
+  				<router-link to="/register">Sign in</router-link>
+  				<router-link to="/login">Login in</router-link>
+  			</div>
+        <transition name="fade-long">
+          <div class="login-form" v-if="isLoaded">
+      			<form @submit.prevent="login">
+      				<div class="login-form-input">
+      					<input type="" id="login" name="login" v-model="user" v-on:input="checkLoginType" placeholder="Email/phone number" required="">
+      				</div>
+      				<div class="login-form-input">
+      					<input type="password" required="" v-model="password" name="password" placeholder="Password">
+      				</div>
+      				<div class="login-form-helpers">
+      					<div class="login-form-remember">
+      						<label class="checkbox">
+      							<input type="checkbox" name="">
+      							<div></div>
+      							<span class="text">Remember me</span>
+      						</label>
+      					</div>
 
-					<div class="login-form-forgot">
-						<router-link to="login/reset">Forgot password?</router-link>
-					</div>
-				</div>
-				<div class="login-form-button">
-					<button type="submit" class="btn">Login</button>
-				</div>
-				{{error}}
-			</form>
-		</div>
+      					<div class="login-form-forgot">
+      						<router-link to="password-recovery">Forgot password?</router-link>
+      					</div>
+      				</div>
+      				<div class="login-form-button">
+      					<button type="submit" class="btn">Login</button>
+      				</div>
+      				{{error}}
+      			</form>
+      		</div>
+        </transition>
+      </div>
   	</div>
   </login-layout>
 </template>
@@ -51,8 +55,12 @@ export default {
   		loginType: false,
   		user:null,
   		password:null,
-  		error: null
+      error: null,
+      isLoaded: false,
   	}
+  },
+  mounted() {
+    this.isLoaded = true;
   },
     methods: {
     	checkLoginType() {
