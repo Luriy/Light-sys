@@ -4,6 +4,7 @@ import { getAuthParams } from '@/functions/auth'
 import { API_URL } from '@/constants'
 
 export default {
+  namespaced: true,
   getters: {
     CARDS: state => state.cards
   },
@@ -22,9 +23,7 @@ export default {
           ...getAuthParams()
         }
       }).then(({ data }) => {
-        console.log(data)
-        const returnData = parsePythonArray(data)['1'].return
-        console.log(returnData)
+        const {Cards: cards} = parsePythonArray(data)['1'].return;
         // const result = Object.keys(returnData).reduce((acc, walletCurrency) => {
         //   acc.push(
         //     ...Object.values(returnData[walletCurrency]).map(item => ({
@@ -38,7 +37,7 @@ export default {
         //   return acc
         // }, []).filter(item => item.status !== 'Frozen');
 
-        return store.commit('SET_CARDS', [])
+        return store.commit('SET_CARDS', cards)
       })
     }
   }

@@ -63,7 +63,7 @@ export default {
     SET_PERCENTAGE: (state, payload) => (state.percentage = payload),
     SET_OPERATIONS: (state, payload) => (state.operations = payload),
     SET_TRANSFER_INFO: (state, payload) => (state.transferInfo = payload),
-    SET_EXCHANGE_SUCCES: (state, payload) => (state.exchangeSucces = payload)
+    SET_EXCHANGE_SUCCES: (state, payload) => (state.exchangeSucces = payload),
   },
   actions: {
     // todo убрать в отдельный стор
@@ -130,7 +130,6 @@ export default {
       })
     },
     GET_WALLETS: ({ commit }) => {
-      console.log('f')
       return Axios({
         url: API_URL,
         method: 'POST',

@@ -1,6 +1,5 @@
 <template>
-  <lk-layout>
-  	<div class="exchange-block">
+  	<div class="exchange-index">
   		<div class="exchange-block_currency">
   			<div class="arrows" @click="toggleCurrency();" v-bind:class="{active: dir}">
   				<img src="@/assets/images/exchange-arrs.svg" alt title>
@@ -273,7 +272,6 @@
         </div>
       </lk-pop-up>
   	</div>
-  </lk-layout>
 </template>
 
 <script>
@@ -358,12 +356,12 @@ export default {
         }, 1000)
       });
     },
-    setData() {
-      if (this.wallets && this.wallets.length) {
-        this.exchangeCurrency = this.wallets.filter(({currency}) => currency === 'BTC')[0];
-        this.receiveCurrency = this.wallets.filter(({currency}) => currency === 'ETH')[0];
-      }
-    },
+    // setData() {
+    //   if (this.wallets && this.wallets.length) {
+    //     this.exchangeCurrency = this.wallets.filter(({currency}) => currency === 'BTC')[0];
+    //     this.receiveCurrency = this.wallets.filter(({currency}) => currency === 'ETH')[0];
+    //   }
+    // },
     exchangeAction() {
       this.exchangeModal = !this.exchangeModal;
       this.receiveModal = false;
@@ -452,31 +450,12 @@ export default {
   },
   computed: {
     wallets() {
-      const data = this.$store.getters['wallet/WALLETS'].map((item) => {
+      return this.$store.getters['wallet/WALLETS'].map((item) => {
         return {
           ...item,
           ...currencyList[item.currency]
         }
       }) || [];
-      data.push(
-        {
-          code: 'btc',
-          currency: 'BTC',
-          address: '3PQhzGATmPfBcswJCxj4QqSipDMiEsnNih',
-          balance: 10,
-          balanceUSD: 1055550,
-          ...currencyList['BTC']
-        },
-        {
-          code: 'eth',
-          currency: 'ETH',
-          address: '3Jbk3LDY23bW3xcRWku921M5xDZVXC1bCj',
-          balance: 150,
-          balanceUSD: 1055,
-          ...currencyList['ETH']
-        },
-      );
-      return data
     },
     user() {
       return {...getAuthParams()}
@@ -507,9 +486,9 @@ export default {
     this.getTypes();
   },
   watch: {
-    wallets() {
-      this.setData()
-    },
+    // wallets() {
+    //   this.setData()
+    // },
     countdown(value) {
       if (value === 0) {
         this.countdown = 59;

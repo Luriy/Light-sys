@@ -5,6 +5,7 @@ import auth from './modules/auth'
 import wallet from './modules/wallet'
 import account from './modules/account'
 import alerts from './modules/alerts'
+import exchange from './modules/exchange'
 import common from './modules/common'
 import { BASE_URL } from '@/settings/config'
 Vue.use(Vuex)
@@ -18,6 +19,7 @@ export default new Vuex.Store({
     wallet,
     account,
     alerts,
+    exchange,
     common
   },
   state: {
