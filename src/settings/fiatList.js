@@ -4,5 +4,8 @@ export default {
   },
   110: {
     icon: require('@/assets/images/fiat/sber-bank.png'),
-  }
+  },
+  111: {
+    icon: require('@/assets/images/fiat/any-bank.png'),
+  },
 }

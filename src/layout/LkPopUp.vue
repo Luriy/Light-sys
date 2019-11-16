@@ -30,5 +30,234 @@ export default {
 </script>
 
 <style>
-  
+  .success-popup_title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .status {
+      color: #ffffff;
+      font-size: 36px;
+      font-weight: 600;
+      line-height: 21px;
+    }
+
+    .icon-wrapper {
+      width: 43px;
+      height: 43px;
+      margin: 30px 0;
+      border-radius: 17px;
+      background-color: #4d3779;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .success-popup_body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .from {
+      margin-top: 15px;
+      color: #fda50c;
+    }
+
+    .to {
+      margin-top: 15px;
+      color: #7d8ef6;
+    }
+
+    .transaction-info {
+      margin-top: 15px;
+    }
+
+    .images {
+      display: flex;
+      margin: 15px 0;
+    }
+
+    .success_arrows {
+      margin: 0 5px;
+    }
+  }
+
+  .popup-body {
+    position: fixed;
+    z-index: 99;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(38,8,72, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .popup-wrapper {
+      z-index: 100;
+      border-radius: 8px;
+      background: #3b2665;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .exchange-popup_title {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      position: absolute;
+      top: -33px;
+    }
+
+    .question {
+      opacity: 0.5;
+      color: #ffffff;
+      font-size: 14px;
+      line-height: 21px;
+      margin: 15px 0;
+    }
+    .transaction {
+      color: #ffffff;
+      text-align: center;
+      padding-top: 30px;
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 35px;
+    }
+
+    .number-block {
+      display: flex;
+
+      .number {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 21px;
+        margin-right: 5px;
+      }
+
+      .link {
+        color: #f787ff;
+        font-size: 14px;
+        line-height: 21px;
+      }
+    }
+  }
+
+  .exchange-popup_buttons {
+    .back {
+      width: 88px;
+      height: 50px;
+      border-radius: 14px 14px 0 0;
+      background-color: #4d3779;
+      border: none;
+      opacity: 0.5;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 21px;
+    }
+  }
+  .exchange-popup_info {
+    display: flex;
+    justify-content: space-between;
+
+    .from {
+      margin-left: 15px;
+      color: #fda50c;
+    }
+
+    .to {
+      margin-right: 15px;
+      color: #7d8ef6;
+    }
+  }
+
+  .exchange-popup_sms-number {
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .timer-body {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+
+      .title {
+        color: #ffffff;
+        opacity: 0.5;
+        font-size: 14px;
+        line-height: 21px;
+        margin-right: 5px;
+      }
+
+      .timer {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 21px;
+      }
+    }
+
+    .number-input {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      background-color: #4d3779;
+      border: none;
+      color: #ffffff;
+      text-align: center;
+      font-size: 36px;
+      font-weight: 600;
+      line-height: 21px;
+      &::placeholder {
+        color: #ffffff;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .network-fee, .balance {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px;
+    opacity: 0.5;
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 21px;
+
+    .title {
+      flex-grow: 1;
+
+      span {
+        text-transform: capitalize;
+      }
+    }
+
+    .btc-value {
+      margin-right: 30px;
+    }
+  }
+
+  .exchange-popup_body {
+    width: 477px;
+    height: 113px;
+    border-radius: 14px;
+    background-color: #260848;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
 </style>
