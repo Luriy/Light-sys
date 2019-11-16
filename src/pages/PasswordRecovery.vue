@@ -18,11 +18,7 @@
       				<div class="login-form-button">
       					<button type="submit" class="btn">Send</button>
       				</div>
-              <transition name="fade-long">
-                <div class="error-block" v-if="commonError">
-                  <p class="error">{{commonError}}</p>
-                </div>
-              </transition>
+              <error :error="commonError"></error>
       			</form>
             
           </div>
@@ -98,10 +94,12 @@ import { parsePythonDataObject } from '@/functions/helpers'
 import sha512 from 'js-sha512';
 import {AUTH_REQUEST} from '@/store/actions/auth'
 import checkLoginType from '@/functions/checkLoginType'
+import Error from '@/components/Error';
 
 export default {
   components: {
-    LoginLayout
+    LoginLayout,
+    Error,
   },
   data() {
   	return {
@@ -130,8 +128,8 @@ export default {
     getPin() {
       const { user, loginType } = this;
         Axios({ url: API_URL, method: 'POST', params: {
-          Comand: 'PasswordRecoveryPhone',
-          Phone: loginType === 'Phone' ? user : '',
+          Comand: 'PasswordRecoveryPhone', // если e-mail, запрос тоже идет на эту команду,
+          Phone: loginType === 'Phone' ? user : '', // но отправляется параметр Email
           Email: loginType === 'Email' ? user : '',
         }}).then((resp) => {
           const data = parsePythonDataObject(resp);

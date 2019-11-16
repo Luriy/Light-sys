@@ -6,7 +6,7 @@
       v-for="(item, idx) in trans"
       :class="{active: item.isactive}" 
       @click="handleClick(item)" 
-      :key="idx"
+      :key="trans.code"
      >
      <transition name="fade">
       <div class="btn-remove" v-show="isCardsMovingAndDeleting" @click="handleDeleteItem(idx)">
@@ -73,7 +73,7 @@
         v-for="(item, idx) in trans"
         :class="{active: item.isactive}" 
         @click="handleClick(item)" 
-        :key="idx"
+        :key="trans.code"
        >
        <transition name="fade">
         <div class="btn-remove" v-show="isCardsMovingAndDeleting" @click="handleDeleteItem(idx)">

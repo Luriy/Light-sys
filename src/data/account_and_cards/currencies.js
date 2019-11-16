@@ -2,7 +2,6 @@ export default [
 	{
 		code: '₽',
 		full: 'Russian Ruble',
-		isActive: false,
 		banks: [
 			{
 				image: require('@/assets/images/tinkoff-bank.png'),

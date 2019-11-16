@@ -45,13 +45,7 @@
         </div>
         <div class="send-form-button">
           <button @click="onSendSms">Send</button>
-          <div class="error-block">
-            <transition name="fade">
-              <p class="error" v-show="error">
-                {{ error }}
-              </p>
-            </transition>
-          </div>
+          <error :error="error"></error>
         </div>
         
         <div class="send-form-totals">
@@ -200,13 +194,15 @@ import { VALIDATE_AMOUNT_TRANSFER_EXCHANGE, VALIDATE_ADDRESS } from '../validati
 import { getAuthParams } from '@/functions/auth';
 import LkPopUp from '@/layout/LkPopUp';
 import capitalizeFirstLetter from "@/functions/capitalizeFirstLetter"
+import Error from '@/components/Error';
 
 
 export default {
   components: {
     LkLayout,
     PaymentsAndTransfer,
-    LkPopUp
+    LkPopUp,
+    Error
   },
   data() {
     return {
@@ -219,7 +215,6 @@ export default {
       isCryptoCurrencyAmountInputClicked: false,
       isCurrencyAmountInputClicked: false,
       isSelectWalletOpened: false,
-      error: null,
       sendPopup: false,
       smsCodes: [
         {0: ''},
