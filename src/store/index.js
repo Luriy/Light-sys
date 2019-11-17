@@ -8,6 +8,7 @@ import alerts from './modules/alerts';
 import common from './modules/common';
 import card from './modules/card';
 import { BASE_URL } from '@/settings/config';
+import exchange from './modules/exchange';
 Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== 'production';
@@ -19,6 +20,7 @@ export default new Vuex.Store({
 		wallet,
 		account,
 		alerts,
+		exchange,
 		common,
 		card,
 	},

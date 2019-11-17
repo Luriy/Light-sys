@@ -13,9 +13,11 @@
 					<div class="button-wrapper button-gradient">
 						<button class="add-cart-action-button cancel" @click="handleCancel">Cancel</button>
 					</div>
-					<button class="add-cart-action-button apply button-gradient" @click="addCard">
-						Apply
-					</button>
+					<div class="button-wrapper button-gradient no-margin">
+						<button class="add-cart-action-button apply button-gradient" @click="addCard">
+							Apply
+						</button>
+					</div>
 				</div>
 			</transition>
 		</div>
@@ -98,27 +100,30 @@
 						</transition>
 					</div>
 				</div>
-				<div class="virtual-card">
-					<div class="flex justify-content-between align-items-center">
-						<img src="@/assets/images/tinkoff-bank-bigger.png" alt />
-						<p class="virtual-card__currency">{{ this.currentBank.currency }}</p>
-					</div>
-					<div class="flex flex-column">
-						<div class="flex justify-content-between virtual-card__number-and-date">
-							<p class="virtual-card__paragraph">
-								{{ maskInput(cardInfo.number, cardInfo.numberMask) }}
-							</p>
-							<p class="virtual-card__paragraph">
-								{{ maskInput(cardInfo.date, cardInfo.dateMask) }}
-							</p>
+				<div class="flex flex-column align-items-center virtual-card__wrapper">
+					<div class="virtual-card">
+						<div class="flex justify-content-between align-items-center">
+							<img src="@/assets/images/tinkoff-bank-bigger.png" alt />
+							<p class="virtual-card__currency">{{ this.currentBank.currency }}</p>
 						</div>
-						<div class="flex justify-content-between">
-							<p class="virtual-card__paragraph">
-								{{ cardInfo.name ? cardInfo.name : 'Full Name' }}
-							</p>
-							<img src="@/assets/images/mastercard.png" alt="mastercard" />
+						<div class="flex flex-column">
+							<div class="flex justify-content-between virtual-card__number-and-date">
+								<p class="virtual-card__paragraph">
+									{{ maskInput(cardInfo.number, cardInfo.numberMask) }}
+								</p>
+								<p class="virtual-card__paragraph">
+									{{ maskInput(cardInfo.date, cardInfo.dateMask) }}
+								</p>
+							</div>
+							<div class="flex justify-content-between">
+								<p class="virtual-card__paragraph">
+									{{ cardInfo.name ? cardInfo.name : 'Full Name' }}
+								</p>
+								<img src="@/assets/images/mastercard.png" width="21" alt="mastercard" />
+							</div>
 						</div>
 					</div>
+					<p class="virtual-card__title">Your card 🎉</p>
 				</div>
 			</div>
 			<error :error="error"></error>
@@ -228,7 +233,7 @@ export default {
 				currentBank: { psid, currency },
 			} = this;
 
-			const validateError = VALIDATE_CARD(psid);
+			const validateError = VALIDATE_CARD({ number, date, name, cvv, psid });
 
 			if (validateError) {
 				this.error = validateError;
@@ -245,7 +250,6 @@ export default {
 					})
 					.then((data) => {
 						const errors = Object.values(data[0]['Errors']);
-
 						if (errors.length) {
 							this.error = erros[0];
 						} else if (data['1'].return.Status === 'Complete') {

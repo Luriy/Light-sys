@@ -1,13 +1,12 @@
 import Axios from 'axios';
-import { parsePythonArray } from '@/functions/helpers';
+import { parsePythonArray, parsePythonDataObject } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
 import { API_URL } from '@/constants';
-import { parsePythonDataObject } from '@/functions/helpers';
 
 export default {
 	namespaced: true,
 	state: {
-		cards: {},
+		cards: [],
 	},
 	getters: {
 		CARDS: (state) => state.cards,
@@ -27,22 +26,10 @@ export default {
 					...getAuthParams(),
 				},
 			}).then(({ data }) => {
-				const returnData = parsePythonArray(data)['1'].return;
-				console.log(returnData);
-				// const result = Object.keys(returnData).reduce((acc, walletCurrency) => {
-				//   acc.push(
-				//     ...Object.values(returnData[walletCurrency]).map(item => ({
-				//       address: item.Walet,
-				//       status: item.Status,
-				//       currency: walletCurrency,
-				//       balance: item.Balance,
-				//       balanceUSD: item.BalanceUsd
-				//     }))
-				//   )
-				//   return acc
-				// }, []).filter(item => item.status !== 'Frozen');
-
-				return store.commit('SET_CARDS', []);
+				const returnData = parsePythonArray(data)['1'].return.Cards;
+				const result = Object.values(returnData).filter((item) => item.status !== 'Frozen');
+				console.log(result);
+				return store.commit('SET_CARDS', result);
 			});
 		},
 		CREATE_CARD: (store, payload) => {
@@ -61,6 +48,21 @@ export default {
 					Currency,
 				},
 			}).then((data) => parsePythonDataObject(data));
+		},
+		DELETE_CARD: (store, payload) => {
+			const { NumberCard } = payload;
+			return Axios({
+				url: API_URL,
+				method: 'POST',
+				params: {
+					Comand: 'FrozenCard',
+					...getAuthParams(),
+					NumberCard,
+				},
+			}).then((data) => {
+				console.log(data);
+				return parsePythonDataObject(data);
+			});
 		},
 	},
 };

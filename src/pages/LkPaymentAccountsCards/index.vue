@@ -13,7 +13,7 @@
 				</div>
 				<div class="accounts-list_wrapper_tabs">
 					<div class="accounts-list_wrapper_tab" v-bind:class="{ active: tabs[0].isActive }">
-						<div class="accounts-list_wrapper_tab_header" v-on:click="handleOpenTab(tabs[0])">
+						<div class="accounts-list_wrapper_tab_header" v-on:click="handleOpenTab(tabs[0], tabs)">
 							<div class="icon">
 								<div class="image"><img src="@/assets/images/wallet.svg" alt title /></div>
 								<p>Open an account</p>
@@ -28,7 +28,6 @@
 							<div class="accounts-list_wrapper_tab_body_table">
 								<div
 									class="accounts-list_wrapper_tab_body_table_tr"
-									v-on:click="setActive(item)"
 									v-for="item in tabs[1].tableData"
 									:key="item.full"
 								>
@@ -46,17 +45,39 @@
 					</div>
 
 					<div class="accounts-list_wrapper_tab" v-bind:class="{ active: tabs[1].isActive }">
-						<div class="accounts-list_wrapper_tab_header" v-on:click="handleOpenTab(tabs[1])">
+						<div class="accounts-list_wrapper_tab_header" v-on:click="handleOpenTab(tabs[1], tabs)">
 							<div class="icon">
 								<div class="image"><img src="@/assets/images/credit-card2.svg" alt title /></div>
 								<p>Open a card</p>
 							</div>
 							<div class="flex align-items-center">
-								<transition name="fade">
+								<transition name="fade-medium">
+									<div
+										class="button-wrapper button-gradient"
+										v-show="tabs[1].isActive && isEditing"
+										@click="handleCancel"
+									>
+										<button class="add-cart-action-button cancel no-margin">
+											Cancel
+										</button>
+									</div>
+								</transition>
+								<transition name="fade-medium">
+									<div
+										class="button-wrapper button-gradient"
+										v-show="tabs[1].isActive && isEditing"
+										@click="handleApply"
+									>
+										<button class="add-cart-action-button apply button-gradient">
+											Apply
+										</button>
+									</div>
+								</transition>
+								<transition name="fade-medium">
 									<div
 										class="button-wrapper button-gradient"
 										@click="handleEdit"
-										v-show="tabs[1].isActive"
+										v-show="tabs[1].isActive && !isEditing"
 									>
 										<button class="add-cart-action-button cancel">
 											Edit
@@ -68,73 +89,67 @@
 							</div>
 						</div>
 
-						<div class="accounts-list_wrapper_tab_body">
+						<div class="accounts-list_wrapper_tab_body ">
 							<div class=" accounts-list_wrapper_tab_body_title">
 								What type of card do you want to open?
 							</div>
 
-							<div class="accounts-list_wrapper_tab_body_table">
+							<div class="accounts-list_wrapper_tab_body_table cards">
 								<div
 									class="accounts-list_wrapper_tab_body_table_tr"
-									v-on:click="setActive(item)"
-									v-for="item in tabs[1].tableData"
+									v-for="item in tabs[1].currencies"
 									:key="item.full"
 								>
 									<div
 										class="accounts-list_wrapper_tab full-width"
-										v-bind:class="{ active: tabs[1].isActive }"
+										v-bind:class="{ active: item.isActive }"
 									>
 										<div
 											class="accounts-list_wrapper_tab_header flex align-items-center justify-content-between"
+											@click="handleOpenTab(item, tabs[1].currencies)"
 										>
 											<div class="flex align-items-center">
 												<div class="currency">
 													<div class="icon">{{ item.code }}</div>
-													<div class="text">{{ item.full }}</div>
+													<div class="text">{{ item.fullName }}</div>
 												</div>
 												<div class="banks">
 													<div class="image-plate" v-for="bank in item.banks" :key="bank.image">
-														<img :src="bank.image" />
+														<!-- <img :src="bank.image" /> -->1
 													</div>
 												</div>
 											</div>
 											<div class="toggle"></div>
 										</div>
+										<div class="accounts-list_wrapper_tab_body">
+											<cards-list
+												:currency="item.currency"
+												@onDeleteCard="writeSoonDeleteCardToStore"
+												:isEditing="isEditing"
+											></cards-list>
+										</div>
 									</div>
-									<!-- <div class="right">
- 									<div class="type" v-if="item.isActive">
- 										<div class="checkbox-type" v-on:click="item.type = 1" v-bind:class="{active: item.type == 1}">
- 											<div></div>
- 											<span>Physical</span>
- 										</div>
- 										<div class="checkbox-type" v-on:click="item.type = 2" v-bind:class="{active: item.type == 2}">
- 											<div></div>
- 											<span>Virtual</span>
- 										</div>
- 									</div>
- 									<div class="checkbox" v-bind:class="{active: item.isActive}"></div>	 									
- 								</div> -->
 								</div>
 							</div>
 							<add-new-card></add-new-card>
 						</div>
 					</div>
-					<deposit :isActive="tabs[2].isActive" @open="handleOpenTab(tabs[2])"></deposit>
+					<deposit :isActive="tabs[2].isActive" @open="handleOpenTab(tabs[2], tabs)"></deposit>
 				</div>
 			</div>
 		</div>
-		<cards-list></cards-list>
 	</lk-layout>
 </template>
 
 <script>
 import LkLayout from '@/layout/LkLayout';
-import 'vue-range-slider/dist/vue-range-slider.css';
-import currencies from '@/data/account_and_cards/currencies';
+// import currencies from '@/data/account_and_cards/currencies';
 import './styles.scss';
 import AddNewCard from './components/AddNewCard';
 import Deposit from './components/Deposit';
 import CardsList from './components/CardsList';
+import { mapGetters } from 'vuex';
+import getCurrencyInfo from '@/functions/getCurrencyInfo';
 
 export default {
 	name: 'LkPaymentWalletsWalletsList',
@@ -145,10 +160,33 @@ export default {
 		CardsList,
 	},
 	mounted() {
-		this.$store.dispatch('common/GET_ALL_CURRENCIES');
+		this.$store.dispatch('common/GET_ALL_CURRENCIES').then(
+			(data) =>
+				(this.tabs[1].currencies = data.map((currency) => {
+					const { fullName, code } = getCurrencyInfo(currency);
+					return {
+						currency,
+						fullName,
+						code,
+						banks: this.banks.filter(({ valute }) => valute === currency),
+						isActive: false,
+					};
+				})),
+		);
+		this.$store.dispatch('common/GET_BANKS');
+	},
+	computed: {
+		...mapGetters({
+			currencies: 'common/CURRENCIES',
+			banks: 'common/BANKS',
+		}),
 	},
 	data() {
 		return {
+			isEditing: false,
+			freezeActive: false,
+			deletingCards: [],
+			editingsCards: [],
 			tabs: [
 				{
 					isActive: false,
@@ -180,8 +218,9 @@ export default {
 				},
 				{
 					isActive: true,
-					tableData: currencies,
-					isAddCardActive: true,
+					isCardsListActive: false,
+					currencies: [],
+					isEditing: false,
 				},
 				{
 					isActive: false,
@@ -190,22 +229,43 @@ export default {
 		};
 	},
 	methods: {
-		setActive: function(tab) {
-			a.forEach(function(c) {
-				if (c != e) {
-					c.isActive = false;
-				} else {
-					c.isActive = true;
+		handleOpenTab(currentTab, tabs) {
+			if (!this.freezeActive) {
+				if (this.tabs.indexOf(currentTab) === 1 && currentTab.isActive === true) {
+					this.isEditing = false;
 				}
-			});
-		},
 
-		handleOpenTab(currentTab) {
-			const isCurrentTabActive = currentTab.isActive;
-			this.tabs.forEach((tab) => (tab.isActive = false));
-			currentTab.isActive = !isCurrentTabActive;
+				const isCurrentTabActive = currentTab.isActive;
+				tabs.forEach((tab) => (tab.isActive = false));
+				currentTab.isActive = !isCurrentTabActive;
+			}
 		},
-		handleEdit() {},
+		handleEdit() {
+			this.freezeActive = true;
+			setTimeout(() => (this.freezeActive = false), 200);
+
+			this.isEditing = true;
+		},
+		handleCancel() {
+			this.freezeActive = true;
+			setTimeout(() => (this.freezeActive = false), 200);
+
+			this.deletingCards = [];
+			this.editingCards = [];
+
+			this.isEditing = false;
+		},
+		writeSoonDeleteCardToStore(cardNumber) {
+			this.deletingCards.push(cardNumber);
+		},
+		handleApply() {
+			console.log(this.deletingCards);
+			this.deletingCards.forEach((card) =>
+				this.$store
+					.dispatch('card/DELETE_CARD', { NumberCard: card })
+					.then(() => this.handleCancel()),
+			);
+		},
 	},
 };
 </script>

@@ -33,9 +33,12 @@ export default {
 				const returnData = Object.values(parsePythonArray(data)['1'].return.Valute).map(
 					(item) => item[0],
 				);
+
 				console.log(returnData);
 
-				return commit('SET_CURRENCIES', returnData);
+				commit('SET_CURRENCIES', returnData);
+
+				return returnData;
 			});
 		},
 		GET_ALL_BALANCE: (store) => {

@@ -29,12 +29,12 @@ export default {
   }),
   methods: {
     closeNotification () {
-      this.$store.dispatch('wallet/clearNotification')
+      this.$store.dispatch('alerts/clearNotification')
     }
   },
   computed: {
     notification () {
-      return this.$store.getters['wallet/notification']
+      return this.$store.getters['alerts/notification']
     }
   },
   created() {

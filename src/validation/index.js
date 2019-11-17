@@ -9,11 +9,20 @@ export const VALIDATE_ADDRESS = (address, currencyName) => {
 	if (address === null) {
 		return `Enter ${currencyName} address.`;
 	} else if (address.length < 5) {
-		return `Enter valid ${currencyName} address.`;
+		return `Enter correct ${currencyName} address.`;
 	} else return null;
 };
-export const VALIDATE_CARD = (psid) => {
-	if (!psid) {
+export const VALIDATE_CARD = ({ number, date, name, cvv, psid }) => {
+	console.log(number, date, name, cvv, psid);
+	if (number.length < 19) {
+		return `Enter correct card number.`;
+	} else if (date.length < 5) {
+		return `Enter correct date.`;
+	} else if (name.length < 3) {
+		return `Enter correct full name.`;
+	} else if (cvv.length < 3) {
+		return `Enter correct CVV.`;
+	} else if (!psid) {
 		return `You need to choose bank.`;
 	} else return null;
 };
