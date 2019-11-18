@@ -216,7 +216,7 @@ export default {
               .then(() => {
       		    	this.commonError = null;
                 this.$router.push('/');
-                this.$store.commit('wallet/setNotification', {
+                this.$store.commit('alerts/setNotification', {
                   message: 'You have successfully registered!',
                   status: 'success-status',
                   icon: 'done'

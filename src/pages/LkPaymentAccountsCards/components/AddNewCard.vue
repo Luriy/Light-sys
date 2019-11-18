@@ -173,7 +173,10 @@ export default {
 	mounted() {
 		const select = document.querySelector('.add-new-card-header .select');
 		window.addEventListener('click', ({ target }) => {
-			if (!target.classList.contains('.add-new-card-header .select') && !select.contains(target)) {
+			if (
+				(target ? false : !target.classList.contains('.add-new-card-header .select')) &&
+				!select.contains(target)
+			) {
 				this.select.isActive = false;
 			}
 		});
@@ -257,7 +260,7 @@ export default {
 						} else if (data['1'].return.Status === 'Complete') {
 							this.handleCancel();
 							this.$store.dispatch('card/GET_CARDS');
-							this.$store.commit('wallet/setNotification', {
+							this.$store.dispatch('alerts/setNotification', {
 								message: `Card has been successfully added`,
 								status: 'success-status',
 								icon: 'done',

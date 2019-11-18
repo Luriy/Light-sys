@@ -152,6 +152,30 @@
 		&:last-of-type {
 			margin-bottom: 0;
 		}
+		&__body {
+			padding-right: 10px;
+			scrollbar-width: thin;
+			scrollbar-color: #947dc1 transparent;
+
+			&::-webkit-scrollbar {
+				width: 13px;
+			}
+			&::-webkit-scrollbar-track {
+				background: transparent;
+			}
+			&::-webkit-scrollbar-thumb,
+			&::-webkit-scrollbar-thumb:hover {
+				cursor: pointer;
+				width: 13px;
+				margin: 15px 0;
+				border-radius: 1px;
+				background-color: #947dc1;
+			}
+			&::-webkit-scrollbar-thumb {
+				box-shadow: inset -3px 0 0 5px #7a5db4;
+				-webkit-box-shadow: inset -3px 0 0 5px #7a5db4;
+			}
+		}
 
 		&__header {
 			border-radius: 13px;
@@ -229,7 +253,7 @@
 .virtual-cards-list {
 	display: flex;
 	flex-wrap: wrap;
-	padding-top: 30px;
+	padding-top: 20px;
 
 	.image-container {
 		width: 30px;
@@ -300,14 +324,8 @@
 		margin-top: 5px !important;
 	}
 }
+.card-list-delete-popup,
 .card-list-edit-popup {
-	.select__header {
-		background-color: #4c347c !important;
-	}
-	.popup-wrapper {
-		border-radius: 13px;
-		background-color: #3b2665;
-	}
 	.image-plate {
 		width: 53px;
 		height: 53px;
@@ -318,6 +336,16 @@
 		align-items: center;
 		transform: translateY(-50%);
 	}
+}
+.card-list-edit-popup {
+	.select__header {
+		background-color: #4c347c !important;
+	}
+	.popup-wrapper {
+		border-radius: 13px;
+		background-color: #3b2665;
+	}
+
 	&__wrapper {
 		max-width: 430px !important;
 		width: 100%;
@@ -349,7 +377,6 @@
 	}
 
 	&__title {
-		margin: 63px 0 0;
 		font-size: 36px;
 		font-weight: 600;
 		color: #fff;

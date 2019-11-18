@@ -6,7 +6,7 @@
 				v-for="(item, idx) in trans"
 				:class="{ active: item.isactive }"
 				@click="handleClick(item)"
-				:key="trans.code"
+				:key="item.code"
 			>
 				<transition name="fade">
 					<div class="btn-remove" v-show="isCardsMovingAndDeleting" @click="handleDeleteItem(idx)">
@@ -73,7 +73,7 @@
 				v-for="(item, idx) in trans"
 				:class="{ active: item.isactive }"
 				@click="handleClick(item)"
-				:key="trans.code"
+				:key="item.code"
 			>
 				<transition name="fade">
 					<div class="btn-remove" v-show="isCardsMovingAndDeleting" @click="handleDeleteItem(idx)">
@@ -137,6 +137,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import draggable from 'vuedraggable';
+import getCardsByCurrency from '@/functions/getCardsByCurrency';
 
 export default {
 	name: 'CardsList',
@@ -186,12 +187,17 @@ export default {
 			],
 		};
 	},
+	beforeCreate() {
+		this.$store.dispatch('common/GET_ALL_CURRENCIES').then(data => console.log(data));
+	},
 	computed: {
 		...mapGetters({
-			accounts: 'account/CARDS',
+			currencies: 'common/CURRENCIES',
+			cards: 'GET_CARDS',
 		}),
 	},
 	methods: {
+		getCardsByCurrency,
 		handleDeleteItem(id) {
 			console.log(this.accounts);
 			console.log(id);
