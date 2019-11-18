@@ -15,11 +15,7 @@
       				<div class="login-form-button">
       					<button type="submit" class="btn">Register</button>
       				</div>
-              <transition name="fade">
-                <div class="error-block" v-if="commonError">
-                  <p class="error">{{commonError}}</p>
-                </div>
-              </transition>
+              <error :error="commonError"></error>
       			</form>
           </div>
         </transition>
@@ -129,10 +125,12 @@ import { parsePythonDataObject } from '@/functions/helpers'
 import sha512 from 'js-sha512';
 import {AUTH_REQUEST} from '@/store/actions/auth'
 import checkLoginType from '@/functions/checkLoginType'
+import Error from '@/components/Error';
 
 export default {
   components: {
-    LoginLayout
+    LoginLayout,
+    Error
   },
   data() {
   	return {

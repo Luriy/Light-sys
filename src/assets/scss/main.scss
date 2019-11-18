@@ -169,7 +169,6 @@ $eth: #7d8ef6;
 			.text {
 				p {
 					font-size: 16px;
-          color: #ffffff;
 					line-height: 21px;
 					font-weight: 600;
 				}
@@ -229,12 +228,6 @@ $eth: #7d8ef6;
         .v-text-field {
           margin: 0;
           padding: 0;
-
-          .v-text-field__slot {
-            input {
-              color: #fff;
-            }
-          }
         }
   			&_input {
   				position:relative;
@@ -510,7 +503,8 @@ $eth: #7d8ef6;
 				.accounts-list_wrapper_tab_body {
 					opacity: 1;
 					max-height:1000px;
-				    padding: 8px 20px 20px 48px;
+          padding: 0px 20px 0px 48px;
+          margin: 8px 0 20px;
         }
 			}
 			&:not(:last-child) {
@@ -737,7 +731,7 @@ $eth: #7d8ef6;
 				cursor: pointer;
 				user-select: none;
 				.toggle {
-					width: 20px;
+					min-width: 20px;
 					height: 20px;
 					border-radius: 9px;
 					background-color: #65489d;
@@ -1117,7 +1111,7 @@ $eth: #7d8ef6;
 			}
 		}
   }
-
+  
 	.toggler {
 		display: flex;
 		align-items:center;
@@ -2272,7 +2266,7 @@ $eth: #7d8ef6;
       &__modal {
         position: absolute;
         width: 300px;
-
+        
         background-color: #785bb3;
         top: 35px;
         z-index: 15;
@@ -2297,7 +2291,7 @@ $eth: #7d8ef6;
         &::-webkit-scrollbar-thumb {
           box-shadow: inset -3px 0 0 6px #785bb3;
           -webkit-box-shadow: inset -3px 0 0 6px #785bb3;
-        }
+        } 
         &-item {
           padding: 0 5px 0 13px;
           height: 40px;
@@ -2361,7 +2355,7 @@ $eth: #7d8ef6;
 			border-bottom:1px solid #8a93cf;
 		}
   }
-
+  
   &.ltc {
     .send-form .send-form-input--amount input {
 			border-bottom:1px solid #d3d3d3;
@@ -2393,7 +2387,7 @@ $eth: #7d8ef6;
 				font-weight: 600;
 			}
     }
-
+    
 		.send-form-totals {
 			.send-form-totals-total {
 				margin-bottom: 11px;
@@ -2614,25 +2608,6 @@ $eth: #7d8ef6;
 		font-weight: 600;
 	}
 }
-
-/* common styles */
-
-.flex {
-  display: flex;
-  flex: 0 1 auto !important;
-}
-.flex-column {
-  flex-direction: column;
-}
-.justify-content-between {
-  justify-content: space-between;
-}
-.justify-content-center {
-  justify-content: center;
-}
-.align-items-center {
-  align-items: center;
-}
 .btn-remove {
   width: 29px;
   height: 29px;
@@ -2657,29 +2632,7 @@ $eth: #7d8ef6;
     }
   }
 }
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-.fade-long-enter-active, .fade-long-leave-active {
-  transition: opacity 1s;
-}
-.fade-long-enter, .fade-long-leave-to {
-  transition: 0s;
-  opacity: 0;
-}
-.slide-fade-enter-active {
-  transition: all .3s ease;
-}
-.slide-fade-leave-active {
-  transition: all .6s;
-}
-.slide-fade-enter, .slide-fade-leave-to {
-  margin-left: -50px;
-  opacity: 0;
-}
+
 .success-popup_title {
   display: flex;
   flex-direction: column;
@@ -2763,22 +2716,6 @@ $eth: #7d8ef6;
   position: relative;
   flex-direction: column;
   align-items: center;
-
-  .wrapper_exchange-fiat-icon {
-    width: 67px;
-    height: 67px;
-    border-radius: 25px;
-    background-color: #543b88;
-    position: absolute;
-    top: -33px;
-    display: flex;
-    justify-content: center;
-
-    img {
-      align-self: center;
-      position: initial;
-    }
-  }
 
   img {
     position: absolute;
