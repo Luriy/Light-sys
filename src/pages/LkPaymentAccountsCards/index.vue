@@ -101,7 +101,7 @@
 									:key="item.full"
 								>
 									<div
-										class="accounts-list_wrapper_tab full-width"
+										class="accounts-list_wrapper_tab mb-10 full-width"
 										v-bind:class="{ active: item.isActive }"
 									>
 										<div
@@ -114,8 +114,14 @@
 													<div class="text">{{ item.fullName }}</div>
 												</div>
 												<div class="banks">
-													<div class="image-plate" v-for="bank in item.banks" :key="bank.image">
-														<!-- <img :src="bank.image" /> -->1
+													<div
+														class="image-plate"
+														v-for="bank in item.banks
+															.slice()
+															.filter((bank) => !!getBankImage(bank.psid, 'small'))"
+														:key="bank.image"
+													>
+														<img :src="getBankImage(bank.psid, 'small')" />
 													</div>
 												</div>
 											</div>
@@ -125,13 +131,15 @@
 											<cards-list
 												:currency="item.currency"
 												@onDeleteCard="writeSoonDeleteCardToStore"
+												@onEditCard="writeSoonEditCardToStore"
 												:isEditing="isEditing"
+												:banks="banks"
 											></cards-list>
 										</div>
 									</div>
 								</div>
 							</div>
-							<add-new-card></add-new-card>
+							<add-new-card :banks="banks"></add-new-card>
 						</div>
 					</div>
 					<deposit :isActive="tabs[2].isActive" @open="handleOpenTab(tabs[2], tabs)"></deposit>
@@ -143,13 +151,13 @@
 
 <script>
 import LkLayout from '@/layout/LkLayout';
-// import currencies from '@/data/account_and_cards/currencies';
 import './styles.scss';
 import AddNewCard from './components/AddNewCard';
 import Deposit from './components/Deposit';
 import CardsList from './components/CardsList';
 import { mapGetters } from 'vuex';
 import getCurrencyInfo from '@/functions/getCurrencyInfo';
+import getBankImage from '@/functions/getBankImage';
 
 export default {
 	name: 'LkPaymentWalletsWalletsList',
@@ -229,6 +237,7 @@ export default {
 		};
 	},
 	methods: {
+		getBankImage,
 		handleOpenTab(currentTab, tabs) {
 			if (!this.freezeActive) {
 				if (this.tabs.indexOf(currentTab) === 1 && currentTab.isActive === true) {
@@ -247,6 +256,7 @@ export default {
 			this.isEditing = true;
 		},
 		handleCancel() {
+			this.$store.dispatch('card/GET_CARDS');
 			this.freezeActive = true;
 			setTimeout(() => (this.freezeActive = false), 200);
 
@@ -258,12 +268,30 @@ export default {
 		writeSoonDeleteCardToStore(cardNumber) {
 			this.deletingCards.push(cardNumber);
 		},
+		writeSoonEditCardToStore({ cardNumber, newCardNumber, psid, newCardHolder }) {
+			if (this.editingsCards.every((card) => card.NumberCard !== cardNumber)) {
+				this.editingsCards.push({
+					NumberCard: cardNumber,
+					NewNumber: newCardNumber,
+					NewHolder: newCardHolder,
+					NewPsid: psid,
+				});
+			}
+		},
 		handleApply() {
-			console.log(this.deletingCards);
 			this.deletingCards.forEach((card) =>
 				this.$store
 					.dispatch('card/DELETE_CARD', { NumberCard: card })
-					.then(() => this.handleCancel()),
+					.then(() => this.handleCancel())
+					.then(() => this.$store.dispatch('card/GET_CARDS')),
+			);
+			this.editingsCards.forEach(({ NumberCard, NewNumber, NewHolder, NewPsid }) =>
+				this.$store.dispatch('card/UPDATE_CARD', {
+					NumberCard,
+					NewNumber,
+					NewHolder,
+					NewPsid,
+				}),
 			);
 		},
 	},

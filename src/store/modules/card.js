@@ -27,8 +27,12 @@ export default {
 				},
 			}).then(({ data }) => {
 				const returnData = parsePythonArray(data)['1'].return.Cards;
-				const result = Object.values(returnData).filter((item) => item.status !== 'Frozen');
-				console.log(result);
+				const result = Object.values(returnData)
+					.filter((item) => item.Status !== 'Frozen')
+					.map((item) => ({
+						...item,
+						Holder: decodeURI(item.Holder),
+					}));
 				return store.commit('SET_CARDS', result);
 			});
 		},
@@ -60,7 +64,23 @@ export default {
 					NumberCard,
 				},
 			}).then((data) => {
-				console.log(data);
+				return parsePythonDataObject(data);
+			});
+		},
+		UPDATE_CARD: (store, payload) => {
+			const { NumberCard, NewNumber, NewHolder, NewPsid } = payload;
+			return Axios({
+				url: API_URL,
+				method: 'POST',
+				params: {
+					Comand: 'CardEdit',
+					...getAuthParams(),
+					NumberCard,
+					NewNumber,
+					NewHolder,
+					NewPsid,
+				},
+			}).then((data) => {
 				return parsePythonDataObject(data);
 			});
 		},

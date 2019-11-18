@@ -34,8 +34,6 @@ export default {
 					(item) => item[0],
 				);
 
-				console.log(returnData);
-
 				commit('SET_CURRENCIES', returnData);
 
 				return returnData;
@@ -63,7 +61,6 @@ export default {
 					Group: 'bank',
 				},
 			}).then(({ data }) => {
-				console.log(parsePythonArray(data)['1'].return);
 				const returnData = parsePythonArray(data)['1'].return.Result;
 
 				const decodedReturnData = Object.values(returnData).map((item) => {
@@ -72,6 +69,8 @@ export default {
 						name: decodeURI(item.name),
 					};
 				});
+
+				console.log(decodedReturnData);
 
 				return commit('SET_BANKS', decodedReturnData);
 			});

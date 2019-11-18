@@ -56,7 +56,7 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			margin: 0 6px 8px 0;
+			margin: 0 6px 0px 0;
 
 			&:last-of-type {
 				margin-right: 0;
@@ -101,7 +101,8 @@
 	}
 }
 
-.add-new-card-header {
+.add-new-card-header,
+.card-list-edit-popup {
 	margin-bottom: 20px;
 	.accounts-list_wrapper_tab_body {
 		margin-bottom: 0 !important;
@@ -155,13 +156,16 @@
 		&__header {
 			border-radius: 13px;
 			background-color: #7a5db4;
-			padding: 8px 12px 8px 8px;
+			padding: 8px 12px 8px 8px !important;
 		}
 		.image-container {
 			width: 30px;
 			height: 30px;
 			border-radius: 11px;
 			background-color: #9a81ca;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 		&__title {
 			font-size: 14px;
@@ -225,7 +229,7 @@
 .virtual-cards-list {
 	display: flex;
 	flex-wrap: wrap;
-	padding-top: 15px;
+	padding-top: 30px;
 
 	.image-container {
 		width: 30px;
@@ -295,8 +299,47 @@
 		margin-bottom: 5px !important;
 		margin-top: 5px !important;
 	}
-	.toggle {
-		margin-bottom: 10px;
+}
+.card-list-edit-popup {
+	.select__header {
+		background-color: #4c347c !important;
+	}
+	.popup-wrapper {
+		border-radius: 13px;
+		background-color: #3b2665;
+	}
+	.image-plate {
+		width: 53px;
+		height: 53px;
+		border-radius: 20px;
+		background-color: #644a99;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transform: translateY(-50%);
+	}
+	&__wrapper {
+		max-width: 430px !important;
+		width: 100%;
+		margin: 0 auto;
+	}
+	.add-card-form {
+		margin-right: 0;
+		border-radius: 8px !important;
+		border: 1px solid #4c357a !important;
+		margin-top: 35px;
+	}
+	&__input-block {
+		margin-bottom: 20px;
+
+		&:last-of-type {
+			margin-bottom: 35px;
+		}
+	}
+	.button-wrapper {
+		width: 300px;
+		height: 50px;
+		border-radius: 28px;
 	}
 }
 .card-list-delete-popup {
@@ -338,4 +381,7 @@
 		background-color: #3b2665 !important;
 		border-radius: 28px !important;
 	}
+}
+.mb-10 {
+	margin-bottom: -10px;
 }

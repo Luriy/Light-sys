@@ -76,7 +76,9 @@
 							@click="select.isActive = !select.isActive"
 						>
 							<div class="flex align-items-center">
-								<div class="image-container"></div>
+								<div class="image-container">
+									<img :src="getBankImage(currentBank.psid, 'small')" alt="" />
+								</div>
 								<div class="select__title">{{ currentBank.name }}</div>
 							</div>
 							<div class="toggle"></div>
@@ -91,7 +93,9 @@
 									@click="handleClickBank(bank.name, bank.psid, bank.valute)"
 								>
 									<div class="flex align-items-center">
-										<div class="image-container"></div>
+										<div class="image-container">
+											<img :src="getBankImage(bank.psid, 'small')" alt="" />
+										</div>
 										<div class="bank-name">{{ bank.name }}</div>
 									</div>
 									<img src="@/assets/images/tick.svg" v-if="currentBank.name === bank.name" alt />
@@ -102,8 +106,8 @@
 				</div>
 				<div class="flex flex-column align-items-center virtual-card__wrapper">
 					<div class="virtual-card">
-						<div class="flex justify-content-between align-items-center">
-							<img src="@/assets/images/tinkoff-bank-bigger.png" alt />
+						<div class="flex justify-content-between align-items-center" style="height: 25px;">
+							<img :src="getBankImage(this.currentBank.psid, 'small')" alt />
 							<p class="virtual-card__currency">{{ this.currentBank.currency }}</p>
 						</div>
 						<div class="flex flex-column">
@@ -134,13 +138,17 @@
 import { mapGetters } from 'vuex';
 import Error from '@/components/Error';
 import { VALIDATE_CARD } from '@/validation';
+import getBankImage from '@/functions/getBankImage';
+import fiatList from '@/settings/fiatList';
 
 export default {
 	components: {
 		Error,
 	},
+	props: ['banks'],
 	data() {
 		return {
+			fiatList,
 			freezeActive: false,
 			isActive: true,
 			cardInfo: {
@@ -163,8 +171,6 @@ export default {
 		};
 	},
 	mounted() {
-		this.$store.dispatch('common/GET_BANKS');
-
 		const select = document.querySelector('.add-new-card-header .select');
 		window.addEventListener('click', ({ target }) => {
 			if (!target.classList.contains('.add-new-card-header .select') && !select.contains(target)) {
@@ -172,12 +178,8 @@ export default {
 			}
 		});
 	},
-	computed: {
-		...mapGetters({
-			banks: 'common/BANKS',
-		}),
-	},
 	methods: {
+		getBankImage,
 		maskInput(value, mask) {
 			return value + mask.slice(value.length);
 		},
@@ -254,6 +256,7 @@ export default {
 							this.error = erros[0];
 						} else if (data['1'].return.Status === 'Complete') {
 							this.handleCancel();
+							this.$store.dispatch('card/GET_CARDS');
 							this.$store.commit('wallet/setNotification', {
 								message: `Card has been successfully added`,
 								status: 'success-status',
