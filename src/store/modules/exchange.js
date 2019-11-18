@@ -49,7 +49,8 @@ export default {
         params: {
           Comand: 'InfoPsid',
           Psid1: exchange,
-          Psid2: receive
+          Psid2: receive,
+          InfoCrypts: true
         }
       }).then(({ data }) => {
         const {Errors} = parsePythonArray(data)['0'];
@@ -121,7 +122,6 @@ export default {
         fiatKeys.forEach(key => {
           fiat[key].name = decodeURIComponent(fiat[key].name)
         });
-        console.log(fiatResult, walletsResult, cardsResult);
         const resultWallets = Object.keys(walletsResult)
           .reduce((acc, walletCurrency) => {
             acc.push(
@@ -149,6 +149,7 @@ export default {
             reserve,
             number: cards[card].Number,
             psid: +cards[card].Psid,
+            holder: cards[card].Holder
           }
         });
         commit('SET_EXCHANGE_DATA', [...resultWallets, ...resultCards]);
@@ -185,8 +186,40 @@ export default {
         }
       })
     },
-    POST_FIAT: ({ commit }, {}) => {
-
+    POST_FIAT: ({ commit }, data) => {
+      return Axios({
+        url: API_URL,
+        method: 'POST',
+        params: {
+          Comand: 'CriptoFiatTransfer',
+          ...data,
+          // todo Убрать хардкод в будущем
+          ...(!data.Email && {MailSender: 'Nikola@mail.ru'})
+        }
+      }).then(({ data }) => {
+        const response = parsePythonArray(data);
+        const { Errors } = response[0];
+        const responseData = response[1];
+        console.log('Errors', Errors);
+        console.log('responseData', responseData);
+        // if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
+        //   commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount })
+        //   commit('SET_EXCHANGE_SUCCES', true)
+        // } else if (Object.keys(Errors).length) {
+        //   const errKey = Object.keys(Errors)[0]
+        //   commit('alerts/setNotification', {
+        //     message: Errors[errKey],
+        //     status: 'error-status',
+        //     icon: 'close'
+        //   },{root:true})
+        // } else {
+        //   commit('alerts/setNotification', {
+        //     message: 'Unknown error',
+        //     status: 'error-status',
+        //     icon: 'close'
+        //   },{root:true})
+        // }
+      })
     },
     SET_SUCCES ({ commit }, value) {
       commit('SET_EXCHANGE_SUCCES', value)

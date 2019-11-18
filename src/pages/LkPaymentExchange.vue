@@ -411,13 +411,14 @@
         } else {
           this.$store.dispatch('exchange/POST_FIAT', {
             ...getAuthParams(),
-            // From:
-            // To:
-            // Amount:
-            // Token:
-            // Vid:
-            // Psid1:
-            // Psid2:
+            From: this.exchangeCurrency.number,
+            To: this.receiveCurrency.number,
+            Amount: this.exchangeAmount,
+            Token: token,
+            Vid: this.exchangeCurrency.isWallet ? 1 : 2,
+            Psid1: this.exchangeCurrency.psid,
+            Psid2: this.receiveCurrency.psid,
+            LastName: this.exchangeCurrency.isWallet ?  this.receiveCurrency.holder : this.exchangeCurrency.holder,
           }).then(() => {
             this.smsCodes.forEach((smsCode, index) =>smsCode[index] = '')
           });
