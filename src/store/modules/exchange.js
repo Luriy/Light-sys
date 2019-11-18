@@ -1,10 +1,10 @@
-import Axios from 'axios'
-import { parsePythonArray } from '@/functions/helpers'
-import { getAuthParams } from '@/functions/auth'
-import { API_URL } from '@/constants'
-import fiatList from "../../settings/fiatList";
-import currensyList from "../../settings/currensyList";
-import errorsList from "../../settings/errorsList";
+import Axios from 'axios';
+import { parsePythonArray } from '@/functions/helpers';
+import { getAuthParams } from '@/functions/auth';
+import { API_URL } from '@/constants';
+import fiatList from '../../settings/fiatList';
+import currensyList from '../../settings/currensyList';
+import errorsList from '../../settings/errorsList';
 
 export default {
   namespaced: true,

@@ -9,7 +9,7 @@
             </span>
             <transition name="fade">
               <div class="select__modal" v-show="isSelectWalletOpened">
-                <div class="select__modal-item" v-for="wallet in wallets" :class="{ active: wallet.address == $route.params.address }" @click="handleSelectWallet(wallet.currency, wallet.address)">
+                <div class="select__modal-item" v-for="wallet in wallets" :key="wallet.address" :class="{ active: wallet.address == $route.params.address }" @click="handleSelectWallet(wallet.currency, wallet.address)">
                   <img v-if="wallet.currency === 'BTC'" width="17" src="@/assets/images/btc.png" />
                   <img v-if="wallet.currency === 'ETH'" width="17" src="@/assets/images/eth.png" />
                   <img v-if="wallet.currency === 'LTC'" width="17" src="@/assets/images/ltc.svg" />
@@ -45,13 +45,7 @@
         </div>
         <div class="send-form-button">
           <button @click="onSendSms">Send</button>
-          <div class="error-block">
-            <transition name="fade">
-              <p class="error" v-show="error">
-                {{ error }}
-              </p>
-            </transition>
-          </div>
+          <error :error="error"></error>
         </div>
         
         <div class="send-form-totals">
@@ -200,13 +194,15 @@ import { VALIDATE_AMOUNT_TRANSFER_EXCHANGE, VALIDATE_ADDRESS } from '../validati
 import { getAuthParams } from '@/functions/auth';
 import LkPopUp from '@/layout/LkPopUp';
 import capitalizeFirstLetter from "@/functions/capitalizeFirstLetter"
+import Error from '@/components/Error';
 
 
 export default {
   components: {
     LkLayout,
     PaymentsAndTransfer,
-    LkPopUp
+    LkPopUp,
+    Error
   },
   data() {
     return {
@@ -219,7 +215,6 @@ export default {
       isCryptoCurrencyAmountInputClicked: false,
       isCurrencyAmountInputClicked: false,
       isSelectWalletOpened: false,
-      error: null,
       sendPopup: false,
       smsCodes: [
         {0: ''},
