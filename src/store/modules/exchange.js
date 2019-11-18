@@ -144,7 +144,7 @@ export default {
           const {name, reserve, valute} = fiat[+cards[card].Psid];
           return {
             fullName: name,
-            icon: fiatList[+cards[card].Psid].icon,
+            icon: fiatList[+cards[card].Psid].icon.big,
             currency: valute,
             reserve,
             number: cards[card].Number,
