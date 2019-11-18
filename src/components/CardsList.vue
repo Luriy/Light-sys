@@ -1,12 +1,16 @@
 <template>
-	<draggable v-model="trans" v-if="isCardsMovingAndDeleting" class="wallets-list_item_body">
+	<draggable
+		v-model="mappedCurrencies"
+		v-if="isCardsMovingAndDeleting"
+		class="wallets-list_item_body"
+	>
 		<transition-group name="slide-fade">
 			<div
 				class="wallet fiat-wallet list__item"
-				v-for="(item, idx) in trans"
+				v-for="(item, idx) in mappedCurrencies"
 				:class="{ active: item.isactive }"
 				@click="handleClick(item)"
-				:key="trans.code"
+				:key="item.code"
 			>
 				<transition name="fade">
 					<div class="btn-remove" v-show="isCardsMovingAndDeleting" @click="handleDeleteItem(idx)">
@@ -15,12 +19,12 @@
 				</transition>
 				<div class="wallet-info">
 					<div class="code">
-						<div class="image fiat">{{ item.ico }}</div>
-						<span>{{ item.code }}</span>
+						<div class="image fiat">{{ item.code }}</div>
+						<span>{{ item.fullName }}</span>
 					</div>
 					<div class="right">
 						<div class="balance">
-							{{ item.balance }}
+							12.500
 						</div>
 						<div class="wallet-toggle"></div>
 					</div>
@@ -48,18 +52,6 @@
 						<div class="info">
 							<div class="amount">17, 352{{ item.ico }}</div>
 							<div class="type"><img src="@/assets/images/left-arrow-purple.svg" alt title /></div>
-						</div>
-					</div>
-					<div class="wallet-last-transactions-item">
-						<div class="from">
-							<div class="image">
-								<img src="@/assets/images/lightnet.png" alt title />
-							</div>
-							<span>NEO bank</span>
-						</div>
-						<div class="info">
-							<div class="amount">1, 547{{ item.ico }}</div>
-							<div class="type"><img src="@/assets/images/cloud.svg" alt title /></div>
 						</div>
 					</div>
 				</div>
@@ -73,7 +65,7 @@
 				v-for="(item, idx) in trans"
 				:class="{ active: item.isactive }"
 				@click="handleClick(item)"
-				:key="trans.code"
+				:key="item.code"
 			>
 				<transition name="fade">
 					<div class="btn-remove" v-show="isCardsMovingAndDeleting" @click="handleDeleteItem(idx)">
@@ -117,18 +109,6 @@
 							<div class="type"><img src="@/assets/images/left-arrow-purple.svg" alt title /></div>
 						</div>
 					</div>
-					<div class="wallet-last-transactions-item">
-						<div class="from">
-							<div class="image">
-								<img src="@/assets/images/lightnet.png" alt title />
-							</div>
-							<span>NEO bank</span>
-						</div>
-						<div class="info">
-							<div class="amount">1, 547{{ item.ico }}</div>
-							<div class="type"><img src="@/assets/images/cloud.svg" alt title /></div>
-						</div>
-					</div>
 				</div>
 			</div>
 		</transition-group>
@@ -137,10 +117,15 @@
 <script>
 import { mapGetters } from 'vuex';
 import draggable from 'vuedraggable';
+import getCardsByCurrency from '@/functions/getCardsByCurrency';
+import getCurrencyInfo from '@/functions/getCurrencyInfo';
+import getBankImage from '@/functions/getBankImage';
 
 export default {
+	// left-arrow-purple.svg or cloud.svg
+
 	name: 'CardsList',
-	props: ['isCardsMovingAndDeleting'],
+	props: ['isCardsMovingAndDeleting', 'cards', 'currencies'],
 	components: {
 		draggable,
 	},
@@ -187,11 +172,21 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters({
-			accounts: 'account/CARDS',
-		}),
+		mappedCurrencies() {
+			return this.currencies.map((currency) => {
+				const { fullName, code } = getCurrencyInfo(currency);
+				return {
+					currency,
+					fullName,
+					code,
+					isactive: false,
+					cards: getCardsByCurrency(currency, this.cards),
+				};
+			});
+		},
 	},
 	methods: {
+		getCardsByCurrency,
 		handleDeleteItem(id) {
 			console.log(this.accounts);
 			console.log(id);
@@ -200,6 +195,7 @@ export default {
 		},
 		handleClick(item) {
 			if (this.isCardsMovingAndDeleting) {
+				console.log(this.mappedCurrencies);
 				return false;
 			} else {
 				item.isactive = !item.isactive;

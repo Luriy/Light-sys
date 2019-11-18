@@ -109,7 +109,6 @@
             </transition>
     			</form>
         </div>
-        </div>
       </div>
   	</div>
   </login-layout>
@@ -216,7 +215,7 @@ export default {
               .then(() => {
       		    	this.commonError = null;
                 this.$router.push('/');
-                this.$store.commit('wallet/setNotification', {
+                this.$store.commit('alerts/setNotification', {
                   message: 'You have successfully registered!',
                   status: 'success-status',
                   icon: 'done'
@@ -241,7 +240,7 @@ export default {
    		params.append('Email', user);
       params.append('Phone', '');
    	} else return null;
-   	params.append('Comand', 'Newaccount');
+   	params.append('Comand', 'Newaccount2');
    	params.append('BIO', '');
    	params.append('Passport', '');
 

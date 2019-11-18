@@ -1,9 +1,9 @@
 <template>
-	<div class="virtual-cards-list">
+	<div class="virtual-cards-list" v-if="filteredCards.length">
 		<div
 			class="virtual-card flex flex-column justify-content-between"
 			v-for="item in filteredCards"
-			:key="item.psid"
+			:key="item.Number"
 		>
 			<div class="flex justify-content-between align-items-center">
 				<div class="flex align-items-center">
@@ -64,7 +64,7 @@
 					</div>
 					<div
 						class="button-wrapper button-gradient no-margin"
-						@click="handleSoonDeleteCard(deletePopup.number)"
+						@click="handleSoonDeleteCard(deletePopup.number, deletePopup.psid)"
 					>
 						<button class="add-cart-action-button apply button-gradient">
 							Yes
@@ -172,13 +172,14 @@ import LkPopup from '@/layout/LkPopUp';
 import getBankImage from '@/functions/getBankImage';
 
 export default {
-	props: ['currency', 'isEditing', 'banks'],
+	props: ['currency', 'isEditing', 'banks', 'cards', 'filteredCards'],
 	mounted() {
-		this.$store.dispatch('card/GET_CARDS');
-
 		const select = document.querySelector('.card-list-edit-popup .select');
 		window.addEventListener('click', ({ target }) => {
-			if (!target.classList.contains('.card-list-edit-popup .select') && !select.contains(target)) {
+			if (
+				(target ? false : !target.classList.contains('.card-list-edit-popup .select')) &&
+				!select.contains(target)
+			) {
 				this.editPopup.select.active = false;
 			}
 		});
@@ -206,14 +207,6 @@ export default {
 				isOpened: false,
 			},
 		};
-	},
-	computed: {
-		...mapGetters({
-			cards: 'card/CARDS',
-		}),
-		filteredCards() {
-			return this.cards.filter(({ Currency }) => Currency === this.currency);
-		},
 	},
 	methods: {
 		getBankImage,
@@ -274,7 +267,7 @@ export default {
 		handleOpenDeletePopup(number, psid) {
 			this.deletePopup = {
 				isOpened: true,
-				number: this.formatCardNumber(number),
+				number,
 				psid,
 			};
 		},
@@ -287,12 +280,11 @@ export default {
 		},
 		handleSoonDeleteCard(number, psid) {
 			this.$emit('onDeleteCard', number);
-			this.deletePopup.psid = psid;
-			this.handleCloseDeletePopup();
 			this.$store.commit(
 				'card/SET_CARDS',
-				this.filteredCards.filter((card) => card.psid != psid),
+				this.cards.filter((card) => card.Number != number),
 			);
+			this.handleCloseDeletePopup();
 		},
 		formatCardNumber(card) {
 			return card

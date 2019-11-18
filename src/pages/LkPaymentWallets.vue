@@ -28,7 +28,11 @@
 						<router-link to="/wallets/accounts-and-cards"><div class="toggle"></div></router-link>
 					</div>
 				</div>
-				<cards-list :isCardsMovingAndDeleting="isCardsMovingAndDeleting"></cards-list>
+				<cards-list
+					:currencies="currencies"
+					:cards="cards"
+					:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
+				></cards-list>
 			</div>
 		</div>
 		<div class="operations-history">
@@ -79,12 +83,16 @@ export default {
 	computed: {
 		...mapGetters({
 			operations: ['wallet/OPERATIONS'],
+			currencies: 'common/CURRENCIES',
+			cards: 'card/CARDS',
 		}),
 	},
-	async mounted() {
+	created() {
 		this.$store.dispatch('wallet/GET_TYPES');
-		await this.$store.dispatch('wallet/GET_WALLETS');
+		this.$store.dispatch('wallet/GET_WALLETS');
 		this.$store.dispatch('wallet/GET_OPERATIONS');
+		this.$store.dispatch('common/GET_ALL_CURRENCIES');
+		this.$store.dispatch('card/GET_CARDS');
 	},
 	methods: {
 		handleMovingAndDeleting(type) {

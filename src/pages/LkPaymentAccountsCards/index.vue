@@ -28,7 +28,7 @@
 							<div class="accounts-list_wrapper_tab_body_table">
 								<div
 									class="accounts-list_wrapper_tab_body_table_tr"
-									v-for="item in tabs[1].tableData"
+									v-for="item in tabs[0].tableData"
 									:key="item.full"
 								>
 									<div class="currency">
@@ -125,7 +125,10 @@
 													</div>
 												</div>
 											</div>
-											<div class="toggle"></div>
+											<div
+												class="toggle"
+												v-if="getCardsByCurrency(item.currency, cards).length"
+											></div>
 										</div>
 										<div class="accounts-list_wrapper_tab_body">
 											<cards-list
@@ -134,6 +137,8 @@
 												@onEditCard="writeSoonEditCardToStore"
 												:isEditing="isEditing"
 												:banks="banks"
+												:cards="cards"
+												:filteredCards="getCardsByCurrency(item.currency)"
 											></cards-list>
 										</div>
 									</div>
@@ -158,6 +163,7 @@ import CardsList from './components/CardsList';
 import { mapGetters } from 'vuex';
 import getCurrencyInfo from '@/functions/getCurrencyInfo';
 import getBankImage from '@/functions/getBankImage';
+import getCardsByCurrency from '@/functions/getCardsByCurrency';
 
 export default {
 	name: 'LkPaymentWalletsWalletsList',
@@ -168,6 +174,7 @@ export default {
 		CardsList,
 	},
 	mounted() {
+		this.$store.dispatch('card/GET_CARDS');
 		this.$store.dispatch('common/GET_ALL_CURRENCIES').then(
 			(data) =>
 				(this.tabs[1].currencies = data.map((currency) => {
@@ -187,6 +194,7 @@ export default {
 		...mapGetters({
 			currencies: 'common/CURRENCIES',
 			banks: 'common/BANKS',
+			cards: 'card/CARDS',
 		}),
 	},
 	data() {
@@ -225,7 +233,7 @@ export default {
 					],
 				},
 				{
-					isActive: true,
+					isActive: false,
 					isCardsListActive: false,
 					currencies: [],
 					isEditing: false,
@@ -238,6 +246,7 @@ export default {
 	},
 	methods: {
 		getBankImage,
+		getCardsByCurrency,
 		handleOpenTab(currentTab, tabs) {
 			if (!this.freezeActive) {
 				if (this.tabs.indexOf(currentTab) === 1 && currentTab.isActive === true) {
@@ -282,17 +291,45 @@ export default {
 			this.deletingCards.forEach((card) =>
 				this.$store
 					.dispatch('card/DELETE_CARD', { NumberCard: card })
+					.then((data) => {
+						const errors = Object.values(data[0]['Errors']);
+
+						this.$store.dispatch('alerts/setNotification', {
+							message: errors.length
+								? errors[0]
+								: this.editingsCards.length > 1
+								? 'Cards have been successfully deleted'
+								: 'Card has been successfully deleted',
+							status: errors.length ? 'error-status' : 'success-status',
+							icon: errors.length ? 'close' : 'done',
+						});
+					})
 					.then(() => this.handleCancel())
 					.then(() => this.$store.dispatch('card/GET_CARDS')),
 			);
 			this.editingsCards.forEach(({ NumberCard, NewNumber, NewHolder, NewPsid }) =>
-				this.$store.dispatch('card/UPDATE_CARD', {
-					NumberCard,
-					NewNumber,
-					NewHolder,
-					NewPsid,
-				}),
+				this.$store
+					.dispatch('card/UPDATE_CARD', {
+						NumberCard,
+						NewNumber,
+						NewHolder,
+						NewPsid,
+					})
+					.then((data) => {
+						const errors = Object.values(data[0]['Errors']);
+
+						this.$store.dispatch('alerts/setNotification', {
+							message: errors.length
+								? errors[0]
+								: this.editingsCards.length > 1
+								? 'Cards have been successfully edited'
+								: 'Card has been successfully edited',
+							status: errors.length ? 'error-status' : 'success-status',
+							icon: errors.length ? 'close' : 'done',
+						});
+					}),
 			);
+			this.$store.dispatch('card/GET_CARDS');
 		},
 	},
 };
