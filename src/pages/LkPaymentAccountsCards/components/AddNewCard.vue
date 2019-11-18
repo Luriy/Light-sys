@@ -150,7 +150,7 @@ export default {
 		return {
 			fiatList,
 			freezeActive: false,
-			isActive: true,
+			isActive: false,
 			cardInfo: {
 				numberMask: '**** **** **** ****',
 				number: '',

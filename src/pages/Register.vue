@@ -109,7 +109,6 @@
             </transition>
     			</form>
         </div>
-        </div>
       </div>
   	</div>
   </login-layout>
@@ -241,7 +240,7 @@ export default {
    		params.append('Email', user);
       params.append('Phone', '');
    	} else return null;
-   	params.append('Comand', 'Newaccount');
+   	params.append('Comand', 'Newaccount2');
    	params.append('BIO', '');
    	params.append('Passport', '');
 

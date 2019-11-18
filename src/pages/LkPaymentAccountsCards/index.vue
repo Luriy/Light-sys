@@ -125,7 +125,10 @@
 													</div>
 												</div>
 											</div>
-											<div class="toggle" v-if="getCardsByCurrency(item.currency).length"></div>
+											<div
+												class="toggle"
+												v-if="getCardsByCurrency(item.currency, cards).length"
+											></div>
 										</div>
 										<div class="accounts-list_wrapper_tab_body">
 											<cards-list
@@ -230,7 +233,7 @@ export default {
 					],
 				},
 				{
-					isActive: true,
+					isActive: false,
 					isCardsListActive: false,
 					currencies: [],
 					isEditing: false,

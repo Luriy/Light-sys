@@ -1,3 +1,3 @@
-export default function getCardsByCurrency(currency) {
-	return this.cards.filter(({ Currency }) => Currency === currency);
+export default function getCardsByCurrency(currency, cards) {
+	return cards.filter(({ Currency }) => Currency === currency);
 }
