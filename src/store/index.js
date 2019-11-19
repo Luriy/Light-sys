@@ -7,8 +7,9 @@ import account from './modules/account';
 import alerts from './modules/alerts';
 import common from './modules/common';
 import card from './modules/card';
-import { BASE_URL } from '@/settings/config';
 import exchange from './modules/exchange';
+import currency from './modules/currency';
+import { BASE_URL } from '@/settings/config';
 Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== 'production';
@@ -23,6 +24,7 @@ export default new Vuex.Store({
 		exchange,
 		common,
 		card,
+		currency,
 	},
 	state: {
 		urls: {

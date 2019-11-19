@@ -2,11 +2,12 @@ import Axios from 'axios';
 import { parsePythonArray, parsePythonDataObject } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
 import { API_URL } from '@/constants';
+import getCurrencyInfo from '@/functions/getCurrencyInfo';
 
 export default {
 	namespaced: true,
 	state: {
-		cards: [],
+		cards: JSON.parse(localStorage.getItem('stateWalletsAndAccountsPageWallets')) || [],
 	},
 	getters: {
 		CARDS: (state) => state.cards,
@@ -14,6 +15,7 @@ export default {
 	mutations: {
 		SET_CARDS: (state, payload) => {
 			state.cards = payload;
+			localStorage.setItem('stateWalletsAndAccountsPageWallets', JSON.stringify(payload));
 		},
 	},
 	actions: {
@@ -33,7 +35,8 @@ export default {
 						...item,
 						Holder: decodeURI(item.Holder),
 					}));
-				return store.commit('SET_CARDS', result);
+				store.commit('SET_CARDS', result);
+				return result;
 			});
 		},
 		CREATE_CARD: (store, payload) => {
