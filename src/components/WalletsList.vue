@@ -110,6 +110,24 @@ export default {
 	components: {
 		draggable,
 	},
+	computed: {
+		draggableWalletsList: {
+			get() {
+				return this.wallets;
+			},
+			set(value) {
+				return this.$store.commit('wallet/SET_WALLETS', value);
+			},
+		},
+		...mapGetters({
+			wallets: 'wallet/WALLETS',
+			percentage: 'wallet/PERCENTAGE',
+		}),
+	},
+	created() {
+		this.$store.dispatch('wallet/GET_TYPES');
+		this.$store.dispatch('wallet/GET_WALLETS');
+	},
 	data() {
 		return {
 			groupTogglerActiveId: null,
@@ -139,20 +157,6 @@ export default {
 					);
 				});
 		},
-	},
-	computed: {
-		draggableWalletsList: {
-			get() {
-				return this.wallets;
-			},
-			set(value) {
-				return this.$store.commit('wallet/SET_WALLETS', value);
-			},
-		},
-		...mapGetters({
-			wallets: 'wallet/WALLETS',
-			percentage: 'wallet/PERCENTAGE',
-		}),
 	},
 };
 </script>

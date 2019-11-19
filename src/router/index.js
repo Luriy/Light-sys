@@ -9,7 +9,7 @@ import LkPaymentExchange from '@/pages/LkPaymentExchange';
 // import LkPaymentSendEth from '@/pages/LkPaymentSendEth'
 import LkPaymentWalletsCreate from '@/pages/LkPaymentWalletsCreate';
 import LkPaymentAccountsCards from '@/pages/LkPaymentAccountsCards/index';
-import LkPayFor from '@/pages/LkPayFor';
+import LkPayFor from '@/pages/LkPayFor/index';
 import PasswordRecovery from '@/pages/PasswordRecovery';
 
 import Login from '@/pages/Login';

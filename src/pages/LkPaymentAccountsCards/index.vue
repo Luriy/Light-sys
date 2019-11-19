@@ -138,7 +138,7 @@
 												:isEditing="isEditing"
 												:banks="banks"
 												:cards="cards"
-												:filteredCards="getCardsByCurrency(item.currency)"
+												:filteredCards="getCardsByCurrency(item.currency, cards)"
 											></cards-list>
 										</div>
 									</div>
@@ -175,9 +175,12 @@ export default {
 	},
 	mounted() {
 		this.$store.dispatch('card/GET_CARDS');
-		this.$store.dispatch('common/GET_ALL_CURRENCIES').then(
-			(data) =>
-				(this.tabs[1].currencies = data.map((currency) => {
+		Promise.all([
+			this.$store.dispatch('common/GET_ALL_CURRENCIES'),
+			this.$store.dispatch('common/GET_BANKS'),
+		]).then(
+			([currencies, banks]) =>
+				(this.tabs[1].currencies = currencies.map((currency) => {
 					const { fullName, code } = getCurrencyInfo(currency);
 					return {
 						currency,
@@ -188,7 +191,6 @@ export default {
 					};
 				})),
 		);
-		this.$store.dispatch('common/GET_BANKS');
 	},
 	computed: {
 		...mapGetters({
@@ -304,7 +306,6 @@ export default {
 							icon: errors.length ? 'close' : 'done',
 						});
 					})
-					.then(() => this.handleCancel())
 					.then(() => this.$store.dispatch('card/GET_CARDS')),
 			);
 			this.editingsCards.forEach(({ NumberCard, NewNumber, NewHolder, NewPsid }) =>
