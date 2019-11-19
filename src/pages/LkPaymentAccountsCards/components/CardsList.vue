@@ -38,42 +38,13 @@
 				</div>
 			</transition>
 		</div>
-		<lk-popup
-			v-show="deletePopup.isOpened"
-			:popupSize="{ width: '350px', height: '300px' }"
-			class="card-list-delete-popup"
-			@closeModal="handleCloseDeletePopup"
-		>
-			<div
-				slot="title"
-				class="_title flex flex-column align-items-center card-list-delete-popup__wrapper"
-			>
-				<div class="image-plate">
-					<img :src="getBankImage(deletePopup.psid, 'big')" alt="" />
-				</div>
-				<p class="card-list-delete-popup__title">Warning</p>
-				<p class="card-list-delete-popup__paragraph text-align-center">
-					Are you sure you want to delete the card?
-				</p>
-				<p class="card-list-delete-popup__card">{{ formatCardNumber(deletePopup.number) }}</p>
-				<div class="flex justify-content-between full-width">
-					<div class="button-wrapper button-gradient no-margin" @click="handleCloseDeletePopup">
-						<button class="add-cart-action-button cancel">
-							No
-						</button>
-					</div>
-					<div
-						class="button-wrapper button-gradient no-margin"
-						@click="handleSoonDeleteCard(deletePopup.number, deletePopup.psid)"
-					>
-						<button class="add-cart-action-button apply button-gradient">
-							Yes
-						</button>
-					</div>
-				</div>
-			</div>
-		</lk-popup>
-
+		<lk-popup-delete-card
+			@onClose="handleCloseDeletePopup"
+			@onSoonDeleteCard="handleSoonDeleteCard"
+			:deletePopup="deletePopup"
+			:formattedCardNumber="formatCardNumber(deletePopup.number)"
+			:bankImage="getBankImage(deletePopup.psid, 'big')"
+		></lk-popup-delete-card>
 		<lk-popup
 			v-show="editPopup.isOpened"
 			:popupSize="{ width: '530px', height: '360px' }"
@@ -170,6 +141,8 @@
 import { mapGetters } from 'vuex';
 import LkPopup from '@/layout/LkPopUp';
 import getBankImage from '@/functions/getBankImage';
+import formatCardNumber from '@/functions/formatCardNumber';
+import LkPopupDeleteCard from '@/components/Popups/DeleteCard/index';
 
 export default {
 	props: ['currency', 'isEditing', 'banks', 'cards', 'filteredCards'],
@@ -186,6 +159,7 @@ export default {
 	},
 	components: {
 		LkPopup,
+		LkPopupDeleteCard,
 	},
 	data() {
 		return {
@@ -209,6 +183,7 @@ export default {
 		};
 	},
 	methods: {
+		formatCardNumber,
 		getBankImage,
 		handleOpenEditPopup(cardNumber, psid, cardHolder) {
 			this.editPopup = {
@@ -285,18 +260,6 @@ export default {
 				this.cards.filter((card) => card.Number != number),
 			);
 			this.handleCloseDeletePopup();
-		},
-		formatCardNumber(card) {
-			return card
-				? card
-						.split('')
-						.map((letter, index) => {
-							if (index === 3 || index === 7 || index === 11) {
-								return (letter += ' ');
-							} else return letter;
-						})
-						.join('')
-				: '';
 		},
 		handleCardNumber({ inputType }) {
 			const { newCardNumber } = this.editPopup;

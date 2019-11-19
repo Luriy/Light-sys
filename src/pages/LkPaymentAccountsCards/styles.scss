@@ -9,35 +9,33 @@
 		margin-right: 6px;
 	}
 }
-.accounts-list_wrapper_tab {
-	.add-cart-action-button.apply {
-		width: 100%;
-		height: 100%;
-	}
-	.button-wrapper {
-		min-width: 70px;
-		height: 30px;
-		color: #fff;
-		font-size: 14px;
-		font-weight: 600;
-		border-radius: 8px;
-		overflow: hidden;
-		margin-right: 20px;
-	}
-	.button-wrapper.no-margin {
-		margin-right: 0;
-	}
-	.add-cart-action-button.cancel {
-		background-color: #4d3779;
-		width: calc(100% - 2px);
-		height: calc(100% - 2px);
-		border-radius: 8px;
-		margin: 1px 0 0 1px;
-		z-index: 10;
-	}
-	.button-gradient {
-		background-image: linear-gradient(270deg, #8e6ee4 0%, #d268bc 100%);
-	}
+.add-cart-action-button.apply {
+	width: 100%;
+	height: 100%;
+}
+.button-wrapper {
+	min-width: 70px;
+	height: 30px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: 600;
+	border-radius: 8px;
+	overflow: hidden;
+	margin-right: 20px;
+}
+.button-wrapper.no-margin {
+	margin-right: 0;
+}
+.add-cart-action-button.cancel {
+	background-color: #4d3779;
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
+	border-radius: 8px;
+	margin: 1px 0 0 1px;
+	z-index: 10;
+}
+.button-gradient {
+	background-image: linear-gradient(270deg, #8e6ee4 0%, #d268bc 100%);
 }
 .accounts-list_wrapper {
 	.currency {
@@ -368,45 +366,6 @@
 		width: 300px;
 		height: 50px;
 		border-radius: 28px;
-	}
-}
-.card-list-delete-popup {
-	.popup-wrapper {
-		border-radius: 47px;
-		background-color: #3b2665 !important;
-	}
-
-	&__title {
-		font-size: 36px;
-		font-weight: 600;
-		color: #fff;
-	}
-	&__paragraph {
-		font-size: 16px;
-		font-weight: 600;
-		opacity: 0.5;
-		color: #ffffff;
-		margin: 15px 0;
-		line-height: 23px;
-	}
-	&__card {
-		font-size: 16px;
-		font-weight: 600;
-		color: #ffffff;
-		margin-bottom: 30px;
-	}
-	&__wrapper {
-		max-width: 250px !important;
-		margin: 0 auto;
-	}
-	.button-wrapper {
-		width: 120px !important;
-		height: 50px !important;
-		border-radius: 28px !important;
-	}
-	.cancel {
-		background-color: #3b2665 !important;
-		border-radius: 28px !important;
 	}
 }
 .mb-10 {
