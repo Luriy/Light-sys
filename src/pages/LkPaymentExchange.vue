@@ -187,7 +187,7 @@
               <div class="title">You will receive</div>
               <div class="currency" :class="receiveCurrency.currency.toLowerCase()">
                 <div class="text">
-                  <p>{{receiveAmount.toFixed(5)}} {{receiveCurrency.currency}}</p>
+                  <p :style="[!receiveCurrency.isWallet ? {color:'#fff'}:'']">{{receiveAmount.toFixed(5)}} {{receiveCurrency.currency}}</p>
                   <span>${{receiveUSD.toFixed(2)}}USD</span>
                 </div>
                 <div class="icon">
@@ -504,7 +504,7 @@
         this.exchangeUSD = 0;
         this.receiveUSD = 0;
         this.receiveModal = false;
-        if (this.exchangeCurrency.isWallet) {
+        if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
           this.getTransferInfo();
         } else {
           this.getFiatInfo();
@@ -529,6 +529,10 @@
           this.receiveChange(this.receiveAmount);
         } else if (this.exchangeCurrency.isWallet && !this.receiveCurrency.isWallet) {
           this.exchangeAmount = this.exchangeCurrency.balance
+          const ammountInDollars = +(this.exchangeAmount * this.fiatInfo[this.exchangeCurrency.currency][this.exchangeCurrency.name].usd).toFixed(3)
+          this.receiveAmount = this.receiveCurrency.currency === 'RUR' ?
+            +(ammountInDollars * this.fiatInfo.RUR.USD).toFixed(3) :
+            +(ammountInDollars * this.fiatInfo.USD[this.receiveCurrency.currency]).toFixed(3);
           this.exchangeChange(this.exchangeAmount);
           this.receiveChange(this.receiveAmount);
         } else {
@@ -551,6 +555,10 @@
           this.receiveChange(this.receiveAmount);
         } else if (this.exchangeCurrency.isWallet && !this.receiveCurrency.isWallet) {
           this.exchangeAmount = this.exchangeCurrency.balance / 2;
+          const ammountInDollars = +(this.exchangeAmount * this.fiatInfo[this.exchangeCurrency.currency][this.exchangeCurrency.name].usd).toFixed(3)
+          this.receiveAmount = this.receiveCurrency.currency === 'RUR' ?
+            +(ammountInDollars * this.fiatInfo.RUR.USD).toFixed(3) :
+            +(ammountInDollars * this.fiatInfo.USD[this.receiveCurrency.currency]).toFixed(3);
           this.exchangeChange(this.exchangeAmount);
           this.receiveChange(this.receiveAmount);
         } else {
@@ -573,6 +581,10 @@
           } else {
             this.exchangeAmount = this.exchangeCurrency.balance
           }
+          const ammountInDollars = +(this.exchangeAmount * this.fiatInfo[this.exchangeCurrency.currency][this.exchangeCurrency.name].usd).toFixed(3)
+          this.receiveAmount = this.receiveCurrency.currency === 'RUR' ?
+            +(ammountInDollars * this.fiatInfo.RUR.USD).toFixed(3) :
+            +(ammountInDollars * this.fiatInfo.USD[this.receiveCurrency.currency]).toFixed(3);
           this.exchangeChange(this.exchangeAmount);
           this.receiveChange(this.receiveAmount);
         } else {
@@ -588,7 +600,9 @@
           price = this.types[this.exchangeCurrency.name].price;
           this.exchangeUSD = +(this.exchangeAmount * price).toFixed(2);
         } else {
-          price = this.exchangeCurrency.currency === 'RUR' ? this.fiatInfo.RUR.USD : this.fiatInfo.USD[this.exchangeCurrency.currency];
+          price = this.exchangeCurrency.currency === 'RUR' ?
+            this.fiatInfo.RUR.USD :
+            this.fiatInfo.USD[this.exchangeCurrency.currency];
           this.exchangeUSD = +(this.exchangeAmount / price).toFixed(2);
         }
       },
@@ -598,7 +612,10 @@
           price = this.types[this.receiveCurrency.name].price;
           this.receiveUSD = +(value * price).toFixed(2);
         } else {
-          // price = this.fiatInfo[this.exchangeCurrency.currency]
+          price = this.receiveCurrency.currency === 'RUR' ?
+            this.fiatInfo.RUR.USD :
+            this.fiatInfo.USD[this.receiveCurrency.currency];
+          this.receiveUSD = +(this.receiveAmount / price).toFixed(2);
         }
       }
     },

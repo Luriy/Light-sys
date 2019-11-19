@@ -114,6 +114,22 @@ export default {
 	flex-direction: column;
 	align-items: center;
 
+  .wrapper_exchange-fiat-icon {
+    width: 67px;
+    height: 67px;
+    border-radius: 25px;
+    background-color: #543b88;
+    position: absolute;
+    top: -33px;
+    display: flex;
+    justify-content: center;
+
+    img {
+      align-self: center;
+      position: initial;
+    }
+  }
+
 	img {
 		position: absolute;
 		top: -33px;

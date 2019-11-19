@@ -61,6 +61,7 @@ export default {
           const result = parsePythonArray(data)['1'].return
           commit('SET_FIAT_INFO', result)
         } else {
+          commit('alerts/setLoading', false,{root:true});
           commit('alerts/setNotification', {
             message: errorsList[Object.keys(Errors)[0]],
             status: 'error-status',
