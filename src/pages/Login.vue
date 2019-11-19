@@ -59,17 +59,20 @@ import LoginLayout from '@/layout/LoginLayout';
 import Inputmask from 'inputmask';
 import { AUTH_REQUEST } from '@/store/actions/auth';
 import sha512 from 'js-sha512';
+import Error from '@/components/Error';
+
 export default {
 	name: 'Login',
 	components: {
 		LoginLayout,
+		Error,
 	},
 	data() {
 		return {
 			loginType: false,
 			user: null,
 			password: null,
-			error: 'Error',
+			error: null,
 			isLoaded: false,
 		};
 	},

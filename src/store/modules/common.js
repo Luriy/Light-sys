@@ -69,9 +69,6 @@ export default {
 						name: decodeURI(item.name),
 					};
 				});
-
-				console.log(decodedReturnData);
-
 				return commit('SET_BANKS', decodedReturnData);
 			});
 		},

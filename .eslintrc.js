@@ -12,6 +12,7 @@ module.exports = {
 		indent: 0,
 		'comma-dangle': 0,
 		'no-extra-semi': 0,
+		'space-before-function-paren': 0,
 	},
 	parserOptions: {
 		parser: 'babel-eslint',

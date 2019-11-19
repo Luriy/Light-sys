@@ -227,6 +227,7 @@ export default {
       timer: null,
       countdown: 59,
       isTransferSuccess: false,
+      error: null,
     }
   },
   mounted() {
@@ -244,7 +245,6 @@ export default {
         const walletsBalancesArray = this.wallets.map(wallet => wallet.balanceUSD);
         const maxBalanceIndex = walletsBalancesArray.indexOf(Math.max.apply(null, walletsBalancesArray));
         const walletWithMaxBalance = this.wallets[maxBalanceIndex];
-        console.log(walletWithMaxBalance)
         this.$router.replace({ params: { currency: walletWithMaxBalance.currency, address: walletWithMaxBalance.address }});
         return walletWithMaxBalance;
       } else {

@@ -81,13 +81,12 @@ export default {
 			operations: ['wallet/OPERATIONS'],
 		}),
 	},
-	async mounted() {
-		this.$store.dispatch('wallet/GET_TYPES');
-		await this.$store.dispatch('wallet/GET_WALLETS');
+	created() {
 		this.$store.dispatch('wallet/GET_OPERATIONS');
 	},
 	methods: {
 		handleMovingAndDeleting(type) {
+			console.log(this.isCardsMovingAndDeleting);
 			switch (type) {
 				case 'cards':
 					return (this.isCardsMovingAndDeleting = !this.isCardsMovingAndDeleting);
