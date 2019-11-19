@@ -98,13 +98,16 @@
               <div class="title">Receive</div>
               <div class="select">
                 <div @click="receiveAction" class="select-title">
-                  <div class="icon"><img :src="receiveCurrency.icon" alt title></div>
+                  <div class="icon"
+                       :style="[!receiveCurrency.isWallet ? {display:'flex', alignSelf:'center'} : '']">
+                    <img :src="receiveCurrency.icon" alt title>
+                  </div>
                   <div class="amount">
                     <div class="code" :class="receiveCurrency.code">{{receiveCurrency.fullName}}</div>
                     <div class="value">
-                      <span>{{exchangeCurrency.isWallet ? '1' : '500'}} {{exchangeCurrency.currency}} =</span>
+                      <span>1 {{exchangeCurrency.currency}} =</span>
                       <span>
-                      {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? transferInfo.rate : fiatInfo.out}}
+                      {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? transferInfo.rate.toFixed(5) : fiatInfo.out}}
                       {{receiveCurrency.currency}}
                     </span>
                     </div>
@@ -152,7 +155,7 @@
 
                 <div class="exchange-amount_input">
                   <v-text-field
-                    v-model="exchangeUSD"
+                    v-model="receiveUSD"
                     class="dollars_input"
                     solo
                     prepend-inner-icon="$"
@@ -175,8 +178,8 @@
                   <img :src="exchangeCurrency.icon" alt title>
                 </div>
                 <div class="text">
-                  <p>{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
-                  <span>${{exchangeUSD.toFixed(3)}}USD</span>
+                  <p :style="[!exchangeCurrency.isWallet ? {color:'#fff'}:'']">{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
+                  <span >${{exchangeUSD.toFixed(2)}}USD</span>
                 </div>
               </div>
             </div>
@@ -184,8 +187,8 @@
               <div class="title">You will receive</div>
               <div class="currency" :class="receiveCurrency.currency.toLowerCase()">
                 <div class="text">
-                  <p>{{receiveAmount.toFixed(3)}} {{receiveCurrency.currency}}</p>
-                  <span>${{receiveUSD.toFixed(3)}}USD</span>
+                  <p>{{receiveAmount.toFixed(5)}} {{receiveCurrency.currency}}</p>
+                  <span>${{receiveUSD.toFixed(2)}}USD</span>
                 </div>
                 <div class="icon">
                   <img :src="receiveCurrency.icon" alt title>
@@ -197,8 +200,8 @@
           <div class="exchange-block_button">
             <button @click="exchange">Exchange</button>
             <p class="info">
-              {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? 1 : 500}}
-              {{exchangeCurrency.currency}} = {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? transferInfo.rate : fiatInfo.out}}
+              1
+              {{exchangeCurrency.currency}} = {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? transferInfo.rate.toFixed(5) : fiatInfo.out}}
               {{receiveCurrency.currency}}</p>
           </div>
 
@@ -483,6 +486,10 @@
       },
       selectExchangeWallet(wallet) {
         this.exchangeCurrency = wallet;
+        this.exchangeAmount = 0;
+        this.receiveAmount = 0;
+        this.exchangeUSD = 0;
+        this.receiveUSD = 0;
         this.exchangeModal = false;
         if (wallet.isWallet) {
           this.getTransferInfo();
@@ -492,6 +499,10 @@
       },
       selectReceiveWallet(wallet) {
         this.receiveCurrency = wallet;
+        this.exchangeAmount = 0;
+        this.receiveAmount = 0;
+        this.exchangeUSD = 0;
+        this.receiveUSD = 0;
         this.receiveModal = false;
         if (this.exchangeCurrency.isWallet) {
           this.getTransferInfo();
@@ -513,14 +524,18 @@
           } else {
             this.exchangeAmount = this.exchangeCurrency.balance
           }
-          this.receiveAmount = this.exchangeAmount * this.transferInfo.rate;
+          this.receiveAmount = +(this.exchangeAmount * this.transferInfo.rate).toFixed(5);
           this.exchangeChange(this.exchangeAmount);
           this.receiveChange(this.receiveAmount);
         } else if (this.exchangeCurrency.isWallet && !this.receiveCurrency.isWallet) {
           this.exchangeAmount = this.exchangeCurrency.balance
+          this.exchangeChange(this.exchangeAmount);
+          this.receiveChange(this.receiveAmount);
         } else {
           this.exchangeAmount = this.fiatInfo.in_max
-          this.receiveAmount = this.exchangeAmount * this.fiatInfo.out;
+          this.receiveAmount = +(this.exchangeAmount * this.fiatInfo.out).toFixed(2);
+          this.exchangeChange(this.exchangeAmount);
+          this.receiveChange(this.receiveAmount);
         }
       },
       selectHalf() {
@@ -529,23 +544,27 @@
           if (this.exchangeCurrency.balance > this.transferInfo.limit) {
             this.exchangeAmount = this.transferInfo.limit / 2;
           } else {
-            this.exchangeAmount = this.exchangeCurrency.balance / 2;
+            this.exchangeAmount = +(this.exchangeCurrency.balance / 2).toFixed(5);
           }
-          this.receiveAmount = this.exchangeAmount * this.transferInfo.rate;
+          this.receiveAmount = +(this.exchangeAmount * this.transferInfo.rate).toFixed(5);
           this.exchangeChange(this.exchangeAmount);
           this.receiveChange(this.receiveAmount);
         } else if (this.exchangeCurrency.isWallet && !this.receiveCurrency.isWallet) {
           this.exchangeAmount = this.exchangeCurrency.balance / 2;
+          this.exchangeChange(this.exchangeAmount);
+          this.receiveChange(this.receiveAmount);
         } else {
           this.exchangeAmount = this.fiatInfo.in_max / 2;
-          this.receiveAmount = this.exchangeAmount * this.fiatInfo.out;
+          this.receiveAmount = +(this.exchangeAmount * this.fiatInfo.out).toFixed(2);
+          this.exchangeChange(this.exchangeAmount);
+          this.receiveChange(this.receiveAmount);
         }
       },
       selectMin() {
         this.exchangeBtn = 3;
         if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
-          this.exchangeAmount = this.transferInfo.minimum;
-          this.receiveAmount = this.exchangeAmount * this.transferInfo.rate;
+          this.exchangeAmount = +(this.transferInfo.minimum).toFixed(5);
+          this.receiveAmount = +(this.exchangeAmount * this.transferInfo.rate).toFixed(5);
           this.exchangeChange(this.exchangeAmount);
           this.receiveChange(this.receiveAmount);
         } else if (this.exchangeCurrency.isWallet && !this.receiveCurrency.isWallet) {
@@ -554,18 +573,33 @@
           } else {
             this.exchangeAmount = this.exchangeCurrency.balance
           }
+          this.exchangeChange(this.exchangeAmount);
+          this.receiveChange(this.receiveAmount);
         } else {
           this.exchangeAmount = this.fiatInfo.in_min;
-          this.receiveAmount = this.exchangeAmount * this.fiatInfo.out;
+          this.receiveAmount = +(this.exchangeAmount * this.fiatInfo.out).toFixed(2);
+          this.exchangeChange(this.exchangeAmount);
+          this.receiveChange(this.receiveAmount);
         }
       },
       exchangeChange() {
-        const price = this.types[this.exchangeCurrency.name].price;
-        this.exchangeUSD = this.exchangeAmount * price;
+        let price = null;
+        if (this.exchangeCurrency.isWallet) {
+          price = this.types[this.exchangeCurrency.name].price;
+          this.exchangeUSD = +(this.exchangeAmount * price).toFixed(2);
+        } else {
+          price = this.exchangeCurrency.currency === 'RUR' ? this.fiatInfo.RUR.USD : this.fiatInfo.USD[this.exchangeCurrency.currency];
+          this.exchangeUSD = +(this.exchangeAmount / price).toFixed(2);
+        }
       },
       receiveChange(value) {
-        const price = this.types[this.receiveCurrency.name].price;
-        this.receiveUSD = value * price;
+        let price = null;
+        if (this.receiveCurrency.isWallet) {
+          price = this.types[this.receiveCurrency.name].price;
+          this.receiveUSD = +(value * price).toFixed(2);
+        } else {
+          // price = this.fiatInfo[this.exchangeCurrency.currency]
+        }
       }
     },
     computed: {

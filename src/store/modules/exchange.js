@@ -43,6 +43,7 @@ export default {
       })
     },
     GET_FIAT_INFO: ({ commit }, { exchange, receive }) => {
+      commit('alerts/setLoading', '#673AB7',{root:true});
       return Axios({
         url: API_URL,
         method: 'GET',
@@ -50,11 +51,13 @@ export default {
           Comand: 'InfoPsid',
           Psid1: exchange,
           Psid2: receive,
-          InfoCrypts: true
+          Ammount: '1',
+          InfoCrypts: 'True'
         }
       }).then(({ data }) => {
         const {Errors} = parsePythonArray(data)['0'];
         if (!Object.keys(Errors).length) {
+          commit('alerts/setLoading', false,{root:true});
           const result = parsePythonArray(data)['1'].return
           commit('SET_FIAT_INFO', result)
         } else {
@@ -130,8 +133,8 @@ export default {
                 number: item.Walet,
                 status: item.Status,
                 currency: walletCurrency,
-                balance: item.Balance,
-                balanceUSD: item.BalanceUsd,
+                balance: item.Balance.toFixed(5),
+                balanceUSD: item.BalanceUsd.toFixed(2),
                 psid: +fiatKeys.filter(item =>(fiat[item].valute === walletCurrency))[0],
                 isWallet: true
               }))
