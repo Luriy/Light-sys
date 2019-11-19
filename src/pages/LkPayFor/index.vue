@@ -79,7 +79,7 @@ export default {
 		}),
 		allUsdBalance() {
 			const { BTCBalanceusd, ETHBalanceusd, LTCBalanceusd } = this.allBalance;
-			return (BTCBalanceusd + ETHBalanceusd + LTCBalanceusd).toFixed(2);
+			return ((BTCBalanceusd || 0) + (ETHBalanceusd || 0) + (LTCBalanceusd || 0)).toFixed(2);
 		},
 	},
 	data() {

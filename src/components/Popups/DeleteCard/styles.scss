@@ -1,0 +1,39 @@
+.card-list-delete-popup {
+	.popup-wrapper {
+		border-radius: 47px;
+		background-color: #3b2665 !important;
+	}
+
+	&__title {
+		font-size: 36px;
+		font-weight: 600;
+		color: #fff;
+	}
+	&__paragraph {
+		font-size: 16px;
+		font-weight: 600;
+		opacity: 0.5;
+		color: #ffffff;
+		margin: 15px 0;
+		line-height: 23px;
+	}
+	&__card {
+		font-size: 16px;
+		font-weight: 600;
+		color: #ffffff;
+		margin-bottom: 30px;
+	}
+	&__wrapper {
+		max-width: 250px !important;
+		margin: 0 auto;
+	}
+	.button-wrapper {
+		width: 120px !important;
+		height: 50px !important;
+		border-radius: 28px !important;
+	}
+	.cancel {
+		background-color: #3b2665 !important;
+		border-radius: 28px !important;
+	}
+}

@@ -940,7 +940,7 @@ $eth: #7d8ef6;
 						}
 					}
 					.wallet-last-transactions {
-						overflow: hidden;
+						// overflow: hidden;
 						transition: .3s;
 						opacity: 0;
 						max-height: 0;
@@ -950,7 +950,11 @@ $eth: #7d8ef6;
 							padding: 10px 0;
 							display: flex;
 							justify-content: space-between;
-							align-items:center;
+              align-items:center;
+              position: relative;
+              .btn-remove {
+                left: -21px;
+              }
 							.from {
 								display: flex;
 									justify-content: left;
@@ -1331,6 +1335,7 @@ $eth: #7d8ef6;
 				.wallets-list_item_body {
           padding-right: 1.5vw;
           padding-left: 10px;
+          display: block;
 
 					&::-webkit-scrollbar {
 						width: 4px !important;

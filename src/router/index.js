@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 import LkPaymentWallet from '@/pages/LkPaymentWallet';
-import LkPaymentWallets from '@/pages/LkPaymentWallets';
+import LkWalletsAndAccounts from '@/pages/LkWalletsAndAccounts';
 import LkPaymentWalletSend from '@/pages/LkPaymentWalletSend';
 import LkPaymentWalletReceive from '@/pages/LkPaymentWalletReceive';
 import LkPaymentExchange from '@/pages/LkPaymentExchange';
@@ -40,7 +40,7 @@ export default new Router({
 	routes: [
 		{
 			path: '/',
-			component: LkPaymentWallets,
+			component: LkWalletsAndAccounts,
 			beforeEnter: ifAuthenticated,
 		},
 		{
@@ -66,8 +66,8 @@ export default new Router({
 		// WALLETS
 		{
 			path: '/wallets',
-			name: 'LkPaymentWallets',
-			component: LkPaymentWallets,
+			name: 'LkWalletsAndAccounts',
+			component: LkWalletsAndAccounts,
 			beforeEnter: ifAuthenticated,
 		},
 		{

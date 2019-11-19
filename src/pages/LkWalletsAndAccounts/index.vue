@@ -1,66 +1,61 @@
 <template>
 	<lk-layout>
-		<div class="wallets-list">
-			<div class="wallets-block wallets-list_item">
-				<div class="toggler">
-					<p>Wallets</p>
-					<div class="flex toggler__panel">
-						<div
-							class="toggle minus"
-							:class="{ active: isWalletsMovingAndDeleting }"
-							@click="handleMovingAndDeleting('wallets')"
-						></div>
-						<router-link to="/wallets/create-wallet"><div class="toggle"></div></router-link>
+		<div class="wallets-and-acccouts-page">
+			<div class="wallets-list">
+				<div class="wallets-block wallets-list_item">
+					<div class="toggler">
+						<p>Wallets</p>
+						<div class="flex toggler__panel">
+							<div
+								class="toggle minus"
+								:class="{ active: isWalletsMovingAndDeleting }"
+								@click="handleMovingAndDeleting('wallets')"
+							></div>
+							<router-link to="/wallets/create-wallet"><div class="toggle"></div></router-link>
+						</div>
 					</div>
+					<wallets-list :isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"></wallets-list>
 				</div>
-				<wallets-list :isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"></wallets-list>
-			</div>
 
-			<div class="fiat-block wallets-list_item">
-				<div class="toggler">
-					<p>Account and Cards</p>
-					<div class="flex toggler_panel">
-						<div
-							class="toggle minus"
-							:class="{ active: isCardsMovingAndDeleting }"
-							@click="handleMovingAndDeleting('cards')"
-						></div>
-						<router-link to="/wallets/accounts-and-cards"><div class="toggle"></div></router-link>
+				<div class="fiat-block wallets-list_item">
+					<div class="toggler">
+						<p>Account and Cards</p>
+						<div class="flex toggler_panel">
+							<div
+								class="toggle minus"
+								:class="{ active: isCardsMovingAndDeleting }"
+								@click="handleMovingAndDeleting('cards')"
+							></div>
+							<router-link to="/wallets/accounts-and-cards"><div class="toggle"></div></router-link>
+						</div>
 					</div>
+					<cards-list :isCardsMovingAndDeleting="isCardsMovingAndDeleting"></cards-list>
 				</div>
-				<cards-list :isCardsMovingAndDeleting="isCardsMovingAndDeleting"></cards-list>
 			</div>
-		</div>
-		<div class="operations-history">
-			<div class="title">
-				<p>Operations history</p>
-				<span>Sep 09, 2019</span>
-			</div>
-			<div class="operations-history-list">
-				<operations-history-list-item
-					v-for="(operation, idx) in operations"
-					:key="idx"
-					v-bind="operation"
-				></operations-history-list-item>
+			<div class="operations-history">
+				<div class="title">
+					<p>Operations history</p>
+					<span>Sep 09, 2019</span>
+				</div>
+				<div class="operations-history-list">
+					<operations-history-list-item
+						v-for="(operation, idx) in operations"
+						:key="idx"
+						v-bind="operation"
+					></operations-history-list-item>
+				</div>
 			</div>
 		</div>
 	</lk-layout>
 </template>
-<style scoped>
-.minus {
-	margin-right: 5px;
-}
-.toggler {
-	padding-right: 1.7vw;
-}
-</style>
 <script>
 import { mapGetters } from 'vuex';
 import wallet from '@/store/modules/wallet';
 import LkLayout from '@/layout/LkLayout';
 import OperationsHistoryListItem from '@/components/OperationsHistoryListItem';
-import WalletsList from '@/components/WalletsList';
-import CardsList from '@/components/CardsList';
+import WalletsList from './components/WalletsList';
+import CardsList from './components/CardsList';
+import './styles.scss';
 
 export default {
 	name: 'LkPaymentWallets',
