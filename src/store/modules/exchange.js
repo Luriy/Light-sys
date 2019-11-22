@@ -134,8 +134,8 @@ export default {
                 number: item.Walet,
                 status: item.Status,
                 currency: walletCurrency,
-                balance: item.Balance.toFixed(5),
-                balanceUSD: item.BalanceUsd.toFixed(2),
+                balance: item.Balance ? item.Balance.toFixed(5) : 0,
+                balanceUSD: item.Balance ? item.BalanceUsd.toFixed(2) : 0,
                 psid: +fiatKeys.filter(item =>(fiat[item].valute === walletCurrency))[0],
                 isWallet: true
               }))

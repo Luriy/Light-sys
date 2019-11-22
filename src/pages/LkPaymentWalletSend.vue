@@ -11,13 +11,13 @@
               <div class="select__modal" v-show="isSelectWalletOpened">
                 <div class="select__modal-item" v-for="wallet in wallets" :key="wallet.address" :class="{ active: wallet.address == $route.params.address }" @click="handleSelectWallet(wallet.currency, wallet.address)">
                   <img v-if="wallet.currency === 'BTC'" width="17" src="@/assets/images/btc.png" />
-                  <img v-if="wallet.currency === 'ETH'" width="17" src="@/assets/images/eth.png" />
+                  <img v-if="wallet.currency === 'ETH'" width="17" src="@/assets/images/eth.png" /><!--А если валют будет 150-200? Дам подказку решение ты найдешь в exchange store GET_FIAT_EXCHANGE-->
                   <img v-if="wallet.currency === 'LTC'" width="17" src="@/assets/images/ltc.svg" />
                   <h2 class="select__modal-currency">{{ currencyName(wallet.currency) }}</h2>
                   <span class="select__modal-balance">{{ `${wallet.currency} ${formatCurrency(wallet.balance, '', 5)}` }}</span>
                   <span class="select__modal-balance-usd">{{ `$${formatCurrency(wallet.balanceUSD)} USD` }}</span>
                 </div>
-              </div>  
+              </div>
             </transition>
           </div>
           <img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title>
@@ -47,7 +47,7 @@
           <button @click="onSendSms">Send</button>
           <error :error="error"></error>
         </div>
-        
+
         <div class="send-form-totals">
           <div class="send-form-totals-total">
             <div class="text">{{ currencyName(currency) }} Network Fee</div>
@@ -140,7 +140,7 @@
     </payments-and-transfer>
   </lk-layout>
 </template>
-<style scoped>
+<style scoped> // <== перенеси в конец файла, файлы стилей в конце всегда
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
       -webkit-appearance: none;
@@ -304,7 +304,7 @@ export default {
         {0: ''},
         {1: ''},
         {2: ''},
-        {3: ''},
+        {3: ''},   // <- делай это в цикле
         {4: ''},
         {5: ''},
       ],
@@ -419,7 +419,7 @@ export default {
         });
       } else {
         this.error = validateErrorAmount || validateErrorAddress;
-      } 
+      }
     },
     onSend() {
       const token = this.smsCodes.map((smsCode, index) =>smsCode[index]).join('');

@@ -89,7 +89,7 @@ $eth: #7d8ef6;
 }
 
 .exchange-block {
-	border-radius: 14px;
+	  border-radius: 14px;
   	background-color: #3b2665;
   	position:relative;
   	padding:25px 25px 40px;
@@ -124,7 +124,7 @@ $eth: #7d8ef6;
 			margin-bottom: 20px;
   		}
 
-  		.info {
+  		.currency_info {
 			font-size: 12px;
 			font-weight: 600;
 			text-transform: uppercase;
@@ -156,11 +156,11 @@ $eth: #7d8ef6;
 		    position: absolute;
 		    text-align: center;
 		}
-		.title {
-			font-size: 12px;
-			font-weight: 600;
+		.exchange_title {
+      font-size: 12px;
+			font-weight: 600!important;
 			color: #fff;
-			line-height:21px;
+			line-height:21px!important;
 		}
 		.currency {
 			display: flex;
@@ -171,6 +171,7 @@ $eth: #7d8ef6;
 					font-size: 16px;
 					line-height: 21px;
 					font-weight: 600;
+          margin: 0;
 				}
 				span {
 					font-size: 12px;
@@ -1447,9 +1448,7 @@ $eth: #7d8ef6;
 		}
 	}
 }
-
 }
-
   	@media(min-width: 1800px){
   		.wallets-list {
 			width: 77.4vw;
@@ -1513,7 +1512,7 @@ $eth: #7d8ef6;
 									font-size: 0.875rem;
 								}
 							}
-							.info {
+							.wallets_info {
 								.amount {
 									margin-right: 3.8vw;
 									font-size: .875rem;
@@ -1523,7 +1522,7 @@ $eth: #7d8ef6;
 						}
 					}
 				}
-					.info {
+					.wallets_info {
 					display: flex;
 					.balance {
 						margin-right: 3.8vw;

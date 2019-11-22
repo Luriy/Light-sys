@@ -74,7 +74,9 @@
               <div class="exchange-amount">
                 <div class="exchange-amount_input" :class="exchangeCurrency.currency.toLowerCase()">
                   <v-text-field
-                    v-model="exchangeAmount"
+                    v-model.number="exchangeAmount"
+                    :rules="exchangeAmountRules"
+                    :color="exchangeCurrency.isWallet ? exchangeCurrency.color : '#fff'"
                     @input="exchangeChange"
                     placeholder="0"
                     required
@@ -86,6 +88,7 @@
                   <v-text-field
                     v-model="exchangeUSD"
                     class="dollars_input"
+                    color="#fff"
                     solo
                     prepend-inner-icon="$"
                     placeholder="0"
@@ -146,7 +149,9 @@
               <div class="exchange-amount">
                 <div class="exchange-amount_input" :class="receiveCurrency.currency.toLowerCase()">
                   <v-text-field
-                    v-model="receiveAmount"
+                    v-model.number="receiveAmount"
+                    :rules="receiveAmountRules"
+                    :color="receiveCurrency.isWallet ? receiveCurrency.color : '#fff'"
                     placeholder="0"
                     required
                   ></v-text-field>
@@ -157,6 +162,7 @@
                   <v-text-field
                     v-model="receiveUSD"
                     class="dollars_input"
+                    color="#fff"
                     solo
                     prepend-inner-icon="$"
                     placeholder="0"
@@ -172,7 +178,7 @@
               <img src="@/assets/images/right-arr-white.svg" alt title>
             </div>
             <div class="left">
-              <div class="title">You are exchanging</div>
+              <div class="exchange_title" style="">You are exchanging</div>
               <div class="currency" :class="exchangeCurrency.currency.toLowerCase()">
                 <div class="icon">
                   <img :src="exchangeCurrency.icon" alt title>
@@ -184,7 +190,7 @@
               </div>
             </div>
             <div class="right">
-              <div class="title">You will receive</div>
+              <div class="exchange_title" style="font-size: 12px">You will receive</div>
               <div class="currency" :class="receiveCurrency.currency.toLowerCase()">
                 <div class="text">
                   <p :style="[!receiveCurrency.isWallet ? {color:'#fff'}:'']">{{receiveAmount.toFixed(5)}} {{receiveCurrency.currency}}</p>
@@ -199,7 +205,7 @@
 
           <div class="exchange-block_button">
             <button @click="exchange">Exchange</button>
-            <p class="info">
+            <p class="currency_info">
               1
               {{exchangeCurrency.currency}} = {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? transferInfo.rate.toFixed(5) : fiatInfo.out}}
               {{receiveCurrency.currency}}</p>
@@ -335,6 +341,7 @@
 <script>
   import LkLayout from '@/layout/LkLayout'
   import LkPopUp from '@/layout/LkPopUp';
+  import Error from '@/components/Error';
   import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
   import currencyList from '@/settings/currensyList'
   import { getAuthParams } from '@/functions/auth';
@@ -344,7 +351,8 @@
     name: 'LkPaymentExchange',
     components: {
       LkLayout,
-      LkPopUp
+      LkPopUp,
+      Error
     },
     data () {
       return {
@@ -361,8 +369,6 @@
           {4: ''},
           {5: ''},
         ],
-        errorMessages: '',
-        formHasErrors: false,
         exchangePopup: false,
         exchangeBtn: 0,
         receiveBtn: 0,
@@ -371,6 +377,16 @@
         receiveAmount: 0,
         exchangeUSD: 0,
         receiveUSD: 0,
+        exchangeAmountRules: [
+          value => !!value || 'Required',
+          value => (this.exchangeCurrency.isWallet && value <= this.exchangeCurrency.balance) || 'Ammount cannot be more than your balance',
+          value => (this.exchangeCurrency.isWallet && value <= this.transferInfo.limit) || 'Ammount cannot be more than limit',
+          value => (!this.exchangeCurrency.isWallet && value <= this.exchangeCurrency.reserve) || 'Ammount cannot be more than reserve'
+        ],
+        receiveAmountRules: [
+          value => !!value || 'Required',
+
+        ],
         exchangeCurrency: {
           code: 'btc',
           currency: 'BTC',
@@ -677,6 +693,6 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
 </style>

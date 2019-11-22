@@ -1,22 +1,24 @@
 <template>
-	<div id="app">
-		<router-view v-if="isReady"></router-view>
-		<template v-if="notification && notification.message">
-			<v-snackbar
-				v-model="notification"
-				:timeout="15000"
-				:multi-line="true"
-				right="right"
-				top="top"
-				color="#3b2665"
-				@input="closeNotification"
-			>
-				<i :class="`material-icons status ${notification.status}`">{{ notification.icon }}</i>
-				<p class="notification-message">{{ notification.message }}</p>
-				<i class="material-icons close-action" @click="closeNotification">close</i>
-			</v-snackbar>
-		</template>
-	</div>
+  <v-app style="background:#2c1559;">
+    <div id="app">
+        <router-view v-if="isReady"></router-view>
+      <template v-if="notification && notification.message">
+        <v-snackbar
+          v-model="notification"
+          :timeout="15000"
+          :multi-line="true"
+          right="right"
+          top="top"
+          color="#3b2665"
+          @input="closeNotification"
+        >
+          <i :class="`material-icons status ${notification.status}`">{{ notification.icon }}</i>
+          <p class="notification-message">{{ notification.message }}</p>
+          <i class="material-icons close-action" @click="closeNotification">close</i>
+        </v-snackbar>
+      </template>
+    </div>
+  </v-app>
 </template>
 
 <script>
