@@ -1,23 +1,27 @@
 <template>
 	<div class="virtual-cards-list" v-if="filteredCards.length">
-		<div
-			class="virtual-card flex flex-column justify-content-between"
-			v-for="item in filteredCards"
-			:key="item.Number"
-		>
-			<div class="flex justify-content-between align-items-center">
-				<div class="flex align-items-center">
-					<img v-if="!!getBankImage(item.Psid, 'small')" :src="getBankImage(item.Psid, 'small')" />
-					<div class="virtual-card__currency">{{ item.Currency }}</div>
+		<div class="virtual-card__wrapper" v-for="item in filteredCards" :key="item.Number">
+			<div
+				class="virtual-card flex flex-column justify-content-between"
+				@click="$emit('onClickCard')"
+			>
+				<div class="flex justify-content-between align-items-center">
+					<div class="flex align-items-center">
+						<img
+							v-if="!!getBankImage(item.Psid, 'small')"
+							:src="getBankImage(item.Psid, 'small')"
+						/>
+						<div class="virtual-card__currency">{{ item.Currency }}</div>
+					</div>
+					<div class="virtual-card__number">* {{ item.Number.slice(-4) }}</div>
 				</div>
-				<div class="virtual-card__number">* {{ item.Number.slice(-4) }}</div>
-			</div>
-			<div class="flex justify-content-between align-items-flex-end">
-				<div class="flex flex-column">
-					<div class="virtual-card__exp-date-title">Exp Date</div>
-					<div class="virtual-card__exp-date">07/20</div>
+				<div class="flex justify-content-between align-items-flex-end">
+					<div class="flex flex-column">
+						<div class="virtual-card__exp-date-title">Exp Date</div>
+						<div class="virtual-card__exp-date">07/20</div>
+					</div>
+					<img src="@/assets/images/mastercard.png" />
 				</div>
-				<img src="@/assets/images/mastercard.png" />
 			</div>
 			<transition name="fade">
 				<div
@@ -142,25 +146,10 @@ import { mapGetters } from 'vuex';
 import LkPopup from '@/layout/LkPopUp';
 import getBankImage from '@/functions/getBankImage';
 import formatCardNumber from '@/functions/formatCardNumber';
-import LkPopupDeleteCard from '@/components/Popups/DeleteCard/index';
+import LkPopupDeleteCard from '@/components/Popups/DeleteCard';
 
 export default {
 	props: ['currency', 'isEditing', 'banks', 'cards', 'filteredCards'],
-	mounted() {
-		const select = document.querySelector('.card-list-edit-popup .select');
-		window.addEventListener('click', ({ target }) => {
-			if (
-				(target ? false : !target.classList.contains('.card-list-edit-popup .select')) &&
-				!select.contains(target)
-			) {
-				this.editPopup.select.active = false;
-			}
-		});
-	},
-	components: {
-		LkPopup,
-		LkPopupDeleteCard,
-	},
 	data() {
 		return {
 			deletePopup: {
@@ -180,7 +169,27 @@ export default {
 				},
 				isOpened: false,
 			},
+			windowHandler: null,
 		};
+	},
+	mounted() {
+		const select = document.querySelector('.card-list-edit-popup .select');
+		this.windowHandler = ({ target }) => {
+			if (
+				(target ? false : !target.classList.contains('.card-list-edit-popup .select')) &&
+				!select.contains(target)
+			) {
+				this.editPopup.select.active = false;
+			}
+		};
+		window.addEventListener('click', this.windowHandler);
+	},
+	beforeDestroy() {
+		window.removeEventListener('click', this.windowHandler);
+	},
+	components: {
+		LkPopup,
+		LkPopupDeleteCard,
 	},
 	methods: {
 		formatCardNumber,

@@ -28,7 +28,7 @@
 						<div class="add-card-form__inputs-block">
 							<div class="flex flex-column">
 								<input
-									type="text"
+									type="number"
 									class="add-card-form__input"
 									placeholder="Card number"
 									v-model="cardInfo.number"
@@ -39,7 +39,7 @@
 							</div>
 							<div class="flex flex-column">
 								<input
-									type="text"
+									type="number"
 									class="add-card-form__input"
 									placeholder="MM/YY"
 									maxlength="5"
@@ -59,7 +59,7 @@
 							</div>
 							<div class="flex flex-column">
 								<input
-									type="text"
+									type="number"
 									pattern="[0-9]"
 									class="add-card-form__input"
 									placeholder="CVV"
@@ -168,18 +168,23 @@ export default {
 				isActive: false,
 			},
 			error: null,
+			windowHandler: null,
 		};
 	},
 	mounted() {
 		const select = document.querySelector('.add-new-card-header .select');
-		window.addEventListener('click', ({ target }) => {
+		this.windowHandler = ({ target }) => {
 			if (
-				(target ? false : !target.classList.contains('.add-new-card-header .select')) &&
+				(target ? !target.classList.contains('.add-new-card-header .select') : false) &&
 				!select.contains(target)
 			) {
 				this.select.isActive = false;
 			}
-		});
+		};
+		window.addEventListener('click', this.windowHandler);
+	},
+	beforeDestroy() {
+		window.removeEventListener('click', this.windowHandler);
 	},
 	methods: {
 		getBankImage,
@@ -220,6 +225,7 @@ export default {
 				name: 'Choose your bank',
 				currency: '',
 			};
+			this.error = null;
 		},
 		handleCancel() {
 			this.freezeActive = true;
@@ -256,7 +262,7 @@ export default {
 					.then((data) => {
 						const errors = Object.values(data[0]['Errors']);
 						if (errors.length) {
-							this.error = erros[0];
+							this.error = errors[0];
 						} else if (data['1'].return.Status === 'Complete') {
 							this.handleCancel();
 							this.$store.dispatch('card/GET_CARDS');

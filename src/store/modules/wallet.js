@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import { parsePythonArray } from '@/functions/helpers';
+import { parsePythonArray, parsePythonDataObject } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
 import { API_URL } from '@/constants';
 
@@ -15,6 +15,7 @@ export default {
 		types: {},
 		percentage: {},
 		operations: [],
+		afterCreateWallet: false,
 	},
 	getters: {
 		PAGE_DETAIL: (state) => state.pageDetail,
@@ -22,6 +23,7 @@ export default {
 		TYPES: (state) => state.types,
 		PERCENTAGE: (state) => state.percentage,
 		OPERATIONS: (state) => state.operations,
+		AFTER_CREATE_WALLET: (state) => state.afterCreateWallet,
 	},
 	mutations: {
 		SET_PAGE_DETAIL: (state, payload) => (state.pageDetail = payload),
@@ -39,6 +41,7 @@ export default {
 		SET_TYPES: (state, payload) => (state.types = payload),
 		SET_PERCENTAGE: (state, payload) => (state.percentage = payload),
 		SET_OPERATIONS: (state, payload) => (state.operations = payload),
+		SET_AFTER_CREATE_WALLET: (state, payload) => (state.afterCreateWallet = payload),
 	},
 	actions: {
 		GET_PAGE_DETAIL: (store, { currency, address }) => {
@@ -73,7 +76,7 @@ export default {
 				});
 			});
 		},
-		CREATE_WALLET: (store, type) => {
+		CREATE_WALLET: ({ commit }, type) => {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -81,6 +84,8 @@ export default {
 					Comand: `Add${type}wallet`,
 					...getAuthParams(),
 				},
+			}).then((data) => {
+				return parsePythonDataObject(data);
 			});
 		},
 		DELETE_WALLET: (state, payload) => {
@@ -94,7 +99,7 @@ export default {
 				},
 			});
 		},
-		GET_WALLETS: ({ commit }) => {
+		GET_WALLETS({ commit }) {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -103,38 +108,61 @@ export default {
 					...getAuthParams(),
 				},
 			}).then(({ data }) => {
-				const returnData = parsePythonArray(data)['1'].return;
+				const errors = Object.values(parsePythonArray(data)['0'].Errors);
 
-				const result = Object.keys(returnData)
-					.reduce((acc, walletCurrency) => {
-						acc.push(
-							...Object.values(returnData[walletCurrency]).map((item) => ({
-								address: item.Walet,
-								status: item.Status,
-								currency: walletCurrency,
-								balance: item.Balance,
-								balanceUSD: item.BalanceUsd,
-							})),
-						);
-						return acc;
-					}, [])
-					.filter(({ status }) => status !== 'Frozen');
+				if (errors.length) {
+					return commit(
+						'alerts/setNotification',
+						{
+							message: errors[0],
+							status: 'error-status',
+							icon: 'close',
+						},
+						{ root: true },
+					);
+				} else {
+					const returnData = parsePythonArray(data)['1'].return;
 
-				// DEVELOPMENT CODE FOR UNFREEZE WALLETS
+					const result = Object.keys(returnData)
+						.reduce((acc, walletCurrency) => {
+							if (
+								walletCurrency === 'BTC' ||
+								walletCurrency === 'ETH' ||
+								walletCurrency === 'LTC'
+							) {
+								acc.push(
+									...Object.values(returnData[walletCurrency]).map((item) => ({
+										address: item.Walet,
+										status: item.Status,
+										currency: walletCurrency,
+										balance: item.Balance,
+										balanceUSD: item.BalanceUsd,
+									})),
+								);
+							}
 
-				// result.forEach(item => {
-				//   return Axios({
-				//     url: API_URL,
-				//     method: 'POST',
-				//     params: {
-				//       Comand: `UnFrozenWalet${item.currency}`,
-				//       Walet: item.address,
-				//       ...getAuthParams()
-				//     }
-				//   })
-				// })
+							return acc;
+						}, [])
+						.filter(({ status }) => status !== 'Frozen');
 
-				return commit('SET_WALLETS', result);
+					// DEVELOPMENT CODE FOR UNFREEZE WALLETS
+
+					// result.forEach(item => {
+					//   return Axios({
+					//     url: API_URL,
+					//     method: 'POST',
+					//     params: {
+					//       Comand: `UnFrozenWalet${item.currency}`,
+					//       Walet: item.address,
+					//       ...getAuthParams()
+					//     }
+					//   })
+					// })
+
+					commit('SET_WALLETS', result);
+
+					return result;
+				}
 			});
 		},
 
@@ -260,6 +288,8 @@ export default {
 					'200d': responseData['percentage_LTC: '].percentage_200d,
 				},
 			});
+
+			return responseData;
 		},
 		GET_OPERATIONS: async (store) => {
 			const transactions = (

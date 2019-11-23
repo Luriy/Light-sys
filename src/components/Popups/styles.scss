@@ -36,4 +36,18 @@
 		background-color: #3b2665 !important;
 		border-radius: 28px !important;
 	}
+	.image-plate {
+		width: 53px;
+		height: 53px;
+		border-radius: 20px;
+		background-color: #644a99;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transform: translateY(-50%);
+
+		&.transparent {
+			background-color: transparent;
+		}
+	}
 }

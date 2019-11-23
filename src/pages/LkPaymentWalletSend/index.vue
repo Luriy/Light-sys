@@ -96,6 +96,7 @@
           <input
             class="number-input"
             v-for="(input, index) in smsCodes"
+            :key="input+index"
             v-model="input[index]"
             @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : onSend()"
             placeholder="_"
@@ -114,7 +115,7 @@
         <div slot='body' class="exchange-popup_body">
           <div class="exchange-popup_info">
             <div class="flex">
-              <p class="from" :class="currency.toLowerCase()">{{ formatCurrency(cryptoCurrencyAmount, '', 8) }} {{ currency }}</p>
+              <p class="from" :class="currency.toLowerCase()">{{ formatCurrency(cryptoCurrencyAmount, '', 5) }} {{ currency }}</p>
               <p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
             </div>
             <img src="@/assets/images/send-arrow.svg" alt title>
@@ -141,60 +142,19 @@
   </lk-layout>
 </template>
 <style scoped>
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-  }
-  input[type='number'] {
-    -moz-appearance: textfield;
-  }
-  .current-balance {
-    width: 100%;
-  }
-  .current-balance input[name='balance'] {
-    width: 90%;
-  }
-  .transfer-popup .payment-address {
-    margin-right: 15px;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .transfer-popup .from {
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .transfer-popup .payment-usd {
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    margin-left: 9px;
-  }
-  .transfer-popup .fixed-value {
-    width: 90px;
-    text-align: right;
-  }
-  .transfer-popup .btc-value {
-    margin-right: 0 !important;
-  }
-  .exchange-popup_info img {
-    left: 35% !important;
-  }
-  .exchange-popup_body {
-    width: 620px !important;
-  }
+  
 </style>
 <script>
 import LkLayout from '@/layout/LkLayout';
 import PaymentsAndTransfer from '@/layout/LkPaymentsAndTransfer'
-import Axios from 'axios';
 import { mapGetters } from 'vuex';
-import { API_URL } from '../constants'
-import { VALIDATE_AMOUNT_TRANSFER_EXCHANGE, VALIDATE_ADDRESS } from '../validation';
+import { VALIDATE_AMOUNT_TRANSFER_EXCHANGE, VALIDATE_ADDRESS } from '@/validation';
 import { getAuthParams } from '@/functions/auth';
 import LkPopUp from '@/layout/LkPopUp';
 import capitalizeFirstLetter from "@/functions/capitalizeFirstLetter"
+import getCryptoInfo from "@/functions/getCryptoInfo"
 import Error from '@/components/Error';
+import './styles.scss';
 
 
 export default {
@@ -208,8 +168,8 @@ export default {
     return {
       cryptoCurrencyAmount: null,
       currencyAmount: null,
-      remainingCurrency: 0,
-      remainingCryptoCurrency: 0,
+      remainingCurrency: Number(0).toFixed(2),
+      remainingCryptoCurrency: Number(0).toFixed(5),
       paymentAddress: null,
       activeButton: null,
       isCryptoCurrencyAmountInputClicked: false,
@@ -232,27 +192,35 @@ export default {
   },
   mounted() {
     this.$store.dispatch('wallet/GET_WALLETS');
+    this.$store.dispatch('wallet/GET_TYPES');
   },
   computed: {
+    currency() {
+      return this.$route.params.currency
+    },
     user() {
       return {...getAuthParams()}
     },
+    course() {
+      return this.types[getCryptoInfo(this.currency).fullName.toLowerCase()].price;
+    },
     ...mapGetters({
       wallets: 'wallet/WALLETS',
+      types: 'wallet/TYPES',
     }),
     currentWallet() {
       if (this.$route.params.address === 'none') {
-        const walletsBalancesArray = this.wallets.map(wallet => wallet.balanceUSD);
-        const maxBalanceIndex = walletsBalancesArray.indexOf(Math.max.apply(null, walletsBalancesArray));
-        const walletWithMaxBalance = this.wallets[maxBalanceIndex];
-        this.$router.replace({ params: { currency: walletWithMaxBalance.currency, address: walletWithMaxBalance.address }});
-        return walletWithMaxBalance;
+        if (this.wallets && this.wallets.length) {
+          const walletsBalancesArray = this.wallets.map(wallet => wallet.balanceUSD);
+          const maxBalanceIndex = walletsBalancesArray.indexOf(Math.max.apply(null, walletsBalancesArray));
+          const walletWithMaxBalance = this.wallets[maxBalanceIndex];
+          this.$router.replace({ params: { currency: walletWithMaxBalance.currency, address: walletWithMaxBalance.address }});
+          return walletWithMaxBalance;
+        }
+        else this.$router.push('/wallets');
       } else {
         return this.wallets.find(wallet => wallet.address == this.$route.params.address)
       }
-    },
-    currency() {
-      return this.$route.params.currency
     },
     minAmount() {
       switch (this.currency) {
@@ -281,7 +249,7 @@ export default {
       }
     },
     cryptoCurrencyAmountPlaceholder() {
-      return this.isCryptoCurrencyAmountInputClicked ? null : this.formatCurrency(this.initialBalance.cryptoCurrency, '', 8);
+      return this.isCryptoCurrencyAmountInputClicked ? null : this.formatCurrency(this.initialBalance.cryptoCurrency, '', 5);
     },
     currencyAmountPlaceholder() {
       return this.isCurrencyAmountInputClicked ? null : this.formatCurrency(this.initialBalance.currency);
@@ -323,17 +291,17 @@ export default {
       }
     },
     cryptoToCurrency(crypto) {
-      return (Number(crypto) * this.initialBalance.course).toFixed(2);
+      return (Number(crypto) * this.course).toFixed(2);
     },
     currencyToCrypto(currency) {
-      return (Number(currency) / this.initialBalance.course).toFixed(8);
+      return (Number(currency) / this.course).toFixed(5);
     },
     handleCurrencyAmount() {
-      const remainingCurrency = (this.initialBalance.currency - this.currencyAmount).toFixed(2);
-      this.remainingCurrency = remainingCurrency < 0 ? 0 : remainingCurrency;
-
       const remainingCryptoCurrency = this.currencyToCrypto(this.initialBalance.currency - this.currencyAmount)
-      this.remainingCryptoCurrency = remainingCryptoCurrency < 0 ? 0 : remainingCryptoCurrency
+      this.remainingCryptoCurrency = (remainingCryptoCurrency < 0 || isNaN(remainingCurrency)) ? 0 : remainingCryptoCurrency;
+      
+      const remainingCurrency = (this.cryptoToCurrency(this.initialBalance.currency) - this.currencyAmount).toFixed(2);
+      this.remainingCurrency = (remainingCurrency < 0 || isNaN(remainingCurrency)) ? 0 : remainingCurrency;
 
       if (this.currencyAmount == this.initialBalance.currency.toFixed(2)) {
         this.activeButton = 'All';
@@ -351,8 +319,11 @@ export default {
       this.cryptoCurrencyAmount = this.currencyToCrypto(this.currencyAmount);
     },
     handleCryptoCurrencyAmount() {
-      this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency - this.cryptoCurrencyAmount).toFixed(8);
-      this.remainingCurrency = (this.initialBalance.currency - this.currencyAmount).toFixed(2);
+      const remainingCryptoCurrency = this.currencyToCrypto(this.initialBalance.currency - this.currencyAmount)
+      this.remainingCryptoCurrency = (remainingCryptoCurrency < 0 || isNaN(remainingCurrency)) ? 0 : remainingCryptoCurrency
+      
+      const remainingCurrency = (this.cryptoToCurrency(this.initialBalance.currency) - this.currencyAmount).toFixed(2);
+      this.remainingCurrency = (remainingCurrency < 0 || isNaN(remainingCurrency)) ? 0 : remainingCurrency;
 
       if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency) {
         this.activeButton = 'All';
@@ -378,20 +349,23 @@ export default {
       }
 
       if (name === 'All') {
-        this.cryptoCurrencyAmount = this.initialBalance.cryptoCurrency.toFixed(8);
+        this.cryptoCurrencyAmount = this.initialBalance.cryptoCurrency.toFixed(5);
         this.currencyAmount = this.initialBalance.currency.toFixed(2);
-        this.remainingCryptoCurrency = 0;
-        this.remainingCurrency = 0;
+        this.remainingCryptoCurrency = Number(0).toFixed(5);
+        this.remainingCurrency = Number(0).toFixed(2);
       } else if (name === 'Half') {
-        this.cryptoCurrencyAmount = (this.initialBalance.cryptoCurrency / 2).toFixed(8);
+        this.cryptoCurrencyAmount = (this.initialBalance.cryptoCurrency / 2).toFixed(5);
         this.currencyAmount =(this.initialBalance.currency / 2).toFixed(2);
-        this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency / 2).toFixed(8);
+        this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency / 2).toFixed(5);
         this.remainingCurrency = (this.initialBalance.currency / 2).toFixed(2);
       } else if (name === 'Min') {
         this.cryptoCurrencyAmount = this.minAmount.toPay;
         this.currencyAmount = this.cryptoToCurrency(this.minAmount.toPay);
-        this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency - this.minAmount.toPay).toFixed(8);
-        this.remainingCurrency = (this.initialBalance.currency - this.cryptoToCurrency(this.minAmount.toPay)).toFixed(2);
+        const remainingCryptoCurrency = this.initialBalance.cryptoCurrency - this.minAmount.toPay;
+        this.remainingCryptoCurrency  = (remainingCryptoCurrency < 0 || isNan(remainingCryptoCurrency)) ? Number(0).toFixed(5) : remainingCryptoCurrency.toFixed(5);
+
+        const remainingCurrency = this.initialBalance.currency - this.cryptoToCurrency(this.minAmount.toPay);
+        this.remainingCurrency = (remainingCurrency < 0 || isNan(remainingCurrency)) ? Number(0).toFixed(2) : remainingCurrency.toFixed(2);
       }
     },
     handleSelectWallet(currency, address) {
@@ -427,7 +401,7 @@ export default {
         currency: capitalizeFirstLetter(this.$route.params.currency.toLowerCase()),
         from: this.$route.params.address,
         to: this.paymentAddress,
-        amount: Number(this.cryptoCurrencyAmount).toFixed(8),
+        amount: Number(this.cryptoCurrencyAmount).toFixed(5),
         token
       }).then((data) => {
         this.clearData()

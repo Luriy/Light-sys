@@ -26,7 +26,77 @@
 		max-width: 640px;
 		border-radius: 14px;
 		background-color: #4d3779;
+		position: relative;
+
+		&__body {
+			padding-right: 10px;
+			width: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			max-height: 315px;
+			overflow-y: auto;
+			border-radius: 8px 0 0 8px;
+			background-color: #4d3779;
+			z-index: 10;
+			scrollbar-width: thin;
+			scrollbar-color: #947dc1 transparent;
+
+			&::-webkit-scrollbar {
+				width: 16px;
+			}
+			&::-webkit-scrollbar-track {
+				background: transparent;
+			}
+			&::-webkit-scrollbar-thumb,
+			&::-webkit-scrollbar-thumb:hover {
+				border-radius: 1px;
+				background-color: #634997;
+				width: 16px;
+				cursor: pointer;
+			}
+			&::-webkit-scrollbar-thumb {
+				box-shadow: inset -3px 0 0 6px #4d3779;
+			}
+
+			&-item {
+				width: 100%;
+				transition: 0.5s;
+				min-height: 43px;
+				padding: 0 10px;
+				cursor: pointer;
+				color: #fff;
+				padding-right: 30px;
+			}
+			&-item:hover,
+			&-item.active {
+				background-color: #634997;
+			}
+
+			&-currency {
+				width: 85px;
+				margin-left: 10px;
+				color: #ffffff;
+				font-size: 16px;
+				font-weight: 500;
+				text-align: left;
+			}
+			&-balance {
+				font-size: 14px;
+				font-weight: 500;
+				width: 90px;
+			}
+			&-balance-usd {
+				font-size: 14px;
+				font-weight: 500;
+				opacity: 0.5;
+				margin-left: 10px;
+			}
+		}
+	}
+	.select__header {
 		padding: 0 15px;
+		cursor: pointer;
 		height: 56px;
 		display: flex;
 		align-items: center;
@@ -58,7 +128,10 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		cursor: pointer;
+
+		img {
+			transform: rotate(180deg);
+		}
 	}
 	.payment-types {
 		display: flex;
@@ -70,7 +143,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		margin-right: 30px;
+		margin-right: 28px;
 		cursor: pointer;
 	}
 	.payment-type:last-of-type {

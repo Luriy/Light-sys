@@ -61,13 +61,16 @@ $eth: #7d8ef6;
 }
 
 .btc {
-	color: #fda50c !important;
+  color: #fda50c !important;
+  opacity: 1 !important;
 }
 .eth {
-	color: #7d8ef6 !important;
+  color: #7d8ef6 !important;
+  opacity: 1 !important;
 }
 .ltc {
-  color: #d3d3d3;
+  color: #d3d3d3 !important;
+  opacity: 1 !important;
 }
 
 .add-token {
@@ -503,7 +506,7 @@ $eth: #7d8ef6;
 				.accounts-list_wrapper_tab_body {
 					opacity: 1;
 					max-height:1000px;
-          padding: 0px 20px 0px 48px;
+          padding: 0px 20px 20px 48px;
           margin: 8px 0 20px;
         }
 			}
@@ -772,101 +775,7 @@ $eth: #7d8ef6;
 	}
 }
 
-.crypto-wallets {
-	.title {
-		display: flex;
-		justify-content: space-between;
-		align-items:center;
-		margin-bottom: 40px;
-		p {
-			line-height: 21px;
-			color: #fff;
-			font-size: 16px;
-		}
-		.close {
-			width:36px;
-			text-align: center;
-			line-height: 36px;
-			border-radius: 8px;
-			background-color: #3b2665;
-		}
-	}
 
-	&_table {
-   		border-collapse: separate;
-		width:100%;
-		border-color: #260848;
-		th {
-			font-size: 14px;
-			color: #fff;
-			line-height: 21px;
-			opacity: .5;
-			padding-bottom:14px;
-			text-align: left;
-			&:last-child {
-				text-align: right;
-				padding-right:33px;
-			}
-		}
-		tbody {
-			tr {
-				background:#3b2665;
-        cursor: pointer;
-        box-shadow: 0 0 0 10px #260848;
-				td {
-					padding:11px 0;
-					vertical-align: middle;
-    				color: #fff;
-    				font-size: 14px;
-  					font-weight: 600;
-  					border:none;
-  					border-color: #260848;
-	    			border-bottom: 5px solid #260848;
-	    			border-top: 5px solid #260848;
-				}
-				td:first-child {
-					padding:11px;
-					text-align: left;
-					border-top-left-radius:17px;
-					border-bottom-left-radius:17px;
-				}
-				td:last-child {
-					text-align: right;
-					vertical-align: middle;
-					border-top-right-radius:17px;
-					border-bottom-right-radius:17px;
-					padding:11px 38px 11px 0;
-				}
-				.progress {
-					img {
-						width: 80px;
-					}
-				}
-				.currency {
-					align-items:center;
-					display: flex;
-					img {
-						max-width: 38px;
-					}
-
-					.icon {
-						margin-right: 10px;
-					}
-
-					.text {
-						font-size: 16px;
-						line-height: 21px;
-						color: #fff;
-						font-weight: 600;
-						span {
-							font-size: 14px;
-						}
-					}
-				}
-			}
-		}
-	}
-}
 
 .wallets-list {
 	border-bottom-left-radius:50px;
@@ -914,12 +823,8 @@ $eth: #7d8ef6;
 				display: flex;
 				align-items:center;
 				justify-content: space-between;
-        margin-bottom: 5px;
-        margin-top: 5px;
+        margin-bottom: 10px;
 
-        &:first-of-type {
-          margin-top: 0;
-        }
         &:last-of-type {
           margin-bottom: 0;
         }
@@ -1344,7 +1249,7 @@ $eth: #7d8ef6;
 				height: 61px;
 
 				&.fiat-wallet {
-					min-height: 61px;
+          min-height: 61px;
 
 					.wallet-last-transactions {
 						&-item {
@@ -2267,7 +2172,7 @@ $eth: #7d8ef6;
       }
       &__modal {
         position: absolute;
-        width: 300px;
+        width: 310px;
 
         background-color: #785bb3;
         top: 35px;
@@ -2295,7 +2200,7 @@ $eth: #7d8ef6;
           -webkit-box-shadow: inset -3px 0 0 6px #785bb3;
         }
         &-item {
-          padding: 0 5px 0 13px;
+          padding: 0 0px 0 13px;
           height: 40px;
           display: flex;
           // justify-content: space-between;
@@ -2318,7 +2223,7 @@ $eth: #7d8ef6;
         &-balance {
           font-size: 12px;
           font-weight: 500;
-          width: 70px;
+          width: 80px;
         }
         &-balance-usd {
           font-size: 12px;
@@ -2918,4 +2823,9 @@ $eth: #7d8ef6;
 }
 .notification-message {
   margin: 0 14px 0 18px;
+}
+.fiat-block {
+  .wallets-list_item_body {
+    overflow-y: visible !important;
+  }
 }

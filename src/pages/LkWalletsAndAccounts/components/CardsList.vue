@@ -1,26 +1,18 @@
 <template>
-	<div>
-		<draggable
-			v-model="draggableMappedCurrencies"
-			v-if="isCardsMovingAndDeleting"
-			class="wallets-list_item_body"
-		>
-			<cards-list-template
-				@onOpenDeletePopup="handleOpenDeletePopup"
-				:mappedCurrencies="mappedCurrencies"
-				:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
-				@onClick="handleClick"
-			></cards-list-template>
-		</draggable>
-		<cards-list-template
-			v-else
+	<draggable
+		v-model="draggableMappedCurrencies"
+		v-if="isCardsMovingAndDeleting"
+		class="wallets-list_item_body"
+	>
+		<cards-list-item
+			v-for="item in mappedCurrencies"
+			:key="item.fullName"
+			:item="item"
 			@onOpenDeletePopup="handleOpenDeletePopup"
-			:mappedCurrencies="mappedCurrencies"
 			:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
-			@onClick="handleClick"
-			class="wallets-list_item_body"
-		>
-		</cards-list-template>
+			:activeTab="activeTab"
+			@onClickTab="handleClickTab"
+		></cards-list-item>
 		<lk-popup-delete-card
 			@onClose="handleCloseDeletePopup"
 			@onDeleteCard="handleDeleteCard"
@@ -28,6 +20,18 @@
 			:formattedCardNumber="formatCardNumber(deletePopup.number)"
 			:bankImage="getBankImage(deletePopup.psid, 'big')"
 		></lk-popup-delete-card>
+	</draggable>
+	<div class="wallets-list_item_body" v-else>
+		<cards-list-item
+			v-for="item in mappedCurrencies"
+			:key="item.fullName"
+			:item="item"
+			@onOpenDeletePopup="handleOpenDeletePopup"
+			:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
+			:activeTab="activeTab"
+			@onClickTab="handleClickTab"
+		>
+		</cards-list-item>
 	</div>
 </template>
 <script>
@@ -37,8 +41,8 @@ import getCardsByCurrency from '@/functions/getCardsByCurrency';
 import getCurrencyInfo from '@/functions/getCurrencyInfo';
 import getBankImage from '@/functions/getBankImage';
 import formatCardNumber from '@/functions/formatCardNumber';
-import CardsListTemplate from './CardsListTemplate';
-import LkPopupDeleteCard from '@/components/Popups/DeleteCard/index';
+import CardsListItem from './CardsListItem';
+import LkPopupDeleteCard from '@/components/Popups/DeleteCard';
 
 export default {
 	// left-arrow-purple.svg or cloud.svg - type of card
@@ -47,7 +51,7 @@ export default {
 	props: ['isCardsMovingAndDeleting'],
 	components: {
 		draggable,
-		CardsListTemplate,
+		CardsListItem,
 		LkPopupDeleteCard,
 	},
 	data() {
@@ -57,6 +61,7 @@ export default {
 				isOpened: false,
 				psid: null,
 			},
+			activeTab: null,
 		};
 	},
 	created() {
@@ -65,8 +70,6 @@ export default {
 			this.$store.dispatch('card/GET_CARDS'),
 			this.$store.dispatch('common/GET_ALL_CURRENCIES'),
 		]).then(([banks, cards, currencies]) => {
-			const localStorageCurrencies = localStorage.getItem('stateWalletsAndAccountsPageCurrencies');
-
 			this.$store.commit(
 				'currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
 				currencies.map((currency) => {
@@ -75,7 +78,6 @@ export default {
 						currency,
 						fullName,
 						code,
-						isactive: false,
 						cards: this.cards.filter(({ Currency }) => Currency === currency),
 					};
 				}),
@@ -103,12 +105,15 @@ export default {
 		formatCardNumber,
 		getBankImage,
 		getCardsByCurrency,
+		handleClickTab(currency) {
+			this.activeTab = this.activeTab === currency ? null : currency;
+		},
 		handleDeleteCard(number) {
 			this.handleCloseDeletePopup();
 			this.$store
 				.dispatch('card/DELETE_CARD', { NumberCard: number })
 				.then((data) => {
-					const errors = Object.values(data[0]['Errors']);
+					const errors = Object.values(data['0']['Errors']);
 
 					this.$store.dispatch('alerts/setNotification', {
 						message: errors.length ? errors[0] : 'Card has been successfully deleted',
@@ -116,7 +121,7 @@ export default {
 						icon: errors.length ? 'close' : 'done',
 					});
 				})
-				.then(() =>
+				.then(() => {
 					this.$store.commit(
 						'currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
 						this.mappedCurrencies.map((item) => ({
@@ -124,8 +129,11 @@ export default {
 							cards: item.cards.filter((card) => card.Number !== number),
 						})),
 						// .filter(({ cards }) => cards.length !== 0), show currency if has cards
-					),
-				);
+					);
+					setTimeout(() => {
+						this.$emit('afterDeleteCard');
+					}, 600);
+				});
 		},
 		handleOpenDeletePopup(number, psid) {
 			this.deletePopup = {
@@ -140,19 +148,6 @@ export default {
 				isOpened: false,
 				psid: null,
 			};
-		},
-		handleClick({ fullName }) {
-			this.$store.commit(
-				'currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
-				this.mappedCurrencies.map((item) =>
-					fullName === item.fullName
-						? {
-								...item,
-								isactive: !item.isactive,
-						  }
-						: item,
-				),
-			);
 		},
 	},
 };

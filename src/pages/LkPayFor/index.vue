@@ -6,19 +6,79 @@
 					<div class="top-bar">
 						<div class="balance">
 							<h2 class="balance__title">Total Balance</h2>
-							<span class="balance__amount">${{ allUsdBalance }} USD</span>
+							<span class="balance__amount">${{ Number(allUsdBalance).toFixed(2) || 0 }} USD</span>
 						</div>
 						<div class="select">
-							<div class="flex align-items-center">
-								<img src="@/assets/images/btc.png" width="34" />
-								<div class="flex flex-column select__wallet-info">
-									<span class="select__curency-name btc">BTC Bitcoin</span>
-									<span class="select__balance">0.97750993 BTC $1.63 USD</span>
+							<div class="select__header" @click="walletSelect.isActive = true">
+								<div class="flex align-items-center">
+									<img
+										v-if="currentWallet.currency === 'LTC'"
+										src="@/assets/images/ltc.svg"
+										width="34"
+									/>
+									<img
+										v-else-if="currentWallet.currency === 'ETH'"
+										src="@/assets/images/eth.png"
+										width="34"
+									/>
+									<img v-else src="@/assets/images/btc.png" width="34" />
+									<div class="flex flex-column select__wallet-info">
+										<span
+											class="select__curency-name"
+											:class="currentWallet.currency.toLowerCase()"
+											>{{
+												`${currentWallet.currency} ${getCryptoInfo(currentWallet.currency)
+													.fullName || 'Bitcoin'}`
+											}}</span
+										>
+										<span class="select__balance">
+											{{ `${Number(currentWallet.balance).toFixed(5)} ${currentWallet.currency}` }}
+											{{ `${Number(currentWallet.balanceUSD).toFixed(2)} USD` }}
+										</span>
+									</div>
+								</div>
+								<div class="select__expand">
+									<img src="@/assets/images/triangle.svg" width="6" height="4" />
 								</div>
 							</div>
-							<div class="select__expand">
-								<img src="@/assets/images/triangle.svg" width="6" height="4" />
-							</div>
+							<transition name="fade">
+								<div class="select__body" v-show="walletSelect.isActive">
+									<div
+										class="select__body-item flex justify-content-between align-items-center"
+										:class="{ active: currentWallet.address === wallet.address }"
+										v-for="wallet in wallets"
+										:key="wallet.address"
+										@click="handleChangeCurrentWallet(wallet)"
+									>
+										<div class="flex align-items-center">
+											<img
+												v-if="wallet.currency === 'BTC'"
+												width="22"
+												src="@/assets/images/btc.png"
+											/>
+											<img
+												v-if="wallet.currency === 'ETH'"
+												width="22"
+												src="@/assets/images/eth.png"
+											/>
+											<img
+												v-if="wallet.currency === 'LTC'"
+												width="22"
+												src="@/assets/images/ltc.svg"
+											/>
+											<h2 class="select__body-currency">
+												{{ getCryptoInfo(wallet.currency).fullName }}
+											</h2>
+										</div>
+										<span class="select__body-balance">{{
+											`${wallet.currency} ${formatCurrency(wallet.balance, '', 5)}`
+										}}</span>
+										<span class="select__body-balance-usd">{{
+											`$${formatCurrency(wallet.balanceUSD)} USD`
+										}}</span>
+									</div>
+								</div>
+							</transition>
 						</div>
 					</div>
 					<div class="payment-block">
@@ -62,6 +122,7 @@
 import LkLayout from '@/layout/LkLayout';
 import PaymentsAndTransfer from '@/layout/LkPaymentsAndTransfer';
 import { mapGetters } from 'vuex';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 import './styles.scss';
 
 export default {
@@ -70,12 +131,29 @@ export default {
 		PaymentsAndTransfer,
 		LkLayout,
 	},
-	created() {
+	mounted() {
 		this.$store.dispatch('common/GET_ALL_BALANCE');
+		this.$store.dispatch('wallet/GET_WALLETS');
+		this.setInitialCurrentWallet();
+
+		const select = document.querySelector('.pay-for .select');
+		this.windowHandler = ({ target }) => {
+			if (
+				(target ? !target.classList.contains('.pay-for .select') : false) &&
+				!select.contains(target)
+			) {
+				this.walletSelect.isActive = false;
+			}
+		};
+		window.addEventListener('click', this.windowHandler);
+	},
+	beforeDestroy() {
+		window.removeEventListener('click', this.windowHandler);
 	},
 	computed: {
 		...mapGetters({
 			allBalance: 'common/ALL_BALANCE',
+			wallets: 'wallet/WALLETS',
 		}),
 		allUsdBalance() {
 			const { BTCBalanceusd, ETHBalanceusd, LTCBalanceusd } = this.allBalance;
@@ -84,7 +162,17 @@ export default {
 	},
 	data() {
 		return {
+			walletSelect: {
+				isActive: false,
+			},
 			activePaymentDirection: null,
+			currentWallet: {
+				currency: 'BTC',
+				balance: '0.00000',
+				balanceUSD: '0.00',
+				address: null,
+			},
+			windowHandler: null,
 			paymentTypes: [
 				{
 					icon: require('@/assets/images/credit-card.svg'),
@@ -180,6 +268,20 @@ export default {
 		};
 	},
 	methods: {
+		getCryptoInfo,
+		setInitialCurrentWallet() {
+			const walletsBalancesArray = this.wallets.map((wallet) => wallet.balanceUSD);
+			const maxBalanceIndex = walletsBalancesArray.indexOf(
+				Math.max.apply(null, walletsBalancesArray),
+			);
+			const walletWithMaxBalance = this.wallets.slice()[maxBalanceIndex];
+
+			this.currentWallet = walletWithMaxBalance;
+		},
+		handleChangeCurrentWallet({ currency, balance, balanceUSD, address }) {
+			this.walletSelect.isActive = false;
+			this.currentWallet = { currency, balance, balanceUSD, address };
+		},
 		handleChangePaymentsDirection(name) {
 			if (name === this.activePaymentDirection) {
 				this.activePaymentDirection = null;

@@ -3,11 +3,11 @@ import Router from 'vue-router';
 
 import LkPaymentWallet from '@/pages/LkPaymentWallet';
 import LkWalletsAndAccounts from '@/pages/LkWalletsAndAccounts';
-import LkPaymentWalletSend from '@/pages/LkPaymentWalletSend';
+import LkPaymentWalletSend from '@/pages/LkPaymentWalletSend/index';
 import LkPaymentWalletReceive from '@/pages/LkPaymentWalletReceive';
 import LkPaymentExchange from '@/pages/LkPaymentExchange';
 // import LkPaymentSendEth from '@/pages/LkPaymentSendEth'
-import LkPaymentWalletsCreate from '@/pages/LkPaymentWalletsCreate';
+import LkPaymentWalletsCreate from '@/pages/LkPaymentWalletsCreate/index';
 import LkPaymentAccountsCards from '@/pages/LkPaymentAccountsCards/index';
 import LkPayFor from '@/pages/LkPayFor/index';
 import PasswordRecovery from '@/pages/PasswordRecovery';

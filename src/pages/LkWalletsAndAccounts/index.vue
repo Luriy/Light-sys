@@ -14,7 +14,10 @@
 							<router-link to="/wallets/create-wallet"><div class="toggle"></div></router-link>
 						</div>
 					</div>
-					<wallets-list :isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"></wallets-list>
+					<wallets-list
+						:isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"
+						@afterDeleteWallet="handleAfterDeleteWallet"
+					></wallets-list>
 				</div>
 
 				<div class="fiat-block wallets-list_item">
@@ -29,7 +32,10 @@
 							<router-link to="/wallets/accounts-and-cards"><div class="toggle"></div></router-link>
 						</div>
 					</div>
-					<cards-list :isCardsMovingAndDeleting="isCardsMovingAndDeleting"></cards-list>
+					<cards-list
+						:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
+						@afterDeleteCard="handleAfterDeleteCard"
+					></cards-list>
 				</div>
 			</div>
 			<div class="operations-history">
@@ -76,18 +82,23 @@ export default {
 			operations: ['wallet/OPERATIONS'],
 		}),
 	},
-	created() {
+	mounted() {
 		this.$store.dispatch('wallet/GET_OPERATIONS');
 	},
 	methods: {
 		handleMovingAndDeleting(type) {
-			console.log(this.isCardsMovingAndDeleting);
 			switch (type) {
 				case 'cards':
 					return (this.isCardsMovingAndDeleting = !this.isCardsMovingAndDeleting);
 				case 'wallets':
 					return (this.isWalletsMovingAndDeleting = !this.isWalletsMovingAndDeleting);
 			}
+		},
+		handleAfterDeleteWallet() {
+			this.isWalletsMovingAndDeleting = false;
+		},
+		handleAfterDeleteCard() {
+			this.isCardsMovingAndDeleting = false;
 		},
 		copyToClipboard() {
 			var elem = document.getElementById('wallet');

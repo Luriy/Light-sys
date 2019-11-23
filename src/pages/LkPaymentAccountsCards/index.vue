@@ -116,12 +116,10 @@
 												<div class="banks">
 													<div
 														class="image-plate"
-														v-for="bank in item.banks
-															.slice()
-															.filter((bank) => !!getBankImage(bank.psid, 'small'))"
-														:key="bank.image"
+														v-for="item in getCardsByCurrency(item.currency, cards)"
+														:key="item.Psid"
 													>
-														<img :src="getBankImage(bank.psid, 'small')" />
+														<img :src="getBankImage(item.Psid, 'small')" />
 													</div>
 												</div>
 											</div>
@@ -135,6 +133,7 @@
 												:currency="item.currency"
 												@onDeleteCard="writeSoonDeleteCardToStore"
 												@onEditCard="writeSoonEditCardToStore"
+												@onClickCard="handleClickCard"
 												:isEditing="isEditing"
 												:banks="banks"
 												:cards="cards"
@@ -265,6 +264,13 @@ export default {
 			setTimeout(() => (this.freezeActive = false), 200);
 
 			this.isEditing = true;
+		},
+		handleClickCard() {
+			if (this.isEditing) {
+				this.handleCancel();
+			} else {
+				this.isEditing = true;
+			}
 		},
 		handleCancel() {
 			this.$store.dispatch('card/GET_CARDS');

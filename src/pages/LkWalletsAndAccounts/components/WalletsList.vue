@@ -4,111 +4,48 @@
 		v-if="isWalletsMovingAndDeleting"
 		class="wallets-list_item_body"
 	>
-		<transition-group name="slide-fade">
-			<div
-				v-for="wallet in wallets"
-				@click="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)"
-				class="list__item"
-				:key="wallet.address"
-			>
-				<transition name="fade">
-					<div
-						class="btn-remove"
-						v-if="isWalletsMovingAndDeleting"
-						@click="handleDeleteItem(wallet.address)"
-						key="idx"
-					>
-						<img src="@/assets/images/cross.svg" />
-					</div>
-				</transition>
-				<div class="wallet">
-					<div class="code">
-						<div :class="['image', wallet.currency.toLowerCase()]">
-							<img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title />
-							<img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title />
-							<img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc-ico.svg" alt title />
-						</div>
-						<span>{{ wallet.currency }}</span>
-					</div>
-					<div class="info">
-						<div class="balance">
-							<p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
-							<span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
-						</div>
-						<div class="progress green">
-							<p>{{ percentage[wallet.currency] | percentage }}</p>
-							<div class="image">
-								<!-- TODO: Используйте computed свойство percentage для построения графиков -->
-								<img src="@/assets/images/graph-green.svg" alt title />
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</transition-group>
+		<wallets-list-item
+			v-for="wallet in wallets"
+			:key="wallet.address"
+			@onWalletRouter="handleWalletRouter"
+			@onOpenPopup="handleOpenPopup"
+			:wallet="wallet"
+			:isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"
+			:percentage="percentage"
+		></wallets-list-item>
+
+		<lk-delete-wallet-popup
+			@onDeleteWallet="handleDeleteItem"
+			@onClose="handleClosePopup"
+			:deletePopup="deletePopup"
+		></lk-delete-wallet-popup>
 	</draggable>
 	<div v-else class="wallets-list_item_body">
-		<transition-group name="slide-fade">
-			<div
-				v-for="wallet in wallets"
-				@click="handleWalletRouter(`/wallets/${wallet.currency}/${wallet.address}`)"
-				class="list__item"
-				:key="wallet.address"
-			>
-				<transition name="fade">
-					<div
-						class="btn-remove"
-						v-show="isWalletsMovingAndDeleting"
-						@click="handleDeleteItem(wallet.address, wallet.address)"
-					>
-						<img src="@/assets/images/cross.svg" />
-					</div>
-				</transition>
-				<div class="wallet">
-					<div class="code">
-						<div :class="['image', wallet.currency.toLowerCase()]">
-							<img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title />
-							<img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title />
-							<img
-								v-if="wallet.currency === 'LTC'"
-								src="@/assets/images/ltc-ico.svg"
-								width="12"
-								alt
-								title
-							/>
-						</div>
-						<span>{{ wallet.currency }}</span>
-					</div>
-					<div class="info">
-						<div class="balance">
-							<p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
-							<span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
-						</div>
-						<div class="progress green">
-							<p>{{ percentage[wallet.currency] | percentage }}</p>
-							<div class="image">
-								<!-- TODO: Используйте computed свойство percentage для построения графиков -->
-								<img src="@/assets/images/graph-green.svg" alt title />
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="group-toggler"></div>
-			</div>
-		</transition-group>
+		<wallets-list-item
+			v-for="wallet in wallets"
+			:key="wallet.address"
+			@onWalletRouter="handleWalletRouter"
+			@onOpenPopup="handleOpenPopup"
+			:wallet="wallet"
+			:isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"
+			:percentage="percentage"
+		></wallets-list-item>
 	</div>
 </template>
 <style scoped></style>
 <script>
 import draggable from 'vuedraggable';
-import { VueNestable, VueNestableHandle } from 'vue-nestable';
 import { mapGetters } from 'vuex';
+import LkDeleteWalletPopup from '@/components/Popups/DeleteWallet';
+import WalletsListItem from './WalletsListItem';
 
 export default {
 	name: 'WalletsList',
 	props: ['isWalletsMovingAndDeleting'],
 	components: {
 		draggable,
+		LkDeleteWalletPopup,
+		WalletsListItem,
 	},
 	computed: {
 		draggableWalletsList: {
@@ -122,29 +59,51 @@ export default {
 		...mapGetters({
 			wallets: 'wallet/WALLETS',
 			percentage: 'wallet/PERCENTAGE',
+			afterCreateWallet: 'wallet/AFTER_CREATE_WALLET',
 		}),
 	},
-	created() {
+	mounted() {
 		this.$store.dispatch('wallet/GET_TYPES');
-		this.$store.dispatch('wallet/GET_WALLETS');
+		if (!this.afterCreateWallet) {
+			console.log(this.afterCreateWallet);
+			this.$store.dispatch('wallet/GET_WALLETS');
+		}
 	},
 	data() {
 		return {
 			groupTogglerActiveId: null,
+			deletePopup: {
+				isOpened: false,
+				address: null,
+				currency: null,
+			},
 		};
 	},
-	filters: {
-		percentage: (value) => (value ? `${value['1h'].toFixed(2)}%` : ''),
-	},
+
 	methods: {
-		handleWalletRouter(route, e) {
+		handleWalletRouter(currency, address) {
 			if (this.isWalletsMovingAndDeleting) {
 				return false;
 			} else {
-				this.$router.push(route);
+				this.$router.push(`/wallets/${currency}/${address}`);
 			}
 		},
+		handleOpenPopup(address, currency) {
+			this.deletePopup = {
+				isOpened: true,
+				address,
+				currency,
+			};
+		},
+		handleClosePopup() {
+			this.deletePopup = {
+				isOpened: false,
+				address: null,
+				currency: null,
+			};
+		},
 		handleDeleteItem(address) {
+			this.handleClosePopup();
 			this.$store
 				.dispatch(
 					'wallet/DELETE_WALLET',
@@ -155,6 +114,9 @@ export default {
 						'wallet/SET_WALLETS',
 						this.wallets.filter((wallet) => wallet.address !== address),
 					);
+					setTimeout(() => {
+						this.$emit('afterDeleteWallet'); // 600 - animation deleting time
+					}, 600);
 				});
 		},
 	},

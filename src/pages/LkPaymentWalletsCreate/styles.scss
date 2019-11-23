@@ -1,0 +1,90 @@
+.crypto-wallets {
+	.title {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 40px;
+		p {
+			line-height: 21px;
+			color: #fff;
+			font-size: 16px;
+		}
+		.close {
+			width: 36px;
+			text-align: center;
+			line-height: 36px;
+			border-radius: 8px;
+			background-color: #3b2665;
+		}
+	}
+
+	&_table {
+		border-collapse: separate;
+		width: 100%;
+		border-color: #260848;
+		.thead {
+			display: grid;
+			grid-template-columns: repeat(4, 100px);
+			justify-content: space-between;
+			align-items: center;
+			padding-right: 24px;
+			margin-bottom: 14px;
+		}
+		.th {
+			font-size: 14px;
+			color: #fff;
+			line-height: 21px;
+			opacity: 0.5;
+			text-align: left;
+		}
+		.tbody {
+			.row {
+				display: grid;
+				grid-template-columns: repeat(4, 100px);
+				justify-content: space-between;
+				align-items: center;
+				background: #3b2665;
+				cursor: pointer;
+				padding: 0 35px 0 13px;
+				height: 61px;
+				border-radius: 17px;
+				margin-bottom: 10px;
+
+				&:last-of-type {
+					margin-bottom: 0;
+				}
+				&__item {
+					color: #fff;
+					font-size: 14px;
+					font-weight: 600;
+				}
+				.progress {
+					img {
+						width: 80px;
+					}
+				}
+				.currency {
+					align-items: center;
+					display: flex;
+					img {
+						max-width: 38px;
+					}
+
+					.icon {
+						margin-right: 10px;
+					}
+
+					.text {
+						font-size: 16px;
+						line-height: 21px;
+						color: #fff;
+						font-weight: 600;
+						span {
+							font-size: 14px;
+						}
+					}
+				}
+			}
+		}
+	}
+}
