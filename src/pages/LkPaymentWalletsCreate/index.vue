@@ -79,7 +79,14 @@
             </div>
             <td class="row__item">{{ formatCurrency(type.price, '$') }}</td>
             <td class="row__item">{{ type.change24h | changePercent }}</td>
-            <td class="row__item"><div class="progress"><img src="@/assets/images/graph-yellow.svg" alt title></div></td>
+            <td class="row__item">
+              <div class="flex align-items-flex-end">
+                <div class="progress">
+                  <img src="@/assets/images/graph-yellow.svg" width="100%" height="100%" alt title>
+                </div>
+                <div class="progress-bar"></div>
+              </div>
+            </td>
           </div>
         </div>
       </div>
@@ -159,22 +166,10 @@ export default {
     addWallet(code) {
       this.$store.dispatch('wallet/CREATE_WALLET', code)
         .then((data) => {
-          if (!data.error) {
-            this.$store.commit('wallet/SET_WALLETS', [{
-              address: data['1'].return[`${code}wallet`],
-              balance: 0,
-              balanceUSD: 0,
-              currency: code,
-              status: 'Active',
-            }, ...this.wallets])
-            this.$store.commit('wallet/SET_AFTER_CREATE_WALLET', true);
-            setTimeout(() => {
-              this.$store.commit('wallet/SET_AFTER_CREATE_WALLET', false);  // из-за бага на беке, что при создании
-            }, 7000);                                                       // кошелька, все кошельки этой валюты фризятся
+          if (!data.error) {                                                    // кошелька, все кошельки этой валюты фризятся                                                     
             this.handleOpenSuccessPopup(code);
           }
         })
-       
         .catch(reason => {
           console.log(reason)
         })

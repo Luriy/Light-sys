@@ -3,7 +3,7 @@
 		<div class="login-form-wrapper">
 			<div class="login-form-container">
 				<div class="login-form-togglers">
-					<router-link to="/register">Sign in</router-link>
+					<router-link to="/register">Sign up</router-link>
 					<router-link to="/login">Login in</router-link>
 				</div>
 				<transition name="fade-long">
@@ -31,9 +31,13 @@
 							</div>
 							<div class="login-form-helpers">
 								<div class="login-form-remember">
-									<label class="checkbox">
-										<input type="checkbox" name="" />
-										<div></div>
+									<label class="checkbox" @click="isRemember.checked = !isRemember.checked">
+										<checkbox
+											:isActive="isRemember.checked"
+											:isDisabled="isRemember.hovered"
+											@onMouseEnter="isRemember.hovered = true"
+											@onMouseLeave="isRemember.hovered = false"
+										></checkbox>
 										<span class="text">Remember me</span>
 									</label>
 								</div>
@@ -57,15 +61,17 @@
 <script>
 import LoginLayout from '@/layout/LoginLayout';
 import Inputmask from 'inputmask';
-import { AUTH_REQUEST } from '@/store/actions/auth';
+import { AUTH_REQUEST, AUTH_LOGOUT } from '@/store/actions/auth';
 import sha512 from 'js-sha512';
 import Error from '@/components/Error';
+import Checkbox from '@/elements/Checkbox';
 
 export default {
 	name: 'Login',
 	components: {
 		LoginLayout,
 		Error,
+		Checkbox,
 	},
 	data() {
 		return {
@@ -74,6 +80,10 @@ export default {
 			password: null,
 			error: null,
 			isLoaded: false,
+			isRemember: {
+				hovered: false,
+				checked: false,
+			},
 		};
 	},
 	mounted() {
@@ -110,7 +120,12 @@ export default {
 				.dispatch(AUTH_REQUEST, params)
 				.then(() => {
 					this.error = null;
-					this.$router.push('/');
+					this.$router.push('/wallets');
+					setTimeout(() => {
+						this.$store.dispatch(AUTH_LOGOUT).then(() => {
+							this.$router.push('/login');
+						});
+					}, 1000 * 60 * 20);
 				})
 				.catch((err) => {
 					this.error = err;

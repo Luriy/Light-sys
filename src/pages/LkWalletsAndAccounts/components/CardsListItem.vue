@@ -23,7 +23,6 @@
 						<span>{{ card.Name }}</span>
 					</div>
 					<div class="info">
-						<div class="amount">12,500 {{ item.code }}</div>
 						<div class="type"><img src="@/assets/images/left-arrow-purple.svg" alt title /></div>
 					</div>
 					<div

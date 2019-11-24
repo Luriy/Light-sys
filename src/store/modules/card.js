@@ -39,7 +39,7 @@ export default {
 			});
 		},
 		CREATE_CARD: (store, payload) => {
-			const { Holder, Number, Psid, Cvv, Data, Currency } = payload;
+			const { Holder, Number, Psid, Currency } = payload;
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -49,8 +49,6 @@ export default {
 					Holder,
 					Number,
 					Psid,
-					Cvv,
-					Data,
 					Currency,
 				},
 			}).then((data) => parsePythonDataObject(data));

@@ -3,7 +3,7 @@
 		<div class="login-form-wrapper">
 			<div class="login-form-container">
 				<div class="login-form-togglers">
-					<router-link to="/register">Sign in</router-link>
+					<router-link to="/register">Sign up</router-link>
 					<router-link to="/login">Login in</router-link>
 				</div>
 				<transition name="fade-long">

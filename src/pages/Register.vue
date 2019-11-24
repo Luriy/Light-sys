@@ -3,7 +3,7 @@
   	<div class="login-form-wrapper">
       <div class="login-form-container">
         <div class="login-form-togglers">
-  				<router-link to="/register">Sign in</router-link>
+  				<router-link to="/register">Sign up</router-link>
   				<router-link to="/login">Login in</router-link>
   			</div>
         <transition name="fade-long">
@@ -72,27 +72,42 @@
           <form @submit.prevent="setPassword">
             <div class="login-form-input">
     					<input :type="isPasswordHidden ? 'password' : 'text'" v-model='password' placeholder="Password">
+              <div class="is-password-hidden-icon-block is-password-hidden-icon" @click="isPasswordHidden = !isPasswordHidden" v-if="!isPasswordHidden">
+                <img
+                  class=""
+                  src="@/assets/images/eye.svg"
+                />
+              </div>
+              <div class="is-password-hidden-icon-block is-password-hidden-icon" @click="isPasswordHidden = !isPasswordHidden" v-if="isPasswordHidden">
+                <img           
+                  class=""
+                  src="@/assets/images/eye-with-bar.svg"
+                />
+              </div>  
     				</div>
             <div class="login-form-input">
     					<input :type="isPasswordHidden ? 'password' : 'text'" v-model='repeatPassword' placeholder="Repeat password">
     				</div>
             <div class="validation-block flex flex-column">
               <div class="flex align-items-center">
-                <div class="invalid-icon" v-if="!isPasswordContainNumber"></div>
+                <img v-if="!isPasswordContainNumber" src="@/assets/images/cross.png" />
+                <!-- <div class="invalid-icon"></div> -->
                 <img src="@/assets/images/done.svg" v-else />
                 <p class="validation-text" :class="{ valid: isPasswordContainNumber }">
                   Your password must contain at least one nubmer
                 </p>
               </div>
               <div class="flex align-items-center">
-                <div class="invalid-icon" v-if="!isPasswordLongEnough"></div>
+                <!-- <div class="invalid-icon" v-if="!isPasswordLongEnough"></div> -->
+                <img v-if="!isPasswordLongEnough" src="@/assets/images/cross.png" />
                 <img src="@/assets/images/done.svg" v-else />
                 <p class="validation-text" :class="{ valid: isPasswordLongEnough }">
                   Your password must be at least 6 characters long
                 </p>
               </div>
               <div class="flex align-items-center">
-                <div class="invalid-icon" v-if="!isPasswordsMatch"></div>
+                <!-- <div class="invalid-icon" v-if="!isPasswordsMatch"></div> -->
+                <img v-if="!isPasswordsMatch" src="@/assets/images/cross.png" />
                 <img src="@/assets/images/done.svg" v-else />
                 <p class="validation-text" :class="{ valid: isPasswordsMatch }">
                   Passwords match
@@ -122,7 +137,7 @@ import Axios from 'axios';
 import { API_URL } from "@/constants"
 import { parsePythonDataObject } from '@/functions/helpers'
 import sha512 from 'js-sha512';
-import {AUTH_REQUEST} from '@/store/actions/auth'
+import { AUTH_REQUEST, AUTH_LOGOUT } from '@/store/actions/auth'
 import checkLoginType from '@/functions/checkLoginType'
 import Error from '@/components/Error';
 
@@ -149,7 +164,7 @@ export default {
       commonError: null,
       password: '',
       repeatPassword: '',
-      isPasswordHidden: false,
+      isPasswordHidden: true,
       isLoaded: false,
   	}
   },
@@ -213,8 +228,13 @@ export default {
 
             this.$store.dispatch(AUTH_REQUEST, params)
               .then(() => {
+                setTimeout(() => {
+                  this.$store.dispatch(AUTH_LOGOUT).then(() => {
+                    this.$router.push('/login');
+                  })
+                }, 1000 * 60 * 20)
       		    	this.commonError = null;
-                this.$router.push('/');
+                this.$router.push('/wallets');
                 this.$store.commit('alerts/setNotification', {
                   message: 'You have successfully registered!',
                   status: 'success-status',
@@ -284,3 +304,27 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+  .login-form-input {
+    position: relative;
+  }
+  .is-password-hidden-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 25px;
+    cursor: pointer;
+    /* opacity: .5; */
+
+    /* &.active {
+      opacity: 1;
+    } */
+  }
+  .is-password-hidden-icon-block {
+    width: 20px;
+    height: 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>

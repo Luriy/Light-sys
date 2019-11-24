@@ -6,7 +6,7 @@
 					<div class="top-bar">
 						<div class="balance">
 							<h2 class="balance__title">Total Balance</h2>
-							<span class="balance__amount">${{ Number(allUsdBalance).toFixed(2) || 0 }} USD</span>
+							<span class="balance__amount">${{ Number(wallets.reduce((acc, item) => acc + item.balanceUSD, 0)).toFixed(2) || 0 }} USD</span>
 						</div>
 						<div class="select">
 							<div class="select__header" @click="walletSelect.isActive = true">

@@ -6,6 +6,16 @@
 .fade-leave-to {
 	opacity: 0;
 }
+
+.fade-fast-enter-active,
+.fade-fast-leave-active {
+	transition: opacity 0.25s;
+}
+.fade-fast-enter,
+.fade-fast-leave-to {
+	opacity: 0;
+}
+
 .fade-long-enter-active,
 .fade-long-leave-active {
 	transition: opacity 1s;
@@ -34,5 +44,15 @@
 .slide-fade-enter,
 .slide-fade-leave-to {
 	margin-left: -50px;
+	opacity: 0;
+}
+
+.slide-fade-top-leave-active,
+.slide-fade-top-enter-active {
+	transition: all 0.5s;
+}
+.slide-fade-top-enter,
+.slide-fade-top-leave-to {
+	transform: translateY(-10px);
 	opacity: 0;
 }

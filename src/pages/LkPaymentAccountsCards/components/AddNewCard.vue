@@ -23,87 +23,63 @@
 		</div>
 		<div class="accounts-list_wrapper_tab_body">
 			<div class="flex align-items-center justify-content-between">
-				<div class="left-side-container">
-					<form class="add-card-form">
-						<div class="add-card-form__inputs-block">
-							<div class="flex flex-column">
-								<input
-									type="number"
-									class="add-card-form__input"
-									placeholder="Card number"
-									v-model="cardInfo.number"
-									maxlength="19"
-									@input="handleCardNumber"
-								/>
-								<div class="add-card-form__line"></div>
-							</div>
-							<div class="flex flex-column">
-								<input
-									type="number"
-									class="add-card-form__input"
-									placeholder="MM/YY"
-									maxlength="5"
-									v-model="cardInfo.date"
-									@input="handleCardDate"
-								/>
-								<div class="add-card-form__line"></div>
-							</div>
-							<div class="flex flex-column">
-								<input
-									type="text"
-									class="add-card-form__input"
-									placeholder="Name of card"
-									v-model="cardInfo.name"
-								/>
-								<div class="add-card-form__line"></div>
-							</div>
-							<div class="flex flex-column">
-								<input
-									type="number"
-									pattern="[0-9]"
-									class="add-card-form__input"
-									placeholder="CVV"
-									maxlength="3"
-									v-model="cardInfo.cvv"
-								/>
-								<div class="add-card-form__line"></div>
-							</div>
+				<form class="add-card-form">
+					<div class="add-card-form__inputs-block">
+						<div class="flex flex-column">
+							<input
+								type="text"
+								class="add-card-form__input"
+								placeholder="Card number"
+								v-model="cardInfo.number"
+								maxlength="19"
+								@input="handleCardNumber"
+							/>
+							<div class="add-card-form__line"></div>
 						</div>
-					</form>
-					<div class="select">
-						<div
-							class="select__header accounts-list_wrapper_tab_header flex justify-content-between align-items-center"
-							@click="select.isActive = !select.isActive"
-						>
-							<div class="flex align-items-center">
-								<div class="image-container">
-									<img :src="getBankImage(currentBank.psid, 'small')" alt="" />
-								</div>
-								<div class="select__title">{{ currentBank.name }}</div>
-							</div>
-							<div class="toggle"></div>
+						<div class="flex flex-column">
+							<input
+								type="text"
+								class="add-card-form__input"
+								placeholder="Name of card"
+								v-model="cardInfo.name"
+							/>
+							<div class="add-card-form__line"></div>
 						</div>
-						<transition name="fade">
-							<div class="select__body flex flex-column" v-show="select.isActive">
-								<div
-									class="select__body-item flex align-items-center justify-content-between"
-									:class="{ active: currentBank.name === bank.name }"
-									v-for="bank in banks"
-									:key="bank.psid"
-									@click="handleClickBank(bank.name, bank.psid, bank.valute)"
-								>
-									<div class="flex align-items-center">
-										<div class="image-container">
-											<img :src="getBankImage(bank.psid, 'small')" alt="" />
-										</div>
-										<div class="bank-name">{{ bank.name }}</div>
+						<div class="select">
+							<div
+								class="select__header accounts-list_wrapper_tab_header flex justify-content-between align-items-center"
+								@click="select.isActive = !select.isActive"
+							>
+								<div class="flex align-items-center">
+									<div class="image-container">
+										<img :src="getBankImage(currentBank.psid, 'small')" alt="" />
 									</div>
-									<img src="@/assets/images/tick.svg" v-if="currentBank.name === bank.name" alt />
+									<div class="select__title">{{ currentBank.name }}</div>
 								</div>
+								<div class="toggle"></div>
 							</div>
-						</transition>
+							<transition name="fade">
+								<div class="select__body flex flex-column" v-show="select.isActive">
+									<div
+										class="select__body-item flex align-items-center justify-content-between"
+										:class="{ active: currentBank.name === bank.name }"
+										v-for="bank in banks"
+										:key="bank.psid"
+										@click="handleClickBank(bank.name, bank.psid, bank.valute)"
+									>
+										<div class="flex align-items-center">
+											<div class="image-container">
+												<img :src="getBankImage(bank.psid, 'small')" alt="" />
+											</div>
+											<div class="bank-name">{{ bank.name }}</div>
+										</div>
+										<img src="@/assets/images/tick.svg" v-if="currentBank.name === bank.name" alt />
+									</div>
+								</div>
+							</transition>
+						</div>
 					</div>
-				</div>
+				</form>
 				<div class="flex flex-column align-items-center virtual-card__wrapper">
 					<div class="virtual-card">
 						<div class="flex justify-content-between align-items-center" style="height: 25px;">
@@ -116,7 +92,7 @@
 									{{ maskInput(cardInfo.number, cardInfo.numberMask) }}
 								</p>
 								<p class="virtual-card__paragraph">
-									{{ maskInput(cardInfo.date, cardInfo.dateMask) }}
+									MM/YY
 								</p>
 							</div>
 							<div class="flex justify-content-between">
@@ -154,10 +130,7 @@ export default {
 			cardInfo: {
 				numberMask: '**** **** **** ****',
 				number: '',
-				dateMask: 'MM/YY',
-				date: '',
 				name: '',
-				cvv: '',
 			},
 			currentBank: {
 				psid: null,
@@ -200,13 +173,6 @@ export default {
 				this.cardInfo.number += ' ';
 			}
 		},
-		handleCardDate({ inputType }) {
-			const { date } = this.cardInfo;
-
-			if (date.length === 2 && inputType !== 'deleteContentBackward') {
-				this.cardInfo.date += '/';
-			}
-		},
 		handleClickBank(name, psid, currency) {
 			this.currentBank = { name, psid, currency };
 			this.select.isActive = false;
@@ -215,10 +181,7 @@ export default {
 			this.cardInfo = {
 				numberMask: '**** **** **** ****',
 				number: '',
-				dateMask: 'MM/YY',
-				date: '',
 				name: '',
-				cvv: '',
 			};
 			this.currentBank = {
 				psid: null,
@@ -240,11 +203,11 @@ export default {
 		},
 		addCard() {
 			const {
-				cardInfo: { number, date, name, cvv },
+				cardInfo: { number, name },
 				currentBank: { psid, currency },
 			} = this;
 
-			const validateError = VALIDATE_CARD({ number, date, name, cvv, psid });
+			const validateError = VALIDATE_CARD({ number, name, psid });
 
 			if (validateError) {
 				this.error = validateError;
@@ -255,8 +218,6 @@ export default {
 						Holder: encodeURI(name),
 						Number: number.replace(/\s+/g, ''),
 						Psid: psid,
-						Cvv: cvv,
-						Data: date,
 						Currency: currency,
 					})
 					.then((data) => {
@@ -270,6 +231,12 @@ export default {
 								message: `Card has been successfully added`,
 								status: 'success-status',
 								icon: 'done',
+							});
+						} else {
+							this.$store.dispatch('alerts/setNotification', {
+								message: 'Unknown error',
+								status: 'error-status',
+								icon: 'close',
 							});
 						}
 					})

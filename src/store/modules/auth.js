@@ -34,7 +34,7 @@ const actions = {
 								token: sha512(resp[1]['return']['Token: ']),
 							}),
 						);
-						commit(AUTH_SUCCESS, user);
+            commit(AUTH_SUCCESS, user);
 						resolve(resp);
 					} else {
 						let err = 'Неизвестная ошибка';
@@ -60,7 +60,7 @@ const actions = {
 		return new Promise((resolve, reject) => {
 			commit(AUTH_LOGOUT);
 			localStorage.removeItem('Data');
-			localStorage.removeItem('Auth');
+      localStorage.removeItem('Auth');
 			resolve();
 		});
 	},

@@ -21,27 +21,7 @@
 							<div class="toggle"></div>
 						</div>
 
-						<div class="accounts-list_wrapper_tab_body">
-							<div class="accounts-list_wrapper_tab_body_title">
-								In what currency do I open an account?
-							</div>
-							<div class="accounts-list_wrapper_tab_body_table">
-								<div
-									class="accounts-list_wrapper_tab_body_table_tr"
-									v-for="item in tabs[0].tableData"
-									:key="item.full"
-								>
-									<div class="currency">
-										<div class="icon">{{ item.code }}</div>
-										<div class="text">{{ item.full }}</div>
-									</div>
-									<div class="right">
-										<button v-if="item.isActive">Apply</button>
-										<div class="checkbox" v-bind:class="{ active: item.isActive }"></div>
-									</div>
-								</div>
-							</div>
-						</div>
+						<open-account :tableData="tabs[0].tableData"></open-account>
 					</div>
 
 					<div class="accounts-list_wrapper_tab" v-bind:class="{ active: tabs[1].isActive }">
@@ -123,10 +103,19 @@
 													</div>
 												</div>
 											</div>
-											<div
-												class="toggle"
-												v-if="getCardsByCurrency(item.currency, cards).length"
-											></div>
+											<div class="flex align-items-center">
+												<transition name="fade">
+													<add-native-card
+														v-if="item.isActive"
+														@onClickRadioButton="handleClickRadioButton"
+													></add-native-card>
+												</transition>
+
+												<div
+													class="toggle"
+													v-if="getCardsByCurrency(item.currency, cards).length"
+												></div>
+											</div>
 										</div>
 										<div class="accounts-list_wrapper_tab_body">
 											<cards-list
@@ -159,6 +148,8 @@ import './styles.scss';
 import AddNewCard from './components/AddNewCard';
 import Deposit from './components/Deposit';
 import CardsList from './components/CardsList';
+import AddNativeCard from './components/AddNativeCard';
+import OpenAccount from './components/OpenAccount.vue';
 import { mapGetters } from 'vuex';
 import getCurrencyInfo from '@/functions/getCurrencyInfo';
 import getBankImage from '@/functions/getBankImage';
@@ -171,6 +162,8 @@ export default {
 		AddNewCard,
 		Deposit,
 		CardsList,
+		AddNativeCard,
+		OpenAccount,
 	},
 	mounted() {
 		this.$store.dispatch('card/GET_CARDS');
@@ -258,6 +251,10 @@ export default {
 				tabs.forEach((tab) => (tab.isActive = false));
 				currentTab.isActive = !isCurrentTabActive;
 			}
+		},
+		handleClickRadioButton() {
+			this.freezeActive = true;
+			setTimeout(() => (this.freezeActive = false), 200);
 		},
 		handleEdit() {
 			this.freezeActive = true;

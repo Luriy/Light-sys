@@ -18,7 +18,7 @@
 				<div class="flex justify-content-between align-items-flex-end">
 					<div class="flex flex-column">
 						<div class="virtual-card__exp-date-title">Exp Date</div>
-						<div class="virtual-card__exp-date">07/20</div>
+						<div class="virtual-card__exp-date">MM/YY</div>
 					</div>
 					<img src="@/assets/images/mastercard.png" />
 				</div>

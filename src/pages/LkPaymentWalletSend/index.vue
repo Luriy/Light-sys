@@ -188,12 +188,27 @@ export default {
       countdown: 59,
       isTransferSuccess: false,
       error: null,
+      windowHandler: null,
     }
   },
   mounted() {
+    const select = document.querySelector('.send-block .select');
+		this.windowHandler = ({ target }) => {
+			if (
+				(target ? !target.classList.contains('.send-block .select') : false) &&
+				!select.contains(target)
+			) {
+				this.isSelectWalletOpened= false;
+			}
+		};
+    window.addEventListener('click', this.windowHandler);
+    
     this.$store.dispatch('wallet/GET_WALLETS');
     this.$store.dispatch('wallet/GET_TYPES');
   },
+  beforeDestroy() {
+		window.removeEventListener('click', this.windowHandler);
+	},
   computed: {
     currency() {
       return this.$route.params.currency
@@ -362,10 +377,10 @@ export default {
         this.cryptoCurrencyAmount = this.minAmount.toPay;
         this.currencyAmount = this.cryptoToCurrency(this.minAmount.toPay);
         const remainingCryptoCurrency = this.initialBalance.cryptoCurrency - this.minAmount.toPay;
-        this.remainingCryptoCurrency  = (remainingCryptoCurrency < 0 || isNan(remainingCryptoCurrency)) ? Number(0).toFixed(5) : remainingCryptoCurrency.toFixed(5);
+        this.remainingCryptoCurrency  = (remainingCryptoCurrency < 0 || isNaN(remainingCryptoCurrency)) ? Number(0).toFixed(5) : remainingCryptoCurrency.toFixed(5);
 
         const remainingCurrency = this.initialBalance.currency - this.cryptoToCurrency(this.minAmount.toPay);
-        this.remainingCurrency = (remainingCurrency < 0 || isNan(remainingCurrency)) ? Number(0).toFixed(2) : remainingCurrency.toFixed(2);
+        this.remainingCurrency = (remainingCurrency < 0 || isNaN(remainingCurrency)) ? Number(0).toFixed(2) : remainingCurrency.toFixed(2);
       }
     },
     handleSelectWallet(currency, address) {

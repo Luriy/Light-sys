@@ -1,7 +1,9 @@
 import Axios from 'axios';
-import { parsePythonArray, parsePythonDataObject } from '@/functions/helpers';
+import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
 import { API_URL } from '@/constants';
+import getCryptoInfo from '@/functions/getCryptoInfo';
+import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
 
 export default {
 	namespaced: true,
@@ -44,39 +46,30 @@ export default {
 		SET_AFTER_CREATE_WALLET: (state, payload) => (state.afterCreateWallet = payload),
 	},
 	actions: {
-		GET_PAGE_DETAIL: (store, { currency, address }) => {
-			let Comand;
-
-			switch (currency.toUpperCase()) {
-				case 'BTC':
-					Comand = 'BalanceBTC';
-					break;
-				case 'ETH':
-					Comand = 'BalanceETH';
-					break;
-				case 'LTC':
-					Comand = 'BalanceETC';
-					break;
-				default:
-					throw new Error('Unknown currency');
-			}
-
+		GET_PAGE_DETAIL: ({ dispatch, commit }, { currency, address }) => {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
 				params: {
-					Comand,
+					Comand: `Balance${currency}`,
 					Wallet: address,
 				},
 			}).then(({ data }) => {
 				const returnData = parsePythonArray(data)['1'].return;
-				return store.commit('SET_PAGE_DETAIL', {
-					currency: currency.toUpperCase(),
-					balance: returnData.BalanceBTC,
+
+				dispatch('GET_TYPES').then(({ types }) => {
+					const balance = returnData[`Balance${currency}`];
+					const pageDetail = {
+						currency: currency.toUpperCase(),
+						balance,
+						balanceUSD: balance * types[getCryptoInfo(currency).fullName.toLowerCase()].price,
+					};
+					commit('SET_PAGE_DETAIL', pageDetail);
+					return pageDetail;
 				});
 			});
 		},
-		CREATE_WALLET: ({ commit }, type) => {
+		CREATE_WALLET({ commit, getters }, type) {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -84,8 +77,51 @@ export default {
 					Comand: `Add${type}wallet`,
 					...getAuthParams(),
 				},
-			}).then((data) => {
-				return parsePythonDataObject(data);
+			}).then(({ data }) => {
+				const errors = Object.values(parsePythonArray(data)['0'].Errors);
+				const parsedData = parsePythonArray(data)['1'].return;
+
+				if (errors.length) {
+					commit(
+						'alerts/setNotification',
+						{
+							message: errors[0],
+							status: 'error-status',
+							icon: 'close',
+						},
+						{ root: true },
+					);
+					return { error: true };
+				} else if (parsedData[`Add${type}wallet`] === 'Complete') {
+					commit('SET_AFTER_CREATE_WALLET', true);
+					commit('SET_WALLETS', [
+						...getters.WALLETS,
+						{
+							address: parsedData[`${type}wallet`],
+							balance: 0,
+							balanceUSD: 0,
+							currency: type,
+							status: 'Active',
+						},
+					]);
+
+					setTimeout(() => {
+						commit('SET_AFTER_CREATE_WALLET', false); // из-за бага на беке, что при создании кошелька
+					}, 12000); // все остальные фризятся
+
+					return parsedData;
+				} else {
+					commit(
+						'alerts/setNotification',
+						{
+							message: 'Unknown error',
+							status: 'error-status',
+							icon: 'close',
+						},
+						{ root: true },
+					);
+					return { error: true };
+				}
 			});
 		},
 		DELETE_WALLET: (state, payload) => {
@@ -111,7 +147,7 @@ export default {
 				const errors = Object.values(parsePythonArray(data)['0'].Errors);
 
 				if (errors.length) {
-					return commit(
+					commit(
 						'alerts/setNotification',
 						{
 							message: errors[0],
@@ -120,6 +156,7 @@ export default {
 						},
 						{ root: true },
 					);
+					return { error: true };
 				} else {
 					const returnData = parsePythonArray(data)['1'].return;
 
@@ -238,7 +275,7 @@ export default {
 
 			const responseData = parsePythonArray(data)['1'].return;
 
-			store.commit('SET_TYPES', {
+			const types = {
 				bitcoin: {
 					name: 'Bitcoin',
 					code: 'BTC',
@@ -260,9 +297,9 @@ export default {
 					price: responseData['LTC: '].litecoin.usd,
 					change24h: responseData['LTC: '].litecoin.usd_24h_change,
 				},
-			});
+			};
 
-			store.commit('SET_PERCENTAGE', {
+			const percentage = {
 				BTC: {
 					'1h': responseData['percentage_BTC: '].percentage_1h,
 					'1y': responseData['percentage_BTC: '].percentage_1y,
@@ -287,9 +324,37 @@ export default {
 					'30d': responseData['percentage_LTC: '].percentage_30d,
 					'200d': responseData['percentage_LTC: '].percentage_200d,
 				},
-			});
+			};
 
-			return responseData;
+			console.log(percentage);
+
+			store.commit('SET_TYPES', types);
+
+			store.commit('SET_PERCENTAGE', percentage);
+
+			return { types, percentage };
+		},
+		GET_WALLET_OPERATIONS: (store, { currency, address }) => {
+			return Axios({
+				url: API_URL,
+				method: 'POST',
+				params: {
+					Comand: `AllTransactions${capitalizeFirstLetter(currency.toLowerCase())}`,
+					Wallet: address,
+				},
+			}).then(({ data }) => {
+				const parsedData = parsePythonArray(data)['1'].return;
+
+				return Object.values(parsedData).map((item) => ({
+					source: item,
+					currency,
+					address: item.address || item.To,
+					time: new Date(parseInt(item.Timestamp, 10) + 1000),
+					url: item.Url,
+					value: item.value,
+					valueUSD: item.valueUSD,
+				}));
+			});
 		},
 		GET_OPERATIONS: async (store) => {
 			const transactions = (

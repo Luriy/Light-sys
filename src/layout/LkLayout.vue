@@ -10,13 +10,13 @@
 
 <script>
 import UserSidebar from '@/components/UserSidebar';
-import LkHeader from '@/components/LkHeader';
+import LkHeader from '@/components/LkHeader/index';
 export default {
-  name: 'LkLaouyt',
-  components: {
-  	UserSidebar,
-  	LkHeader
-  }
-}
+	name: 'LkLaouyt',
+	components: {
+		UserSidebar,
+		LkHeader,
+	},
+};
 </script>
 <style lang="scss"></style>

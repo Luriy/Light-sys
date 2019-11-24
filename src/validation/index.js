@@ -12,15 +12,11 @@ export const VALIDATE_ADDRESS = (address, currencyName) => {
 		return `Enter correct ${currencyName} address.`;
 	} else return null;
 };
-export const VALIDATE_CARD = ({ number, date, name, cvv, psid }) => {
+export const VALIDATE_CARD = ({ number, name, psid }) => {
 	if (number.toString().length < 19) {
 		return `Enter correct card number.`;
-	} else if (date.toString().length < 5) {
-		return `Enter correct date.`;
 	} else if (name.toString().length < 3) {
 		return `Enter correct full name.`;
-	} else if (cvv.toString().length < 3) {
-		return `Enter correct CVV.`;
 	} else if (!psid) {
 		return `You need to choose bank.`;
 	} else return null;

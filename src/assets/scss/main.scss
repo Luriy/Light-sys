@@ -509,6 +509,9 @@ $eth: #7d8ef6;
           padding: 0px 20px 20px 48px;
           margin: 8px 0 20px;
         }
+        .accounts-list_wrapper_tab_body.deposit {
+          padding: 0px 20px 20px 59px;
+        }
 			}
 			&:not(:last-child) {
 				margin-bottom: 10px;
@@ -825,16 +828,13 @@ $eth: #7d8ef6;
 				justify-content: space-between;
         margin-bottom: 10px;
 
-        &:last-of-type {
-          margin-bottom: 0;
-        }
-
 				&.fiat-wallet {
 					height: auto;
 					cursor: pointer;
-					min-height: 6vh;
-					display: block;
+          display: block;
+          overflow: hidden;
 					&.active {
+            overflow: visible;
 						.wallet-last-transactions {
 							opacity: 1;
 							max-height: 65vh;
@@ -1250,11 +1250,17 @@ $eth: #7d8ef6;
 
 				&.fiat-wallet {
           min-height: 61px;
+          max-height: 61px;
+          transition: .3s;
+
+          &.active {
+            max-height: 2000px;
+          }
 
 					.wallet-last-transactions {
 						&-item {
 							height: 61px;
-							padding: 10px 0;
+							padding: 10px 0 10px 0;
 
 							.info {
 								.amount {
@@ -1780,7 +1786,8 @@ $eth: #7d8ef6;
 		justify-content: space-around;
 		text-align: center;
 		.icon {
-			cursor: pointer;
+      cursor: pointer;
+      text-decoration: none;
 			img {
 				display: inline-block;
 			}
@@ -1866,7 +1873,6 @@ $eth: #7d8ef6;
 .lk-wrapper #container {
 	display: flex;
 }
-
 .trans-list {
 	.trans-date {
 		font-size: 12px;
@@ -1874,7 +1880,13 @@ $eth: #7d8ef6;
 		line-height: 21px;
 		color: #fff;
 		margin-bottom: 20px;
-	}
+  }
+  .trans-id {
+    max-width: 120px;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 	.trans-item {
 		margin-bottom: 23px;
 		&.active {
@@ -2823,9 +2835,4 @@ $eth: #7d8ef6;
 }
 .notification-message {
   margin: 0 14px 0 18px;
-}
-.fiat-block {
-  .wallets-list_item_body {
-    overflow-y: visible !important;
-  }
 }
