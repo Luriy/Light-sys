@@ -133,6 +133,7 @@ export default {
                 ...currensyList[walletCurrency],
                 number: item.Walet,
                 status: item.Status,
+                statusNode: walletsResult[`StatusNode${walletCurrency}`],
                 currency: walletCurrency,
                 balance: item.Balance ? item.Balance.toFixed(5) : 0,
                 balanceUSD: item.Balance ? item.BalanceUsd.toFixed(2) : 0,

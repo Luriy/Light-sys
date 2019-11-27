@@ -30,7 +30,7 @@
 						</div>
 						<span>{{ wallet.currency }}</span>
 					</div>
-					<div class="info">
+					<div class="wallet-info">
 						<div class="balance">
 							<p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
 							<span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
