@@ -22,9 +22,12 @@ export default {
 		},
 	},
 	methods: {
-		closeDialog() {
-			this.$emit('closeModal', false);
-		},
+      closeDialog() {
+          this.$emit('closeModal', false);
+      },
+      repeatTransferRequest() {
+        this.$emit('repeatTransferRequest');
+      }
 	},
 };
 </script>
@@ -207,24 +210,28 @@ export default {
 	}
 
 	.timer-body {
-		display: flex;
-		justify-content: center;
-		margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
 
-		.title {
-			color: #ffffff;
-			opacity: 0.5;
-			font-size: 14px;
-			line-height: 21px;
-			margin-right: 5px;
-		}
+      .title {
+        color: #ffffff;
+        opacity: 0.5;
+        font-size: 14px;
+        line-height: 21px;
+        margin-right: 5px;
+      }
 
-		.timer {
-			color: #ffffff;
-			font-size: 14px;
-			font-weight: 600;
-			line-height: 21px;
-		}
+      .timer {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 24px;
+      }
+
+      .repeat-btn {
+        @extend .timer
+      }
 	}
 
 	.number-input {
@@ -255,8 +262,8 @@ export default {
 	font-size: 12px;
 	line-height: 21px;
 
-	.title {
-		flex-grow: 1;
+	.network-fee__title {
+      margin: 0;
 
 		span {
 			text-transform: capitalize;

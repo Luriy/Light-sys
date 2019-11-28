@@ -56,6 +56,10 @@ b, strong {
 }
 $eth: #7d8ef6;
 
+.v-application p {
+  margin-bottom: 0!important;
+}
+
 .etc {
 	color: #00c95a !important;
 }
@@ -92,7 +96,7 @@ $eth: #7d8ef6;
 }
 
 .exchange-block {
-	border-radius: 14px;
+	  border-radius: 14px;
   	background-color: #3b2665;
   	position:relative;
   	padding:25px 25px 40px;
@@ -127,7 +131,7 @@ $eth: #7d8ef6;
 			margin-bottom: 20px;
   		}
 
-  		.info {
+  		.currency_info {
 			font-size: 12px;
 			font-weight: 600;
 			text-transform: uppercase;
@@ -159,11 +163,11 @@ $eth: #7d8ef6;
 		    position: absolute;
 		    text-align: center;
 		}
-		.title {
-			font-size: 12px;
-			font-weight: 600;
+		.exchange_title {
+      font-size: 12px;
+			font-weight: 600!important;
 			color: #fff;
-			line-height:21px;
+			line-height:21px!important;
 		}
 		.currency {
 			display: flex;
@@ -174,6 +178,7 @@ $eth: #7d8ef6;
 					font-size: 16px;
 					line-height: 21px;
 					font-weight: 600;
+          margin: 0;
 				}
 				span {
 					font-size: 12px;
@@ -373,45 +378,7 @@ $eth: #7d8ef6;
           background-color: #2e0e52;
         }
       }
-			.select-body {
-				width:100%;
-				top: 66px;
-				position:absolute;
-				border-radius: 14px;
-				background-color: #4d3779;
-				padding:20px;
-				z-index: 5;
-				left: 0;
 
-				.select-item {
-					display: flex;
-					align-items:center;
-					padding:8px 9px;
-					height: 56px;
-					border-radius: 8px;
-					background-color: #684e9c;
-					&:not(:last-child) {
-						margin-bottom: 10px;
-					}
-				}
-
-				.search-input {
-					margin-bottom: 10px;
-					input {
-						width:100%;
-						border:none;
-						height: 29px;
-						border-radius: 8px;
-						background-color: #684e9c;
-						padding-left:11px;
-					}
-					input, input::placeholder {
-						color: rgba(255,255,255,.7);
-						font-size: 12px;
-						font-weight: 600;
-					}
-				}
-			}
 			.toggle {
 				position:absolute;
 				top: calc(50% - 10px);
@@ -980,6 +947,7 @@ $eth: #7d8ef6;
 						color: #db5353;
 						&.green {
 							color: #53d344;
+              background: transparent!important;
 						}
 						p {
 							margin-bottom: 4px;
@@ -1274,6 +1242,7 @@ $eth: #7d8ef6;
 
 				.info {
 					display: flex;
+          background: transparent!important;
 					.balance {
 						text-transform: uppercase;
 						text-align: right;
@@ -1358,9 +1327,7 @@ $eth: #7d8ef6;
 		}
 	}
 }
-
 }
-
   	@media(min-width: 1800px){
   		.wallets-list {
 			width: 77.4vw;
@@ -1424,7 +1391,7 @@ $eth: #7d8ef6;
 									font-size: 0.875rem;
 								}
 							}
-							.info {
+							.wallets_info {
 								.amount {
 									margin-right: 3.8vw;
 									font-size: .875rem;
@@ -1434,7 +1401,7 @@ $eth: #7d8ef6;
 						}
 					}
 				}
-					.info {
+					.wallets_info {
 					display: flex;
 					.balance {
 						margin-right: 3.8vw;

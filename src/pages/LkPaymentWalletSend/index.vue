@@ -11,13 +11,13 @@
               <div class="select__modal" v-show="isSelectWalletOpened">
                 <div class="select__modal-item" v-for="wallet in wallets" :key="wallet.address" :class="{ active: wallet.address == $route.params.address }" @click="handleSelectWallet(wallet.currency, wallet.address)">
                   <img v-if="wallet.currency === 'BTC'" width="17" src="@/assets/images/btc.png" />
-                  <img v-if="wallet.currency === 'ETH'" width="17" src="@/assets/images/eth.png" />
+                  <img v-if="wallet.currency === 'ETH'" width="17" src="@/assets/images/eth.png" /><!--А если валют будет 150-200? Дам подказку решение ты найдешь в exchange store GET_FIAT_EXCHANGE-->
                   <img v-if="wallet.currency === 'LTC'" width="17" src="@/assets/images/ltc.svg" />
                   <h2 class="select__modal-currency">{{ currencyName(wallet.currency) }}</h2>
                   <span class="select__modal-balance">{{ `${wallet.currency} ${formatCurrency(wallet.balance, '', 5)}` }}</span>
                   <span class="select__modal-balance-usd">{{ `$${formatCurrency(wallet.balanceUSD)} USD` }}</span>
                 </div>
-              </div>  
+              </div>
             </transition>
           </div>
           <img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title>
@@ -47,7 +47,7 @@
           <button @click="onSendSms">Send</button>
           <error :error="error"></error>
         </div>
-        
+
         <div class="send-form-totals">
           <div class="send-form-totals-total">
             <div class="text">{{ currencyName(currency) }} Network Fee</div>
@@ -94,9 +94,6 @@
     </payments-and-transfer>
   </lk-layout>
 </template>
-<style scoped>
-  
-</style>
 <script>
 import LkLayout from '@/layout/LkLayout';
 import PaymentsAndTransfer from '@/layout/LkPaymentsAndTransfer'
@@ -248,7 +245,7 @@ export default {
         {0: ''},
         {1: ''},
         {2: ''},
-        {3: ''},
+        {3: ''},   // <- делай это в цикле
         {4: ''},
         {5: ''},
       ],
@@ -372,7 +369,7 @@ export default {
         });
       } else {
         this.error = validateErrorAmount || validateErrorAddress;
-      } 
+      }
     },
     onSend() {
       const token = this.smsCodes.map((smsCode, index) =>smsCode[index]).join('');
@@ -404,3 +401,47 @@ export default {
   }
 }
 </script>
+<style scoped>
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+  .current-balance {
+    width: 100%;
+  }
+  .current-balance input[name='balance'] {
+    width: 90%;
+  }
+  .transfer-popup .payment-address {
+    margin-right: 15px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .transfer-popup .from {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .transfer-popup .payment-usd {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-left: 9px;
+  }
+  .transfer-popup .fixed-value {
+    width: 90px;
+    text-align: right;
+  }
+  .transfer-popup .btc-value {
+    margin-right: 0 !important;
+  }
+  .exchange-popup_info img {
+    left: 35% !important;
+  }
+  .exchange-popup_body {
+    width: 620px !important;
+  }
+</style>
