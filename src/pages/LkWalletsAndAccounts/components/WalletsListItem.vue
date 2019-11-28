@@ -11,7 +11,7 @@
 						<img src="@/assets/images/cross.svg" />
 					</div>
 				</transition>
-				<div class="wallet">
+				<div class="wallet" :class="{ active: !isWalletsMovingAndDeleting }">
 					<div class="code">
 						<div :class="['image', wallet.currency.toLowerCase()]">
 							<img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title />
@@ -36,24 +36,74 @@
 				</div>
 				<div class="group-toggler"></div>
 			</div>
-			<div class="under-wallet-block"></div>
+			<div
+				class="under-wallet-block flex align-items-center justify-content-between"
+				:class="{ 'active-input': isInputEditingActive }"
+				v-show="isWalletsMovingAndDeleting || isGroupActive"
+				@click="handleClickLine"
+			>
+				<div class="under-wallet-line" v-show="!isInputEditingActive"></div>
+				<div class="add-group-input-wrapper flex align-items-center" v-show="isInputEditingActive">
+					<input type="text" v-model="groupName" />
+				</div>
+				<div v-if="isGroupActive">{{ groupName }}</div>
+			</div>
 		</div>
 	</transition>
 </template>
 <script>
 export default {
 	props: ['wallet', 'isWalletsMovingAndDeleting', 'percentage'],
+	data() {
+		return {
+			groupName: 'Group name',
+			isInputEditingActive: false,
+			isGroupActive: false,
+		};
+	},
 	filters: {
 		percentage: (value) => (value ? `${value['1h'].toFixed(2)}%` : ''),
+	},
+	methods: {
+		handleClickLine() {
+			if (!this.isInputEditingActive && !this.isGroupActive) {
+				this.isInputEditingActive = true;
+				document.querySelector('.add-group-input-wrapper input').focus();
+			}
+		},
 	},
 };
 </script>
 <style scoped>
+.add-group-input-wrapper {
+	height: 32px;
+	border-radius: 4px;
+	border: 1px solid #745e9f;
+	font-size: 16px;
+	font-weight: 600;
+	color: #fff;
+	padding: 0 8px;
+}
+
 .under-wallet-block {
 	width: 100%;
+	cursor: pointer;
+	height: 10px;
+	transition: 0.2s;
+}
+.under-wallet-line {
 	background-color: #3b2665;
-	height: 3px;
-	margin-bottom: 6px;
+	height: 0px;
+	width: 100%;
+}
+.under-wallet-block:hover {
+	height: 14px;
+}
+.under-wallet-block.active-input {
+	height: 46px;
+}
+.under-wallet-block:hover .under-wallet-line {
+	height: 4px;
 }
 .outside-wrapper:last-of-type .under-wallet-block {
 	display: none;

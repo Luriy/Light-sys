@@ -1,5 +1,8 @@
 <template>
-	<div class="wallet fiat-wallet list__item" :class="{ active: item.currency === activeTab }">
+	<div
+		class="wallet fiat-wallet list__item"
+		:class="{ active: item.currency === activeTab, active2: !isCardsMovingAndDeleting }"
+	>
 		<div class="wallet-info" @click="$emit('onClickTab', item.currency)">
 			<div class="code">
 				<div class="image fiat">{{ item.code }}</div>
