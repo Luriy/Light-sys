@@ -187,7 +187,7 @@
                 </div>
                 <div class="text">
                   <p :style="[!exchangeCurrency.isWallet ? {color:'#fff'}:'']">{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
-                  <span >${{exchangeUSD && typeof exchangeUSD === 'number' ? exchangeUSD.toFixed(2) : exchangeUSD}}USD</span>
+                  <span >${{exchangeUSD && typeof exchangeUSD === 'number' ? exchangeUSD.toFixed(2) : exchangeUSD}} USD</span>
                 </div>
               </div>
             </div>
@@ -199,7 +199,7 @@
                     {{receiveAmount}}
                     {{receiveCurrency.currency}}
                   </p>
-                  <span>${{receiveUSD && typeof receiveUSD === 'number' ? receiveUSD.toFixed(2) : receiveUSD}}USD</span>
+                  <span>${{receiveUSD && typeof receiveUSD === 'number' ? receiveUSD.toFixed(2) : receiveUSD}} USD</span>
                 </div>
                 <div class="icon">
                   <img :src="receiveCurrency.icon" alt title>
@@ -358,7 +358,6 @@
 
   let exchangePrice = null;
   let receivePrice = null;
-  const defaultValue = parseFloat(0).toFixed(2);
 
   export default {
     name: 'LkPaymentExchange',
@@ -386,12 +385,12 @@
         exchangeBtn: 0,
         receiveBtn: 0,
         dir: 0,
-        exchangeAmount: defaultValue,
-        receiveAmount: defaultValue,
-        exchangeUSD: defaultValue,
-        receiveUSD: defaultValue,
+        exchangeAmount: "0.00",
+        receiveAmount: "0.00",
+        exchangeUSD: "0.00",
+        receiveUSD: "0.00",
         exchangeAmountRules: [
-          value => !!value || 'Required',
+          value => !!value && typeof value !== 'string' || 'Required',
           value => {
             if (this.exchangeCurrency.isWallet) {
               if (this.exchangeCurrency.balance < value) {
@@ -426,8 +425,31 @@
           }
         ],
         receiveAmountRules: [
-          value => !!value || 'Required',
-
+          value => !!value && typeof value !== 'string' || 'Required',
+          value => {
+            if (this.receiveCurrency.isWallet) {
+              if (value > this.transferInfo.limit) {
+                return 'Ammount cannot be more than limit'
+              }
+            }
+            return false
+          },
+          value => {
+            if (!this.receiveCurrency.isWallet) {
+              if (value > this.exchangeCurrency.reserve) {
+                return 'Ammount cannot be more than reserve'
+              }
+            }
+            return false
+          },
+          value => {
+            if (!this.receiveCurrency.isWallet) {
+              if (value < this.fiatInfo.in_min) {
+                return 'Ammount cannot be less than min ammount of transaction'
+              }
+            }
+            return false
+          }
         ],
         exchangeCurrency: {
           code: 'btc',
@@ -555,10 +577,10 @@
         }
       },
       clearValues() {
-        this.exchangeAmount = 0;
-        this.receiveAmount = 0;
-        this.exchangeUSD = 0;
-        this.receiveUSD = 0;
+        this.exchangeAmount = "0.00";
+        this.receiveAmount = "0.00";
+        this.exchangeUSD = "0.00";
+        this.receiveUSD = "0.00";
       },
       selectReceiveWallet(wallet) {
         this.clearValues();
