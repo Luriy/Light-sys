@@ -29,6 +29,11 @@ export default {
 			big: require('@/assets/images/fiat/tinkoff-bank.png'),
 		},
 	},
+	23: {
+		icon: {
+			small: require('@/assets/images/fiat/small/ak-bars.png'),
+		},
+	},
 	26: {
 		icon: {
 			small: require('@/assets/images/fiat/small/viza.png'),
@@ -95,118 +100,118 @@ export default {
 			big: require('@/assets/images/fiat/any-bank.png'),
 		},
 	},
-  109: {
-    icon: {
-      small: require('@/assets/images/fiat/small/any-bank.png'),
-      big: require('@/assets/images/fiat/any-bank.png'),
-    },
-  },
-  28: {
-	  icon: {
-      small: require('@/assets/images/fiat/small/advanced-cash.png'),
-      big: require('@/assets/images/fiat/advanced-cash.png'),
-    }
-  },
-  48: {
-    icon: {
-      small: require('@/assets/images/fiat/small/advanced-cash.png'),
-      big: require('@/assets/images/fiat/advanced-cash.png'),
-    }
-  },
-  57: {
-    icon: {
-      small: require('@/assets/images/fiat/small/advanced-cash.png'),
-      big: require('@/assets/images/fiat/advanced-cash.png'),
-    }
-  },
-  59: {
-    icon: {
-      small: require('@/assets/images/fiat/small/exmo.png'),
-      big: require('@/assets/images/fiat/exmo.png'),
-    }
-  },
-  60: {
-    icon: {
-      small: require('@/assets/images/fiat/small/exmo.png'),
-      big: require('@/assets/images/fiat/exmo.png'),
-    }
-  },
-  61: {
-    icon: {
-      small: require('@/assets/images/fiat/small/exmo.png'),
-      big: require('@/assets/images/fiat/exmo.png'),
-    }
-  },
-  65: {
-    icon: {
-      small: require('@/assets/images/fiat/small/exmo.png'),
-      big: require('@/assets/images/fiat/exmo.png'),
-    }
-  },
-  47: {
-    icon: {
-      small: require('@/assets/images/fiat/small/livecoin.png'),
-      big: require('@/assets/images/fiat/livecoin.png'),
-    }
-  },
-  41: {
-    icon: {
-      small: require('@/assets/images/fiat/small/payeer.png'),
-      big: require('@/assets/images/fiat/payeer.png'),
-    }
-  },
-  50: {
-    icon: {
-      small: require('@/assets/images/fiat/small/payeer.png'),
-      big: require('@/assets/images/fiat/payeer.png'),
-    }
-  },
-  22: {
-    icon: {
-      small: require('@/assets/images/fiat/small/payeer.png'),
-      big: require('@/assets/images/fiat/payeer.png'),
-    }
-  },
-  1: {
-    icon: {
-      small: require('@/assets/images/fiat/small/perfect-money.png'),
-      big: require('@/assets/images/fiat/perfect-money.png'),
-    }
-  },
-  49: {
-    icon: {
-      small: require('@/assets/images/fiat/small/perfect-money.png'),
-      big: require('@/assets/images/fiat/perfect-money.png'),
-    }
-  },
-  24: {
-    icon: {
-      small: require('@/assets/images/fiat/small/psb-bank.png'),
-      big: require('@/assets/images/fiat/psb-bank.png'),
-    }
-  },
-  9: {
-    icon: {
-      small: require('@/assets/images/fiat/small/qiwi.png'),
-      big: require('@/assets/images/fiat/qiwi.png'),
-    }
-  },
-  76: {
-    icon: {
-      small: require('@/assets/images/fiat/small/qiwi.png'),
-      big: require('@/assets/images/fiat/qiwi.png'),
-    }
-  },
-  2: {
-    icon: {
-      small: require('@/assets/images/fiat/small/standart-bank.png'),
-      big: require('@/assets/images/fiat/standart-bank.png'),
-    }
-  },
-  15: {
-    icon: {
-      small: require('@/assets/images/fiat/small/standart-bank.png'),
-      big: require('@/assets/images/fiat/standart-bank.png'),
-    }
-  }
+	109: {
+		icon: {
+			small: require('@/assets/images/fiat/small/any-bank.png'),
+			big: require('@/assets/images/fiat/any-bank.png'),
+		},
+	},
+	28: {
+		icon: {
+			small: require('@/assets/images/fiat/small/advanced-cash.png'),
+			big: require('@/assets/images/fiat/advanced-cash.png'),
+		},
+	},
+	48: {
+		icon: {
+			small: require('@/assets/images/fiat/small/advanced-cash.png'),
+			big: require('@/assets/images/fiat/advanced-cash.png'),
+		},
+	},
+	57: {
+		icon: {
+			small: require('@/assets/images/fiat/small/advanced-cash.png'),
+			big: require('@/assets/images/fiat/advanced-cash.png'),
+		},
+	},
+	59: {
+		icon: {
+			small: require('@/assets/images/fiat/small/exmo.png'),
+			big: require('@/assets/images/fiat/exmo.png'),
+		},
+	},
+	60: {
+		icon: {
+			small: require('@/assets/images/fiat/small/exmo.png'),
+			big: require('@/assets/images/fiat/exmo.png'),
+		},
+	},
+	61: {
+		icon: {
+			small: require('@/assets/images/fiat/small/exmo.png'),
+			big: require('@/assets/images/fiat/exmo.png'),
+		},
+	},
+	65: {
+		icon: {
+			small: require('@/assets/images/fiat/small/exmo.png'),
+			big: require('@/assets/images/fiat/exmo.png'),
+		},
+	},
+	47: {
+		icon: {
+			small: require('@/assets/images/fiat/small/livecoin.png'),
+			big: require('@/assets/images/fiat/livecoin.png'),
+		},
+	},
+	41: {
+		icon: {
+			small: require('@/assets/images/fiat/small/payeer.png'),
+			big: require('@/assets/images/fiat/payeer.png'),
+		},
+	},
+	50: {
+		icon: {
+			small: require('@/assets/images/fiat/small/payeer.png'),
+			big: require('@/assets/images/fiat/payeer.png'),
+		},
+	},
+	22: {
+		icon: {
+			small: require('@/assets/images/fiat/small/payeer.png'),
+			big: require('@/assets/images/fiat/payeer.png'),
+		},
+	},
+	1: {
+		icon: {
+			small: require('@/assets/images/fiat/small/perfect-money.png'),
+			big: require('@/assets/images/fiat/perfect-money.png'),
+		},
+	},
+	49: {
+		icon: {
+			small: require('@/assets/images/fiat/small/perfect-money.png'),
+			big: require('@/assets/images/fiat/perfect-money.png'),
+		},
+	},
+	24: {
+		icon: {
+			small: require('@/assets/images/fiat/small/psb-bank.png'),
+			big: require('@/assets/images/fiat/psb-bank.png'),
+		},
+	},
+	9: {
+		icon: {
+			small: require('@/assets/images/fiat/small/qiwi.png'),
+			big: require('@/assets/images/fiat/qiwi.png'),
+		},
+	},
+	76: {
+		icon: {
+			small: require('@/assets/images/fiat/small/qiwi.png'),
+			big: require('@/assets/images/fiat/qiwi.png'),
+		},
+	},
+	2: {
+		icon: {
+			small: require('@/assets/images/fiat/small/standart-bank.png'),
+			big: require('@/assets/images/fiat/standart-bank.png'),
+		},
+	},
+	15: {
+		icon: {
+			small: require('@/assets/images/fiat/small/standart-bank.png'),
+			big: require('@/assets/images/fiat/standart-bank.png'),
+		},
+	},
 };

@@ -25,7 +25,7 @@
 				</div>
 				<div
 					class="button-wrapper button-gradient no-margin"
-					@click="$emit('onDeleteCard', deletePopup.number, deletePopup.psid)"
+					@click="$emit('onSoonDeleteCard', deletePopup.number, deletePopup.psid)"
 				>
 					<button class="add-cart-action-button apply button-gradient">
 						Yes

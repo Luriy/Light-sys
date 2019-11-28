@@ -68,11 +68,11 @@ export default {
 		Promise.all([
 			this.$store.dispatch('common/GET_BANKS'),
 			this.$store.dispatch('card/GET_CARDS'),
-			this.$store.dispatch('common/GET_ALL_CURRENCIES'),
-		]).then(([banks, cards, currencies]) => {
+			this.$store.dispatch('currency/GET_USER_CURRENCIES'),
+		]).then(([banks, cards, userCurrencies]) => {
 			this.$store.commit(
 				'currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
-				currencies.map((currency) => {
+				userCurrencies.map((currency) => {
 					const { fullName, code } = getCurrencyInfo(currency);
 					return {
 						currency,
@@ -90,7 +90,7 @@ export default {
 			mappedCurrencies: 'currency/WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
 			banks: 'common/BANKS',
 			cards: 'card/CARDS',
-			currencies: 'currency/ALL_CURRENCIES',
+			userCurrencies: 'currency/USER_CURRENCIES',
 		}),
 		draggableMappedCurrencies: {
 			get() {

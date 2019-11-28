@@ -2,6 +2,7 @@ import Axios from 'axios';
 import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
 import { API_URL } from '@/constants';
+import { AUTH_LOGOUT } from '@/store/actions/auth';
 import getCryptoInfo from '@/functions/getCryptoInfo';
 import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
 
@@ -135,7 +136,7 @@ export default {
 				},
 			});
 		},
-		GET_WALLETS({ commit }) {
+		GET_WALLETS({ commit, dispatch }) {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -146,7 +147,12 @@ export default {
 			}).then(({ data }) => {
 				const errors = Object.values(parsePythonArray(data)['0'].Errors);
 
-				if (errors.length) {
+				if (errors.includes('Wrong password')) {
+					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
+						() => (window.location.href = `/login`),
+					);
+					return { error: true };
+				} else if (errors.length) {
 					commit(
 						'alerts/setNotification',
 						{
@@ -203,7 +209,7 @@ export default {
 			});
 		},
 
-		GET_TRANSFER_TOKEN: ({ commit }, user) => {
+		GET_TRANSFER_TOKEN: ({ commit, dispatch }, user) => {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -211,9 +217,28 @@ export default {
 					Comand: 'TransferToken',
 					...user,
 				},
+			}).then(({ data }) => {
+				const parsedData = parsePythonArray(data);
+				const errors = Object.values(parsedData['0']['Errors']);
+				console.log(errors);
+				if (errors.includes('Wrong password')) {
+					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
+						() => (window.location.href = `/login`),
+					);
+				} else if (errors.length) {
+					commit(
+						'alerts/setNotification',
+						{
+							message: errors[0],
+							status: 'error-status',
+							icon: 'close',
+						},
+						{ root: true },
+					);
+				}
 			});
 		},
-		POST_TRANSFER_CRYPTO: ({ commit }, { amount, from, to, token, currency }) => {
+		POST_TRANSFER_CRYPTO: ({ commit, dispatch }, { amount, from, to, token, currency }) => {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -230,14 +255,10 @@ export default {
 				const { Errors } = response[0];
 				const responseData = response[1];
 				if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
-					commit(
-						'alerts/setNotification',
-						{
-							message: 'Transfer done',
-							status: 'success-status',
-							icon: 'done',
-						},
-						{ root: true },
+					return { success: true };
+				} else if (Object.values(Errors).includes('Wrong password')) {
+					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
+						() => (window.location.href = `/login`),
 					);
 				} else if (Object.keys(Errors).length) {
 					const errKey = Object.keys(Errors)[0];
@@ -345,15 +366,64 @@ export default {
 			}).then(({ data }) => {
 				const parsedData = parsePythonArray(data)['1'].return;
 
-				return Object.values(parsedData).map((item) => ({
-					source: item,
-					currency,
-					address: item.address || item.To,
-					time: new Date(parseInt(item.Timestamp, 10) + 1000),
-					url: item.Url,
-					value: item.value,
-					valueUSD: item.valueUSD,
-				}));
+				const dates = [];
+				const transactions = Object.values(parsedData).map((item) => {
+					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
+					if (
+						dates.every(
+							(date) =>
+								date.getDate() !== itemDate.getDate() ||
+								date.getMonth() !== itemDate.getMonth() ||
+								date.getFullYear() !== itemDate.getFullYear(),
+						)
+					) {
+						dates.push(itemDate);
+					}
+					return {
+						source: item,
+						currency,
+						address: item.address || item.To,
+						time: itemDate,
+						url: item.Url,
+						value: item.value,
+						valueUSD: item.valueUSD,
+					};
+				});
+
+				let datesWithTransactions = [];
+
+				transactions.forEach((transaction) => {
+					const date = dates.find((date) => {
+						return (
+							date.getDate() === transaction.time.getDate() &&
+							date.getMonth() === transaction.time.getMonth() &&
+							date.getFullYear() === transaction.time.getFullYear()
+						);
+					});
+
+					const addedTransObject = datesWithTransactions.find(
+						({ date: dateTrans }) =>
+							dateTrans.getDate() === date.getDate() &&
+							dateTrans.getMonth() === date.getMonth() &&
+							dateTrans.getFullYear() === date.getFullYear(),
+					);
+					if (addedTransObject) {
+						addedTransObject.transactions = [...addedTransObject.transactions, transaction];
+					} else {
+						datesWithTransactions = [
+							...datesWithTransactions,
+							{
+								date,
+								transactions: [
+									...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
+									transaction,
+								],
+							},
+						];
+					}
+				});
+
+				return datesWithTransactions.reverse();
 			});
 		},
 		GET_OPERATIONS: async (store) => {

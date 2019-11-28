@@ -16,7 +16,13 @@
 			></radio-button>
 			<label for="virtual-card" class="label">Virtual</label>
 		</div>
-		<checkbox :isActive="true" @onClick="handleSubmit"></checkbox>
+		<checkbox
+			:isActive="isApplied.checked"
+			:isDisabled="isApplied.hovered"
+			@onClick="handleSubmit"
+			@onMouseEnter="isApplied.hovered = true"
+			@onMouseLeave="isApplied.hovered = false"
+		></checkbox>
 	</form>
 </template>
 <script>
@@ -24,10 +30,15 @@ import RadioButton from '@/elements/RadioButton';
 import Checkbox from '@/elements/Checkbox';
 
 export default {
+	props: ['isEditing'],
 	data() {
 		return {
 			isPhysicalCardChecked: false,
 			isVirtualCardChecked: false,
+			isApplied: {
+				hovered: false,
+				checked: false,
+			},
 		};
 	},
 	components: {
@@ -36,18 +47,42 @@ export default {
 	},
 	methods: {
 		handleClickRadioButton(name) {
-			if (name === 'physical-card') {
-				this.isPhysicalCardChecked = !this.isPhysicalCardChecked;
-			} else if (name === 'virtual-card') {
-				this.isVirtualCardChecked = !this.isVirtualCardChecked;
-			} else return false;
+			if (!this.isApplied.checked) {
+				if (name === 'physical-card') {
+					this.isPhysicalCardChecked = !this.isPhysicalCardChecked;
+				} else if (name === 'virtual-card') {
+					this.isVirtualCardChecked = !this.isVirtualCardChecked;
+				} else return false;
+			}
 		},
 		clearData() {
 			this.isPhysicalCardChecked = false;
 			this.isVirtualCardChecked = false;
+			this.isApplied.checked = false;
 		},
 		handleSubmit() {
-			this.clearData();
+			if (this.isApplied.checked) {
+				this.isApplied.checked = false;
+			} else {
+				if (this.isPhysicalCardChecked || this.isVirtualCardChecked) {
+					this.isApplied.checked = true;
+				}
+			}
+
+			if (this.isApplied.checked) {
+				this.$emit('onAddNativeCard');
+			} else {
+				this.clearData();
+				this.$emit('onCancel');
+			}
+		},
+	},
+	watch: {
+		isEditing(value) {
+			console.log(value);
+			if (!value) {
+				this.clearData();
+			}
 		},
 	},
 };

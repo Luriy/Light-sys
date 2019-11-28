@@ -51,7 +51,7 @@
 								@click="select.isActive = !select.isActive"
 							>
 								<div class="flex align-items-center">
-									<div class="image-container">
+									<div class="image-container" v-if="currentBank.psid">
 										<img :src="getBankImage(currentBank.psid, 'small')" alt="" />
 									</div>
 									<div class="select__title">{{ currentBank.name }}</div>
@@ -144,6 +144,12 @@ export default {
 			windowHandler: null,
 		};
 	},
+	computed: {
+		...mapGetters({
+			userCurrencies: 'currency/USER_CURRENCIES',
+			walletsAndAccountsPageCurrencies: 'currency/WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
+		}),
+	},
 	mounted() {
 		const select = document.querySelector('.add-new-card-header .select');
 		this.windowHandler = ({ target }) => {
@@ -213,6 +219,29 @@ export default {
 				this.error = validateError;
 			} else {
 				this.error = null;
+				if (this.userCurrencies.every((userCurrency) => userCurrency !== currency)) {
+					this.$store
+						.dispatch('currency/ADD_USER_CURRENCY', { ValuteName: currency })
+						.then((data) => {
+							if (data.success) {
+								this.$store.commit('currency/SET_USER_CURRENCIES', [
+									...this.userCurrencies,
+									currency,
+								]);
+								if (this.walletsAndAccountsPageCurrencies.length) {
+									this.$store.commit('currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES', [
+										...this.walletsAndAccountsPageCurrencies,
+										{
+											cards: [],
+											currency,
+											code: getCurrencyInfo(currency).code,
+											fullName: getCurrencyInfo(currency).fullName,
+										},
+									]);
+								}
+							}
+						});
+				}
 				this.$store
 					.dispatch('card/CREATE_CARD', {
 						Holder: encodeURI(name),
@@ -246,3 +275,8 @@ export default {
 	},
 };
 </script>
+<style scoped>
+.select__header {
+	height: 46px;
+}
+</style>

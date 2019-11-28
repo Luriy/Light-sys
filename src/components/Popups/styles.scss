@@ -51,3 +51,14 @@
 		}
 	}
 }
+.popup {
+	position: relative;
+	&__success-image {
+		top: 106px;
+		width: 671px;
+		height: 379px;
+		position: absolute;
+		opacity: 0;
+		z-index: 15 !important;
+	}
+}

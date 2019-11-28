@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import LkPaymentWallet from '@/pages/LkPaymentWallet';
+import LkPaymentWallet from '@/pages/LkPaymentWallet/index';
 import LkWalletsAndAccounts from '@/pages/LkWalletsAndAccounts';
 import LkPaymentWalletSend from '@/pages/LkPaymentWalletSend/index';
 import LkPaymentWalletReceive from '@/pages/LkPaymentWalletReceive';

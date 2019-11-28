@@ -15,10 +15,10 @@
 					<img src="@/assets/images/bell.svg" alt title />
 					<span></span>
 				</div>
-				<div class="avatar">
+				<div class="avatar" @click="isDropDownOpened = !isDropDownOpened">
 					<img src="@/assets/images/avatar.png" alt title />
-					<div class="dropdown" @click="isDropDownOpened = !isDropDownOpened"></div>
-          <dropdown :isOpened="isDropDownOpened" @onClose="isDropDownOpened = false"></dropdown>
+					<div class="dropdown"></div>
+					<dropdown :isOpened="isDropDownOpened" @onClose="isDropDownOpened = false"></dropdown>
 				</div>
 				<div class="lang">
 					En

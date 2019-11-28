@@ -207,7 +207,6 @@ export default {
 		countdown(value) {
 			if (value === 0) {
 				this.countdown = 59;
-				// this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams());
 			}
 		},
 	},

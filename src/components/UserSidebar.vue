@@ -2,7 +2,7 @@
 	<div class="sidebar">
 		<ul>
 			<li v-for="link in links" :key="link.to">
-				<router-link :to="link.to">
+				<router-link :to="link.to" :class="{ 'router-link-active': (link.to === '/wallets' && $route.path === '/')  }">
 					<img :src="link.image" />
 					<p>{{ link.text }}</p>
 				</router-link>

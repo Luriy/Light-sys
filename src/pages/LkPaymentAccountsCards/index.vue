@@ -12,17 +12,12 @@
 					Accounts and Cards
 				</div>
 				<div class="accounts-list_wrapper_tabs">
-					<div class="accounts-list_wrapper_tab" v-bind:class="{ active: tabs[0].isActive }">
-						<div class="accounts-list_wrapper_tab_header" v-on:click="handleOpenTab(tabs[0], tabs)">
-							<div class="icon">
-								<div class="image"><img src="@/assets/images/wallet.svg" alt title /></div>
-								<p>Open an account</p>
-							</div>
-							<div class="toggle"></div>
-						</div>
-
-						<open-account :tableData="tabs[0].tableData"></open-account>
-					</div>
+					<open-account
+						:userCurrencies="userCurrencies"
+						:isActive="tabs[0].isActive"
+						@onOpenTab="handleOpenTab(tabs[0], tabs)"
+						@onFreeze="handleFreeze"
+					></open-account>
 
 					<div class="accounts-list_wrapper_tab" v-bind:class="{ active: tabs[1].isActive }">
 						<div class="accounts-list_wrapper_tab_header" v-on:click="handleOpenTab(tabs[1], tabs)">
@@ -65,7 +60,7 @@
 									</div>
 								</transition>
 
-								<div class="toggle"></div>
+								<div class="toggle active"></div>
 							</div>
 						</div>
 
@@ -77,16 +72,25 @@
 							<div class="accounts-list_wrapper_tab_body_table cards">
 								<div
 									class="accounts-list_wrapper_tab_body_table_tr"
-									v-for="item in tabs[1].currencies"
+									v-for="(item, index) in openCardCurrencies"
 									:key="item.full"
 								>
 									<div
 										class="accounts-list_wrapper_tab mb-10 full-width"
-										v-bind:class="{ active: item.isActive }"
+										v-bind:class="{
+											active:
+												tabs[1].activeCurrencies[index] && tabs[1].activeCurrencies[index].isActive,
+										}"
 									>
 										<div
 											class="accounts-list_wrapper_tab_header flex align-items-center justify-content-between"
-											@click="handleOpenTab(item, tabs[1].currencies)"
+											@click="
+												handleOpenTab(
+													tabs[1].activeCurrencies[index],
+													tabs[1].activeCurrencies,
+													false,
+												)
+											"
 										>
 											<div class="flex align-items-center">
 												<div class="currency">
@@ -97,7 +101,6 @@
 													<div
 														class="image-plate"
 														v-for="item in getCardsByCurrency(item.currency, cards)"
-														:key="item.Psid"
 													>
 														<img :src="getBankImage(item.Psid, 'small')" />
 													</div>
@@ -106,14 +109,16 @@
 											<div class="flex align-items-center">
 												<transition name="fade">
 													<add-native-card
-														v-if="item.isActive"
 														@onClickRadioButton="handleClickRadioButton"
+														@onAddNativeCard="handleEdit"
+														@onCancel="handleCancel"
+														:isEditing="isEditing"
 													></add-native-card>
 												</transition>
 
 												<div
 													class="toggle"
-													v-if="getCardsByCurrency(item.currency, cards).length"
+													:class="{ active: getCardsByCurrency(item.currency, cards).length }"
 												></div>
 											</div>
 										</div>
@@ -167,29 +172,31 @@ export default {
 	},
 	mounted() {
 		this.$store.dispatch('card/GET_CARDS');
-		Promise.all([
-			this.$store.dispatch('common/GET_ALL_CURRENCIES'),
-			this.$store.dispatch('common/GET_BANKS'),
-		]).then(
-			([currencies, banks]) =>
-				(this.tabs[1].currencies = currencies.map((currency) => {
-					const { fullName, code } = getCurrencyInfo(currency);
-					return {
-						currency,
-						fullName,
-						code,
-						banks: this.banks.filter(({ valute }) => valute === currency),
-						isActive: false,
-					};
-				})),
-		);
+		this.$store.dispatch('currency/GET_USER_CURRENCIES').then(() => {
+			this.tabs[1].activeCurrencies = this.userCurrencies.map(() => ({
+				isActive: false,
+			}));
+		});
+		this.$store.dispatch('common/GET_BANKS');
 	},
 	computed: {
 		...mapGetters({
-			currencies: 'common/CURRENCIES',
+			userCurrencies: 'currency/USER_CURRENCIES',
 			banks: 'common/BANKS',
 			cards: 'card/CARDS',
 		}),
+		openCardCurrencies() {
+			return this.userCurrencies.map((currency) => {
+				const { fullName, code } = getCurrencyInfo(currency);
+				return {
+					currency,
+					fullName,
+					code,
+					banks: this.banks.filter(({ valute }) => valute === currency),
+					isActive: false,
+				};
+			});
+		},
 	},
 	data() {
 		return {
@@ -200,37 +207,12 @@ export default {
 			tabs: [
 				{
 					isActive: false,
-					tableData: [
-						{
-							code: '₽',
-							full: 'Russian Ruble',
-							isActive: false,
-						},
-						{
-							code: '円',
-							full: 'Japanese yen',
-							banks: [],
-							isActive: false,
-						},
-						{
-							code: '$',
-							full: 'U.S. dollar',
-							banks: [],
-							isActive: false,
-						},
-						{
-							code: '€',
-							full: 'European Euro',
-							banks: [],
-							isActive: false,
-						},
-					],
 				},
 				{
 					isActive: false,
 					isCardsListActive: false,
-					currencies: [],
 					isEditing: false,
+					activeCurrencies: [],
 				},
 				{
 					isActive: false,
@@ -241,9 +223,9 @@ export default {
 	methods: {
 		getBankImage,
 		getCardsByCurrency,
-		handleOpenTab(currentTab, tabs) {
+		handleOpenTab(currentTab, tabs, isBigTab = true) {
 			if (!this.freezeActive) {
-				if (this.tabs.indexOf(currentTab) === 1 && currentTab.isActive === true) {
+				if (this.tabs.indexOf(currentTab) === 1 && currentTab.isActive === true && isBigTab) {
 					this.isEditing = false;
 				}
 
@@ -253,14 +235,16 @@ export default {
 			}
 		},
 		handleClickRadioButton() {
-			this.freezeActive = true;
-			setTimeout(() => (this.freezeActive = false), 200);
+			this.handleFreeze();
 		},
 		handleEdit() {
-			this.freezeActive = true;
-			setTimeout(() => (this.freezeActive = false), 200);
+			this.handleFreeze();
 
 			this.isEditing = true;
+		},
+		handleFreeze() {
+			this.freezeActive = true;
+			setTimeout(() => (this.freezeActive = false), 200);
 		},
 		handleClickCard() {
 			if (this.isEditing) {
@@ -271,8 +255,7 @@ export default {
 		},
 		handleCancel() {
 			this.$store.dispatch('card/GET_CARDS');
-			this.freezeActive = true;
-			setTimeout(() => (this.freezeActive = false), 200);
+			this.handleFreeze();
 
 			this.deletingCards = [];
 			this.editingCards = [];
@@ -294,22 +277,19 @@ export default {
 		},
 		handleApply() {
 			this.deletingCards.forEach((card) =>
-				this.$store
-					.dispatch('card/DELETE_CARD', { NumberCard: card })
-					.then((data) => {
-						const errors = Object.values(data[0]['Errors']);
+				this.$store.dispatch('card/DELETE_CARD', { NumberCard: card }).then((data) => {
+					const errors = Object.values(data[0]['Errors']);
 
-						this.$store.dispatch('alerts/setNotification', {
-							message: errors.length
-								? errors[0]
-								: this.editingsCards.length > 1
-								? 'Cards have been successfully deleted'
-								: 'Card has been successfully deleted',
-							status: errors.length ? 'error-status' : 'success-status',
-							icon: errors.length ? 'close' : 'done',
-						});
-					})
-					.then(() => this.$store.dispatch('card/GET_CARDS')),
+					// this.$store.dispatch('alerts/setNotification', {
+					// 	message: errors.length
+					// 		? errors[0]
+					// 		: this.editingsCards.length > 1
+					// 		? 'Cards have been successfully deleted'
+					// 		: 'Card has been successfully deleted',
+					// 	status: errors.length ? 'error-status' : 'success-status',
+					// 	icon: errors.length ? 'close' : 'done',
+					// });
+				}),
 			);
 			this.editingsCards.forEach(({ NumberCard, NewNumber, NewHolder, NewPsid }) =>
 				this.$store
@@ -322,15 +302,15 @@ export default {
 					.then((data) => {
 						const errors = Object.values(data[0]['Errors']);
 
-						this.$store.dispatch('alerts/setNotification', {
-							message: errors.length
-								? errors[0]
-								: this.editingsCards.length > 1
-								? 'Cards have been successfully edited'
-								: 'Card has been successfully edited',
-							status: errors.length ? 'error-status' : 'success-status',
-							icon: errors.length ? 'close' : 'done',
-						});
+						// this.$store.dispatch('alerts/setNotification', {
+						// 	message: errors.length
+						// 		? errors[0]
+						// 		: this.editingsCards.length > 1
+						// 		? 'Cards have been successfully edited'
+						// 		: 'Card has been successfully edited',
+						// 	status: errors.length ? 'error-status' : 'success-status',
+						// 	icon: errors.length ? 'close' : 'done',
+						// });
 					}),
 			);
 			this.$store.dispatch('card/GET_CARDS');
@@ -338,3 +318,17 @@ export default {
 	},
 };
 </script>
+<style scoped>
+.toggle {
+	background-color: transparent;
+}
+.toggle:before {
+	display: none;
+}
+.toggle.active {
+	background-color: #65489d;
+}
+.toggle.active:before {
+	display: block;
+}
+</style>

@@ -1,5 +1,4 @@
 import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth';
-import { USER_REQUEST, USER_SUCCESS } from '../actions/user';
 import axios from 'axios';
 import qs from 'querystring';
 import sha512 from 'js-sha512';
@@ -34,7 +33,7 @@ const actions = {
 								token: sha512(resp[1]['return']['Token: ']),
 							}),
 						);
-            commit(AUTH_SUCCESS, user);
+						commit(AUTH_SUCCESS, user);
 						resolve(resp);
 					} else {
 						let err = 'Неизвестная ошибка';
@@ -59,8 +58,7 @@ const actions = {
 	[AUTH_LOGOUT]: ({ commit, dispatch }) => {
 		return new Promise((resolve, reject) => {
 			commit(AUTH_LOGOUT);
-			localStorage.removeItem('Data');
-      localStorage.removeItem('Auth');
+			localStorage.clear();
 			resolve();
 		});
 	},

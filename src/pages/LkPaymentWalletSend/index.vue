@@ -31,7 +31,7 @@
             <div class="qr"><img src="@/assets/images/bitmap-i.png" alt title></div>
           </div>
           <div class="send-form-input--amount">
-          <input type="number" v-model="cryptoCurrencyAmount" @input="handleCryptoCurrencyAmount" :placeholder="cryptoCurrencyAmountPlaceholder" @click.once="isCryptoCurrencyAmountInputClicked = true">
+          <input type="text" pattern="[0-9]+([\.][0-9])?" v-model="cryptoCurrencyAmount" @input="handleCryptoCurrencyAmount" :placeholder="cryptoCurrencyAmountPlaceholder" @click.once="isCryptoCurrencyAmountInputClicked = true">
           <div class="btns">
             <button class="btn" :class="{ active: activeButton === 'Min'}" @click="handleButton('Min')">Min</button>
             <button class="btn" :class="{ active: activeButton === 'Half'}" @click="handleButton('Half')">Half</button>
@@ -40,7 +40,7 @@
           </div>
           </div>
         <div class="send-form-balance">
-          <div class="current-balance"><span>$</span> <input type="number" v-model="currencyAmount" name="balance" :placeholder="currencyAmountPlaceholder" @click.once="isCurrencyAmountInputClicked = true" @input="handleCurrencyAmount"></div>
+          <div class="current-balance"><span>$</span> <input type="text" pattern="[0-9]+([\.][0-9])?" v-model="currencyAmount" name="balance" :placeholder="currencyAmountPlaceholder" @click.once="isCurrencyAmountInputClicked = true" @input="handleCurrencyAmount"></div>
           <div class="currency-balance">USD</div>
         </div>
         <div class="send-form-button">
@@ -66,78 +66,31 @@
         </div>
         </div>
       </div>
-      <lk-pop-up
-        v-if="sendPopup"
-        class="transfer-popup"
-        @closeModal="closeModal"
-        :popupSize="{ width: '680px', height: '500px' }"
-      >
-        <div slot='title' class="exchange-popup_title">
-          <img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title>
-          <img v-if="currency === 'ETH'" src="@/assets/images/eth.png" alt title>
-          <img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" alt title>
-          <p class="transaction">Confirmation <br> exchange {{ currencyAmount }} USD</p>
-          <div class="phone-question" v-if="user.Phone">
-            <p class="question">We sent an SMS confirmation to the number</p>
-            <div class="number-block">
-              <p class="number">{{user.Phone}}</p>
-              <router-link class="link" to="/">Wrong number?</router-link>
-            </div>
-          </div>
-          <div class="email-question" v-else>
-            <p class="question">We sent an email confirmation to the email</p>
-            <div class="number-block">
-              <p class="number">{{user.Email}}</p>
-              <router-link class="link" to="/">Wrong email?</router-link>
-            </div>
-          </div>
-        </div>
-        <div slot='smsNumber' class="exchange-popup_sms-number">
-          <input
-            class="number-input"
-            v-for="(input, index) in smsCodes"
-            :key="input+index"
-            v-model="input[index]"
-            @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : onSend()"
-            placeholder="_"
-            type="text"
-            maxLength="1"
-            size="1"
-            min="0"
-            max="9" pattern="[0-9]{1}"
-          />
-
-          <div class="timer-body">
-            <div class="title">Resend code:</div>
-            <div class="timer">00:{{countdown}} Sec</div>
-          </div>
-        </div>
-        <div slot='body' class="exchange-popup_body">
-          <div class="exchange-popup_info">
-            <div class="flex">
-              <p class="from" :class="currency.toLowerCase()">{{ formatCurrency(cryptoCurrencyAmount, '', 5) }} {{ currency }}</p>
-              <p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
-            </div>
-            <img src="@/assets/images/send-arrow.svg" alt title>
-            <p class="payment-address">{{ paymentAddress }}</p>
-          </div>
-          <div class="exchange-block_fee">
-            <div class="network-fee">
-              <p class="title"><span>{{ currency }}</span> Network Fee</p>
-              <p class="btc-value">{{ 1 }} {{currency}}</p>
-              <p class="fixed-value">${{ 0.12 }}</p>
-            </div>
-            <div class="balance">
-              <p class="title">Remaining balance</p>
-              <p class="btc-value">{{ remainingCryptoCurrency }} {{ currency }}</p>
-              <p class="fixed-value">${{ remainingCurrency }}</p>
-            </div>
-          </div>
-        </div>
-        <div slot='buttons' class="exchange-popup_buttons">
-          <button class="back" @click="closeModal">Back</button>
-        </div>
-      </lk-pop-up>
+      <lk-transfer-confirmation-popup 
+        @onClose="closeModal" 
+        :sendPopup="sendPopup" 
+        :remainingCryptoCurrency="remainingCryptoCurrency"
+        :remainingCurrency="remainingCurrency"
+        :currency="currency"
+        :fullCurrencyName="getCryptoInfo(currency).fullName"
+        @onSend="onSend"
+        :user="user"
+        :smsCodes="smsCodes"
+        :paymentAddress="paymentAddress"
+        :currencyAmount="currencyAmount"
+        :cryptoCurrencyAmount="cryptoCurrencyAmount"
+        :countdown="countdown"
+      ></lk-transfer-confirmation-popup>
+      <lk-transfer-success-popup 
+        :successPopup="successPopup" 
+        :remainingCryptoCurrency="remainingCryptoCurrency" 
+        :remainingCurrency="remainingCurrency" 
+        :currencyAmount="currencyAmount" 
+        :cryptoCurrencyAmount="cryptoCurrencyAmount" 
+        :currency="currency"
+        :fullCurrencyName="getCryptoInfo(currency).fullName"
+        @onClose="successPopup = false"
+      ></lk-transfer-success-popup>
     </payments-and-transfer>
   </lk-layout>
 </template>
@@ -150,31 +103,33 @@ import PaymentsAndTransfer from '@/layout/LkPaymentsAndTransfer'
 import { mapGetters } from 'vuex';
 import { VALIDATE_AMOUNT_TRANSFER_EXCHANGE, VALIDATE_ADDRESS } from '@/validation';
 import { getAuthParams } from '@/functions/auth';
-import LkPopUp from '@/layout/LkPopUp';
 import capitalizeFirstLetter from "@/functions/capitalizeFirstLetter"
 import getCryptoInfo from "@/functions/getCryptoInfo"
 import Error from '@/components/Error';
-import './styles.scss';
-
+import LkTransferConfirmationPopup from '@/components/Popups/TransferConfirmation';
+import LkTransferSuccessPopup from '@/components/Popups/TransferSuccess';
+import { AUTH_LOGOUT } from '@/store/actions/auth';
 
 export default {
   components: {
     LkLayout,
     PaymentsAndTransfer,
-    LkPopUp,
-    Error
+    Error,
+    LkTransferConfirmationPopup,
+    LkTransferSuccessPopup,
   },
   data() {
     return {
       cryptoCurrencyAmount: null,
       currencyAmount: null,
       remainingCurrency: Number(0).toFixed(2),
-      remainingCryptoCurrency: Number(0).toFixed(5),
+      remainingCryptoCurrency: Number(0).toFixed(2),
       paymentAddress: null,
       activeButton: null,
       isCryptoCurrencyAmountInputClicked: false,
       isCurrencyAmountInputClicked: false,
       isSelectWalletOpened: false,
+      successPopup: false,
       sendPopup: false,
       smsCodes: [
         {0: ''},
@@ -192,6 +147,9 @@ export default {
     }
   },
   mounted() {
+    this.$store.dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
+						() => (window.location.href = `/login`),
+					);
     const select = document.querySelector('.send-block .select');
 		this.windowHandler = ({ target }) => {
 			if (
@@ -229,7 +187,7 @@ export default {
           const walletsBalancesArray = this.wallets.map(wallet => wallet.balanceUSD);
           const maxBalanceIndex = walletsBalancesArray.indexOf(Math.max.apply(null, walletsBalancesArray));
           const walletWithMaxBalance = this.wallets[maxBalanceIndex];
-          this.$router.replace({ params: { currency: walletWithMaxBalance.currency, address: walletWithMaxBalance.address }});
+          this.$router.push(`/wallets/${walletWithMaxBalance.currency}/${walletWithMaxBalance.address}`);
           return walletWithMaxBalance;
         }
         else this.$router.push('/wallets');
@@ -264,18 +222,21 @@ export default {
       }
     },
     cryptoCurrencyAmountPlaceholder() {
-      return this.isCryptoCurrencyAmountInputClicked ? null : this.formatCurrency(this.initialBalance.cryptoCurrency, '', 5);
+      
+      const decimals = this.initialBalance.cryptoCurrency == 0 ? 2 : 5;
+      return this.isCryptoCurrencyAmountInputClicked ? null : this.formatCurrency(this.initialBalance.cryptoCurrency, '', decimals);
     },
     currencyAmountPlaceholder() {
       return this.isCurrencyAmountInputClicked ? null : this.formatCurrency(this.initialBalance.currency);
     },
   },
   methods: {
+    getCryptoInfo,
     clearData() {
       this.cryptoCurrencyAmount = null;
       this.currencyAmount = null;
-      this.remainingCurrency = 0;
-      this.remainingCryptoCurrency = 0;
+      this.remainingCurrency = '0.00';
+      this.remainingCryptoCurrency = '0.00';
       this.paymentAddress = null;
       this.activeButton = null;
       this.isCryptoCurrencyAmountInputClicked = false;
@@ -333,7 +294,8 @@ export default {
 
       this.cryptoCurrencyAmount = this.currencyToCrypto(this.currencyAmount);
     },
-    handleCryptoCurrencyAmount() {
+    handleCryptoCurrencyAmount({ target: { value } }) {
+      console.log(value.test(/[0-9]+([\.][0-9])?/))
       const remainingCryptoCurrency = this.currencyToCrypto(this.initialBalance.currency - this.currencyAmount)
       this.remainingCryptoCurrency = (remainingCryptoCurrency < 0 || isNaN(remainingCurrency)) ? 0 : remainingCryptoCurrency
       
@@ -384,8 +346,10 @@ export default {
       }
     },
     handleSelectWallet(currency, address) {
+      console.log(this.sendPopup)
       this.clearData();
       this.$router.push(`/payments-and-transfer/send/${currency}/${address}`);
+      console.log(this.sendPopup)
     },
     closeModal() {
       this.sendPopup = false;
@@ -419,7 +383,14 @@ export default {
         amount: Number(this.cryptoCurrencyAmount).toFixed(5),
         token
       }).then((data) => {
-        this.clearData()
+        if (data.success) {
+          this.sendPopup = false;
+          this.successPopup = true;
+        }
+        setTimeout(() => {
+          this.successPopup = false;
+          this.clearData()
+        }, 7000)
       });
     }
   },

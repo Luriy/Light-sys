@@ -50,6 +50,8 @@ export default {
 					Number,
 					Psid,
 					Currency,
+					Cvv: '',
+					Data: '',
 				},
 			}).then((data) => parsePythonDataObject(data));
 		},
