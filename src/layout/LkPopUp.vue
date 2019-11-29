@@ -23,7 +23,7 @@ export default {
 	},
 	methods: {
       closeDialog() {
-          this.$emit('closeModal', false);
+        this.$emit('closeModal', false);
       },
       repeatTransferRequest() {
         this.$emit('repeatTransferRequest');
@@ -44,6 +44,12 @@ export default {
 		font-weight: 600;
 		line-height: 21px;
 	}
+
+  .exchange-ammount {
+    margin-top: 10px;
+    font-size: 16px;
+    @extend .status
+  }
 
 	.icon-wrapper {
 		width: 43px;
@@ -76,6 +82,7 @@ export default {
 
 	.transaction-info {
 		margin-top: 15px;
+    margin-bottom: 15px;
 	}
 
 	.images {
