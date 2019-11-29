@@ -83,13 +83,13 @@ $eth: #7d8ef6;
 .add-token {
 	position:absolute;
 	width: 160px;
-    height: 50px;
+  height: 50px;
 	border-top-left-radius: 14px;
 	border-top-right-radius: 14px;
 	font-size: 14px;
-  	font-weight: 600;
-  	color: rgba(255,255,255,.5);
-  	border:none;
+  font-weight: 600;
+  color: rgba(255,255,255,.5);
+  border:none;
 	background-color: #4d3779;
 	left: 0;
 	right: 0;
@@ -110,7 +110,7 @@ $eth: #7d8ef6;
 	    background: #3b2665;
 	    z-index: 2;
 	    left: calc(50% - 17.5px);
-	    top: 72px;
+	    top: 85px;
 	    transition: .3s;
 	    &.active {
 	    	transform: rotate(180deg);
@@ -2777,32 +2777,6 @@ $eth: #7d8ef6;
   }
 }
 
-.send-block .network-fee, .send-block .balance {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 15px;
-  opacity: 0.5;
-  color: #ffffff;
-  font-size: 12px;
-  line-height: 21px;
-
-  .middle-text {
-    margin: 0 5px;
-  }
-
-  .title {
-    flex-grow: 1;
-
-    span {
-      text-transform: capitalize;
-    }
-  }
-
-  .btc-value {
-    margin-right: 30px;
-  }
-}
-
 .exchange-popup_body {
   width: 477px;
   height: 113px;
@@ -2886,7 +2860,7 @@ $eth: #7d8ef6;
 	.btc-value {
 		margin-right: 0 !important;
 	}
-	
+
 }
 .transfer-success-popup {
   .popup-wrapper {
