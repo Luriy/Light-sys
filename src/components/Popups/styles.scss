@@ -1,6 +1,6 @@
-.card-list-delete-popup {
+html body .card-list-delete-popup {
 	.popup-wrapper {
-		border-radius: 47px;
+		border-radius: 47px !important;
 		background-color: #3b2665 !important;
 	}
 
@@ -8,20 +8,21 @@
 		font-size: 36px;
 		font-weight: 600;
 		color: #fff;
+		margin-top: -20px;
 	}
 	&__paragraph {
 		font-size: 16px;
 		font-weight: 600;
 		opacity: 0.5;
 		color: #ffffff;
-		margin: 15px 0;
+		margin: 15px 0 !important;
 		line-height: 23px;
 	}
 	&__card {
 		font-size: 16px;
 		font-weight: 600;
 		color: #ffffff;
-		margin-bottom: 30px;
+		margin-bottom: 30px !important;
 	}
 	&__wrapper {
 		max-width: 250px !important;

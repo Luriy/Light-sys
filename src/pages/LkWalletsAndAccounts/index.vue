@@ -41,13 +41,12 @@
 			<div class="operations-history">
 				<div class="title">
 					<p>Operations history</p>
-					<span>Sep 09, 2019</span>
 				</div>
 				<div class="operations-history-list">
 					<operations-history-list-item
 						v-for="(operation, idx) in operations"
 						:key="idx"
-						v-bind="operation"
+						:operation="operation"
 					></operations-history-list-item>
 				</div>
 			</div>
@@ -79,7 +78,7 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			operations: ['wallet/OPERATIONS'],
+			operations: 'wallet/OPERATIONS',
 		}),
 	},
 	mounted() {

@@ -48,7 +48,10 @@
 
 			<div class="timer-body">
 				<div class="title">Resend code:</div>
-				<div class="timer">00:{{ `${countdown < 10 ? '0' : ''}${countdown}` }} Sec</div>
+				<div class="timer" v-show="countdown > 0">
+					00:{{ `${countdown < 10 ? '0' : ''}${countdown}` }} Sec
+				</div>
+				<p class="repeat-btn" v-show="countdown === 0" @click="$emit('onSendSms')">Repeat</p>
 			</div>
 		</div>
 		<div slot="body" class="exchange-popup_body">
@@ -68,13 +71,17 @@
 					<p class="title">
 						<span>{{ fullCurrencyName }}</span> Network Fee
 					</p>
-					<p class="btc-value">{{ 0.0005 }} {{ currency }}</p>
-					<p class="fixed-value">${{ 0.12 }}</p>
+					<div class="flex align-items-center">
+						<p class="btc-value">{{ 0.0005 }} {{ currency }}</p>
+						<p class="fixed-value">${{ 0.12 }}</p>
+					</div>
 				</div>
 				<div class="balance">
 					<p class="title">Remaining balance</p>
-					<p class="btc-value">{{ remainingCryptoCurrency }} {{ currency }}</p>
-					<p class="fixed-value">${{ remainingCurrency }}</p>
+					<div class="flex align-items-center">
+						<p class="btc-value">{{ remainingCryptoCurrency }} {{ currency }}</p>
+						<p class="fixed-value">${{ remainingCurrency }}</p>
+					</div>
 				</div>
 			</div>
 		</div>

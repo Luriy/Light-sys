@@ -37,16 +37,16 @@
 				<div class="group-toggler"></div>
 			</div>
 			<div
-				class="under-wallet-block flex align-items-center justify-content-between"
-				:class="{ 'active-input': isInputEditingActive }"
+				class="under-wallet-block flex align-items-center"
+				:class="{ 'active-input': isInputEditingActive || isGroupActive }"
 				v-show="isWalletsMovingAndDeleting || isGroupActive"
 				@click="handleClickLine"
 			>
-				<div class="under-wallet-line" v-show="!isInputEditingActive"></div>
+				<div class="under-wallet-line" v-show="!isInputEditingActive && !isGroupActive"></div>
 				<div class="add-group-input-wrapper flex align-items-center" v-show="isInputEditingActive">
-					<input type="text" v-model="groupName" />
+					<input type="text" v-model="groupName" @blur="handleSaveGroup" />
 				</div>
-				<div v-if="isGroupActive">{{ groupName }}</div>
+				<div v-if="isGroupActive" class="active-group">{{ groupName }}</div>
 			</div>
 		</div>
 	</transition>
@@ -68,8 +68,12 @@ export default {
 		handleClickLine() {
 			if (!this.isInputEditingActive && !this.isGroupActive) {
 				this.isInputEditingActive = true;
-				document.querySelector('.add-group-input-wrapper input').focus();
+				setTimeout(() => document.querySelector('.add-group-input-wrapper input').focus(), 50);
 			}
+		},
+		handleSaveGroup() {
+			this.isInputEditingActive = false;
+			this.isGroupActive = true;
 		},
 	},
 };
@@ -107,5 +111,9 @@ export default {
 }
 .outside-wrapper:last-of-type .under-wallet-block {
 	display: none;
+}
+.active-group {
+	color: #fff;
+	font-weight: 600;
 }
 </style>

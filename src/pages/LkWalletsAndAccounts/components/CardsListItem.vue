@@ -1,8 +1,5 @@
 <template>
-	<div
-		class="wallet fiat-wallet list__item"
-		:class="{ active: item.currency === activeTab, active2: !isCardsMovingAndDeleting }"
-	>
+	<div class="wallet fiat-wallet list__item" :class="{ active: item.currency === activeTab }">
 		<div class="wallet-info" @click="$emit('onClickTab', item.currency)">
 			<div class="code">
 				<div class="image fiat">{{ item.code }}</div>
@@ -31,7 +28,7 @@
 					<div
 						class="btn-remove"
 						v-show="isCardsMovingAndDeleting"
-						@click="$emit('onOpenDeletePopup', card.Number)"
+						@click="$emit('onOpenDeletePopup', card.Number, card.Psid)"
 					>
 						<img src="@/assets/images/cross.svg" />
 					</div>

@@ -370,6 +370,7 @@ export default {
 				const transactions = Object.values(parsedData).map((item) => {
 					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
 					if (
+						// * 1000 - because in js milliseconds, + hour
 						dates.every(
 							(date) =>
 								date.getDate() !== itemDate.getDate() ||
@@ -423,10 +424,18 @@ export default {
 					}
 				});
 
+				datesWithTransactions = datesWithTransactions.map((obj) => {
+					return {
+						...obj,
+						transactions: obj.transactions.reverse(),
+					};
+				});
+
 				return datesWithTransactions.reverse();
 			});
 		},
 		GET_OPERATIONS: async (store) => {
+			const dates = [];
 			const transactions = (
 				await Promise.all(
 					store.state.wallets.map(async (wallet) => {
@@ -455,20 +464,78 @@ export default {
 							},
 						});
 
-						return Object.values(parsePythonArray(data)[1].return).map((item) => ({
-							source: item,
-							currency: wallet.currency,
-							address: item.address || item.To, // FIXME: Адрес не работает корректно
-							time: new Date(parseInt(item.Timestamp, 10) + 1000),
-							url: item.Url,
-							value: item.value,
-							valueUSD: item.valueUSD,
-						}));
+						const transactions = Object.values(parsePythonArray(data)[1].return).map((item) => {
+							const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
+							if (
+								dates.every(
+									(date) =>
+										date.getDate() !== itemDate.getDate() ||
+										date.getMonth() !== itemDate.getMonth() ||
+										date.getFullYear() !== itemDate.getFullYear(),
+								)
+							) {
+								dates.push(itemDate);
+							}
+
+							return {
+								source: item,
+								currency: wallet.currency,
+								address: item.address || item.To, // FIXME: Адрес не работает корректно
+								time: itemDate,
+								url: item.Url,
+								value: item.value,
+								valueUSD: item.valueUSD,
+								currentWallet: wallet.address,
+							};
+						});
+
+						return transactions;
 					}),
 				)
 			).flat();
 
-			return store.commit('SET_OPERATIONS', transactions);
+			let datesWithTransactions = [];
+
+			transactions.forEach((transaction) => {
+				const date = dates.find((date) => {
+					return (
+						date.getDate() === transaction.time.getDate() &&
+						date.getMonth() === transaction.time.getMonth() &&
+						date.getFullYear() === transaction.time.getFullYear()
+					);
+				});
+
+				const addedTransObject = datesWithTransactions.find(
+					({ date: dateTrans }) =>
+						dateTrans.getDate() === date.getDate() &&
+						dateTrans.getMonth() === date.getMonth() &&
+						dateTrans.getFullYear() === date.getFullYear(),
+				);
+				if (addedTransObject) {
+					addedTransObject.transactions = [...addedTransObject.transactions, transaction];
+				} else {
+					datesWithTransactions = [
+						...datesWithTransactions,
+						{
+							date,
+							transactions: [
+								...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
+								transaction,
+							],
+						},
+					];
+				}
+			});
+
+			datesWithTransactions = datesWithTransactions.map((obj) => {
+				return {
+					...obj,
+					transactions: obj.transactions.reverse(),
+				};
+			});
+
+			store.commit('SET_OPERATIONS', datesWithTransactions.slice().reverse());
+			return datesWithTransactions.reverse();
 		},
 		// SEND: (store, { currency, from, to, amount }) => {
 		//   Axios({
