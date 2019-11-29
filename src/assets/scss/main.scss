@@ -793,7 +793,11 @@ $eth: #7d8ef6;
 				display: flex;
 				align-items:center;
 				justify-content: space-between;
-        margin-bottom: 6px;
+        margin-bottom: 0px;
+
+        &.active, &.active2 {
+          margin-bottom: 10px;
+        }
 
 				&.fiat-wallet {
 					height: auto;
