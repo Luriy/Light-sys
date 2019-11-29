@@ -33,9 +33,8 @@ export default {
 
 		this.windowHandler = ({ target }) => {
 			if (
-				(target ? !target.classList.contains('.dropdown__body') : false) &&
+				(target ? !target.classList.contains('dropdown__body') : true) &&
 				!dropdown.contains(target) &&
-				!dropdown.contains(avatar) &&
 				!avatar.contains(target)
 			) {
 				this.$emit('onClose');

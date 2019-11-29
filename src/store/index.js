@@ -9,6 +9,7 @@ import common from './modules/common';
 import card from './modules/card';
 import exchange from './modules/exchange';
 import currency from './modules/currency';
+import group from './modules/group';
 import { BASE_URL } from '@/settings/config';
 Vue.use(Vuex);
 
@@ -25,6 +26,7 @@ export default new Vuex.Store({
 		common,
 		card,
 		currency,
+		group,
 	},
 	state: {
 		urls: {

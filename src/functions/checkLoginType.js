@@ -1,7 +1,6 @@
 import Inputmask from 'inputmask';
 
 export default (elem, loginType, user) => {
-  console.log(elem, loginType, user)
 	var pattern = /^[\d\(\)\ \- \+ \_]{0,100}$/;
 	var im = new Inputmask('+9 (999) 999 99-99');
 
@@ -11,7 +10,6 @@ export default (elem, loginType, user) => {
 		if (elem.inputmask) {
 			elem.inputmask.remove();
 		}
-  }
-  console.log(pattern.test(user))
-  return user === "" ? 'Email' : pattern.test(user) ? 'Phone' : 'Email';
+	}
+	return user === '' ? 'Email' : pattern.test(user) ? 'Phone' : 'Email';
 };

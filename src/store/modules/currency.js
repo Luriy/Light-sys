@@ -160,7 +160,6 @@ export default {
 				const response = parsePythonArray(data);
 				const { Errors } = response[0];
 				const responseData = response[1].return;
-				console.log(responseData);
 
 				if (!Object.keys(Errors).length && Object.keys(responseData).length) {
 					return { success: true };

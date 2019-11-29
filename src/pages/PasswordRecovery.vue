@@ -73,7 +73,10 @@
 									</div>
 									<div class="timer-body">
 										<div class="title">Resend code:</div>
-										<div class="timer">00:{{ countdown }} Sec</div>
+										<div class="timer" v-if="countdown > 0">
+											00:{{ `${countdown < 10 ? '0' : ''}${countdown}` }} Sec
+										</div>
+										<p class="repeat-btn" v-if="countdown === 0" @click="getPin">Repeat</p>
 									</div>
 									<transition name="fade-long">
 										<div class="error-block" v-if="commonError">
@@ -148,7 +151,7 @@ export default {
 					this.commonError = errors[0];
 				} else {
 					this.step = 2;
-					this.commonError = null;
+					this.countdown = 59;
 					this.timer = setInterval(() => {
 						this.countdown--;
 					}, 1000);
@@ -189,7 +192,7 @@ export default {
 							this.commonError = null;
 							this.$router.push('/');
 							this.$store.commit('alerts/setNotification', {
-								message: `Password recovery has done! We have sent your new password to your ${loginType.toLowerCase()}`,
+								message: `We have sent your new password to your ${loginType.toLowerCase()}`,
 								status: 'success-status',
 								icon: 'done',
 							});
@@ -206,7 +209,7 @@ export default {
 	watch: {
 		countdown(value) {
 			if (value === 0) {
-				this.countdown = 59;
+				clearInterval(this.timer);
 			}
 		},
 	},

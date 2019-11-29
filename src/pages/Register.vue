@@ -57,7 +57,8 @@
                 </div>
                 <div class="timer-body">
                   <div class="title">Resend code:</div>
-                  <div class="timer">00:{{countdown}} Sec</div>
+                  <div class="timer" v-if="countdown > 0">00:{{`${countdown < 10 ? '0' : ''}${countdown}`}} Sec</div>
+                  <p class="repeat-btn" v-if="countdown === 0" @click="resendPin">Repeat</p>
                 </div>
                 <transition name="fade">
                   <div class="error-block" v-if="commonError">
@@ -94,7 +95,7 @@
                 <!-- <div class="invalid-icon"></div> -->
                 <img src="@/assets/images/done.svg" v-else />
                 <p class="validation-text" :class="{ valid: isPasswordContainNumber }">
-                  Your password must contain at least one nubmer
+                  Your password must contain at least one number
                 </p>
               </div>
               <div class="flex align-items-center">
@@ -235,11 +236,14 @@ export default {
                 }, 1000 * 60 * 20)
       		    	this.commonError = null;
                 this.$router.push('/wallets');
-                this.$store.commit('alerts/setNotification', {
-                  message: 'You have successfully registered!',
-                  status: 'success-status',
-                  icon: 'done'
-                })
+                setTimeout(() => {
+                    this.$store.commit('alerts/setNotification', {
+                    message: 'You have successfully registered!',
+                    status: 'success-status',
+                    icon: 'done'
+                  })
+                }, 1500)
+                
       		    })
               .catch(err => {
       			    this.commonError = err;
@@ -276,18 +280,36 @@ export default {
         } else {
           this.step = 2;
           this.commonError = null;
+          this.countdown = 59;
           this.timer = setInterval(() => {
             this.countdown--
           }, 1000)
         }
       })
-		},
+    },
+    resendPin() {
+      const { loginType, user } = this;
+      this.$store.dispatch('user/USER_RESEND_PASSWORD', { 
+        Email: loginType === 'Email' ? user : '',
+        Phone: loginType === 'Phone' ? user : '',
+      }).then((data) => {
+        if (data.success) {
+          this.commonError = null;
+          this.countdown = 59;
+          this.timer = setInterval(() => {
+            this.countdown--
+          }, 1000)
+        } else {
+          this.commonError = data.errors[0];
+        }
+        
+      })
+    }
   },
   watch: {
     countdown(value) {
       if (value === 0) {
-        this.countdown = 59;
-        // this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams());
+        clearInterval(this.timer);
       }
     },
   },
