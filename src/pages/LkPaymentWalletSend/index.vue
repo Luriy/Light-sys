@@ -74,6 +74,7 @@
         :currency="currency"
         :fullCurrencyName="getCryptoInfo(currency).fullName"
         @onSend="onSend"
+        @onSendSms="onSendSms"
         :user="user"
         :smsCodes="smsCodes"
         :paymentAddress="paymentAddress"
@@ -90,6 +91,8 @@
         :currency="currency"
         :fullCurrencyName="getCryptoInfo(currency).fullName"
         @onClose="successPopup = false"
+        :paymentAddress="paymentAddress"
+        
       ></lk-transfer-success-popup>
     </payments-and-transfer>
   </lk-layout>
@@ -144,9 +147,6 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
-						() => (window.location.href = `/login`),
-					);
     const select = document.querySelector('.send-block .select');
 		this.windowHandler = ({ target }) => {
 			if (
@@ -270,11 +270,13 @@ export default {
       return (Number(currency) / this.course).toFixed(5);
     },
     handleCurrencyAmount() {
-      const remainingCryptoCurrency = this.currencyToCrypto(this.initialBalance.currency - this.currencyAmount)
-      this.remainingCryptoCurrency = (remainingCryptoCurrency < 0 || isNaN(remainingCurrency)) ? 0 : remainingCryptoCurrency;
+      this.cryptoCurrencyAmount = this.currencyToCrypto(this.currencyAmount);
+
+      const remainingCryptoCurrency = (this.initialBalance.cryptoCurrency - this.cryptoCurrencyAmount).toFixed(5);
+      this.remainingCryptoCurrency = (remainingCryptoCurrency < 0 || isNaN(+remainingCryptoCurrency)) ? 0 : remainingCryptoCurrency;
       
-      const remainingCurrency = (this.cryptoToCurrency(this.initialBalance.currency) - this.currencyAmount).toFixed(2);
-      this.remainingCurrency = (remainingCurrency < 0 || isNaN(remainingCurrency)) ? 0 : remainingCurrency;
+      const remainingCurrency = (this.initialBalance.currency - this.currencyAmount).toFixed(2);
+      this.remainingCurrency = (remainingCurrency < 0 || isNaN(+remainingCurrency)) ? 0 : remainingCurrency;
 
       if (this.currencyAmount == this.initialBalance.currency.toFixed(2)) {
         this.activeButton = 'All';
@@ -288,16 +290,15 @@ export default {
       else {
         this.activeButton = null;
       }
-
-      this.cryptoCurrencyAmount = this.currencyToCrypto(this.currencyAmount);
     },
     handleCryptoCurrencyAmount({ target: { value } }) {
-      console.log(value.test(/[0-9]+([\.][0-9])?/))
-      const remainingCryptoCurrency = this.currencyToCrypto(this.initialBalance.currency - this.currencyAmount)
-      this.remainingCryptoCurrency = (remainingCryptoCurrency < 0 || isNaN(remainingCurrency)) ? 0 : remainingCryptoCurrency
-      
-      const remainingCurrency = (this.cryptoToCurrency(this.initialBalance.currency) - this.currencyAmount).toFixed(2);
-      this.remainingCurrency = (remainingCurrency < 0 || isNaN(remainingCurrency)) ? 0 : remainingCurrency;
+      this.currencyAmount = this.cryptoToCurrency(this.cryptoCurrencyAmount);
+
+      const remainingCryptoCurrency = (this.initialBalance.cryptoCurrency - this.cryptoCurrencyAmount).toFixed(5);
+      this.remainingCryptoCurrency = (remainingCryptoCurrency < 0 || isNaN(+remainingCryptoCurrency)) ? 0 : remainingCryptoCurrency;
+
+      const remainingCurrency = (this.initialBalance.currency - this.currencyAmount).toFixed(2);
+      this.remainingCurrency = (remainingCurrency < 0 || isNaN(+remainingCurrency)) ? 0 : remainingCurrency;
 
       if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency) {
         this.activeButton = 'All';
@@ -312,7 +313,7 @@ export default {
         this.activeButton = null;
       }
 
-      this.currencyAmount = this.cryptoToCurrency(this.cryptoCurrencyAmount);
+      
     },
     handleButton(name) {
       if (name !== this.activeButton) {
@@ -362,6 +363,8 @@ export default {
         this.error = null;
         this.sendPopup = true;
 
+        this.countdown = 59;
+
         this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
           this.timer = setInterval(() => {
             this.countdown--
@@ -394,8 +397,7 @@ export default {
   watch: {
     countdown(value) {
       if (value === 0) {
-        this.countdown = 59;
-        this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams());
+        clearInterval(this.timer);
       }
     }
   }

@@ -13,10 +13,15 @@
 	font-size: 12px !important;
 	text-align: center;
 	font-weight: 600;
+	line-height: 12px;
 }
 .error-block {
 	height: 12px;
 	margin-top: 20px;
+}
+.error-block .error {
+	background-color: transparent !important;
+	border: none !important;
 }
 </style>
 <script>

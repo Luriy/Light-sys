@@ -25,21 +25,23 @@
 				class="send-arrow_btc send-arrow"
 			/>
 			<img v-else src="@/assets/images/send-arrow-eth.svg" class="send-arrow" />
-			<p class="address">0x91B2Af0A711877714b1881aF22D51dF738c832E4</p>
+			<p class="address">{{ paymentAddress }}</p>
 			<div class="exchange-block_fee">
 				<div class="network-fee flex justify-content-between">
 					<p class="title">
 						<span>{{ fullCurrencyName }}</span> Network Fee
 					</p>
-					<div class="flex">
+					<div class="flex align-items-center">
 						<p class="btc-value">{{ 0.0005 }} {{ currency }}</p>
 						<p class="fixed-value">${{ 0.12 }}</p>
 					</div>
 				</div>
 				<div class="balance">
 					<p class="title">Remaining balance</p>
-					<p class="btc-value">{{ remainingCryptoCurrency }} {{ currency }}</p>
-					<p class="fixed-value">${{ remainingCurrency }}</p>
+					<div class="flex align-items-center">
+						<p class="btc-value">{{ remainingCryptoCurrency }} {{ currency }}</p>
+						<p class="fixed-value">${{ remainingCurrency }}</p>
+					</div>
 				</div>
 			</div>
 			<img class="popup__success-image" src="@/assets/images/success-popup.png" />
@@ -61,7 +63,7 @@ export default {
 		'currencyAmount',
 		'cryptoCurrencyAmount',
 		'currency',
-		'paymentAdress',
+		'paymentAddress',
 		'fullCurrencyName',
 	],
 };
@@ -72,7 +74,7 @@ export default {
 	font-size: 36px !important;
 }
 .send-arrow {
-	margin: 20px 0 25px;
+	margin: 15px 0 20px;
 }
 .send-arrow_btc {
 	transform: rotate(90deg);
@@ -84,12 +86,14 @@ export default {
 	font-size: 16px;
 }
 .address {
-	margin-bottom: 45px;
+	margin-bottom: 45px !important;
 	color: #ffffff;
 	font-weight: 600;
+	font-size: 14px;
 }
 .exchange-block_fee {
 	width: 100%;
+	min-width: 300px;
 }
 .network-fee,
 .balance {
@@ -100,18 +104,18 @@ export default {
 	width: auto;
 }
 .title {
-	width: 130px;
+	width: 140px;
 }
 .exchange-popup_title,
 .exchange-popup_title > * {
 	z-index: 20;
 }
 .progress-bar {
-	width: calc(100% - 26px);
+	width: 90%;
 	position: absolute;
 	left: 50%;
 	transform: translateX(-50%);
-	bottom: -48px;
+	bottom: -24px;
 	height: 2px;
 	box-shadow: 0 -2px 7px rgba(253, 165, 12, 0.93);
 	border-radius: 1px;
