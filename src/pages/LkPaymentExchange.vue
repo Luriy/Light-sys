@@ -7,13 +7,13 @@
       <div class="exchange-block">
         <div class="exchange-index">
           <div class="exchange-block_currency">
-            <div class="arrows" @click="toggleCurrency();" v-bind:class="{active: dir}">
+            <div class="arrows" @click="toggleCurrency()" v-bind:class="{active: dir}">
               <img src="@/assets/images/exchange-arrs.svg" alt title>
             </div>
             <div class="left">
               <div class="title">Exchange</div>
               <div class="select">
-                <div @click="exchangeAction" v-click-outside="hideExchange" class="select-title">
+                <div @click="exchangeAction" class="select-title">
                   <div class="icon" :style="[!exchangeCurrency.isWallet ? {display: 'flex', alignSelf: 'center'} : '']">
                     <img :src="exchangeCurrency.icon" alt title>
                   </div>
@@ -27,7 +27,7 @@
                       }}
                       {{exchangeCurrency.currency}}
                     </span>
-                      <span style="font-size: 16px;">|</span>
+                      <span style="vertical-align: text-top">|</span>
                       <span>
                       {{exchangeCurrency.isWallet ?
                       `$${exchangeCurrency.balanceUSD} USD` :
@@ -44,23 +44,61 @@
                       <input type="text" v-model="search" name="" placeholder="Search">
                       <span></span>
                     </div>
-                    <div
-                      class="select-item"
-                      v-for="(wallet, index) of filteredExchangeWallets"
-                      :key="index"
-                      @click="!wallet.statusNode ? selectExchangeWallet(wallet) : ''"
-                    >
-                      <div class="select-item-disabled" v-if="wallet.statusNode">Temporarily unavailable</div>
-                      <div class="icon"><img :src="wallet.icon" alt></div>
-                      <div class="amount">
-                        <div class="code btc">{{wallet.fullName}}</div>
-                        <div class="value">
+                    <div class="filter-buttons">
+                      <v-btn class="filter-btn" :class="{'active-list': currentExchangeList === 'all'}" text small @click="currentExchangeList = 'all'">All</v-btn>
+                      <v-btn class="filter-btn" :class="{'active-list': currentExchangeList === 'wallets'}" text small @click="currentExchangeList = 'wallets'">My wallets</v-btn>
+                      <v-btn class="filter-btn" :class="{'active-list': currentExchangeList === 'cards'}" text small @click="currentExchangeList = 'cards'">My cards</v-btn>
+                    </div>
+                    <div class="select-item-wallet" v-if="currentExchangeList !== 'cards'">
+                      <div class="title-wrapper">
+                        <span class="select-header">my wallets</span>
+                        <span class="select-line"></span>
+                      </div>
+                      <div
+                        class="select-item"
+                        v-for="(wallet, index) of filteredExchangeWallets.filter(({isWallet}) => (isWallet))"
+                        :key="`wallet-${index}`"
+                        @click="!wallet.statusNode ? selectExchangeWallet(wallet) : ''"
+                      >
+                        <div class="select-item-disabled" v-if="wallet.statusNode">Temporarily unavailable</div>
+                        <div class="icon"><img :src="wallet.icon" alt></div>
+                        <div class="amount">
+                          <div class="code btc">{{wallet.fullName}}</div>
+                          <div class="value">
                         <span>
                           {{wallet.isWallet ? wallet.balance : `****${wallet.number.substr(wallet.number.length - 4)}`}}
                           {{wallet.currency}}
                         </span>
-                        <span style="font-size: 16px;">|</span>
-                        <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            <span style="vertical-align: text-top">|</span>
+                            <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="select-item-fiat" v-if="currentExchangeList !== 'wallets'">
+                      <div class="title-wrapper">
+                        <span class="select-header">my cards</span>
+                        <span class="select-line"></span>
+                      </div>
+                      <div
+                        class="select-item"
+                        v-for="(wallet, index) of filteredExchangeWallets.filter(({isWallet}) => (!isWallet))"
+                        :key="`fiat-${index}`"
+                        @click="!wallet.statusNode ? selectExchangeWallet(wallet) : ''"
+                      >
+                        <div class="select-item-disabled" v-if="wallet.statusNode">Temporarily unavailable</div>
+                        <div class="icon"><img :src="wallet.icon" alt></div>
+                        <div class="amount">
+                          <div class="code btc">{{wallet.fullName}}</div>
+                          <div class="value">
+                        <span>
+                          {{wallet.isWallet ? wallet.balance : `****${wallet.number.substr(wallet.number.length - 4)}`}}
+                          {{wallet.currency}}
+                        </span>
+                            <span style="font-size: 16px;">|</span>
+                            <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -111,7 +149,7 @@
             <div class="right">
               <div class="title">Receive</div>
               <div class="select">
-                <div @click="receiveAction" v-click-outside="hideReceive"  class="select-title">
+                <div @click="receiveAction" class="select-title">
                   <div class="icon"
                        :style="[!receiveCurrency.isWallet ? {display:'flex', alignSelf:'center'} : '']">
                     <img :src="receiveCurrency.icon" alt title>
@@ -135,22 +173,61 @@
                       <input type="" name="" v-model="search" placeholder="Search">
                       <span></span>
                     </div>
-                    <div
-                      class="select-item"
-                      v-for="(wallet, index) of filteredReceiveWallets"
-                      :key="index"
-                      @click="selectReceiveWallet(wallet)"
-                    >
-                      <div class="icon"><img :src="wallet.icon" alt title></div>
-                      <div class="amount">
-                        <div class="code btc">{{wallet.fullName}}</div>
-                        <div class="value">
+                    <div class="filter-buttons">
+                      <v-btn class="filter-btn" :class="{'active-list': currentReceiveList === 'all'}" text small @click="currentReceiveList = 'all'">All</v-btn>
+                      <v-btn class="filter-btn" :class="{'active-list': currentReceiveList === 'wallets'}" text small @click="currentReceiveList = 'wallets'">My wallets</v-btn>
+                      <v-btn class="filter-btn" :class="{'active-list': currentReceiveList === 'cards'}" text small @click="currentReceiveList = 'cards'">My cards</v-btn>
+                    </div>
+                    <div class="select-item-wallet" v-if="currentReceiveList !== 'cards'">
+                      <div class="title-wrapper">
+                        <span class="select-header">my wallets</span>
+                        <span class="select-line"></span>
+                      </div>
+                      <div
+                        class="select-item"
+                        v-for="(wallet, index) of filteredReceiveWallets.filter(({isWallet}) => (isWallet))"
+                        :key="`wallet-${index}`"
+                        @click="!wallet.statusNode ? selectReceiveWallet(wallet) : ''"
+                      >
+                        <div class="select-item-disabled" v-if="wallet.statusNode">Temporarily unavailable</div>
+                        <div class="icon"><img :src="wallet.icon" alt title></div>
+                        <div class="amount">
+                          <div class="code btc">{{wallet.fullName}}</div>
+                          <div class="value">
                         <span>
                           {{wallet.isWallet ? wallet.balance : `****${wallet.number.substr(wallet.number.length - 4)}`}}
                           {{wallet.currency}}
                         </span>
-                        <span style="font-size: 16px;">|</span>
-                        <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            <span style="font-size: 16px;">|</span>
+                            <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="select-item-wallet" v-if="currentReceiveList !== 'wallets'">
+                      <div class="title-wrapper">
+                        <span class="select-header">my cards</span>
+                        <span class="select-line"></span>
+                      </div>
+                      <div
+                        class="select-item"
+                        v-for="(wallet, index) of filteredReceiveWallets.filter(({isWallet}) => (!isWallet))"
+                        :key="`wallet-${index}`"
+                        @click="!wallet.statusNode ? selectReceiveWallet(wallet) : ''"
+                      >
+                        <div class="select-item-disabled" v-if="wallet.statusNode">Temporarily unavailable</div>
+                        <div class="icon"><img :src="wallet.icon" alt title></div>
+                        <div class="amount">
+                          <div class="code btc">{{wallet.fullName}}</div>
+                          <div class="value">
+                        <span>
+                          {{wallet.isWallet ? wallet.balance : `****${wallet.number.substr(wallet.number.length - 4)}`}}
+                          {{wallet.currency}}
+                        </span>
+                            <span style="font-size: 16px;">|</span>
+                            <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -430,7 +507,6 @@
   import LkPopUp from '@/layout/LkPopUp';
   import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
   import currencyList from '@/settings/currensyList'
-  import ClickOutside from 'vue-click-outside'
   import { getAuthParams } from '@/functions/auth';
 
   let exchangePrice = null;
@@ -442,11 +518,10 @@
       LkLayout,
       LkPopUp,
     },
-    directives: {
-      ClickOutside
-    },
     data () {
       return {
+        currentExchangeList: 'all',
+        currentReceiveList: 'all',
         receiveModal: false,
         exchangeModal: false,
         isRepeat: '',
@@ -1104,6 +1179,37 @@
         font-weight: 600;
         line-height: 21px;
       }
+    }
+  }
+  .title-wrapper {
+    display: flex;
+    margin: 10px 0;
+  }
+  .select-header {
+    color: #ffffff;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    line-height: 21px;
+    text-transform: uppercase;
+  }
+
+  .select-line {
+    flex-grow: 1;
+    border-bottom: 1px solid #ffffff;
+    opacity: 0.5;
+    margin-bottom: 7px;
+  }
+
+  .filter-btn {
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 21px;
+
+    &.active-list {
+      border-radius: 5px;
+      background-image: linear-gradient(270deg, #8e6ee4 0%, #d268bc 100%);
     }
   }
 </style>

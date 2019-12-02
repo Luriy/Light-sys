@@ -100,6 +100,18 @@ export default {
 			big: require('@/assets/images/fiat/any-bank.png'),
 		},
 	},
+  11: {
+    icon: {
+      small: require('@/assets/images/fiat/small/any-bank.png'),
+      big: require('@/assets/images/fiat/any-bank.png'),
+    },
+  },
+  32: {
+    icon: {
+      small: require('@/assets/images/fiat/small/any-bank.png'),
+      big: require('@/assets/images/fiat/any-bank.png'),
+    },
+  },
 	109: {
 		icon: {
 			small: require('@/assets/images/fiat/small/any-bank.png'),
