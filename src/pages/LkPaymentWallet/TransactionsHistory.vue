@@ -1,4 +1,4 @@
-<template v-if="operations.length">
+<template v-if="datesWithTransactions.length">
 	<div>
 		<div
 			class="trans-list"
@@ -8,36 +8,36 @@
 			<div class="trans-date">{{ formatDate(datesWithTransaction.date) }}</div>
 			<div
 				class="trans-item"
-				v-for="operation in datesWithTransaction.transactions"
-				:key="operation.url"
-				:class="{ active: openedOperation === operation.url }"
+				v-for="transaction in datesWithTransaction.transactions"
+				:key="transaction.url"
+				:class="{ active: openedOperation === transaction.url }"
 			>
 				<div class="trans-card">
 					<div class="trans-top">
 						<button class="btn">
 							<span class="icon">
 								<img
-									v-if="operation.source.From === operation.source.To"
+									v-if="getTransactionType(transaction) === 'exchange'"
 									src="@/assets/images/transaction-exchange.svg"
 								/>
 								<img
-									v-else-if="operation.source.From === currentWallet.address.toLowerCase()"
+									v-else-if="getTransactionType(transaction) === 'send'"
 									src="@/assets/images/transaction-sent.svg"
 								/>
 								<img
-									v-else-if="operation.source.To === currentWallet.address.toLowerCase()"
+									v-else-if="getTransactionType(transaction) === 'receive'"
 									src="@/assets/images/transaction-received.svg"
 								/>
 							</span>
 							<div class="text">
-								<p v-if="operation.source.From === operation.source.To">Exchanged</p>
-								<p v-else-if="operation.source.From === currentWallet.address.toLowerCase()">
+								<p v-if="getTransactionType(transaction) === 'exchange'">Exchanged</p>
+								<p v-else-if="getTransactionType(transaction) === 'send'">
 									Sent
 								</p>
-								<p v-else-if="operation.source.To === currentWallet.address.toLowerCase()">
+								<p v-else-if="getTransactionType(transaction) === 'receive'">
 									Received
 								</p>
-								<span>{{ operation.source.Time.slice(-5) }} PM</span>
+								<span>{{ getTime(transaction.time) }} PM</span>
 							</div>
 						</button>
 						<div class="code">
@@ -59,28 +59,22 @@
 								alt
 								title
 							/>
-							<span :class="currentWallet.currency.toLowerCase()">{{ operation.currency }}</span>
+							<span :class="currentWallet.currency.toLowerCase()">{{ transaction.currency }}</span>
 						</div>
-						<div class="address" v-if="!operation.source.To && !operation.source.From">
-							{{ operation.source.address }}
+						<div class="address" v-if="getTransactionType(transaction) === 'exchange'">
+							{{ transaction.source.address }}
 						</div>
-						<div
-							class="address"
-							v-else-if="operation.source.To === currentWallet.address.toLowerCase()"
-						>
-							{{ operation.source.From }}
+						<div class="address" v-else-if="getTransactionType(transaction) === 'receive'">
+							{{ transaction.source.From }}
 						</div>
-						<div
-							class="address"
-							v-else-if="operation.source.From === currentWallet.address.toLowerCase()"
-						>
-							{{ operation.source.To }}
+						<div class="address" v-else-if="getTransactionType(transaction) === 'send'">
+							{{ transaction.source.To }}
 						</div>
 						<div class="trans-amount">
 							<span class="text"
-								>{{ Number(operation.value).toFixed(5) }} {{ operation.currency }}</span
+								>{{ Number(transaction.value).toFixed(5) }} {{ transaction.currency }}</span
 							>
-							<span class="icon" @click="handleOpenOperation(operation.url)"></span>
+							<span class="icon" @click="handleOpenOperation(transaction.url)"></span>
 						</div>
 					</div>
 					<div class="trans-info">
@@ -89,13 +83,13 @@
 								<tr>
 									<th>
 										<p>Date</p>
-										<span>{{ operation.source.Time }}</span>
+										<span>{{ transaction.source.Time }}</span>
 									</th>
 									<th>
 										<p>Transaction ID</p>
 										<span
-											><a :href="operation.url" target="_blank" class="trans-id">{{
-												operation.url.slice(24)
+											><a :href="transaction.url" target="_blank" class="trans-id">{{
+												transaction.url.slice(24)
 											}}</a></span
 										>
 									</th>
@@ -103,14 +97,21 @@
 										<p>Fee</p>
 										<span>{{ '0.0003 ' + currentWallet.currency }}</span>
 									</th>
-									<th v-if="operation.source.From || operation.source.To">
-										<p v-if="operation.source.From === currentWallet.address.toLowerCase()">To</p>
-										<p v-if="operation.source.To === currentWallet.address.toLowerCase()">From</p>
-										<span v-if="operation.source.From === currentWallet.address.toLowerCase()">{{
-											operation.source.To
+									<th>
+										<p v-if="getTransactionType(transaction) === 'send'">To</p>
+										<p v-else-if="getTransactionType(transaction) === 'exchange'">To</p>
+										<p v-else-if="getTransactionType(transaction) === 'receive'">
+											From
+										</p>
+
+										<span v-if="getTransactionType(transaction) === 'send'">{{
+											transaction.source.To
 										}}</span>
-										<span v-if="operation.source.To === currentWallet.address.toLowerCase()">{{
-											operation.source.From
+										<span v-else-if="getTransactionType(transaction) === 'receive'">{{
+											transaction.source.From
+										}}</span>
+										<span v-else-if="getTransactionType(transaction) === 'exchange'">{{
+											transaction.address
 										}}</span>
 									</th>
 								</tr>
@@ -161,12 +162,26 @@ export default {
 			const year = date.getFullYear();
 			return `${month} ${day}, ${year}`;
 		},
+		getTime(date) {
+			const parsedDate = new Date(Date.parse(date)).toString();
+
+			return parsedDate.slice(16, 21);
+		},
 		handleOpenOperation(url) {
 			if (this.openedOperation === url) {
 				this.openedOperation = null;
 			} else {
 				this.openedOperation = url;
 			}
+		},
+		getTransactionType(transaction) {
+			if (!transaction.source.From && !transaction.source.To) {
+				return 'exchange';
+			} else if (transaction.source.From === this.currentWallet.address.toLowerCase()) {
+				return 'send';
+			} else if (transaction.source.To === this.currentWallet.address.toLowerCase()) {
+				return 'receive';
+			} else return 'unknown';
 		},
 	},
 };

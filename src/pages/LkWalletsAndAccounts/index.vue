@@ -17,6 +17,7 @@
 					<wallets-list
 						:isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"
 						@afterDeleteWallet="handleAfterDeleteWallet"
+						:wallets="wallets"
 					></wallets-list>
 				</div>
 
@@ -79,10 +80,32 @@ export default {
 	computed: {
 		...mapGetters({
 			operations: 'wallet/OPERATIONS',
+			wallets: 'wallet/WALLETS',
+			afterCreateWallet: 'wallet/AFTER_CREATE_WALLET',
+			afterCreateTransaction: 'wallet/AFTER_CREATE_TRANSACTION',
 		}),
+		groupWallets() {},
 	},
 	mounted() {
-		this.$store.dispatch('wallet/GET_OPERATIONS');
+		if (!this.afterCreateWallet) {
+			if (this.wallets.length) {
+				this.$store.dispatch('wallet/GET_WALLETS', { wallets: this.wallets });
+				if (!this.afterCreateTransaction) {
+					this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+				}
+			} else {
+				this.$store.dispatch('wallet/GET_WALLETS').then((wallets) => {
+					this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+				});
+			}
+		} else {
+			this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+		}
+
+		// this.$store.dispatch('group/CREATE_GROUP', {
+		// 	GroupName: encodeURI('With money'),
+		// 	wallets: { 0: '0x3cB525F4F0d523aDA365339Fb3Fe71F8d9C26e9E' },
+		// });
 	},
 	methods: {
 		handleMovingAndDeleting(type) {

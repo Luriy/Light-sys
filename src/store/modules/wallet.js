@@ -17,8 +17,10 @@ export default {
 		wallets: JSON.parse(localStorage.getItem('stateWalletsWallets')) || [],
 		types: {},
 		percentage: {},
-		operations: [],
+		operations: JSON.parse(localStorage.getItem('stateWalletsOperations')) || [],
 		afterCreateWallet: false,
+		afterTransaction: false,
+		afterTransactionTimeout: null,
 	},
 	getters: {
 		PAGE_DETAIL: (state) => state.pageDetail,
@@ -27,6 +29,7 @@ export default {
 		PERCENTAGE: (state) => state.percentage,
 		OPERATIONS: (state) => state.operations,
 		AFTER_CREATE_WALLET: (state) => state.afterCreateWallet,
+		AFTER_CREATE_TRANSACTION: (state) => state.afterTransaction,
 	},
 	mutations: {
 		SET_PAGE_DETAIL: (state, payload) => (state.pageDetail = payload),
@@ -43,8 +46,12 @@ export default {
 		},
 		SET_TYPES: (state, payload) => (state.types = payload),
 		SET_PERCENTAGE: (state, payload) => (state.percentage = payload),
-		SET_OPERATIONS: (state, payload) => (state.operations = payload),
+		SET_OPERATIONS: (state, payload) => {
+			state.operations = payload;
+			localStorage.setItem('stateWalletsOperations', JSON.stringify(payload));
+		},
 		SET_AFTER_CREATE_WALLET: (state, payload) => (state.afterCreateWallet = payload),
+		SET_AFTER_TRANSACTION: (state, payload) => (state.afterTransaction = payload),
 	},
 	actions: {
 		GET_PAGE_DETAIL: ({ dispatch, commit }, { currency, address }) => {
@@ -103,11 +110,12 @@ export default {
 							balanceUSD: 0,
 							currency: type,
 							status: 'Active',
+							isAvailable: true,
 						},
 					]);
 
 					setTimeout(() => {
-						commit('SET_AFTER_CREATE_WALLET', false); // из-за бага на беке, что при создании кошелька
+						commit('SET_AFTER_CREATE_WALLET', false); // из-за бага, что при создании кошелька
 					}, 12000); // все остальные фризятся
 
 					return parsedData;
@@ -137,15 +145,26 @@ export default {
 			});
 		},
 		GET_WALLETS({ commit, dispatch }) {
-			return Axios({
-				url: API_URL,
-				method: 'POST',
-				params: {
-					Comand: 'AllWalets',
-					...getAuthParams(),
-				},
-			}).then(({ data }) => {
+			return Promise.all([
+				Axios({
+					url: API_URL,
+					method: 'POST',
+					params: {
+						Comand: 'StatusNode',
+					},
+				}),
+				Axios({
+					url: API_URL,
+					method: 'POST',
+					params: {
+						Comand: 'AllWalets',
+						...getAuthParams(),
+					},
+				}),
+			]).then(([{ data: nodeData }, { data }]) => {
 				const errors = Object.values(parsePythonArray(data)['0'].Errors);
+				const responseNodesStatusData = parsePythonArray(nodeData)['1'].return;
+				const returnData = parsePythonArray(data)['1'].return;
 
 				if (errors.includes('Wrong password')) {
 					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
@@ -164,8 +183,6 @@ export default {
 					);
 					return { error: true };
 				} else {
-					const returnData = parsePythonArray(data)['1'].return;
-
 					const result = Object.keys(returnData)
 						.reduce((acc, walletCurrency) => {
 							if (
@@ -180,6 +197,7 @@ export default {
 										currency: walletCurrency,
 										balance: item.Balance,
 										balanceUSD: item.BalanceUsd,
+										isAvailable: responseNodesStatusData[`StatusNode${walletCurrency}`] === 0,
 									})),
 								);
 							}
@@ -201,10 +219,20 @@ export default {
 					//     }
 					//   })
 					// })
+					const groups = [
+						...Object.keys(returnData.Group).map((key) => {
+							return {
+								[decodeURI(key)]: Object.values(returnData.Group[key]),
+							};
+						}),
+						{ 'Without group': result.filter((wallet) => wallet) },
+					];
 
 					commit('SET_WALLETS', result);
+					console.log(groups);
+					// commit('SET_GROUP_WALLETS', groups);
 
-					return result;
+					return { wallets: result, groups };
 				}
 			});
 		},
@@ -220,7 +248,6 @@ export default {
 			}).then(({ data }) => {
 				const parsedData = parsePythonArray(data);
 				const errors = Object.values(parsedData['0']['Errors']);
-				console.log(errors);
 				if (errors.includes('Wrong password')) {
 					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
 						() => (window.location.href = `/login`),
@@ -238,7 +265,8 @@ export default {
 				}
 			});
 		},
-		POST_TRANSFER_CRYPTO: ({ commit, dispatch }, { amount, from, to, token, currency }) => {
+		POST_TRANSFER_CRYPTO: (state, { amount, from, to, token, currency }) => {
+			const { commit, dispatch } = state;
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -255,7 +283,15 @@ export default {
 				const { Errors } = response[0];
 				const responseData = response[1];
 				if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
-					return { success: true };
+					if (state.afterTransactionTimeout) {
+						clearTimeout(state.afterTransactionTimeout);
+					}
+					commit('SET_AFTER_TRANSACTION', true);
+					state.afterTransactionTimeout = setTimeout(
+						() => commit('SET_AFTER_TRANSACTION', false),
+						1000 * 60 * 2,
+					);
+					return { success: true, data: responseData.return };
 				} else if (Object.values(Errors).includes('Wrong password')) {
 					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
 						() => (window.location.href = `/login`),
@@ -286,15 +322,25 @@ export default {
 		},
 
 		GET_TYPES: async (store) => {
-			const { data } = await Axios({
-				url: API_URL,
-				method: 'GET',
-				params: {
-					Comand: 'InfoCrypts',
-				},
-			});
+			const [{ data: nodeData }, { data }] = await Promise.all([
+				Axios({
+					url: API_URL,
+					method: 'POST',
+					params: {
+						Comand: 'StatusNode',
+					},
+				}),
+				Axios({
+					url: API_URL,
+					method: 'GET',
+					params: {
+						Comand: 'InfoCrypts',
+					},
+				}),
+			]);
 
 			const responseData = parsePythonArray(data)['1'].return;
+			const responseNodesStatusData = parsePythonArray(nodeData)['1'].return;
 
 			const types = {
 				bitcoin: {
@@ -303,6 +349,7 @@ export default {
 					codeMarkup: 'btc',
 					price: responseData['BTC: '].bitcoin.usd,
 					change24h: responseData['BTC: '].bitcoin.usd_24h_change,
+					isAvailable: responseNodesStatusData.StatusNodeBTC === 0,
 				},
 				ethereum: {
 					name: 'Ethereum',
@@ -310,6 +357,7 @@ export default {
 					codeMarkup: 'eth',
 					price: responseData['ETH: '].ethereum.usd,
 					change24h: responseData['ETH: '].ethereum.usd_24h_change,
+					isAvailable: responseNodesStatusData.StatusNodeETH === 0,
 				},
 				litecoin: {
 					name: 'Litecoin',
@@ -317,6 +365,7 @@ export default {
 					codeMarkup: 'ltc',
 					price: responseData['LTC: '].litecoin.usd,
 					change24h: responseData['LTC: '].litecoin.usd_24h_change,
+					isAvailable: responseNodesStatusData.StatusNodeLTC === 0,
 				},
 			};
 
@@ -346,8 +395,6 @@ export default {
 					'200d': responseData['percentage_LTC: '].percentage_200d,
 				},
 			};
-
-			console.log(percentage);
 
 			store.commit('SET_TYPES', types);
 
@@ -434,11 +481,11 @@ export default {
 				return datesWithTransactions.reverse();
 			});
 		},
-		GET_OPERATIONS: async (store) => {
+		GET_OPERATIONS: async (store, { wallets }) => {
 			const dates = [];
 			const transactions = (
 				await Promise.all(
-					store.state.wallets.map(async (wallet) => {
+					wallets.map(async (wallet) => {
 						let Comand;
 
 						switch (wallet.currency) {
@@ -527,12 +574,28 @@ export default {
 				}
 			});
 
+			const filterByDateTimeFunc = (a, b) => {
+				if (a.time < b.time) return -1;
+				else if (a.time > b.time) return 1;
+				else return 0;
+			};
+			const filterfilterByDateFunc = (a, b) => {
+				if (a.date < b.date) return -1;
+				else if (a.date > b.date) return 1;
+				else return 0;
+			};
+
 			datesWithTransactions = datesWithTransactions.map((obj) => {
 				return {
 					...obj,
-					transactions: obj.transactions.reverse(),
+					transactions: obj.transactions
+						.slice()
+						.sort(filterByDateTimeFunc)
+						.reverse(),
 				};
 			});
+
+			datesWithTransactions.sort(filterfilterByDateFunc);
 
 			store.commit('SET_OPERATIONS', datesWithTransactions.slice().reverse());
 			return datesWithTransactions.reverse();

@@ -16,7 +16,7 @@
 			<div class="phone-question" v-if="user.Phone">
 				<p class="question">We sent an SMS confirmation to the number</p>
 				<div class="number-block">
-					<p class="number">{{ user.Phone }}</p>
+					<p class="number">{{ formatPhoneNumber(user.Phone) }}</p>
 					<router-link class="link" to="/">Wrong number?</router-link>
 				</div>
 			</div>
@@ -92,6 +92,7 @@
 </template>
 <script>
 import LkPopUp from '@/layout/LkPopUp';
+import formatPhoneNumber from '@/functions/formatPhoneNumber';
 
 export default {
 	components: {
@@ -110,6 +111,9 @@ export default {
 		'countdown',
 		'fullCurrencyName',
 	],
+	methods: {
+		formatPhoneNumber,
+	},
 };
 </script>
 <style scoped>

@@ -63,7 +63,10 @@
           <div class="th">30 Day Trend</div>
         </div>
         <div class="tbody">
-          <div class="row" v-for="type in types" :key="type.code" @click="addWallet(type.code)">
+          <div class="row" v-for="type in types" :key="type.code" @click="addWallet(type.code, type.isAvailable)">
+            <div v-if="!type.isAvailable" class="unavailable-block flex justify-content-center align-items-center">
+              <p class="unavailable-text">Temporarily unavailable</p>
+            </div>
             <div class="row__item">
               <div class="currency">
                 <div class="icon">
@@ -163,16 +166,18 @@ export default {
       }
       this.$router.push('/wallets');
     },
-    addWallet(code) {
-      this.$store.dispatch('wallet/CREATE_WALLET', code)
+    addWallet(code, isAvailable) {
+      if (isAvailable) {
+         this.$store.dispatch('wallet/CREATE_WALLET', code)
         .then((data) => {
-          if (!data.error) {                                                    // кошелька, все кошельки этой валюты фризятся                                                     
+          if (!data.error) {                                                     
             this.handleOpenSuccessPopup(code);
           }
         })
         .catch(reason => {
           console.log(reason)
         })
+      }
     }
   },
   

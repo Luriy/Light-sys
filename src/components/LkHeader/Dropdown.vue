@@ -7,8 +7,11 @@
 			<div class="dropdown__body-item">
 				<p class="dropdown__body-item-text">Profile</p>
 			</div>
-			<button class="sign-out-button flex align-items-center justify-content-center">
-				<div class="flex align-items-center" @click="handleSignOut">
+			<button
+				class="sign-out-button flex align-items-center justify-content-center"
+				@click="handleSignOut"
+			>
+				<div class="flex align-items-center">
 					<img class="sign-out-icon" src="@/assets/images/sign-out.svg" />
 					<p class="dropdown__body-item-text">Sign out</p>
 				</div>
@@ -18,7 +21,6 @@
 </template>
 <script>
 import { AUTH_LOGOUT } from '@/store/actions/auth';
-import { SITE_URL } from '@/constants';
 
 export default {
 	props: ['isOpened'],
@@ -48,7 +50,7 @@ export default {
 	methods: {
 		handleSignOut() {
 			this.$store.dispatch(AUTH_LOGOUT).then(() => {
-				location.href = `${SITE_URL}/login`;
+				location.href = `/login`;
 			});
 		},
 	},

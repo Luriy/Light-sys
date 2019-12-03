@@ -85,27 +85,12 @@ export default {
 	},
 	data() {
 		return {
-			checkboxes: [],
-			initialCheckboxes: [],
 			isEditing: false,
 		};
 	},
 	created() {
-		Promise.all([
-			this.$store.dispatch('currency/GET_ALL_CURRENCIES'),
-			this.$store.dispatch('currency/GET_USER_CURRENCIES'),
-		]).then(() => {
-			this.checkboxes = this.currencies.map((currency, index) => ({
-				isChecked: false,
-				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-				id: index,
-			}));
-			this.initialCheckboxes = this.currencies.map((currency, index) => ({
-				isChecked: false,
-				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-				id: index,
-			}));
-		});
+		this.$store.dispatch('currency/GET_ALL_CURRENCIES');
+		this.$store.dispatch('currency/GET_USER_CURRENCIES');
 	},
 	computed: {
 		...mapGetters({
@@ -113,6 +98,30 @@ export default {
 			userCurrencies: 'currency/USER_CURRENCIES',
 			walletsAndAccountsPageCurrencies: 'currency/WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
 		}),
+		checkboxes: {
+			get() {
+				return this.currencies.map((currency, index) => ({
+					isChecked: false,
+					isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+					id: index,
+				}));
+			},
+			set() {
+				this.checkboxes = value;
+			},
+		},
+		initialCheckboxes: {
+			get() {
+				return this.currencies.map((currency, index) => ({
+					isChecked: false,
+					isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+					id: index,
+				}));
+			},
+			set(value) {
+				this.initialCheckboxes = value;
+			},
+		},
 	},
 	methods: {
 		getCurrencyInfo,

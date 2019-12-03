@@ -15,6 +15,56 @@
 		<slot></slot>
 	</div>
 </template>
+
+<script>
+import { mapGetters } from 'vuex';
+
+export default {
+	name: 'LkPaymentsAndTransfers',
+	computed: {
+		...mapGetters({
+			wallets: 'wallet/WALLETS',
+		}),
+		transferWallet() {
+			if (this.wallets && this.wallets.length) {
+				const walletsBalancesArray = this.wallets.map((wallet) => wallet.balanceUSD);
+				const maxBalanceIndex = walletsBalancesArray.indexOf(
+					Math.max.apply(null, walletsBalancesArray),
+				);
+				const walletWithMaxBalance = this.wallets[maxBalanceIndex];
+				return walletWithMaxBalance;
+			}
+		},
+		links() {
+			return [
+				{
+					name: 'Transfer',
+					to: this.wallets
+						? `/payments-and-transfer/${this.transferWallet.currency}/${this.transferWallet.address}`
+						: '/wallets',
+					activeString: '/payments-and-transfer/send',
+				},
+				{
+					name: 'Pay for',
+					to: '/payments-and-transfer/pay-for',
+					activeString: '/payments-and-transfer/pay-for',
+				},
+			];
+		},
+	},
+	mounted() {
+		if (!this.wallets.length) {
+			this.$store.dispatch('wallet/GET_WALLETS');
+		}
+	},
+	methods: {
+		handleClickTab(name, route) {
+			this.activeTab = name;
+			this.$router.push(route);
+		},
+	},
+};
+</script>
 <style scoped>
 .tabs-bar {
 	display: flex;
@@ -36,30 +86,3 @@
 	background-color: #513685;
 }
 </style>
-<script>
-export default {
-	name: 'LkPaymentsAndTransfers',
-	data() {
-		return {
-			links: [
-				{
-					name: 'Transfer',
-					to: '/payments-and-transfer/send/BTC/none',
-					activeString: '/payments-and-transfer/send',
-				},
-				{
-					name: 'Pay for',
-					to: '/payments-and-transfer/pay-for',
-					activeString: '/payments-and-transfer/pay-for',
-				},
-			],
-		};
-	},
-	methods: {
-		handleClickTab(name, route) {
-			this.activeTab = name;
-			this.$router.push(route);
-		},
-	},
-};
-</script>

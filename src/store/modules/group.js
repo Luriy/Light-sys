@@ -15,9 +15,9 @@ export default {
 				method: 'POST',
 				params: {
 					Comand: 'AddWalletsGroup',
-					...getAuthParams,
 					GroupName,
 					...wallets,
+					...getAuthParams(),
 				},
 			});
 		},

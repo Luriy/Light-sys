@@ -83,7 +83,7 @@ export default new Router({
 		},
 		{
 			name: 'LkPaymentWallet',
-			path: '/wallets/:currency/:address',
+			path: '/payments-and-transfer/:currency/:address',
 			component: LkPaymentWallet,
 			beforeEnter: ifAuthenticated,
 		},

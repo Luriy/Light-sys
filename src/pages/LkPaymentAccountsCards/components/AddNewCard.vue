@@ -116,6 +116,7 @@ import Error from '@/components/Error';
 import { VALIDATE_CARD } from '@/validation';
 import getBankImage from '@/functions/getBankImage';
 import fiatList from '@/settings/fiatList';
+import formatCardNumber from '@/functions/formatCardNumber';
 
 export default {
 	components: {
@@ -178,6 +179,10 @@ export default {
 			) {
 				this.cardInfo.number += ' ';
 			}
+
+			if (inputType === 'insertFromPaste') {
+				this.cardInfo.number = formatCardNumber(this.cardInfo.number);
+			}
 		},
 		handleClickBank(name, psid, currency) {
 			this.currentBank = { name, psid, currency };
@@ -219,29 +224,7 @@ export default {
 				this.error = validateError;
 			} else {
 				this.error = null;
-				if (this.userCurrencies.every((userCurrency) => userCurrency !== currency)) {
-					this.$store
-						.dispatch('currency/ADD_USER_CURRENCY', { ValuteName: currency })
-						.then((data) => {
-							if (data.success) {
-								this.$store.commit('currency/SET_USER_CURRENCIES', [
-									...this.userCurrencies,
-									currency,
-								]);
-								if (this.walletsAndAccountsPageCurrencies.length) {
-									this.$store.commit('currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES', [
-										...this.walletsAndAccountsPageCurrencies,
-										{
-											cards: [],
-											currency,
-											code: getCurrencyInfo(currency).code,
-											fullName: getCurrencyInfo(currency).fullName,
-										},
-									]);
-								}
-							}
-						});
-				}
+
 				this.$store
 					.dispatch('card/CREATE_CARD', {
 						Holder: encodeURI(name),
@@ -254,6 +237,29 @@ export default {
 						if (errors.length) {
 							this.error = errors[0];
 						} else if (data['1'].return.Status === 'Complete') {
+							if (this.userCurrencies.every((userCurrency) => userCurrency !== currency)) {
+								this.$store
+									.dispatch('currency/ADD_USER_CURRENCY', { ValuteName: currency })
+									.then((data) => {
+										if (data.success) {
+											this.$store.commit('currency/SET_USER_CURRENCIES', [
+												...this.userCurrencies,
+												currency,
+											]);
+											if (this.walletsAndAccountsPageCurrencies.length) {
+												this.$store.commit('currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES', [
+													...this.walletsAndAccountsPageCurrencies,
+													{
+														cards: [],
+														currency,
+														code: getCurrencyInfo(currency).code,
+														fullName: getCurrencyInfo(currency).fullName,
+													},
+												]);
+											}
+										}
+									});
+							}
 							this.handleCancel();
 							this.$store.dispatch('card/GET_CARDS');
 							this.$store.dispatch('alerts/setNotification', {

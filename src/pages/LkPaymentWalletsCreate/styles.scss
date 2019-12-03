@@ -22,6 +22,7 @@
 		border-collapse: separate;
 		width: 100%;
 		border-color: #260848;
+
 		.thead {
 			display: grid;
 			grid-template-columns: repeat(4, 100px);
@@ -39,6 +40,7 @@
 		}
 		.tbody {
 			.row {
+				position: relative;
 				display: grid;
 				grid-template-columns: repeat(4, 100px);
 				justify-content: space-between;
@@ -53,6 +55,7 @@
 				&:last-of-type {
 					margin-bottom: 0;
 				}
+
 				&__item {
 					color: #fff;
 					font-size: 14px;

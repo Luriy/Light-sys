@@ -139,7 +139,7 @@ export default {
 				method: 'POST',
 				params: {
 					Comand: 'PasswordRecoveryPhone', // если e-mail, запрос тоже идет на эту команду,
-					Phone: loginType === 'Phone' ? user : '', // но отправляется параметр Email
+					Phone: loginType === 'Phone' ? user.replace(/[^0-9]/gim, '') : '', // но отправляется параметр Email
 					Email: loginType === 'Email' ? user : '',
 				},
 			}).then((resp) => {
@@ -167,7 +167,7 @@ export default {
 				method: 'POST',
 				params: {
 					Comand: 'PasswordRecoveryPin',
-					Phone: loginType === 'Phone' ? user : '',
+					Phone: loginType === 'Phone' ? user.replace(/[^0-9]/gim, '') : '',
 					Email: loginType === 'Email' ? user : '',
 					Pin: smsCodes.map((smsCode, index) => smsCode[index]).join(''),
 				},

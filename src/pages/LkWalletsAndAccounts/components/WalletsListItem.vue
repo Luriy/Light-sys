@@ -1,7 +1,10 @@
 <template>
 	<transition name="slide-fade">
 		<div class="flex flex-column outside-wrapper">
-			<div @click="$emit('onWalletRouter', wallet.currency, wallet.address)" class="list__item">
+			<div
+				@click="$emit('onWalletRouter', wallet.currency, wallet.address, wallet.isAvailable)"
+				class="list__item"
+			>
 				<transition name="fade">
 					<div
 						class="btn-remove"
@@ -12,6 +15,12 @@
 					</div>
 				</transition>
 				<div class="wallet" :class="{ active: !isWalletsMovingAndDeleting }">
+					<div
+						v-if="!wallet.isAvailable"
+						class="unavailable-block flex justify-content-center align-items-center"
+					>
+						<p class="unavailable-text">Temporarily unavailable</p>
+					</div>
 					<div class="code">
 						<div :class="['image', wallet.currency.toLowerCase()]">
 							<img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title />
@@ -20,7 +29,7 @@
 						</div>
 						<span>{{ wallet.currency }}</span>
 					</div>
-					<div class="info">
+					<div class="info" v-if="wallet.isAvailable">
 						<div class="balance">
 							<p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
 							<span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
@@ -46,8 +55,8 @@
 				<div class="add-group-input-wrapper flex align-items-center" v-show="isInputEditingActive">
 					<input type="text" v-model="groupName" @blur="handleSaveGroup" />
 				</div>
-				<div v-if="isGroupActive" class="active-group">{{ groupName }}</div>
 			</div>
+			<div v-if="isGroupActive" class="active-group">{{ groupName }}</div>
 		</div>
 	</transition>
 </template>

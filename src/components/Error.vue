@@ -7,7 +7,7 @@
 		</transition>
 	</div>
 </template>
-<style>
+<style scoped>
 .error {
 	color: #db5353 !important;
 	font-size: 12px !important;
@@ -19,7 +19,7 @@
 	height: 12px;
 	margin-top: 20px;
 }
-.error-block .error {
+body .error-block .error {
 	background-color: transparent !important;
 	border: none !important;
 }

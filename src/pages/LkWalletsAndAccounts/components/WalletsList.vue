@@ -41,7 +41,7 @@ import WalletsListItem from './WalletsListItem';
 
 export default {
 	name: 'WalletsList',
-	props: ['isWalletsMovingAndDeleting'],
+	props: ['isWalletsMovingAndDeleting', 'wallets'],
 	components: {
 		draggable,
 		LkDeleteWalletPopup,
@@ -57,17 +57,11 @@ export default {
 			},
 		},
 		...mapGetters({
-			wallets: 'wallet/WALLETS',
 			percentage: 'wallet/PERCENTAGE',
-			afterCreateWallet: 'wallet/AFTER_CREATE_WALLET',
 		}),
 	},
 	mounted() {
 		this.$store.dispatch('wallet/GET_TYPES');
-		if (!this.afterCreateWallet) {
-			console.log(this.afterCreateWallet);
-			this.$store.dispatch('wallet/GET_WALLETS');
-		}
 	},
 	data() {
 		return {
@@ -81,11 +75,11 @@ export default {
 	},
 
 	methods: {
-		handleWalletRouter(currency, address) {
-			if (this.isWalletsMovingAndDeleting) {
+		handleWalletRouter(currency, address, isAvailable) {
+			if (this.isWalletsMovingAndDeleting || !isAvailable) {
 				return false;
 			} else {
-				this.$router.push(`/wallets/${currency}/${address}`);
+				this.$router.push(`/payments-and-transfer/${currency}/${address}`);
 			}
 		},
 		handleOpenPopup(address, currency) {
