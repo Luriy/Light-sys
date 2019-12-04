@@ -120,11 +120,8 @@
                   <div class="exchange-amount_input" :class="exchangeCurrency.currency.toLowerCase()">
                     <v-text-field
                       v-model.lazy.number="exchangeAmount"
-                      :step="exchangeCurrency.isWallet ? 0.00001 : 0.01"
-                      min="0"
                       :rules="exchangeAmountRules"
                       :color="exchangeCurrency.isWallet ? exchangeCurrency.color : '#fff'"
-                      :type="'number'"
                       @input="exchangeChange"
                     ></v-text-field>
                     <span>{{exchangeCurrency.currency}}</span>
@@ -132,9 +129,6 @@
                   <div class="exchange-amount_input">
                     <v-text-field
                       v-model.number.lazy="exchangeUSD"
-                      min="0"
-                      :step="0.01"
-                      :type="'number'"
                       class="dollars_input"
                       @input="exchangeUSDChange"
                       color="#fff"
@@ -239,9 +233,6 @@
                 <div class="exchange-amount_input" :class="receiveCurrency.currency.toLowerCase()">
                   <v-text-field
                     v-model.number.lazy="receiveAmount"
-                    :step="receiveCurrency.isWallet ? 0.00001 : 0.01"
-                    min="0"
-                    :type="'number'"
                     :rules="receiveAmountRules"
                     @input="receiveChange"
                     :color="receiveCurrency.isWallet ? receiveCurrency.color : '#fff'"
@@ -252,9 +243,6 @@
                 <div class="exchange-amount_input">
                   <v-text-field
                     v-model.number.lazy="receiveUSD"
-                    :type="'number'"
-                    :step="0.01"
-                    min="0"
                     @input="receiveUSDChange"
                     class="dollars_input"
                     color="#fff"
@@ -996,7 +984,9 @@
             }
             return item
           })
-          .filter(({ fullName }) => (fullName.toLowerCase().includes(this.search)))
+          .filter(({ fullName }) => {
+            return fullName.toLowerCase().includes(this.search);
+          })
       },
       filteredReceiveWallets() {
         return this.wallets

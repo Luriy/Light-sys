@@ -147,7 +147,8 @@ export default {
 							);
 							return acc;
 						}, [])
-						.filter(({ status }) => status !== 'Frozen'),
+						.filter(({ status }) => status !== 'Frozen')
+                        .filter(({ currency }) => currency !== 'Group'),
 					resultCards = Object.keys(cards).map((card) => {
 						const { name, reserve, valute } = fiat[+cards[card].Psid];
 						return {
@@ -160,7 +161,7 @@ export default {
 							holder: cards[card].Holder,
 						};
 					});
-				commit('SET_EXCHANGE_DATA', [...resultWallets, ...resultCards]);
+        commit('SET_EXCHANGE_DATA', [...resultWallets, ...resultCards]);
 			});
 		},
 		POST_WALLETS: ({ commit }, { transferData, pair: { exchange, receive } }) => {
