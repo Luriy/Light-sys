@@ -17,8 +17,6 @@
 					<wallets-list
 						:isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"
 						@afterDeleteWallet="handleAfterDeleteWallet"
-						:groupWallets="groupWallets"
-						:wallets="wallets"
 					></wallets-list>
 				</div>
 
@@ -46,7 +44,7 @@
 				</div>
 				<div class="operations-history-list">
 					<operations-history-list-item
-						v-for="(operation, idx) in operations"
+						v-for="(operation, idx) in operationsWithUnconfirmed"
 						:key="idx"
 						:operation="operation"
 					></operations-history-list-item>
@@ -80,20 +78,17 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			operations: 'wallet/OPERATIONS',
+			operationsWithUnconfirmed: 'wallet/OPERATIONS_WITH_UNCONFIRMED',
 			wallets: 'wallet/WALLETS',
 			groupWallets: 'group/GROUP_WALLETS',
 			afterCreateWallet: 'wallet/AFTER_CREATE_WALLET',
-			afterCreateTransaction: 'wallet/AFTER_CREATE_TRANSACTION',
 		}),
 	},
 	mounted() {
 		if (!this.afterCreateWallet) {
 			if (this.wallets.length) {
 				this.$store.dispatch('wallet/GET_WALLETS', { wallets: this.wallets });
-				if (!this.afterCreateTransaction) {
-					this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
-				}
+				this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
 			} else {
 				this.$store.dispatch('wallet/GET_WALLETS').then(() => {
 					this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
@@ -102,11 +97,6 @@ export default {
 		} else {
 			this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
 		}
-
-		// this.$store.dispatch('group/CREATE_GROUP', {
-		// 	GroupName: encodeURI('With money'),
-		// 	wallets: { 0: '0x3cB525F4F0d523aDA365339Fb3Fe71F8d9C26e9E' },
-		// });
 	},
 	methods: {
 		handleMovingAndDeleting(type) {

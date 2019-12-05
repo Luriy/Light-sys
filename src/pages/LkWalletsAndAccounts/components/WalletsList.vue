@@ -5,7 +5,18 @@
 			v-for="(group, index) in groupWallets"
 			:key="group.groupName + index"
 		>
-			<div class="active-group" :class="{ active: group.groupName.length === 0 }">
+			<div
+				class="add-group-input-wrapper flex align-items-center"
+				v-if="editingGroup === group.groupName"
+			>
+				<input type="text" v-model="newGroupName" @blur="handleSaveRenameGroup" />
+			</div>
+			<div
+				class="active-group"
+				:class="{ active: group.groupName.length === 0 }"
+				@click="handleRenameGroup(group.groupName)"
+				v-else
+			>
 				{{ group.groupName }}
 			</div>
 			<draggable-wallet-items
@@ -54,7 +65,7 @@ import DraggableWalletItems from './DraggableWalletItems';
 
 export default {
 	name: 'WalletsList',
-	props: ['isWalletsMovingAndDeleting', 'groupWallets', 'wallets'],
+	props: ['isWalletsMovingAndDeleting'],
 	components: {
 		LkDeleteWalletPopup,
 		WalletsListItem,
@@ -67,12 +78,16 @@ export default {
 				address: null,
 				currency: null,
 			},
+			editingGroup: null,
+			newGroupName: '',
 		};
 	},
 	mounted() {},
 	computed: {
 		...mapGetters({
 			percentage: 'wallet/PERCENTAGE',
+			wallets: 'wallet/WALLETS',
+			groupWallets: 'group/GROUP_WALLETS',
 		}),
 	},
 	created() {
@@ -124,6 +139,22 @@ export default {
 						this.$emit('afterDeleteWallet'); // 600 - animation deleting time
 					}, 600);
 				});
+		},
+		handleRenameGroup(groupName) {
+			this.editingGroup = groupName;
+			this.newGroupName = groupName;
+			setTimeout(
+				() => document.querySelector('.group-wrapper .add-group-input-wrapper input').focus(),
+				50,
+			);
+		},
+		handleSaveRenameGroup() {
+			this.$store.dispatch('group/RENAME_WALLET_GROUP', {
+				oldGroupName: this.editingGroup,
+				newGroupName: this.newGroupName,
+			});
+			this.editingGroup = null;
+			this.newGroupName = null;
 		},
 	},
 };

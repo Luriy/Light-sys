@@ -60,6 +60,7 @@
 			}
 
 			&-item {
+				position: relative;
 				width: 100%;
 				transition: 0.5s;
 				min-height: 43px;
@@ -67,10 +68,19 @@
 				cursor: pointer;
 				color: #fff;
 				padding-right: 30px;
+
+				.unavailable-block {
+					border-radius: 0;
+				}
 			}
+
 			&-item:hover,
 			&-item.active {
 				background-color: #634997;
+			}
+			&-item.unavailable,
+			&-item.unavailable:hover {
+				background-color: transparent;
 			}
 
 			&-currency {

@@ -7,9 +7,11 @@ export default {
 	namespaced: true,
 	state: {
 		groupWallets: JSON.parse(localStorage.getItem('stateGroupWallets')) || [],
+		groupCards: JSON.parse(localStorage.getItem('stateGroupCards')) || [],
 	},
 	getters: {
 		GROUP_WALLETS: (state) => state.groupWallets,
+		GROUP_CARDS: (state) => state.groupCards,
 	},
 	mutations: {
 		SET_GROUP_WALLETS: (state, payload) => {
@@ -18,6 +20,12 @@ export default {
 		},
 		SET_WALLETS_TO_GROUP: (state, { groupName, wallets }) => {
 			state.groupWallets.find((group) => group.groupName === groupName).wallets = wallets;
+			localStorage.setItem('stateGroupWallets', JSON.stringify(state.groupWallets));
+		},
+		RENAME_WALLET_GROUP: (state, { oldGroupName, newGroupName }) => {
+			state.groupWallets.find(
+				({ groupName }) => groupName === oldGroupName,
+			).groupName = newGroupName;
 			localStorage.setItem('stateGroupWallets', JSON.stringify(state.groupWallets));
 		},
 		UPDATE_GROUP_WALLETS: (state, { wallets }) => {
@@ -34,17 +42,21 @@ export default {
 				}),
 			}));
 		},
+		SET_GROUP_CARDS: (state, payload) => {
+			state.groupCards = payload;
+			localStorage.setItem('stateGroupCards', JSON.stringify(payload));
+		},
 	},
 	actions: {
-		CREATE_GROUP: ({ commit, state }, { GroupName, wallets }) => {
+		CREATE_WALLET_GROUP: (store, { GroupName, wallets }) => {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
 				params: {
+					...getAuthParams(),
 					Comand: 'AddWalletsGroup',
 					GroupName: encodeURI(GroupName),
 					...wallets,
-					...getAuthParams(),
 				},
 			});
 		},
@@ -64,7 +76,46 @@ export default {
 				walletsToAdd[index] = item.address;
 			});
 
-			dispatch('CREATE_GROUP', { GroupName: groupName, wallets: walletsToAdd });
+			dispatch('CREATE_WALLET_GROUP', { GroupName: groupName, wallets: walletsToAdd });
+		},
+		RENAME_WALLET_GROUP: ({ commit, dispatch, state }, { oldGroupName, newGroupName }) => {
+			dispatch('CREATE_WALLET_GROUP', {
+				GroupName: newGroupName,
+				wallets: state.groupWallets
+					.find(({ groupName }) => groupName === oldGroupName)
+					.wallets.map(({ address }) => address),
+			});
+			commit('RENAME_WALLET_GROUP', { oldGroupName, newGroupName });
+		},
+		CREATE_CARD_GROUP: (store, { GroupName, cards }) => {
+			return Axios({
+				url: API_URL,
+				method: 'POST',
+				params: {
+					Comand: 'AddCardGroup',
+					...getAuthParams(),
+					GroupName: encodeURI(GroupName),
+					...cards,
+				},
+			});
+		},
+		SET_CARDS_TO_GROUP: ({ state, dispatch, commit }, { groupName, cards }) => {
+			if (cards.length) {
+				commit('SET_CARDS_TO_GROUP', { groupName, cards });
+			} else {
+				commit(
+					'SET_GROUP_CARDS',
+					state.groupWallets.filter((group) => group.groupName !== groupName),
+				);
+			}
+
+			const cardsToAdd = {};
+
+			cards.forEach((item, index) => {
+				cardsToAdd[index] = item.number;
+			});
+
+			dispatch('CREATE_WALLET_GROUP', { GroupName: groupName, wallets: cardsToAdd });
 		},
 	},
 };
