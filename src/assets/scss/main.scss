@@ -2531,6 +2531,32 @@ $eth: #7d8ef6;
   cursor: pointer;
 }
 .wallets-list_item_body {
+  .group-wrapper {
+    margin-bottom: 15px;
+
+
+    .active-group.active:first-of-type {
+      margin-bottom: 0;
+    }
+    &:not(:first-of-type) {
+      .active-group.active {
+        margin-bottom: 35px;
+      }
+    }
+    .active-group {
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+    .outside-wrapper:last-of-type {
+      .wallet.active {
+        margin-bottom: 0;
+      }
+    }
+  }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
   .list__item {
     position: relative;
     cursor: pointer;

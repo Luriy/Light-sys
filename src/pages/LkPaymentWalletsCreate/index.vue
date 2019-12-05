@@ -135,6 +135,7 @@ export default {
     ...mapGetters({
       types: 'wallet/TYPES',
       wallets: 'wallet/WALLETS',
+      groupWallets: 'group/GROUP_WALLETS',
     })
   },
   filters: {
@@ -170,7 +171,25 @@ export default {
       if (isAvailable) {
          this.$store.dispatch('wallet/CREATE_WALLET', code)
         .then((data) => {
-          if (!data.error) {                                                     
+          if (!data.error) {
+            this.$store.commit('group/SET_GROUP_WALLETS', this.groupWallets.map(group => {
+              if (group.groupName === '') {
+                return {
+                  ...group,
+                  wallets: [
+        						...group.wallets,
+        						{
+        							address: data[`${code}wallet`],
+        							balance: 0,
+        							balanceUSD: 0,
+        							currency: code,
+        							status: 'Active',
+        							isAvailable: true,
+        						},
+        					]
+                }
+              } else return group;
+            }))                                                   
             this.handleOpenSuccessPopup(code);
           }
         })

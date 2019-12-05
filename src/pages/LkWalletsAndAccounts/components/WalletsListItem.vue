@@ -1,73 +1,69 @@
 <template>
-	<transition name="slide-fade">
-		<div class="flex flex-column outside-wrapper">
-			<div
-				@click="$emit('onWalletRouter', wallet.currency, wallet.address, wallet.isAvailable)"
-				class="list__item"
-			>
-				<transition name="fade">
-					<div
-						class="btn-remove"
-						v-show="isWalletsMovingAndDeleting"
-						@click="$emit('onOpenPopup', wallet.address, wallet.currency)"
-					>
-						<img src="@/assets/images/cross.svg" />
+	<div class="flex flex-column outside-wrapper">
+		<div
+			@click="$emit('onWalletRouter', wallet.currency, wallet.address, wallet.isAvailable)"
+			class="list__item"
+		>
+			<transition name="fade">
+				<div
+					class="btn-remove"
+					v-show="isWalletsMovingAndDeleting"
+					@click="$emit('onOpenPopup', wallet.address, wallet.currency)"
+				>
+					<img src="@/assets/images/cross.svg" />
+				</div>
+			</transition>
+			<div class="wallet" :class="{ active: !isWalletsMovingAndDeleting }">
+				<div
+					v-if="!wallet.isAvailable"
+					class="unavailable-block flex justify-content-center align-items-center"
+				>
+					<p class="unavailable-text">Temporarily unavailable</p>
+				</div>
+				<div class="code">
+					<div :class="['image', wallet.currency.toLowerCase()]">
+						<img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title />
+						<img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title />
+						<img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc-ico.svg" width="12" />
 					</div>
-				</transition>
-				<div class="wallet" :class="{ active: !isWalletsMovingAndDeleting }">
-					<div
-						v-if="!wallet.isAvailable"
-						class="unavailable-block flex justify-content-center align-items-center"
-					>
-						<p class="unavailable-text">Temporarily unavailable</p>
+					<span>{{ wallet.currency }}</span>
+				</div>
+				<div class="info" v-if="wallet.isAvailable">
+					<div class="balance">
+						<p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
+						<span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
 					</div>
-					<div class="code">
-						<div :class="['image', wallet.currency.toLowerCase()]">
-							<img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title />
-							<img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title />
-							<img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc-ico.svg" width="12" />
-						</div>
-						<span>{{ wallet.currency }}</span>
-					</div>
-					<div class="info" v-if="wallet.isAvailable">
-						<div class="balance">
-							<p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
-							<span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
-						</div>
-						<div class="progress green">
-							<p>{{ percentage[wallet.currency] | percentage }}</p>
-							<div class="image">
-								<!-- TODO: Используйте computed свойство percentage для построения графиков -->
-								<img src="@/assets/images/graph-green.svg" alt title />
-							</div>
+					<div class="progress green">
+						<p>{{ percentage[wallet.currency] | percentage }}</p>
+						<div class="image">
+							<!-- TODO: Используйте computed свойство percentage для построения графиков -->
+							<img src="@/assets/images/graph-green.svg" alt title />
 						</div>
 					</div>
 				</div>
-				<div class="group-toggler"></div>
 			</div>
-			<div
-				class="under-wallet-block flex align-items-center"
-				:class="{ 'active-input': isInputEditingActive || isGroupActive }"
-				v-show="isWalletsMovingAndDeleting || isGroupActive"
-				@click="handleClickLine"
-			>
-				<div class="under-wallet-line" v-show="!isInputEditingActive && !isGroupActive"></div>
-				<div class="add-group-input-wrapper flex align-items-center" v-show="isInputEditingActive">
-					<input type="text" v-model="groupName" @blur="handleSaveGroup" />
-				</div>
-			</div>
-			<div v-if="isGroupActive" class="active-group">{{ groupName }}</div>
+			<div class="group-toggler"></div>
 		</div>
-	</transition>
+		<div
+			class="under-wallet-block flex align-items-center"
+			:class="{ 'active-input': isInputEditingActive }"
+			v-show="isWalletsMovingAndDeleting"
+			@click="handleClickLine"
+		>
+			<div class="under-wallet-line" v-show="!isInputEditingActive"></div>
+			<div class="add-group-input-wrapper flex align-items-center" v-show="isInputEditingActive">
+				<input type="text" v-model="groupName" @blur="handleSaveGroup" />
+			</div>
+		</div>
+	</div>
 </template>
 <script>
 export default {
-	props: ['wallet', 'isWalletsMovingAndDeleting', 'percentage'],
+	props: ['wallet', 'isWalletsMovingAndDeleting', 'percentage', 'id', 'groupWallets'],
 	data() {
 		return {
 			groupName: 'Group name',
 			isInputEditingActive: false,
-			isGroupActive: false,
 		};
 	},
 	filters: {
@@ -75,14 +71,28 @@ export default {
 	},
 	methods: {
 		handleClickLine() {
-			if (!this.isInputEditingActive && !this.isGroupActive) {
+			if (!this.isInputEditingActive) {
 				this.isInputEditingActive = true;
 				setTimeout(() => document.querySelector('.add-group-input-wrapper input').focus(), 50);
 			}
 		},
 		handleSaveGroup() {
 			this.isInputEditingActive = false;
-			this.isGroupActive = true;
+			const clonedGroupWallets = [...this.groupWallets];
+			// clonedGroupWallets.splice(this.id + 1, 0, {
+			// 	groupName: this.groupName,
+			// 	wallets: [],
+			// });
+			clonedGroupWallets.splice(0, 0, {
+				groupName: this.groupName,
+				wallets: [],
+			});
+			this.$store.commit('group/SET_GROUP_WALLETS', clonedGroupWallets);
+
+			this.$store.dispatch('group/CREATE_GROUP', {
+				GroupName: this.groupName,
+				wallets: [],
+			});
 		},
 	},
 };
@@ -118,11 +128,8 @@ export default {
 .under-wallet-block:hover .under-wallet-line {
 	height: 4px;
 }
+
 .outside-wrapper:last-of-type .under-wallet-block {
 	display: none;
-}
-.active-group {
-	color: #fff;
-	font-weight: 600;
 }
 </style>

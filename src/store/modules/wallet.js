@@ -19,8 +19,6 @@ export default {
 		percentage: {},
 		operations: JSON.parse(localStorage.getItem('stateWalletsOperations')) || [],
 		afterCreateWallet: false,
-		afterTransaction: false,
-		afterTransactionTimeout: null,
 	},
 	getters: {
 		PAGE_DETAIL: (state) => state.pageDetail,
@@ -29,7 +27,6 @@ export default {
 		PERCENTAGE: (state) => state.percentage,
 		OPERATIONS: (state) => state.operations,
 		AFTER_CREATE_WALLET: (state) => state.afterCreateWallet,
-		AFTER_CREATE_TRANSACTION: (state) => state.afterTransaction,
 	},
 	mutations: {
 		SET_PAGE_DETAIL: (state, payload) => (state.pageDetail = payload),
@@ -51,7 +48,6 @@ export default {
 			localStorage.setItem('stateWalletsOperations', JSON.stringify(payload));
 		},
 		SET_AFTER_CREATE_WALLET: (state, payload) => (state.afterCreateWallet = payload),
-		SET_AFTER_TRANSACTION: (state, payload) => (state.afterTransaction = payload),
 	},
 	actions: {
 		GET_PAGE_DETAIL: ({ dispatch, commit }, { currency, address }) => {
@@ -144,7 +140,7 @@ export default {
 				},
 			});
 		},
-		GET_WALLETS({ commit, dispatch }) {
+		GET_WALLETS({ commit, dispatch, rootState }) {
 			return Promise.all([
 				Axios({
 					url: API_URL,
@@ -198,6 +194,7 @@ export default {
 										balance: item.Balance,
 										balanceUSD: item.BalanceUsd,
 										isAvailable: responseNodesStatusData[`StatusNode${walletCurrency}`] === 0,
+										group: decodeURI(item.Group),
 									})),
 								);
 							}
@@ -222,15 +219,25 @@ export default {
 					const groups = [
 						...Object.keys(returnData.Group).map((key) => {
 							return {
-								[decodeURI(key)]: Object.values(returnData.Group[key]),
+								groupName: decodeURI(key),
+								wallets: Object.values(returnData.Group[key]).map((address) =>
+									result.find((res) => res.address === address),
+								),
 							};
 						}),
-						{ 'Without group': result.filter((wallet) => wallet) },
+						{
+							groupName: '',
+							wallets: result.filter((wallet) => wallet.group === ''),
+						},
 					];
 
 					commit('SET_WALLETS', result);
-					console.log(groups);
-					// commit('SET_GROUP_WALLETS', groups);
+
+					if (!rootState.group.groupWallets.length) {
+						commit('group/SET_GROUP_WALLETS', groups, { root: true });
+					} else {
+						commit('group/UPDATE_GROUP_WALLETS', { wallets: result }, { root: true });
+					}
 
 					return { wallets: result, groups };
 				}
@@ -283,14 +290,6 @@ export default {
 				const { Errors } = response[0];
 				const responseData = response[1];
 				if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
-					if (state.afterTransactionTimeout) {
-						clearTimeout(state.afterTransactionTimeout);
-					}
-					commit('SET_AFTER_TRANSACTION', true);
-					state.afterTransactionTimeout = setTimeout(
-						() => commit('SET_AFTER_TRANSACTION', false),
-						1000 * 60 * 2,
-					);
 					return { success: true, data: responseData.return };
 				} else if (Object.values(Errors).includes('Wrong password')) {
 					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(

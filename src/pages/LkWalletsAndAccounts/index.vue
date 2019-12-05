@@ -17,6 +17,7 @@
 					<wallets-list
 						:isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"
 						@afterDeleteWallet="handleAfterDeleteWallet"
+						:groupWallets="groupWallets"
 						:wallets="wallets"
 					></wallets-list>
 				</div>
@@ -81,10 +82,10 @@ export default {
 		...mapGetters({
 			operations: 'wallet/OPERATIONS',
 			wallets: 'wallet/WALLETS',
+			groupWallets: 'group/GROUP_WALLETS',
 			afterCreateWallet: 'wallet/AFTER_CREATE_WALLET',
 			afterCreateTransaction: 'wallet/AFTER_CREATE_TRANSACTION',
 		}),
-		groupWallets() {},
 	},
 	mounted() {
 		if (!this.afterCreateWallet) {
@@ -94,7 +95,7 @@ export default {
 					this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
 				}
 			} else {
-				this.$store.dispatch('wallet/GET_WALLETS').then((wallets) => {
+				this.$store.dispatch('wallet/GET_WALLETS').then(() => {
 					this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
 				});
 			}
