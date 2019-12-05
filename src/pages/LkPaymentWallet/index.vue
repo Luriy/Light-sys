@@ -40,12 +40,12 @@
 		</div>
 
 		<div class="wallet-description" :class="{ active: isDescriptionOpened }">
-			<div class="flex justify-content-between align-items-center description-header-block">
-				<div class="title">Description</div>
-				<button
-					class="description-toggler flex align-items-center justify-content-center"
-					@click="isDescriptionOpened = !isDescriptionOpened"
-				>
+			<div
+				class="flex justify-content-between align-items-center description-header-block"
+				@click="isDescriptionOpened = !isDescriptionOpened"
+			>
+				<div class="title" :class="{ active: isDescriptionOpened }">Description</div>
+				<button class="description-toggler flex align-items-center justify-content-center">
 					<img
 						src="@/assets/images/arrow-big.svg"
 						alt="Description toggler"
@@ -220,13 +220,14 @@ export default {
 	max-width: 775px;
 }
 .wallet-description-text-wrapper {
-	border-radius: 8px;
+	transition: 0.2s;
 	padding: 0px 10px 0px 15px;
 	border: solid 1px #3b2665;
 	padding: 10px 10px 15px 15px;
 }
 .wallet-description-outer {
-	max-height: 0;
+	margin-top: 8px;
+	max-height: 1px;
 	transition: 0.5s;
 	overflow: hidden;
 }
@@ -235,6 +236,9 @@ export default {
 	max-height: 300px;
 	margin-top: 20px;
 }
+.wallet-description-outer.active .wallet-description-text-wrapper {
+	border-radius: 8px;
+}
 .description-toggler {
 	width: 29px;
 	height: 29px;
@@ -242,12 +246,24 @@ export default {
 	background-color: #3b2665;
 }
 .title {
+	transition: 0.4s;
 	margin-bottom: 0 !important;
+	opacity: 0.6;
 }
 .description-toggler-image {
-	transition: 0.3s;
+	opacity: 0.6;
+	transition: 0.4s;
 }
 .description-toggler-image.active {
 	transform: rotate(180deg);
+}
+.description-header-block {
+	cursor: pointer;
+}
+.description-header-block:hover .title,
+.description-header-block .title.active,
+.description-header-block:hover .description-toggler-image,
+.description-header-block .description-toggler-image.active {
+	opacity: 1;
 }
 </style>

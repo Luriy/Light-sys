@@ -23,14 +23,6 @@ export default {
 		draggable,
 		WalletsListItem,
 	},
-	mounted() {
-		// this.$store.dispatch('group/CREATE_GROUP', {
-		// 	GroupName: encodeURI('Some group'),
-		// 	wallets: {
-		// 		'0': '3HHXsmsVub9xHSFU7zx89da4EkwQdGwHR1',
-		// 	},
-		// });
-	},
 	computed: {
 		draggableWalletsList: {
 			get() {

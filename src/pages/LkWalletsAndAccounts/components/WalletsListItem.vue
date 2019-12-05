@@ -50,8 +50,8 @@
 			v-show="isWalletsMovingAndDeleting"
 			@click="handleClickLine"
 		>
-			<div class="under-wallet-line" v-show="!isInputEditingActive"></div>
-			<div class="add-group-input-wrapper flex align-items-center" v-show="isInputEditingActive">
+			<div class="under-wallet-line" v-if="!isInputEditingActive"></div>
+			<div class="add-group-input-wrapper flex align-items-center" v-else>
 				<input type="text" v-model="groupName" @blur="handleSaveGroup" />
 			</div>
 		</div>
@@ -73,7 +73,11 @@ export default {
 		handleClickLine() {
 			if (!this.isInputEditingActive) {
 				this.isInputEditingActive = true;
-				setTimeout(() => document.querySelector('.add-group-input-wrapper input').focus(), 50);
+				setTimeout(
+					() =>
+						document.querySelector('.under-wallet-block .add-group-input-wrapper input').focus(),
+					50,
+				);
 			}
 		},
 		handleSaveGroup() {
@@ -89,7 +93,7 @@ export default {
 			});
 			this.$store.commit('group/SET_GROUP_WALLETS', clonedGroupWallets);
 
-			this.$store.dispatch('group/CREATE_GROUP', {
+			this.$store.dispatch('group/CREATE_WALLET_GROUP', {
 				GroupName: this.groupName,
 				wallets: [],
 			});
@@ -98,16 +102,6 @@ export default {
 };
 </script>
 <style scoped>
-.add-group-input-wrapper {
-	height: 32px;
-	border-radius: 4px;
-	border: 1px solid #745e9f;
-	font-size: 16px;
-	font-weight: 600;
-	color: #fff;
-	padding: 0 8px;
-}
-
 .under-wallet-block {
 	width: 100%;
 	cursor: pointer;
@@ -127,9 +121,5 @@ export default {
 }
 .under-wallet-block:hover .under-wallet-line {
 	height: 4px;
-}
-
-.outside-wrapper:last-of-type .under-wallet-block {
-	display: none;
 }
 </style>

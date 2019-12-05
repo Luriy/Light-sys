@@ -2540,19 +2540,21 @@ $eth: #7d8ef6;
     }
     &:not(:first-of-type) {
       .active-group.active {
-        margin-bottom: 35px;
+        margin-bottom: 15px;
       }
     }
     .active-group {
       color: #fff;
       font-weight: 600;
-      margin-bottom: 15px;
+      font-family: 'Open Sans', sans-serif;
+      margin-bottom: 13px;
     }
-    .outside-wrapper:last-of-type {
-      .wallet.active {
-        margin-bottom: 0;
-      }
-    }
+    
+    // .outside-wrapper:last-of-type {
+    //   .wallet.active {
+    //     margin-bottom: 0;
+    //   }
+    // }
   }
   &:last-of-type {
     margin-bottom: 0;
@@ -2569,7 +2571,20 @@ $eth: #7d8ef6;
     }
   }
 }
-
+.group-wrapper {
+  .add-group-input-wrapper {
+    margin-bottom: 5px;
+  }
+}
+.add-group-input-wrapper {
+      height: 32px;
+      border-radius: 4px;
+      border: 1px solid #745e9f;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      padding: 0 8px;
+    }
 .success-popup_title {
   display: flex;
   flex-direction: column;

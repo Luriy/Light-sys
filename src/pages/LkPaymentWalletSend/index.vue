@@ -14,20 +14,22 @@
 									v-for="wallet in wallets"
 									:key="wallet.address"
 									:class="{ active: wallet.address == $route.params.address }"
-									@click="handleSelectWallet(wallet.currency, wallet.address)"
+									@click="handleSelectWallet(wallet.currency, wallet.address, wallet.isAvailable)"
 								>
+									<div
+										v-if="!wallet.isAvailable"
+										class="unavailable-block flex justify-content-center align-items-center"
+									>
+										<p class="unavailable-text">Temporarily unavailable</p>
+									</div>
 									<img v-if="wallet.currency === 'BTC'" width="17" src="@/assets/images/btc.png" />
-									<img
-										v-if="wallet.currency === 'ETH'"
-										width="17"
-										src="@/assets/images/eth.png"
-									/><!--А если валют будет 150-200? Дам подказку решение ты найдешь в exchange store GET_FIAT_EXCHANGE-->
+									<img v-if="wallet.currency === 'ETH'" width="17" src="@/assets/images/eth.png" />
 									<img v-if="wallet.currency === 'LTC'" width="17" src="@/assets/images/ltc.svg" />
 									<h2 class="select__modal-currency">{{ currencyName(wallet.currency) }}</h2>
-									<span class="select__modal-balance">{{
+									<span class="select__modal-balance" v-if="wallet.isAvailable">{{
 										`${wallet.currency} ${formatCurrency(wallet.balance, '', 5)}`
 									}}</span>
-									<span class="select__modal-balance-usd">{{
+									<span class="select__modal-balance-usd" v-if="wallet.isAvailable">{{
 										`$${formatCurrency(wallet.balanceUSD)} USD`
 									}}</span>
 								</div>
@@ -46,6 +48,7 @@
 						<input
 							type="text"
 							v-model="paymentAddress"
+							spellcheck="false"
 							:placeholder="`Send to ${currencyName(currency)} address..`"
 						/>
 						<div class="qr"><img src="@/assets/images/bitmap-i.png" alt title /></div>
@@ -220,6 +223,7 @@ export default {
 			wallets: 'wallet/WALLETS',
 			types: 'wallet/TYPES',
 			operations: 'wallet/OPERATIONS',
+			unconfirmedOperations: 'wallet/UNCONFIRMED_OPERATIONS',
 		}),
 		currentWallet() {
 			return this.wallets.find((wallet) => wallet.address == this.$route.params.address);
@@ -379,11 +383,11 @@ export default {
 						: remainingCurrency.toFixed(2);
 			}
 		},
-		handleSelectWallet(currency, address) {
-			console.log(this.sendPopup);
-			this.clearData();
-			this.$router.push(`/payments-and-transfer/send/${currency}/${address}`);
-			console.log(this.sendPopup);
+		handleSelectWallet(currency, address, isAvailable) {
+			if (isAvailable) {
+				this.clearData();
+				this.$router.push(`/payments-and-transfer/send/${currency}/${address}`);
+			} else return false;
 		},
 		closeModal() {
 			this.sendPopup = false;
@@ -458,35 +462,23 @@ export default {
 							isLocal: true,
 						};
 						if (this.operations.length) {
-							this.$store.commit('wallet/SET_OPERATIONS', [
-								{
-									...this.operations[0],
-									transactions: [
-										firstTransactionObject,
-										secondTransactionObject,
-										...this.operations[0].transactions,
-									],
-								},
-								...this.operations.slice(1),
+							this.$store.commit('wallet/SET_UNCONFIRMED_OPERATIONS', [
+								...this.unconfirmedOperations,
+								firstTransactionObject,
+								secondTransactionObject,
 							]);
 							this.sendPopup = false;
 							this.successPopup = true;
 						} else {
 							this.$store.dispatch('wallet/GET_OPERATIONS', this.wallets).then((operations) => {
-								this.$store.commit('wallet/SET_OPERATIONS', [
-									{
-										...operations[0],
-										transactions: [
-											firstTransactionObject,
-											secondTransactionObject,
-											...operations[0].transactions,
-										],
-									},
-									...operations.slice(1),
+								this.$store.commit('wallet/SET_UNCONFIRMED_OPERATIONS', [
+									...this.unconfirmedOperations,
+									firstTransactionObject,
+									secondTransactionObject,
 								]);
 							});
-            }
-            this.$store.commit('af')
+						}
+						this.$store.commit('af');
 					}
 					setTimeout(() => {
 						this.successPopup = false;
@@ -505,6 +497,9 @@ export default {
 };
 </script>
 <style scoped>
+.unavailable-block {
+	border-radius: 0;
+}
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
 	-webkit-appearance: none;

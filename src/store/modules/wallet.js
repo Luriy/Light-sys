@@ -15,9 +15,10 @@ export default {
 			balanceUSD: 0,
 		},
 		wallets: JSON.parse(localStorage.getItem('stateWalletsWallets')) || [],
-		types: {},
-		percentage: {},
+		types: JSON.parse(localStorage.getItem('stateTypes')) || {},
+		percentage: JSON.parse(localStorage.getItem('statePercentage')) || {},
 		operations: JSON.parse(localStorage.getItem('stateWalletsOperations')) || [],
+		unconfirmedOperations: JSON.parse(localStorage.getItem('stateUnconfirmedOperations')) || [],
 		afterCreateWallet: false,
 	},
 	getters: {
@@ -27,6 +28,8 @@ export default {
 		PERCENTAGE: (state) => state.percentage,
 		OPERATIONS: (state) => state.operations,
 		AFTER_CREATE_WALLET: (state) => state.afterCreateWallet,
+		OPERATIONS_WITH_UNCONFIRMED: (state) => [...state.operations, ...state.unconfirmedOperations],
+		UNCONFIRMED_OPERATIONS: (state) => state.unconfirmedOperations,
 	},
 	mutations: {
 		SET_PAGE_DETAIL: (state, payload) => (state.pageDetail = payload),
@@ -41,13 +44,20 @@ export default {
 				}
 			});
 		},
-		SET_TYPES: (state, payload) => (state.types = payload),
-		SET_PERCENTAGE: (state, payload) => (state.percentage = payload),
+		SET_TYPES: (state, payload) => {
+			state.types = payload;
+			localStorage.setItem('stateTypes', JSON.stringify(payload));
+		},
+		SET_PERCENTAGE: (state, payload) => {
+			state.percentage = payload;
+			localStorage.setItem('statePercentage', JSON.stringify(payload));
+		},
 		SET_OPERATIONS: (state, payload) => {
 			state.operations = payload;
 			localStorage.setItem('stateWalletsOperations', JSON.stringify(payload));
 		},
 		SET_AFTER_CREATE_WALLET: (state, payload) => (state.afterCreateWallet = payload),
+		SET_UNCONFIRMED_OPERATIONS: (state, payload) => (state.unconfirmedOperations = payload),
 	},
 	actions: {
 		GET_PAGE_DETAIL: ({ dispatch, commit }, { currency, address }) => {
@@ -539,6 +549,28 @@ export default {
 					}),
 				)
 			).flat();
+
+			console.log(transactions);
+
+			const { unconfirmedOperations } = store.state;
+
+			if (unconfirmedOperations.length) {
+				console.log(
+					unconfirmedOperations.filter((unconf) =>
+						transactions.every(
+							(trans) => trans.url !== unconf[0].url || trans.url !== unconf[1].url,
+						),
+					),
+				);
+				this.$store.commit(
+					'SET_UNCONFIRMED_OPERATIONS',
+					unconfirmedOperations.filter((unconf) =>
+						transactions.every(
+							(trans) => trans.url !== unconf[0].url || trans.url !== unconf[1].url,
+						),
+					),
+				);
+			}
 
 			let datesWithTransactions = [];
 
