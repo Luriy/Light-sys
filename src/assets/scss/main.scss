@@ -45,6 +45,10 @@ body .v-application .title {
   font-family:'Open Sans' !important;
 }
 
+.material-icons {
+  font-family: "Material Icons"!important;
+}
+
 a, button, label {
 	cursor: pointer;
 	transition: all .2s ease-in;
@@ -268,7 +272,6 @@ $eth: #7d8ef6;
                 input, i {
                   color: white;
                   font-size: 16px;
-                  line-height: 15px;
                 }
               }
             }
@@ -2807,7 +2810,7 @@ $eth: #7d8ef6;
       font-size: 14px !important;
       line-height: 21px;
       margin-right: 5px;
-      
+
       &.active {
         color: #f787ff;
         text-decoration: underline;
@@ -2952,6 +2955,9 @@ body .v-application .title {
   background-color: rgba(38, 8, 72, 0.75);
   border-radius: 17px;
 }
+<<<<<<< HEAD
 .material-icons {
   font-family: 'Material Icons' !important;
 }
+=======
+>>>>>>> 9aa7bfd1c19c6f795bd23b5eaed199f62f278577

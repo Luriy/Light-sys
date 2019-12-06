@@ -13,6 +13,7 @@ export default {
 		exchangeData: [],
 		transferInfo: {},
 		fiatInfo: {},
+        fiatData: {},
 		exchangeSucces: false,
 	},
 	getters: {
@@ -20,6 +21,7 @@ export default {
 		EXCHANGE_DATA: (state) => state.exchangeData,
 		TRANSFER_INFO: (state) => state.transferInfo,
 		FIAT_INFO: (state) => state.fiatInfo,
+		FIAT_DATA: (state) => state.fiatData,
 		EXCHANGE_SUCCES: (state) => state.exchangeSucces,
 	},
 	mutations: {
@@ -27,6 +29,7 @@ export default {
 		SET_EXCHANGE_DATA: (state, payload) => (state.exchangeData = payload),
 		SET_TRANSFER_INFO: (state, payload) => (state.transferInfo = payload),
 		SET_FIAT_INFO: (state, payload) => (state.fiatInfo = payload),
+        SET_FIAT_DATA: (state, payload) => (state.fiatData = payload),
 		SET_EXCHANGE_SUCCES: (state, payload) => (state.exchangeSucces = payload),
 	},
 	actions: {
@@ -57,8 +60,8 @@ export default {
 			}).then(({ data }) => {
 				const { Errors } = parsePythonArray(data)['0'];
 				if (!Object.keys(Errors).length) {
-					commit('alerts/setLoading', false, { root: true });
-					const result = parsePythonArray(data)['1'].return;
+                    const result = parsePythonArray(data)['1'].return;
+                    commit('alerts/setLoading', false, { root: true });
 					commit('SET_FIAT_INFO', result);
 				} else {
 					commit('alerts/setLoading', false, { root: true });
@@ -121,11 +124,11 @@ export default {
 				// const { Errors } = response[0];
 				const parsedData = values.map((item) => {
 						return parsePythonArray(item.data)['1'].return;
-					}),
-					[fiatResult, walletsResult, cardsResult] = parsedData,
-					{ Result: fiat } = fiatResult,
-					{ Cards: cards } = cardsResult,
-					fiatKeys = Object.keys(fiat);
+					});
+				const [fiatResult, walletsResult, cardsResult] = parsedData;
+				const	{ Result: fiat } = fiatResult;
+				const	{ Cards: cards } = cardsResult;
+				const	fiatKeys = Object.keys(fiat);
 
 				fiatKeys.forEach((key) => {
 					fiat[key].name = decodeURIComponent(fiat[key].name);
@@ -148,12 +151,12 @@ export default {
 							return acc;
 						}, [])
 						.filter(({ status }) => status !== 'Frozen')
-                        .filter(({ currency }) => currency !== 'Group'),
-					resultCards = Object.keys(cards).map((card) => {
+            .filter(({ currency }) => currency !== 'Group');
+				const	resultCards = Object.keys(cards).map((card) => {
 						const { name, reserve, valute } = fiat[+cards[card].Psid];
 						return {
 							fullName: name,
-							icon: fiatList[+cards[card].Psid].icon.big,
+							icon: fiatList[cards[card].Psid] && fiatList[cards[card].Psid].icon.big ? fiatList[+cards[card].Psid].icon.big : fiatList['111'].icon.big,
 							currency: valute,
 							reserve,
 							number: cards[card].Number,
@@ -162,6 +165,16 @@ export default {
 						};
 					});
         commit('SET_EXCHANGE_DATA', [...resultWallets, ...resultCards]);
+        const resultPsids = Object.keys(fiat).map(item => {
+          return {
+           name: fiat[item].name,
+           psid: fiat[item].psid,
+           icon: fiatList[fiat[item].psid] && fiatList[fiat[item].psid].icon.big ? fiatList[fiat[item].psid].icon.big : fiatList['111'].icon.big,
+           currency: fiat[item].valute,
+           reserve: fiat[item].reserve
+         }
+        });
+        commit('SET_FIAT_DATA', resultPsids);
 			});
 		},
 		POST_WALLETS: ({ commit }, { transferData, pair: { exchange, receive } }) => {
