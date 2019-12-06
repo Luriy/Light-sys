@@ -37,7 +37,7 @@
 								<p v-else-if="getTransactionType(transaction) === 'receive'">
 									Received
 								</p>
-								<span>{{ getTime(transaction.time) }} PM</span>
+								<span>{{ getTime(transaction.time) }}</span>
 							</div>
 						</button>
 						<div class="code">
@@ -72,7 +72,8 @@
 						</div>
 						<div class="trans-amount">
 							<span class="text"
-								>{{ Number(transaction.value).toFixed(5) }} {{ transaction.currency }}</span
+								>{{ Math.abs(Number(transaction.value).toFixed(5)) }}
+								{{ transaction.currency }}</span
 							>
 							<span class="icon" @click="handleOpenOperation(transaction.url)"></span>
 						</div>
@@ -83,7 +84,7 @@
 								<tr>
 									<th>
 										<p>Date</p>
-										<span>{{ transaction.source.Time }}</span>
+										<span>{{ getFullTime(transaction.time) }}</span>
 									</th>
 									<th>
 										<p>Transaction ID</p>
@@ -164,8 +165,15 @@ export default {
 		},
 		getTime(date) {
 			const parsedDate = new Date(Date.parse(date)).toString();
-
 			return parsedDate.slice(16, 21);
+		},
+		getFullTime(date) {
+			const parsedDate = new Date(Date.parse(date));
+			const day = parsedDate.getDate();
+			const month = Number(parsedDate.getMonth()) + 1;
+			const formattedMonth = month < 10 ? '0' + month : month;
+			const year = parsedDate.getFullYear();
+			return `${day}/${month}/${year} ${this.getTime(date)}`;
 		},
 		handleOpenOperation(url) {
 			if (this.openedOperation === url) {

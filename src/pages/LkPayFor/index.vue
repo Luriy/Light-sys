@@ -50,11 +50,20 @@
 								<div class="select__body" v-show="walletSelect.isActive">
 									<div
 										class="select__body-item flex justify-content-between align-items-center"
-										:class="{ active: currentWallet.address === wallet.address }"
+										:class="{
+											active: currentWallet.address === wallet.address,
+											unavailable: !wallet.isAvailable,
+										}"
 										v-for="wallet in wallets"
 										:key="wallet.address"
 										@click="handleChangeCurrentWallet(wallet)"
 									>
+										<div
+											v-if="!wallet.isAvailable"
+											class="unavailable-block flex justify-content-center align-items-center"
+										>
+											<p class="unavailable-text">Temporarily unavailable</p>
+										</div>
 										<div class="flex align-items-center">
 											<img
 												v-if="wallet.currency === 'BTC'"
@@ -75,10 +84,10 @@
 												{{ getCryptoInfo(wallet.currency).fullName }}
 											</h2>
 										</div>
-										<span class="select__body-balance">{{
+										<span class="select__body-balance" v-if="wallet.isAvailable">{{
 											`${wallet.currency} ${formatCurrency(wallet.balance, '', 5)}`
 										}}</span>
-										<span class="select__body-balance-usd">{{
+										<span class="select__body-balance-usd" v-if="wallet.isAvailable">{{
 											`$${formatCurrency(wallet.balanceUSD)} USD`
 										}}</span>
 									</div>
@@ -283,9 +292,11 @@ export default {
 
 			this.currentWallet = walletWithMaxBalance;
 		},
-		handleChangeCurrentWallet({ currency, balance, balanceUSD, address }) {
-			this.walletSelect.isActive = false;
-			this.currentWallet = { currency, balance, balanceUSD, address };
+		handleChangeCurrentWallet({ currency, balance, balanceUSD, address, isAvailable }) {
+			if (isAvailable) {
+				this.walletSelect.isActive = false;
+				this.currentWallet = { currency, balance, balanceUSD, address };
+			} else return false;
 		},
 		handleChangePaymentsDirection(name) {
 			if (name === this.activePaymentDirection) {

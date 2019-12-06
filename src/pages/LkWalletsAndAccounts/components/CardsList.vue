@@ -1,26 +1,28 @@
 <template>
-	<draggable
-		v-model="draggableMappedCurrencies"
-		v-if="isCardsMovingAndDeleting"
-		class="wallets-list_item_body"
-	>
-		<cards-list-item
-			v-for="item in mappedCurrencies"
-			:key="item.fullName"
-			:item="item"
-			@onOpenDeletePopup="handleOpenDeletePopup"
-			:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
-			:activeTab="activeTab"
-			@onClickTab="handleClickTab"
-		></cards-list-item>
-		<lk-popup-delete-card
-			@onClose="handleCloseDeletePopup"
-			@onDeleteCard="handleDeleteCard"
-			:deletePopup="deletePopup"
-			:formattedCardNumber="formatCardNumber(deletePopup.number)"
-			:bankImage="getBankImage(deletePopup.psid, 'big')"
-		></lk-popup-delete-card>
-	</draggable>
+	<div v-if="isCardsMovingAndDeleting">
+		<div class="group-wrapper" v-for="(group, index) in groupCards" :key="group.groupName + index">
+			<div class="active-group" :class="{ active: group.groupName.length === 0 }">
+				{{ group.groupName }}
+			</div>
+			<draggable-card-items
+				:id="index"
+				:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
+				:groupCards="groupCards"
+				@onClickTab="handleClickTab"
+				@onOpenDeletePopup="handleOpenDeletePopup"
+				:group="group"
+				:mappedCurrencies="mappedCurrencies"
+				:activeTab="activeTab"
+			></draggable-card-items>
+			<lk-popup-delete-card
+				@onClose="handleCloseDeletePopup"
+				@onDeleteCard="handleDeleteCard"
+				:deletePopup="deletePopup"
+				:formattedCardNumber="formatCardNumber(deletePopup.number)"
+				:bankImage="getBankImage(deletePopup.psid, 'big')"
+			></lk-popup-delete-card>
+		</div>
+	</div>
 	<div class="wallets-list_item_body" v-else>
 		<cards-list-item
 			v-for="item in mappedCurrencies"
@@ -36,13 +38,13 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import draggable from 'vuedraggable';
 import getCardsByCurrency from '@/functions/getCardsByCurrency';
 import getCurrencyInfo from '@/functions/getCurrencyInfo';
 import getBankImage from '@/functions/getBankImage';
 import formatCardNumber from '@/functions/formatCardNumber';
 import CardsListItem from './CardsListItem';
 import LkPopupDeleteCard from '@/components/Popups/DeleteCard';
+import DraggableCardsItems from './DraggableCardItems';
 
 export default {
 	// left-arrow-purple.svg or cloud.svg - type of card
@@ -50,9 +52,9 @@ export default {
 	name: 'CardsList',
 	props: ['isCardsMovingAndDeleting'],
 	components: {
-		draggable,
 		CardsListItem,
 		LkPopupDeleteCard,
+		DraggableCardsItems,
 	},
 	data() {
 		return {
@@ -91,15 +93,8 @@ export default {
 			banks: 'common/BANKS',
 			cards: 'card/CARDS',
 			userCurrencies: 'currency/USER_CURRENCIES',
+			groupCards: 'group/GROUP_CARDS',
 		}),
-		draggableMappedCurrencies: {
-			get() {
-				return this.mappedCurrencies;
-			},
-			set(value) {
-				return this.$store.commit('currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES', value);
-			},
-		},
 	},
 	methods: {
 		formatCardNumber,
