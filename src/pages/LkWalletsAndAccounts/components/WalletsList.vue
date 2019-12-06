@@ -36,12 +36,7 @@
 		</div>
 	</div>
 	<div v-else class="wallets-list_item_body">
-		<div
-			class="group-wrapper"
-			v-for="(group, index) in groupWallets"
-			:key="group.groupName"
-			:data-id="index"
-		>
+		<div class="group-wrapper" v-for="group in groupWallets" :key="group.groupName">
 			<div class="active-group" :class="{ active: group.groupName.length === 0 }">
 				{{ group.groupName }}
 			</div>
@@ -82,7 +77,6 @@ export default {
 			newGroupName: '',
 		};
 	},
-	mounted() {},
 	computed: {
 		...mapGetters({
 			percentage: 'wallet/PERCENTAGE',
@@ -144,7 +138,10 @@ export default {
 			this.editingGroup = groupName;
 			this.newGroupName = groupName;
 			setTimeout(
-				() => document.querySelector('.group-wrapper .add-group-input-wrapper input').focus(),
+				() =>
+					document
+						.querySelector('.wallets-block .group-wrapper .add-group-input-wrapper input')
+						.focus(),
 				50,
 			);
 		},

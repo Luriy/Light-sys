@@ -263,7 +263,6 @@ export default {
 			};
 		},
 		handleSoonDeleteCard(number, psid) {
-			console.log(number);
 			this.$emit('onDeleteCard', number);
 			this.$store.commit(
 				'card/SET_CARDS',

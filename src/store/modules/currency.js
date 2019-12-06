@@ -44,14 +44,13 @@ export default {
 				const returnData = Object.values(parsePythonArray(data)['1'].return.Valute).map(
 					(item) => item[0],
 				);
-				console.log(returnData);
 
 				commit('SET_CURRENCIES', returnData);
 
 				return returnData;
 			});
 		},
-		GET_USER_CURRENCIES: ({ commit, dispatch }) => {
+		GET_USER_CURRENCIES: ({ commit, dispatch, rootState }) => {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -65,8 +64,27 @@ export default {
 				const responseData = response[1].return;
 
 				if (!Object.keys(Errors).length && Object.keys(responseData).length) {
-					const userCurrenciesArray = Object.values(responseData.Result);
+					const userCurrenciesArray = Object.values(responseData.Result).map((item) => item[0]);
 					commit('SET_USER_CURRENCIES', userCurrenciesArray);
+					const groups = [
+						...Object.keys(responseData.Group).map((key) => {
+							return {
+								groupName: decodeURI(key),
+								currencies: Object.values(responseData.Group[key]).map((groupCurrency) => ({
+									currency: userCurrenciesArray.find(
+										(userCurrency) => userCurrency === groupCurrency,
+									),
+								})),
+							};
+						}),
+						// {
+						// 	groupName: '',
+						// 	wallets: userCurrenciesArray.filter((userCurrency) => userCurrency[1] === ''),
+						// },
+					];
+					if (!rootState.group.groupCurrencies.length) {
+						commit('group/SET_GROUP_CURRENCIES', groups, { root: true });
+					}
 
 					return userCurrenciesArray;
 				} else if (Object.values(Errors).includes('Wrong password')) {

@@ -1,17 +1,14 @@
 <template>
-	<draggable
-		v-model="draggableMappedCurrencies"
-		v-if="isCardsMovingAndDeleting"
-		class="wallets-list_item_body"
-	>
+	<draggable v-model="draggableCurrenciesList" group="cards" :animation="350">
 		<cards-list-item
-			v-for="item in mappedCurrencies"
+			v-for="item in currencies"
 			:key="item.fullName"
 			:item="item"
 			@onOpenDeletePopup="onOpenDeletePopup"
 			:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
 			:activeTab="activeTab"
 			@onClickTab="onClickTab"
+			:groupCurrencies="groupCurrencies"
 		></cards-list-item>
 	</draggable>
 </template>
@@ -20,18 +17,21 @@ import draggable from 'vuedraggable';
 import CardsListItem from './CardsListItem';
 
 export default {
-	props: ['activeTab', 'isCardsMovingAndDeleting', 'mappedCurrencies'],
+	props: ['activeTab', 'isCardsMovingAndDeleting', 'currencies', 'id', 'groupCurrencies', 'group'],
 	components: {
 		draggable,
 		CardsListItem,
 	},
 	computed: {
-		draggableMappedCurrencies: {
+		draggableCurrenciesList: {
 			get() {
-				return this.mappedCurrencies;
+				return this.groupCurrencies[this.id].currencies;
 			},
 			set(value) {
-				return this.$store.commit('currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES', value);
+				return this.$store.dispatch('group/SET_CURRENCIES_TO_GROUP', {
+					currencies: value,
+					groupName: this.group.groupName,
+				});
 			},
 		},
 	},

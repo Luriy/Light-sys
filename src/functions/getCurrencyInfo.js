@@ -8,7 +8,7 @@ const getCurrencyInfo = (currency) => {
 		case 'KZT':
 			return {
 				fullName: 'Tenge',
-				code: '〒',
+				code: '&#8376',
 			};
 		case 'UAH':
 			return {
@@ -19,6 +19,11 @@ const getCurrencyInfo = (currency) => {
 			return {
 				fullName: 'US Dollar',
 				code: '$',
+			};
+		default:
+			return {
+				fullName: 'Unknown',
+				code: 'Unknown',
 			};
 	}
 };

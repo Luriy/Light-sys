@@ -117,6 +117,7 @@ import { VALIDATE_CARD } from '@/validation';
 import getBankImage from '@/functions/getBankImage';
 import fiatList from '@/settings/fiatList';
 import formatCardNumber from '@/functions/formatCardNumber';
+import getCurrencyInfo from '@/functions/getCurrencyInfo';
 
 export default {
 	components: {

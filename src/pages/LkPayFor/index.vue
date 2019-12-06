@@ -38,7 +38,7 @@
 										>
 										<span class="select__balance">
 											{{ `${Number(currentWallet.balance).toFixed(5)} ${currentWallet.currency}` }}
-											{{ `${Number(currentWallet.balanceUSD).toFixed(2)} USD` }}
+											{{ `$${Number(currentWallet.balanceUSD).toFixed(2)} USD` }}
 										</span>
 									</div>
 								</div>

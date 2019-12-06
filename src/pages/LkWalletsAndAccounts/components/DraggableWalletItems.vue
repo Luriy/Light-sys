@@ -8,7 +8,6 @@
 			:wallet="wallet"
 			:isWalletsMovingAndDeleting="isWalletsMovingAndDeleting"
 			:percentage="percentage"
-			:id="id"
 			:groupWallets="groupWallets"
 		></wallets-list-item>
 	</draggable>
@@ -29,7 +28,7 @@ export default {
 				return this.groupWallets[this.id].wallets;
 			},
 			set(value) {
-				this.$store.dispatch('group/SET_WALLETS_TO_GROUP', {
+				return this.$store.dispatch('group/SET_WALLETS_TO_GROUP', {
 					wallets: value,
 					groupName: this.group.groupName,
 				});

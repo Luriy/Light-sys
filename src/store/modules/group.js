@@ -7,11 +7,11 @@ export default {
 	namespaced: true,
 	state: {
 		groupWallets: JSON.parse(localStorage.getItem('stateGroupWallets')) || [],
-		groupCards: JSON.parse(localStorage.getItem('stateGroupCards')) || [],
+		groupCurrencies: JSON.parse(localStorage.getItem('stateGroupCurrencies')) || [],
 	},
 	getters: {
 		GROUP_WALLETS: (state) => state.groupWallets,
-		GROUP_CARDS: (state) => state.groupCards,
+		GROUP_CURRENCIES: (state) => state.groupCurrencies,
 	},
 	mutations: {
 		SET_GROUP_WALLETS: (state, payload) => {
@@ -42,9 +42,19 @@ export default {
 				}),
 			}));
 		},
-		SET_GROUP_CARDS: (state, payload) => {
-			state.groupCards = payload;
-			localStorage.setItem('stateGroupCards', JSON.stringify(payload));
+		SET_GROUP_CURRENCIES: (state, payload) => {
+			state.groupCurrencies = payload;
+			localStorage.setItem('stateGroupCurrencies', JSON.stringify(payload));
+		},
+		SET_CURRENCIES_TO_GROUP: (state, { groupName, currencies }) => {
+			state.groupCurrencies.find((group) => group.groupName === groupName).currencies = currencies;
+			localStorage.setItem('stateGroupCurrencies', JSON.stringify(state.groupCurrencies));
+		},
+		RENAME_CURRENCY_GROUP: (state, { oldGroupName, newGroupName }) => {
+			state.groupCurrencies.find(
+				({ groupName }) => groupName === oldGroupName,
+			).groupName = newGroupName;
+			localStorage.setItem('stateGroupCurrencies', JSON.stringify(state.groupCurrencies));
 		},
 	},
 	actions: {
@@ -64,10 +74,24 @@ export default {
 			if (wallets.length) {
 				commit('SET_WALLETS_TO_GROUP', { groupName, wallets });
 			} else {
-				commit(
-					'SET_GROUP_WALLETS',
-					state.groupWallets.filter((group) => group.groupName !== groupName),
-				);
+				if (groupName === '') {
+					commit(
+						'SET_GROUP_WALLETS',
+						state.groupWallets.map((group) =>
+							group.groupName === ''
+								? {
+										...group,
+										wallets: [],
+								  }
+								: group,
+						),
+					);
+				} else {
+					commit(
+						'SET_GROUP_WALLETS',
+						state.groupWallets.filter((group) => group.groupName !== groupName),
+					);
+				}
 			}
 
 			const walletsToAdd = {};
@@ -87,35 +111,58 @@ export default {
 			});
 			commit('RENAME_WALLET_GROUP', { oldGroupName, newGroupName });
 		},
-		CREATE_CARD_GROUP: (store, { GroupName, cards }) => {
+		CREATE_CURRENCY_GROUP: (store, { GroupName, currencies }) => {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
 				params: {
-					Comand: 'AddCardGroup',
+					Comand: 'AddValuteGroup',
 					...getAuthParams(),
 					GroupName: encodeURI(GroupName),
-					...cards,
+					...currencies,
 				},
 			});
 		},
-		SET_CARDS_TO_GROUP: ({ state, dispatch, commit }, { groupName, cards }) => {
-			if (cards.length) {
-				commit('SET_CARDS_TO_GROUP', { groupName, cards });
+		SET_CURRENCIES_TO_GROUP: ({ state, dispatch, commit }, { groupName, currencies }) => {
+			if (currencies.length) {
+				commit('SET_CURRENCIES_TO_GROUP', { groupName, currencies });
 			} else {
-				commit(
-					'SET_GROUP_CARDS',
-					state.groupWallets.filter((group) => group.groupName !== groupName),
-				);
+				if (groupName === '') {
+					commit(
+						'SET_GROUP_CURRENCIES',
+						state.groupCurrencies.map((group) =>
+							group.groupName === ''
+								? {
+										...group,
+										currencies: [],
+								  }
+								: group,
+						),
+					);
+				} else {
+					commit(
+						'SET_GROUP_CURRENCIES',
+						state.groupCurrencies.filter((group) => group.groupName !== groupName),
+					);
+				}
 			}
 
-			const cardsToAdd = {};
+			const currenciesToAdd = {};
 
-			cards.forEach((item, index) => {
-				cardsToAdd[index] = item.number;
+			currencies.forEach((item, index) => {
+				currenciesToAdd[index] = item.Number;
 			});
 
-			dispatch('CREATE_WALLET_GROUP', { GroupName: groupName, wallets: cardsToAdd });
+			dispatch('CREATE_CURRENCY_GROUP', { GroupName: groupName, currencies: currenciesToAdd });
+		},
+		RENAME_CURRENCY_GROUP: ({ commit, dispatch, state }, { oldGroupName, newGroupName }) => {
+			dispatch('CREATE_CURRENCY_GROUP', {
+				GroupName: newGroupName,
+				currencies: state.groupCurrencies
+					.find(({ groupName }) => groupName === oldGroupName)
+					.currencies.map(({ Number: number }) => number),
+			});
+			commit('RENAME_CURRENCY_GROUP', { oldGroupName, newGroupName });
 		},
 	},
 };

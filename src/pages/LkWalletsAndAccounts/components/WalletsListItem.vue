@@ -33,7 +33,13 @@
 						<p>{{ wallet.currency }} {{ formatCurrency(wallet.balance, '', 5) }}</p>
 						<span>USD {{ formatCurrency(wallet.balanceUSD, '$') }}</span>
 					</div>
-					<div class="progress green">
+					<div
+						class="progress"
+						:class="{
+							green: percentage[wallet.currency]['1h'].toFixed(2) > 0.01,
+							red: percentage[wallet.currency]['1h'].toFixed(2) < -0.01,
+						}"
+					>
 						<p>{{ percentage[wallet.currency] | percentage }}</p>
 						<div class="image">
 							<!-- TODO: Используйте computed свойство percentage для построения графиков -->
@@ -59,7 +65,7 @@
 </template>
 <script>
 export default {
-	props: ['wallet', 'isWalletsMovingAndDeleting', 'percentage', 'id', 'groupWallets'],
+	props: ['wallet', 'isWalletsMovingAndDeleting', 'percentage', 'groupWallets'],
 	data() {
 		return {
 			groupName: 'Group name',
@@ -67,7 +73,14 @@ export default {
 		};
 	},
 	filters: {
-		percentage: (value) => (value ? `${value['1h'].toFixed(2)}%` : ''),
+		percentage: (value) =>
+			value
+				? `${
+						value['1h'].toFixed(2) < 0.01 && value['1h'].toFixed(2) > -0.01
+							? '0.00'
+							: value['1h'].toFixed(2)
+				  }%`
+				: '',
 	},
 	methods: {
 		handleClickLine() {
@@ -83,11 +96,7 @@ export default {
 		handleSaveGroup() {
 			this.isInputEditingActive = false;
 			const clonedGroupWallets = [...this.groupWallets];
-			// clonedGroupWallets.splice(this.id + 1, 0, {
-			// 	groupName: this.groupName,
-			// 	wallets: [],
-			// });
-			clonedGroupWallets.splice(0, 0, {
+			clonedGroupWallets.unshift({
 				groupName: this.groupName,
 				wallets: [],
 			});
@@ -101,25 +110,4 @@ export default {
 	},
 };
 </script>
-<style scoped>
-.under-wallet-block {
-	width: 100%;
-	cursor: pointer;
-	height: 10px;
-	transition: 0.2s;
-}
-.under-wallet-line {
-	background-color: #3b2665;
-	height: 0px;
-	width: 100%;
-}
-.under-wallet-block:hover {
-	height: 14px;
-}
-.under-wallet-block.active-input {
-	height: 46px;
-}
-.under-wallet-block:hover .under-wallet-line {
-	height: 4px;
-}
-</style>
+<style scoped></style>

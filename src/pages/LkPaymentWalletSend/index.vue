@@ -13,7 +13,10 @@
 									class="select__modal-item"
 									v-for="wallet in wallets"
 									:key="wallet.address"
-									:class="{ active: wallet.address == $route.params.address }"
+									:class="{
+										active: wallet.address == $route.params.address,
+										unavailable: !wallet.isAvailable,
+									}"
 									@click="handleSelectWallet(wallet.currency, wallet.address, wallet.isAvailable)"
 								>
 									<div

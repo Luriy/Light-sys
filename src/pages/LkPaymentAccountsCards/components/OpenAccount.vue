@@ -53,7 +53,7 @@
 					:key="currency"
 				>
 					<div class="currency">
-						<div class="icon">{{ getCurrencyInfo(currency).code }}</div>
+						<div class="icon" v-html="getCurrencyInfo(currency).code"></div>
 						<div class="text">{{ getCurrencyInfo(currency).fullName }}</div>
 					</div>
 					<!-- <div class="right">
@@ -86,41 +86,31 @@ export default {
 	data() {
 		return {
 			isEditing: false,
+			checkboxes: [],
 		};
 	},
-	created() {
-		this.$store.dispatch('currency/GET_ALL_CURRENCIES');
+	mounted() {
+		this.$store.dispatch('currency/GET_ALL_CURRENCIES').then(() => {
+			this.checkboxes = this.currencies.map((currency, index) => ({
+				isChecked: false,
+				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				id: index,
+			}));
+		});
 		this.$store.dispatch('currency/GET_USER_CURRENCIES');
 	},
 	computed: {
 		...mapGetters({
 			currencies: 'currency/CURRENCIES',
 			userCurrencies: 'currency/USER_CURRENCIES',
-			walletsAndAccountsPageCurrencies: 'currency/WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
+			groupCurrencies: 'group/GROUP_CURRENCIES',
 		}),
-		checkboxes: {
-			get() {
-				return this.currencies.map((currency, index) => ({
-					isChecked: false,
-					isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-					id: index,
-				}));
-			},
-			set() {
-				this.checkboxes = value;
-			},
-		},
-		initialCheckboxes: {
-			get() {
-				return this.currencies.map((currency, index) => ({
-					isChecked: false,
-					isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-					id: index,
-				}));
-			},
-			set(value) {
-				this.initialCheckboxes = value;
-			},
+		initialCheckboxes() {
+			return this.currencies.map((currency, index) => ({
+				isChecked: false,
+				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				id: index,
+			}));
 		},
 	},
 	methods: {
@@ -168,17 +158,18 @@ export default {
 				this.$store.dispatch('currency/ADD_USER_CURRENCY', { ValuteName: valute }).then((data) => {
 					if (data.success) {
 						this.$store.commit('currency/SET_USER_CURRENCIES', [valute, ...this.userCurrencies]);
-						if (this.walletsAndAccountsPageCurrencies.length) {
-							this.$store.commit('currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES', [
-								...this.walletsAndAccountsPageCurrencies,
+						this.$store.dispatch('group/SET_CURRENCIES_TO_GROUP', {
+							groupName: '',
+							currencies: [
+								...this.groupCurrencies.find(({ groupName }) => groupName === '').currencies,
 								{
 									cards: [],
 									currency: valute,
 									code: getCurrencyInfo(valute).code,
 									fullName: getCurrencyInfo(valute).fullName,
 								},
-							]);
-						}
+							],
+						});
 
 						this.isEditing = false;
 					}
@@ -202,8 +193,11 @@ export default {
 								this.userCurrencies.filter((userCurrency) => userCurrency !== valute),
 							);
 							this.$store.commit(
-								'currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
-								this.walletsAndAccountsPageCurrencies.filter(({ currency }) => currency !== valute),
+								'group/SET_GROUP_CURRENCIES',
+								this.groupCurrencies.map((group) => ({
+									...group,
+									currencies: group.currencies.filter(({ currency }) => currency !== valute),
+								})),
 							);
 							this.isEditing = false;
 						}
@@ -211,6 +205,15 @@ export default {
 			});
 
 			// console.log('valutesToAdd', valutesToAdd, 'valutesToRemove', valutesToRemove);
+		},
+	},
+	watch: {
+		userCurrencies() {
+			this.checkboxes = this.currencies.map((currency, index) => ({
+				isChecked: false,
+				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				id: index,
+			}));
 		},
 	},
 };

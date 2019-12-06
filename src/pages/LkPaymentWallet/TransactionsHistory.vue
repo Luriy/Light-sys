@@ -1,11 +1,13 @@
 <template v-if="datesWithTransactions.length">
-	<div>
+	<div class="trans-list__wrapper">
 		<div
 			class="trans-list"
 			v-for="datesWithTransaction in datesWithTransactions"
 			:key="datesWithTransaction.date.toString()"
 		>
-			<div class="trans-date">{{ formatDate(datesWithTransaction.date) }}</div>
+			<div class="trans-date">
+				<p>{{ formatDate(datesWithTransaction.date) }}</p>
+			</div>
 			<div
 				class="trans-item"
 				v-for="transaction in datesWithTransaction.transactions"
@@ -72,7 +74,7 @@
 						</div>
 						<div class="trans-amount">
 							<span class="text"
-								>{{ Math.abs(Number(transaction.value).toFixed(5)) }}
+								>{{ Math.abs(Number(transaction.value)).toFixed(5) }}
 								{{ transaction.currency }}</span
 							>
 							<span class="icon" @click="handleOpenOperation(transaction.url)"></span>
@@ -100,10 +102,10 @@
 									</th>
 									<th>
 										<p v-if="getTransactionType(transaction) === 'send'">To</p>
-										<p v-else-if="getTransactionType(transaction) === 'exchange'">To</p>
 										<p v-else-if="getTransactionType(transaction) === 'receive'">
 											From
 										</p>
+										<p v-else-if="getTransactionType(transaction) === 'exchange'">To</p>
 
 										<span v-if="getTransactionType(transaction) === 'send'">{{
 											transaction.source.To

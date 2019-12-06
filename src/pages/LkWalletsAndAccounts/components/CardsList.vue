@@ -1,22 +1,37 @@
 <template>
-	<div v-if="isCardsMovingAndDeleting">
-		<div class="group-wrapper" v-for="(group, index) in groupCards" :key="group.groupName + index">
-			<div class="active-group" :class="{ active: group.groupName.length === 0 }">
+	<div v-if="isCardsMovingAndDeleting" class="wallets-list_item_body">
+		<div
+			class="group-wrapper"
+			v-for="(group, index) in groupCurrencies"
+			:key="group.groupName + index"
+		>
+			<div
+				class="add-group-input-wrapper flex align-items-center"
+				v-if="editingGroup === group.groupName"
+			>
+				<input type="text" v-model="newGroupName" @blur="handleSaveRenameGroup" />
+			</div>
+			<div
+				class="active-group"
+				:class="{ active: group.groupName.length === 0 }"
+				@click="handleRenameGroup(group.groupName)"
+				v-else
+			>
 				{{ group.groupName }}
 			</div>
 			<draggable-card-items
 				:id="index"
+				:group="group"
 				:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
-				:groupCards="groupCards"
+				:groupCurrencies="groupCurrencies"
 				@onClickTab="handleClickTab"
 				@onOpenDeletePopup="handleOpenDeletePopup"
-				:group="group"
-				:mappedCurrencies="mappedCurrencies"
+				:currencies="group.currencies"
 				:activeTab="activeTab"
 			></draggable-card-items>
 			<lk-popup-delete-card
 				@onClose="handleCloseDeletePopup"
-				@onDeleteCard="handleDeleteCard"
+				@onSoonDeleteCard="handleDeleteCard"
 				:deletePopup="deletePopup"
 				:formattedCardNumber="formatCardNumber(deletePopup.number)"
 				:bankImage="getBankImage(deletePopup.psid, 'big')"
@@ -24,16 +39,21 @@
 		</div>
 	</div>
 	<div class="wallets-list_item_body" v-else>
-		<cards-list-item
-			v-for="item in mappedCurrencies"
-			:key="item.fullName"
-			:item="item"
-			@onOpenDeletePopup="handleOpenDeletePopup"
-			:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
-			:activeTab="activeTab"
-			@onClickTab="handleClickTab"
-		>
-		</cards-list-item>
+		<div class="group-wrapper" v-for="group in groupCurrencies" :key="group.groupName">
+			<div class="active-group" :class="{ active: group.groupName.length === 0 }">
+				{{ group.groupName }}
+			</div>
+			<cards-list-item
+				v-for="item in group.currencies"
+				:key="item.fullName"
+				:item="item"
+				@onOpenDeletePopup="handleOpenDeletePopup"
+				:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
+				:activeTab="activeTab"
+				@onClickTab="handleClickTab"
+			>
+			</cards-list-item>
+		</div>
 	</div>
 </template>
 <script>
@@ -44,7 +64,7 @@ import getBankImage from '@/functions/getBankImage';
 import formatCardNumber from '@/functions/formatCardNumber';
 import CardsListItem from './CardsListItem';
 import LkPopupDeleteCard from '@/components/Popups/DeleteCard';
-import DraggableCardsItems from './DraggableCardItems';
+import DraggableCardItems from './DraggableCardItems';
 
 export default {
 	// left-arrow-purple.svg or cloud.svg - type of card
@@ -54,7 +74,7 @@ export default {
 	components: {
 		CardsListItem,
 		LkPopupDeleteCard,
-		DraggableCardsItems,
+		DraggableCardItems,
 	},
 	data() {
 		return {
@@ -64,6 +84,8 @@ export default {
 				psid: null,
 			},
 			activeTab: null,
+			editingGroup: null,
+			newGroupName: '',
 		};
 	},
 	created() {
@@ -71,16 +93,21 @@ export default {
 			this.$store.dispatch('common/GET_BANKS'),
 			this.$store.dispatch('card/GET_CARDS'),
 			this.$store.dispatch('currency/GET_USER_CURRENCIES'),
-		]).then(([banks, cards, userCurrencies]) => {
+		]).then(() => {
 			this.$store.commit(
-				'currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
-				userCurrencies.map((currency) => {
-					const { fullName, code } = getCurrencyInfo(currency);
+				'group/SET_GROUP_CURRENCIES',
+				this.groupCurrencies.map((group) => {
 					return {
-						currency,
-						fullName,
-						code,
-						cards: this.cards.filter(({ Currency }) => Currency === currency),
+						...group,
+						currencies: group.currencies.map(({ currency }) => {
+							const { fullName, code } = getCurrencyInfo(currency);
+							return {
+								currency,
+								fullName,
+								code,
+								cards: this.cards.filter(({ Currency }) => Currency === currency),
+							};
+						}),
 					};
 				}),
 				// .filter(({ cards }) => cards.length !== 0), show currency if has cards
@@ -89,11 +116,10 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			mappedCurrencies: 'currency/WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
 			banks: 'common/BANKS',
 			cards: 'card/CARDS',
 			userCurrencies: 'currency/USER_CURRENCIES',
-			groupCards: 'group/GROUP_CARDS',
+			groupCurrencies: 'group/GROUP_CURRENCIES',
 		}),
 	},
 	methods: {
@@ -118,12 +144,14 @@ export default {
 				})
 				.then(() => {
 					this.$store.commit(
-						'currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
-						this.mappedCurrencies.map((item) => ({
-							...item,
-							cards: item.cards.filter((card) => card.Number !== number),
+						'group/SET_GROUP_CURRENCIES',
+						this.groupCurrencies.map((group) => ({
+							...group,
+							currencies: group.currencies.map((currency) => ({
+								...currency,
+								cards: currency.cards.filter((card) => card.Number !== number),
+							})),
 						})),
-						// .filter(({ cards }) => cards.length !== 0), show currency if has cards
 					);
 					setTimeout(() => {
 						this.$emit('afterDeleteCard');
@@ -143,6 +171,25 @@ export default {
 				isOpened: false,
 				psid: null,
 			};
+		},
+		handleRenameGroup(groupName) {
+			this.editingGroup = groupName;
+			this.newGroupName = groupName;
+			setTimeout(
+				() =>
+					document
+						.querySelector('.fiat-block .group-wrapper .add-group-input-wrapper input')
+						.focus(),
+				50,
+			);
+		},
+		handleSaveRenameGroup() {
+			this.$store.dispatch('group/RENAME_CURRENCY_GROUP', {
+				oldGroupName: this.editingGroup,
+				newGroupName: this.newGroupName,
+			});
+			this.editingGroup = null;
+			this.newGroupName = null;
 		},
 	},
 };

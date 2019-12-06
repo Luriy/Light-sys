@@ -94,13 +94,14 @@
 										>
 											<div class="flex align-items-center">
 												<div class="currency">
-													<div class="icon">{{ item.code }}</div>
+													<div class="icon" v-html="item.code"></div>
 													<div class="text">{{ item.fullName }}</div>
 												</div>
 												<div class="banks">
 													<div
 														class="image-plate"
 														v-for="item in getCardsByCurrency(item.currency, cards)"
+														:key="item.currency"
 													>
 														<img :src="getBankImage(item.Psid, 'small')" />
 													</div>
@@ -172,11 +173,7 @@ export default {
 	},
 	mounted() {
 		this.$store.dispatch('card/GET_CARDS');
-		this.$store.dispatch('currency/GET_USER_CURRENCIES').then(() => {
-			this.tabs[1].activeCurrencies = this.userCurrencies.map(() => ({
-				isActive: false,
-			}));
-		});
+		this.$store.dispatch('currency/GET_USER_CURRENCIES');
 		this.$store.dispatch('common/GET_BANKS');
 	},
 	computed: {
@@ -314,6 +311,13 @@ export default {
 					}),
 			);
 			this.$store.dispatch('card/GET_CARDS');
+		},
+	},
+	watch: {
+		userCurrencies(value) {
+			this.tabs[1].activeCurrencies = value.map(() => ({
+				isActive: false,
+			}));
 		},
 	},
 };
