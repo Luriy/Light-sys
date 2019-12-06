@@ -973,10 +973,11 @@ $eth: #7d8ef6;
 						color: #fff;
 						&.green {
 							color: #53d344;
-              background: transparent!important;
+              background-color: transparent !important;
             }
             &.red {
               color: #db5353;
+              background-color: transparent !important;
             }
 						p {
 							margin-bottom: 4px;

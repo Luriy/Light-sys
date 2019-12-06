@@ -63,8 +63,8 @@ export default {
 				url: API_URL,
 				method: 'POST',
 				params: {
-					...getAuthParams(),
 					Comand: 'AddWalletsGroup',
+					...getAuthParams(),
 					GroupName: encodeURI(GroupName),
 					...wallets,
 				},
@@ -150,7 +150,7 @@ export default {
 			const currenciesToAdd = {};
 
 			currencies.forEach((item, index) => {
-				currenciesToAdd[index] = item.Number;
+				currenciesToAdd[index] = item.currency;
 			});
 
 			dispatch('CREATE_CURRENCY_GROUP', { GroupName: groupName, currencies: currenciesToAdd });
@@ -160,7 +160,7 @@ export default {
 				GroupName: newGroupName,
 				currencies: state.groupCurrencies
 					.find(({ groupName }) => groupName === oldGroupName)
-					.currencies.map(({ Number: number }) => number),
+					.currencies.map(({ currency }) => currency),
 			});
 			commit('RENAME_CURRENCY_GROUP', { oldGroupName, newGroupName });
 		},
