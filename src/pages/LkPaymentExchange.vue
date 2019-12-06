@@ -27,7 +27,7 @@
                       }}
                       {{exchangeCurrency.currency}}
                     </span>
-                      <span style="vertical-align: text-top">|</span>
+                      <span class="currency-divider">&#124;</span>
                       <span>
                       {{exchangeCurrency.isWallet ?
                       `$${exchangeCurrency.balanceUSD} USD` :
@@ -45,11 +45,37 @@
                       <span></span>
                     </div>
                     <div class="filter-buttons">
-                      <v-btn class="filter-btn" :class="{'active-list': currentExchangeList === 'all'}" text small @click="currentExchangeList = 'all'">All</v-btn>
-                      <v-btn class="filter-btn" :class="{'active-list': currentExchangeList === 'wallets'}" text small @click="currentExchangeList = 'wallets'">My wallets</v-btn>
-                      <v-btn class="filter-btn" :class="{'active-list': currentExchangeList === 'cards'}" text small @click="currentExchangeList = 'cards'">My cards</v-btn>
+                      <v-btn class="filter-btn"
+                             :class="{'active-list': currentExchangeList === 'all'}"
+                             text
+                             small
+                             @click="currentExchangeList = 'all'"
+                      >All</v-btn>
+                      <v-btn
+                        class="filter-btn"
+                        :class="{'active-list': currentExchangeList === 'wallets'}"
+                        text
+                        small
+                        @click="currentExchangeList = 'wallets'"
+                      >My wallets
+                      </v-btn>
+                      <v-btn
+                        class="filter-btn"
+                        :class="{'active-list': currentExchangeList === 'cards'}"
+                        text
+                        small
+                        @click="currentExchangeList = 'cards'"
+                      >My cards</v-btn>
+                      <v-btn
+                        class="filter-btn"
+                        :class="{'active-list': currentExchangeList === 'banks'}"
+                        text
+                        small
+                        @click="currentExchangeList = 'banks'"
+                      >Banks</v-btn>
                     </div>
-                    <div class="select-item-wallet" v-if="currentExchangeList !== 'cards'">
+
+                    <div class="select-item-wallet" v-if="currentExchangeList === 'wallets' || currentExchangeList === 'all'">
                       <div class="title-wrapper">
                         <span class="select-header">my wallets</span>
                         <span class="select-line"></span>
@@ -69,14 +95,14 @@
                           {{wallet.isWallet ? wallet.balance : `****${wallet.number.substr(wallet.number.length - 4)}`}}
                           {{wallet.currency}}
                         </span>
-                            <span style="vertical-align: text-top">|</span>
+                            <span class="currency-divider">&#124;</span>
                             <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <div class="select-item-fiat" v-if="currentExchangeList !== 'wallets'">
+                    <div class="select-item-fiat" v-if="currentExchangeList === 'cards' || currentExchangeList === 'all'">
                       <div class="title-wrapper">
                         <span class="select-header">my cards</span>
                         <span class="select-line"></span>
@@ -96,11 +122,37 @@
                           {{wallet.isWallet ? wallet.balance : `****${wallet.number.substr(wallet.number.length - 4)}`}}
                           {{wallet.currency}}
                         </span>
-                            <span style="font-size: 16px;">|</span>
+                            <span class="currency-divider">&#124;</span>
                             <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
+                    </div>
+
+                    <div class="select-item-fiat" v-if="currentExchangeList === 'banks' || currentExchangeList === 'all'">
+                      <div class="title-wrapper">
+                        <span class="select-header">banks</span>
+                        <span class="select-line"></span>
+                      </div>
+                      <router-link to="/wallets/accounts-and-cards" tag="div">
+                        <div
+                          class="select-item"
+                          v-for="(wallet, index) of fiatData"
+                          :key="`fiat-${index}`"
+                        >
+                          <div class="icon"><img :src="wallet.icon" alt></div>
+                          <div class="amount">
+                            <div class="code btc">{{wallet.name}}</div>
+                            <div class="value">
+                        <span>
+                          {{wallet.currency}}
+                        </span>
+                              <span class="currency-divider">&#124;</span>
+                              <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </router-link>
                     </div>
                   </div>
                 </div>
@@ -120,6 +172,7 @@
                   <div class="exchange-amount_input" :class="exchangeCurrency.currency.toLowerCase()">
                     <v-text-field
                       v-model.lazy.number="exchangeAmount"
+                      :hide-details="true"
                       :rules="exchangeAmountRules"
                       :color="exchangeCurrency.isWallet ? exchangeCurrency.color : '#fff'"
                       @input="exchangeChange"
@@ -168,11 +221,40 @@
                       <span></span>
                     </div>
                     <div class="filter-buttons">
-                      <v-btn class="filter-btn" :class="{'active-list': currentReceiveList === 'all'}" text small @click="currentReceiveList = 'all'">All</v-btn>
-                      <v-btn class="filter-btn" :class="{'active-list': currentReceiveList === 'wallets'}" text small @click="currentReceiveList = 'wallets'">My wallets</v-btn>
-                      <v-btn class="filter-btn" :class="{'active-list': currentReceiveList === 'cards'}" text small @click="currentReceiveList = 'cards'">My cards</v-btn>
+                      <v-btn
+                        class="filter-btn"
+                        :class="{'active-list': currentReceiveList === 'all'}"
+                        text
+                        small
+                        @click="currentReceiveList = 'all'"
+                      >All
+                      </v-btn>
+
+                      <v-btn
+                        class="filter-btn"
+                        :class="{'active-list': currentReceiveList === 'wallets'}"
+                        text
+                        small
+                        @click="currentReceiveList = 'wallets'"
+                      >My wallets</v-btn>
+
+                      <v-btn
+                        class="filter-btn"
+                        :class="{'active-list': currentReceiveList === 'cards'}"
+                        text
+                        small
+                        @click="currentReceiveList = 'cards'"
+                      >My cards</v-btn>
+
+                      <v-btn
+                        class="filter-btn"
+                        :class="{'active-list': currentReceiveList === 'banks'}"
+                        text
+                        small
+                        @click="currentReceiveList = 'banks'"
+                      >Banks</v-btn>
                     </div>
-                    <div class="select-item-wallet" v-if="currentReceiveList !== 'cards'">
+                    <div class="select-item-wallet" v-if="currentReceiveList === 'wallets' || currentReceiveList === 'all'">
                       <div class="title-wrapper">
                         <span class="select-header">my wallets</span>
                         <span class="select-line"></span>
@@ -192,14 +274,14 @@
                           {{wallet.isWallet ? wallet.balance : `****${wallet.number.substr(wallet.number.length - 4)}`}}
                           {{wallet.currency}}
                         </span>
-                            <span style="font-size: 16px;">|</span>
+                            <span class="currency-divider">&#124;</span>
                             <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <div class="select-item-wallet" v-if="currentReceiveList !== 'wallets'">
+                    <div class="select-item-wallet" v-if="currentReceiveList === 'cards' || currentReceiveList === 'all'">
                       <div class="title-wrapper">
                         <span class="select-header">my cards</span>
                         <span class="select-line"></span>
@@ -219,11 +301,37 @@
                           {{wallet.isWallet ? wallet.balance : `****${wallet.number.substr(wallet.number.length - 4)}`}}
                           {{wallet.currency}}
                         </span>
-                            <span style="font-size: 16px;">|</span>
+                            <span class="currency-divider">&#124;</span>
                             <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
+                    </div>
+
+                    <div class="select-item-fiat" v-if="currentReceiveList === 'banks' || currentReceiveList === 'all'">
+                      <div class="title-wrapper">
+                        <span class="select-header">banks</span>
+                        <span class="select-line"></span>
+                      </div>
+                      <router-link to="/wallets/accounts-and-cards" tag="div">
+                        <div
+                          class="select-item"
+                          v-for="(wallet, index) of fiatData"
+                          :key="`fiat-${index}`"
+                        >
+                          <div class="icon"><img :src="wallet.icon" alt></div>
+                          <div class="amount">
+                            <div class="code btc">{{wallet.name}}</div>
+                            <div class="value">
+                        <span>
+                          {{wallet.currency}}
+                        </span>
+                              <span class="currency-divider">&#124;</span>
+                              <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </router-link>
                     </div>
                   </div>
                 </div>
@@ -233,6 +341,7 @@
                 <div class="exchange-amount_input" :class="receiveCurrency.currency.toLowerCase()">
                   <v-text-field
                     v-model.number.lazy="receiveAmount"
+                    :hide-details="true"
                     :rules="receiveAmountRules"
                     @input="receiveChange"
                     :color="receiveCurrency.isWallet ? receiveCurrency.color : '#fff'"
@@ -254,7 +363,11 @@
               </div>
             </div>
           </div>
-
+          <transition name="fade">
+          <div class="error-block" v-if="showError">
+            {{errorMsg}}
+          </div>
+          </transition>
           <div class="exchange-block_info">
             <div class="to">
               <img src="@/assets/images/right-arr-white.svg" alt title style="margin-top: 17px;">
@@ -292,7 +405,10 @@
             <button @click="exchange">Exchange</button>
             <p class="currency_info">
               1
-              {{exchangeCurrency.currency}} = {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? transferInfo.rate.toFixed(5) : fiatInfo.out}}
+              {{exchangeCurrency.currency}} = {{exchangeCurrency.isWallet && receiveCurrency.isWallet ?
+                transferInfo.rate.toFixed(5) :
+                fiatInfo.out
+              }}
               {{receiveCurrency.currency}}</p>
           </div>
 
@@ -512,6 +628,8 @@
         currentReceiveList: 'all',
         receiveModal: false,
         exchangeModal: false,
+        errorMsg: '',
+        showError: false,
         isRepeat: '',
         countdown: 59,
         timer: null,
@@ -533,26 +651,41 @@
         exchangeUSD: '0.00',
         receiveUSD: '0.00',
         exchangeAmountRules: [
-          value => !!+value || 'Required',
+          value => {
+            if (!+value) {
+              this.errorMsg = ('Required');
+              return 'Required'
+            }
+            this.showError = false;
+            return false
+          },
           value => {
             if (this.exchangeCurrency.isWallet) {
               if (this.exchangeCurrency.balance < value) {
+                this.showError = true;
+                this.errorMsg = ('Value of balance is not enough to make this transaction');
                 return 'Value of balance is not enough to make this transaction'
               }
             }
+            this.showError = false;
             return false
           },
           value => {
           if (this.exchangeCurrency.isWallet) {
             if (value > this.transferInfo.limit) {
+              this.errorMsg = ('Ammount cannot be more than limit');
+              this.showError = true;
               return 'Ammount cannot be more than limit'
             }
           }
+          this.showError = false;
           return false
           },
           value => {
           if (!this.exchangeCurrency.isWallet) {
             if (value > this.exchangeCurrency.reserve) {
+              this.errorMsg = ('Ammount cannot be more than reserve');
+              this.showError = true;
               return 'Ammount cannot be more than reserve'
             }
           }
@@ -561,6 +694,8 @@
           value => {
             if (!this.exchangeCurrency.isWallet) {
               if (value < this.fiatInfo.in_min) {
+                this.errorMsg = ('Ammount cannot be less than min ammount of transaction');
+                this.showError = true;
                 return 'Ammount cannot be less than min ammount of transaction'
               }
             }
@@ -568,29 +703,45 @@
           }
         ],
         receiveAmountRules: [
-          value => !!+value || 'Required',
+          value => {
+            if (!+value) {
+              this.errorMsg = ('Required');
+              return 'Required'
+            }
+            this.showError = false;
+            return false
+          },
           value => {
             if (this.receiveCurrency.isWallet) {
               if (value > this.transferInfo.limit) {
+                this.showError = true;
+                this.errorMsg = ('Ammount cannot be more than limit');
                 return 'Ammount cannot be more than limit'
               }
             }
+            this.showError = false;
             return false
           },
           value => {
             if (!this.receiveCurrency.isWallet) {
               if (value > this.exchangeCurrency.reserve) {
+                this.showError = true;
+                this.errorMsg = ('Ammount cannot be more than reserve');
                 return 'Ammount cannot be more than reserve'
               }
             }
+            this.showError = false;
             return false
           },
           value => {
             if (!this.receiveCurrency.isWallet) {
               if (value < this.fiatInfo.in_min) {
+                this.showError = true;
+                this.errorMsg = ('Ammount cannot be more than reserve');
                 return 'Ammount cannot be less than min ammount of transaction'
               }
             }
+            this.showError = false;
             return false
           }
         ],
@@ -632,7 +783,7 @@
               receive: capitalizeFirstLetter(this.receiveCurrency.currency.toLowerCase())
             }
           }).then(() => {
-            this.smsCodes.forEach((smsCode, index) => smsCode[index] = '')
+            this.smsCodes.forEach((smsCode, index) => { smsCode[index] = '' })
           });
         } else {
           this.$store.dispatch('exchange/POST_FIAT', {
@@ -646,16 +797,19 @@
             Psid2: this.receiveCurrency.psid,
             LastName: this.exchangeCurrency.isWallet ? this.receiveCurrency.holder : this.exchangeCurrency.holder,
           }).then(() => {
-            this.smsCodes.forEach((smsCode, index) => smsCode[index] = '')
+            this.smsCodes.forEach((smsCode, index) => { smsCode[index] = '' })
           });
         }
       },
       exchange() {
         if (this.$refs.exchangeForm.validate()) {
+          this.showError = false;
           this.exchangePopup = !this.exchangePopup;
           this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
            this.setTimer()
           });
+        } else {
+          this.showError = true;
         }
       },
       setTimer() {
@@ -972,6 +1126,9 @@
       fiatInfo() {
         return this.$store.getters['exchange/FIAT_INFO']
       },
+      fiatData() {
+        return this.$store.getters['exchange/FIAT_DATA']
+      },
       types() {
         return this.$store.getters['wallet/TYPES']
       },
@@ -1201,5 +1358,19 @@
       border-radius: 5px;
       background-image: linear-gradient(270deg, #8e6ee4 0%, #d268bc 100%);
     }
+  }
+  .error-block {
+    text-align: center;
+    color: #db5353;
+    position: relative;
+    background-color: rgb(59, 38, 101);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 21px;
+  }
+  .currency-divider {
+    vertical-align: text-top;
+    font-size: 10px!important;
+    line-height: 23px!important;
   }
 </style>
