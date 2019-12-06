@@ -1121,16 +1121,16 @@
         return { ...getAuthParams() }
       },
       transferInfo() {
-        return this.$store.getters['exchange/TRANSFER_INFO']
+        return this.$store.getters['exchange/TRANSFER_INFO'];
       },
       fiatInfo() {
-        return this.$store.getters['exchange/FIAT_INFO']
+        return this.$store.getters['exchange/FIAT_INFO'];
       },
       fiatData() {
-        return this.$store.getters['exchange/FIAT_DATA']
+        return this.$store.getters['exchange/FIAT_DATA'];
       },
       types() {
-        return this.$store.getters['wallet/TYPES']
+        return this.$store.getters['wallet/TYPES'];
       },
       filteredExchangeWallets() {
         return this.wallets
@@ -1353,6 +1353,7 @@
     font-size: 12px;
     font-weight: 600;
     line-height: 21px;
+    text-transform: capitalize;
 
     &.active-list {
       border-radius: 5px;

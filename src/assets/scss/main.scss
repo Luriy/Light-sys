@@ -45,6 +45,10 @@ body .v-application .title {
   font-family:'Open Sans' !important;
 }
 
+.material-icons {
+  font-family: "Material Icons"!important;
+}
+
 a, button, label {
 	cursor: pointer;
 	transition: all .2s ease-in;
@@ -2548,7 +2552,7 @@ $eth: #7d8ef6;
       font-family: 'Open Sans', sans-serif;
       margin-bottom: 13px;
     }
-    
+
     // .outside-wrapper:last-of-type {
     //   .wallet.active {
     //     margin-bottom: 0;

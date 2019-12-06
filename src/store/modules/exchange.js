@@ -60,8 +60,8 @@ export default {
 			}).then(({ data }) => {
 				const { Errors } = parsePythonArray(data)['0'];
 				if (!Object.keys(Errors).length) {
-					commit('alerts/setLoading', false, { root: true });
-					const result = parsePythonArray(data)['1'].return;
+                    const result = parsePythonArray(data)['1'].return;
+                    commit('alerts/setLoading', false, { root: true });
 					commit('SET_FIAT_INFO', result);
 				} else {
 					commit('alerts/setLoading', false, { root: true });
