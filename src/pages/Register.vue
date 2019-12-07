@@ -229,11 +229,6 @@ export default {
 
             this.$store.dispatch(AUTH_REQUEST, params)
               .then(() => {
-                setTimeout(() => {
-                  this.$store.dispatch(AUTH_LOGOUT).then(() => {
-                    this.$router.push('/login');
-                  })
-                }, 1000 * 60 * 20)
       		    	this.commonError = null;
                 this.$router.push('/wallets');
                 setTimeout(() => {

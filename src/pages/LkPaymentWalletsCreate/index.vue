@@ -173,7 +173,7 @@ export default {
         .then((data) => {
           if (!data.error) {
             this.$store.commit('group/SET_GROUP_WALLETS', this.groupWallets.map(group => {
-              if (group.groupName === '') {
+              if (group.groupName === 'Other wallets') {
                 return {
                   ...group,
                   wallets: [

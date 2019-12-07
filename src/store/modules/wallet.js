@@ -239,7 +239,7 @@ export default {
 							};
 						}),
 						{
-							groupName: '',
+							groupName: 'Other wallets',
 							wallets: result.filter((wallet) => wallet.group === ''),
 						},
 					];

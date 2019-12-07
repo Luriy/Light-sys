@@ -121,11 +121,6 @@ export default {
 				.then(() => {
 					this.error = null;
 					this.$router.push('/wallets');
-					setTimeout(() => {
-						this.$store.dispatch(AUTH_LOGOUT).then(() => {
-							this.$router.push('/login');
-						});
-					}, 1000 * 60 * 20);
 				})
 				.catch((err) => {
 					this.error = err;
