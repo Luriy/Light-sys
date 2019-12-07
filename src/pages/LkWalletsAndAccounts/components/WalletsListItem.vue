@@ -82,9 +82,6 @@ export default {
 				  }%`
 				: '',
 	},
-	mounted() {
-		console.log(this.percentage);
-	},
 	methods: {
 		handleClickLine() {
 			if (!this.isInputEditingActive) {

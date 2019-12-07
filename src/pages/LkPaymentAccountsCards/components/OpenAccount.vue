@@ -159,9 +159,10 @@ export default {
 					if (data.success) {
 						this.$store.commit('currency/SET_USER_CURRENCIES', [valute, ...this.userCurrencies]);
 						this.$store.dispatch('group/SET_CURRENCIES_TO_GROUP', {
-							groupName: '',
+							groupName: 'Other accounts',
 							currencies: [
-								...this.groupCurrencies.find(({ groupName }) => groupName === '').currencies,
+								...this.groupCurrencies.find(({ groupName }) => groupName === 'Other accounts')
+									.currencies,
 								{
 									cards: [],
 									currency: valute,

@@ -47,7 +47,6 @@
 				v-for="item in group.currencies"
 				:key="item.fullName"
 				:item="item"
-				@onOpenDeletePopup="handleOpenDeletePopup"
 				:isCardsMovingAndDeleting="isCardsMovingAndDeleting"
 				:activeTab="activeTab"
 				@onClickTab="handleClickTab"
@@ -133,15 +132,15 @@ export default {
 			this.handleCloseDeletePopup();
 			this.$store
 				.dispatch('card/DELETE_CARD', { NumberCard: number })
-				.then((data) => {
-					const errors = Object.values(data['0']['Errors']);
+				// .then((data) => {
+				// 	const errors = Object.values(data['0']['Errors']);
 
-					this.$store.dispatch('alerts/setNotification', {
-						message: errors.length ? errors[0] : 'Card has been successfully deleted',
-						status: errors.length ? 'error-status' : 'success-status',
-						icon: errors.length ? 'close' : 'done',
-					});
-				})
+				// 	this.$store.dispatch('alerts/setNotification', {
+				// 		message: errors.length ? errors[0] : 'Card has been successfully deleted',
+				// 		status: errors.length ? 'error-status' : 'success-status',
+				// 		icon: errors.length ? 'close' : 'done',
+				// 	});
+				// })
 				.then(() => {
 					this.$store.commit(
 						'group/SET_GROUP_CURRENCIES',

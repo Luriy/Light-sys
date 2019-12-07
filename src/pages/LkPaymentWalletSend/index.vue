@@ -481,12 +481,12 @@ export default {
 								]);
 							});
 						}
-						this.$store.commit('af');
 					}
 					setTimeout(() => {
+						this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
 						this.successPopup = false;
 						this.clearData();
-					}, 7000);
+					}, 5000);
 				});
 		},
 	},
