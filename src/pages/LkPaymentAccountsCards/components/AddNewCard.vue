@@ -149,7 +149,7 @@ export default {
 	computed: {
 		...mapGetters({
 			userCurrencies: 'currency/USER_CURRENCIES',
-			walletsAndAccountsPageCurrencies: 'currency/WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES',
+			groupCurrencies: 'group/GROUP_CURRENCIES',
 		}),
 	},
 	mounted() {
@@ -247,17 +247,19 @@ export default {
 												...this.userCurrencies,
 												currency,
 											]);
-											if (this.walletsAndAccountsPageCurrencies.length) {
-												this.$store.commit('currency/SET_WALLETS_AND_ACCOUNTS_PAGE_CURRENCIES', [
-													...this.walletsAndAccountsPageCurrencies,
+											this.$store.commit('group/SET_CURRENCIES_TO_GROUP', {
+												groupName: '',
+												currencies: [
+													...this.groupCurrencies.find(({ groupName }) => groupName === '')
+														.currencies,
 													{
 														cards: [],
 														currency,
 														code: getCurrencyInfo(currency).code,
 														fullName: getCurrencyInfo(currency).fullName,
 													},
-												]);
-											}
+												],
+											});
 										}
 									});
 							}
