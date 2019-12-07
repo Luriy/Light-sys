@@ -57,7 +57,10 @@ export default {
 			localStorage.setItem('stateWalletsOperations', JSON.stringify(payload));
 		},
 		SET_AFTER_CREATE_WALLET: (state, payload) => (state.afterCreateWallet = payload),
-		SET_UNCONFIRMED_OPERATIONS: (state, payload) => (state.unconfirmedOperations = payload),
+		SET_UNCONFIRMED_OPERATIONS: (state, payload) => {
+			state.unconfirmedOperations = payload;
+			localStorage.setItem('stateUnconfirmedOperations', JSON.stringify(payload));
+		},
 	},
 	actions: {
 		GET_PAGE_DETAIL: ({ dispatch, commit }, { currency, address }) => {
@@ -491,8 +494,9 @@ export default {
 			});
 		},
 		GET_OPERATIONS: async (store, { wallets }) => {
+			const { commit } = store;
 			const dates = [];
-			const transactions = (
+			let transactions = (
 				await Promise.all(
 					wallets.map(async (wallet) => {
 						let Comand;
@@ -550,44 +554,33 @@ export default {
 				)
 			).flat();
 
-			console.log(transactions);
-
-			const { unconfirmedOperations } = store.state;
-
-			if (unconfirmedOperations.length) {
-				console.log(
-					unconfirmedOperations.filter((unconf) =>
-						transactions.every(
-							(trans) => trans.url !== unconf[0].url || trans.url !== unconf[1].url,
-						),
-					),
-				);
-				this.$store.commit(
+			if (store.state.unconfirmedOperations.length) {
+				commit(
 					'SET_UNCONFIRMED_OPERATIONS',
-					unconfirmedOperations.filter((unconf) =>
-						transactions.every(
-							(trans) => trans.url !== unconf[0].url || trans.url !== unconf[1].url,
-						),
+					store.state.unconfirmedOperations.filter((unconf) =>
+						transactions.every((trans) => trans.url !== unconf.url),
 					),
 				);
 			}
+
+			// transactions = [...store.state.unconfirmedOperations, transactions];
 
 			let datesWithTransactions = [];
 
 			transactions.forEach((transaction) => {
 				const date = dates.find((date) => {
 					return (
-						date.getDate() === transaction.time.getDate() &&
-						date.getMonth() === transaction.time.getMonth() &&
-						date.getFullYear() === transaction.time.getFullYear()
+						date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
+						date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
+						date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
 					);
 				});
 
 				const addedTransObject = datesWithTransactions.find(
 					({ date: dateTrans }) =>
-						dateTrans.getDate() === date.getDate() &&
-						dateTrans.getMonth() === date.getMonth() &&
-						dateTrans.getFullYear() === date.getFullYear(),
+						new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
+						new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
+						new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
 				);
 				if (addedTransObject) {
 					addedTransObject.transactions = [...addedTransObject.transactions, transaction];
