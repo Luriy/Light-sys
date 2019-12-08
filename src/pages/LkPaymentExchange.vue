@@ -134,7 +134,6 @@
                         <span class="select-header">banks</span>
                         <span class="select-line"></span>
                       </div>
-                      <router-link to="/wallets/accounts-and-cards" tag="div">
                         <div
                           class="select-item"
                           v-for="(wallet, index) of fiatData"
@@ -144,15 +143,14 @@
                           <div class="amount">
                             <div class="code btc">{{wallet.name}}</div>
                             <div class="value">
-                        <span>
-                          {{wallet.currency}}
-                        </span>
+                              <span>
+                                {{wallet.currency}}
+                              </span>
                               <span class="currency-divider">&#124;</span>
                               <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                             </div>
                           </div>
                         </div>
-                      </router-link>
                     </div>
                   </div>
                 </div>
@@ -206,7 +204,8 @@
                     <div class="value">
                       <span>1 {{exchangeCurrency.currency}} =</span>
                       <span>
-                      {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? transferInfo.rate.toFixed(5) : fiatInfo.out}}
+                        <!--todo не работает рест transferInfo заменить в будущем-->
+                      {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? (transferInfo.rate ? transferInfo.rate : '0') : fiatInfo.out}}
                       {{receiveCurrency.currency}}
                     </span>
                     </div>
@@ -406,7 +405,8 @@
             <p class="currency_info">
               1
               {{exchangeCurrency.currency}} = {{exchangeCurrency.isWallet && receiveCurrency.isWallet ?
-                transferInfo.rate.toFixed(5) :
+              <!--todo не работает рест transferInfo заменить в будущем-->
+              (transferInfo.rate ? transferInfo.rate : '0') :
                 fiatInfo.out
               }}
               {{receiveCurrency.currency}}</p>
