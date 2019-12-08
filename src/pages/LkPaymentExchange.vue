@@ -404,8 +404,8 @@
             <button @click="exchange">Exchange</button>
             <p class="currency_info">
               1
-              {{exchangeCurrency.currency}} = {{exchangeCurrency.isWallet && receiveCurrency.isWallet ?
               <!--todo не работает рест transferInfo заменить в будущем-->
+              {{exchangeCurrency.currency}} = {{exchangeCurrency.isWallet && receiveCurrency.isWallet ?
               (transferInfo.rate ? transferInfo.rate : '0') :
                 fiatInfo.out
               }}
