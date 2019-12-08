@@ -2582,7 +2582,7 @@ $eth: #7d8ef6;
 	height: 4px;
 }
 .group-wrapper {
-  margin-bottom: 5px;
+  margin-bottom: 3px;
   .active-group.active:first-of-type {
     margin-bottom: 0;
   }
@@ -2593,8 +2593,7 @@ $eth: #7d8ef6;
   }
   .active-group {
     color: #fff;
-    font-weight: 600;
-    font-family: 'Open Sans', sans-serif;
+    font-weight: 500;
     margin-bottom: 13px;
   }
 }

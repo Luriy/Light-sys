@@ -36,8 +36,8 @@
 					<div
 						class="progress"
 						:class="{
-							green: percentage[wallet.currency]['1h'].toFixed(2) > 0.01,
-							red: percentage[wallet.currency]['1h'].toFixed(2) < -0.01,
+							green: percentage[wallet.currency]['1h'].toFixed(2) >= 0.01,
+							red: percentage[wallet.currency]['1h'].toFixed(2) <= -0.01,
 						}"
 					>
 						<p>{{ percentage[wallet.currency] | percentage }}</p>

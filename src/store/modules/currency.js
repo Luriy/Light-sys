@@ -69,7 +69,7 @@ export default {
 					const groups = [
 						...Object.keys(responseData.Group).map((key) => {
 							return {
-								groupName: decodeURI(key),
+								groupName: key === '' ? 'Other accounts' : decodeURI(key),
 								currencies: Object.values(responseData.Group[key]).map((groupCurrency) => ({
 									currency: userCurrenciesArray.find(
 										(userCurrency) => userCurrency === groupCurrency,
@@ -78,7 +78,7 @@ export default {
 							};
 						}),
 						// {
-						// 	groupName: '',
+						// 	groupName: 'Other accounts',
 						// 	wallets: userCurrenciesArray.filter((userCurrency) => userCurrency[1] === ''),
 						// },
 					];

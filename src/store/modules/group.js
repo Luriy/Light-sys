@@ -74,11 +74,11 @@ export default {
 			if (wallets.length) {
 				commit('SET_WALLETS_TO_GROUP', { groupName, wallets });
 			} else {
-				if (groupName === '') {
+				if (groupName === 'Other wallets') {
 					commit(
 						'SET_GROUP_WALLETS',
 						state.groupWallets.map((group) =>
-							group.groupName === ''
+							group.groupName === 'Other wallets'
 								? {
 										...group,
 										wallets: [],
@@ -127,11 +127,11 @@ export default {
 			if (currencies.length) {
 				commit('SET_CURRENCIES_TO_GROUP', { groupName, currencies });
 			} else {
-				if (groupName === '') {
+				if (groupName === 'Other accounts') {
 					commit(
 						'SET_GROUP_CURRENCIES',
 						state.groupCurrencies.map((group) =>
-							group.groupName === ''
+							group.groupName === 'Other accounts'
 								? {
 										...group,
 										currencies: [],
