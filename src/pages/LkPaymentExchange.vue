@@ -28,7 +28,7 @@
                       {{exchangeCurrency.currency}}
                     </span>
                       <span class="currency-divider">&#124;</span>
-                      <span>
+                      <span class="balance-reserve">
                       {{exchangeCurrency.isWallet ?
                       `$${exchangeCurrency.balanceUSD} USD` :
                       `Reserve: ${exchangeCurrency.reserve}`}}
@@ -96,7 +96,7 @@
                           {{wallet.currency}}
                         </span>
                             <span class="currency-divider">&#124;</span>
-                            <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
@@ -123,7 +123,7 @@
                           {{wallet.currency}}
                         </span>
                             <span class="currency-divider">&#124;</span>
-                            <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
@@ -147,7 +147,7 @@
                                 {{wallet.currency}}
                               </span>
                               <span class="currency-divider">&#124;</span>
-                              <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                              <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                             </div>
                           </div>
                         </div>
@@ -274,7 +274,7 @@
                           {{wallet.currency}}
                         </span>
                             <span class="currency-divider">&#124;</span>
-                            <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
@@ -301,7 +301,7 @@
                           {{wallet.currency}}
                         </span>
                             <span class="currency-divider">&#124;</span>
-                            <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
@@ -326,7 +326,7 @@
                           {{wallet.currency}}
                         </span>
                               <span class="currency-divider">&#124;</span>
-                              <span>{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                              <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                             </div>
                           </div>
                         </div>
@@ -1142,7 +1142,9 @@
             return item
           })
           .filter(({ fullName }) => {
-            return fullName.toLowerCase().includes(this.search);
+            if (fullName) {
+              return fullName.toLowerCase().includes(this.search);
+            }
           })
       },
       filteredReceiveWallets() {
@@ -1154,7 +1156,11 @@
             }
             return item
           })
-          .filter(({ fullName }) => (fullName.toLowerCase().includes(this.search)))
+          .filter(({ fullName }) => {
+            if (fullName) {
+              return fullName.toLowerCase().includes(this.search);
+            }
+          })
       },
       exchangeSucces() {
         return this.$store.getters['exchange/EXCHANGE_SUCCES'];

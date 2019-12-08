@@ -84,6 +84,76 @@ $eth: #7d8ef6;
   opacity: 1 !important;
 }
 
+// responsive breakpoints
+$break-small-portrait: 320px;
+$break-medium-portrait: 480px;
+$break-small-landscape: 750px;
+$break-medium: 1024px;
+$break-large: 1124px;
+
+@mixin respond-to($media) {
+  @if $media == smallest-phones {
+    @media only screen and (max-width: $break-small-portrait) {
+      @content;
+    }
+  }
+  @if $media == small-phones {
+    @media only screen and (min-width: $break-small-portrait) {
+      @content;
+    }
+  }
+  @if $media == medium-phones {
+    @media only screen and (min-width: $break-medium-portrait) and (max-width: $break-small-landscape) {
+      @content;
+    }
+  }
+  @if $media == phones {
+    @media only screen and (min-width: $break-small-portrait) and (max-width: $break-small-landscape) {
+      @content;
+    }
+  } @else if $media == tablets {
+    @media only screen and (min-width: $break-small-landscape + 1) and (max-width: $break-medium) {
+      @content;
+    }
+  } @else if $media == tablets-landscape {
+    @media only screen and (min-width: $break-small-landscape + 1) and (max-width: $break-medium) and (orientation: landscape) {
+      @content;
+    }
+  } @else if $media == phones-tablets {
+    @media only screen and (min-width: $break-small-portrait) and (max-width: $break-medium - 1) {
+      @content;
+    }
+  } @else if $media == wide-screens {
+    @media only screen and (min-width: $break-large) {
+      @content;
+    }
+  } @else if $media == custom-phones-tablets {
+    @media only screen and (min-width: $break-small-portrait) and (max-width: $break-medium) {
+      @content;
+    }
+  } @else if $media == phone-landscape {
+    @media only screen and (min-width: $break-small-portrait) and (max-width: $break-small-landscape) and (orientation: landscape) {
+      @content;
+    }
+  } @else if $media == medium-mobile-only {
+    @media only screen and (max-width: $break-medium-portrait) {
+      @content;
+    }
+  } @else if $media == mobile-only {
+    @media only screen and (max-width: $break-small-landscape) {
+      @content;
+    }
+  } @else if $media == tablets-up {
+    @media only screen and (min-width: $break-small-landscape + 1) {
+      @content;
+    }
+  } @else if $media == desktops {
+    @media only screen and (min-width: $break-medium) {
+      @content;
+    }
+  }
+}
+
 .add-token {
 	position:absolute;
 	width: 160px;
@@ -411,10 +481,17 @@ $eth: #7d8ef6;
 			}
 			.amount {
 				.code {
-					font-size: 14px;
+					font-size: 10px;
 					color: #fff;
 					font-weight: 600;
-					line-height: 21px;
+					line-height: 12px;
+
+          @include respond-to(wide-screens) {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 600;
+            line-height: 21px;
+          }
 				}
 
 				.value {
@@ -1105,8 +1182,8 @@ $eth: #7d8ef6;
 			align-items:center;
 			margin-right: -2vw;
       border-bottom:1px solid #3b2665;
-      
-      
+
+
 			> * {
 				width: 25%;
 			}
@@ -1634,12 +1711,15 @@ $eth: #7d8ef6;
 			border:none;
 		}
 		input {
-			width: 327px;
 			height: 44px;
 			background:#3b2665;
 			border-radius:22px;
 			border:none;
 			padding-left:17px;
+
+      @include respond-to(wide-screens) {
+        width: 327px;
+      }
 		}
 		input, input::placeholder {
 			font-size: 12px;
@@ -1653,7 +1733,10 @@ $eth: #7d8ef6;
 		align-items: center;
 
 		.rating {
-			font-size: 14px;
+      font-size: 12px;
+      @include respond-to(wide-screens) {
+        font-size: 14px;
+      }
 			font-weight: 600;
 			line-height: 21px;
 			color: #fff;
@@ -1903,7 +1986,7 @@ $eth: #7d8ef6;
     margin-bottom: 25px;
   }
 	.trans-date {
-		
+
     border-bottom:1px solid #3b2665;
     padding: 15px 0;
     p {
@@ -2598,7 +2681,7 @@ $eth: #7d8ef6;
   }
 }
 .wallets-list_item_body {
-  
+
   &:last-of-type {
     margin-bottom: 0;
   }
@@ -2957,4 +3040,11 @@ body .v-application .title {
 }
 .material-icons {
   font-family: 'Material Icons' !important;
+}
+
+.balance-reserve, .currency-divider {
+  display: none;
+  @include respond-to(wide-screens) {
+    display: inline-block;
+  }
 }
