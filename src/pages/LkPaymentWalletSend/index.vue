@@ -235,8 +235,8 @@ export default {
 			switch (this.currency) {
 				case 'BTC':
 					return {
-						toShow: 0.00035,
-						toPay: 0.00035,
+						toShow: 0.0005,
+						toPay: 0.0005,
 					};
 				case 'ETH':
 					return {

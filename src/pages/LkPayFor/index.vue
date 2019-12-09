@@ -47,7 +47,7 @@
 								</div>
 							</div>
 							<transition name="fade">
-								<div class="select__body" v-show="walletSelect.isActive">
+								<!-- <div class="select__body" v-show="walletSelect.isActive">
 									<div
 										class="select__body-item flex justify-content-between align-items-center"
 										:class="{
@@ -91,7 +91,14 @@
 											`$${formatCurrency(wallet.balanceUSD)} USD`
 										}}</span>
 									</div>
-								</div>
+								</div> -->
+								<payment-types
+									:search="search"
+									:isOpened="walletSelect.isActive"
+									:wallets="wallets"
+									:cards="cards"
+									:fiatData="[]"
+								></payment-types>
 							</transition>
 						</div>
 					</div>
@@ -133,9 +140,10 @@
 	</lk-layout>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 import LkLayout from '@/layout/LkLayout';
 import PaymentsAndTransfer from '@/layout/LkPaymentsAndTransfer';
-import { mapGetters } from 'vuex';
+import PaymentTypes from '@/components/PaymentTypes';
 import getCryptoInfo from '@/functions/getCryptoInfo';
 import './styles.scss';
 
@@ -144,10 +152,14 @@ export default {
 	components: {
 		PaymentsAndTransfer,
 		LkLayout,
+		PaymentTypes,
 	},
 	mounted() {
 		this.$store.dispatch('common/GET_ALL_BALANCE');
-		this.$store.dispatch('wallet/GET_WALLETS');
+		if (!this.wallets.length) {
+			this.$store.dispatch('wallet/GET_WALLETS');
+		}
+
 		this.setInitialCurrentWallet();
 
 		const select = document.querySelector('.pay-for .select');
@@ -168,14 +180,23 @@ export default {
 		...mapGetters({
 			allBalance: 'common/ALL_BALANCE',
 			wallets: 'wallet/WALLETS',
+			cards: 'card/CARDS',
 		}),
 		allUsdBalance() {
 			const { BTCBalanceusd, ETHBalanceusd, LTCBalanceusd } = this.allBalance;
 			return ((BTCBalanceusd || 0) + (ETHBalanceusd || 0) + (LTCBalanceusd || 0)).toFixed(2);
 		},
+		filteredWallets() {
+			return this.wallets.filter(({ fullName }) => {
+				if (fullName) {
+					return fullName.toLowerCase().includes(this.search);
+				}
+			});
+		},
 	},
 	data() {
 		return {
+			search: '',
 			walletSelect: {
 				isActive: false,
 			},
