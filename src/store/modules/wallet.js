@@ -238,11 +238,14 @@ export default {
 								),
 							};
 						}),
-						{
+					];
+
+					if (!groups.some((group) => group.groupName === 'Other wallets')) {
+						groups.push({
 							groupName: 'Other wallets',
 							wallets: result.filter((wallet) => wallet.group === ''),
-						},
-					];
+						});
+					}
 
 					commit('SET_WALLETS', result);
 
@@ -447,6 +450,10 @@ export default {
 						url: item.Url,
 						value: item.value,
 						valueUSD: item.valueUSD,
+						currentWallet: {
+							address,
+							currency,
+						},
 					};
 				});
 
@@ -545,7 +552,10 @@ export default {
 								url: item.Url,
 								value: item.value,
 								valueUSD: item.valueUSD,
-								currentWallet: wallet.address,
+								currentWallet: {
+									address: wallet.address,
+									currency: wallet.currency,
+								},
 							};
 						});
 

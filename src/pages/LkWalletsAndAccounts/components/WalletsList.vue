@@ -13,9 +13,8 @@
 			</div>
 			<div
 				class="active-group"
-				:class="{ active: group.groupName.length === 0 }"
-				@click="handleRenameGroup(group.groupName)"
-				v-else
+				@click="handleRenameGroup"
+				v-else-if="groupWallets.length !== 1 && editingGroup !== group.groupName"
 			>
 				{{ group.groupName }}
 			</div>
@@ -37,7 +36,7 @@
 	</div>
 	<div v-else class="wallets-list_item_body">
 		<div class="group-wrapper" v-for="group in groupWallets" :key="group.groupName">
-			<div class="active-group" :class="{ active: group.groupName.length === 0 }">
+			<div class="active-group" v-if="groupWallets.length !== 1">
 				{{ group.groupName }}
 			</div>
 			<wallets-list-item

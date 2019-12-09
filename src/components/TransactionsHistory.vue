@@ -9,10 +9,13 @@
 				<p>{{ formatDate(datesWithTransaction.date) }}</p>
 			</div>
 			<div
-				class="trans-item"
+				class="trans-item operations-history-list-item"
 				v-for="transaction in datesWithTransaction.transactions"
-				:key="transaction.url"
-				:class="{ active: openedOperation === transaction.url }"
+				:key="transaction.url + getTransactionType(transaction)"
+				:class="{
+					active: openedOperation === transaction.url + getTransactionType(transaction),
+					'plus-trans': getTransactionType(transaction) === 'receive',
+				}"
 			>
 				<div class="trans-card">
 					<div class="trans-top">
@@ -44,24 +47,26 @@
 						</button>
 						<div class="code">
 							<img
-								v-if="currentWallet.currency === 'BTC'"
+								v-if="transaction.currentWallet.currency === 'BTC'"
 								src="@/assets/images/btc.png"
 								alt
 								title
 							/>
 							<img
-								v-if="currentWallet.currency === 'ETH'"
+								v-if="transaction.currentWallet.currency === 'ETH'"
 								src="@/assets/images/eth.png"
 								alt
 								title
 							/>
 							<img
-								v-if="currentWallet.currency === 'LTC'"
+								v-if="transaction.currentWallet.currency === 'LTC'"
 								src="@/assets/images/ltc.svg"
 								alt
 								title
 							/>
-							<span :class="currentWallet.currency.toLowerCase()">{{ transaction.currency }}</span>
+							<span :class="transaction.currentWallet.currency.toLowerCase()">{{
+								transaction.currency
+							}}</span>
 						</div>
 						<div class="address" v-if="getTransactionType(transaction) === 'exchange'">
 							{{ transaction.source.address }}
@@ -73,11 +78,27 @@
 							{{ transaction.source.To }}
 						</div>
 						<div class="trans-amount">
-							<span class="text"
-								>{{ Math.abs(Number(transaction.value)).toFixed(5) }}
-								{{ transaction.currency }}</span
-							>
-							<span class="icon" @click="handleOpenOperation(transaction.url)"></span>
+							<div class="amount">
+								<p>
+									{{
+										getTransactionType(transaction) === 'send'
+											? '-'
+											: getTransactionType(transaction) === 'receive'
+											? '+'
+											: ''
+									}}{{ formatCurrency(transaction.value, '', 5) }} {{ transaction.currency }}
+								</p>
+								<span
+									>{{
+										getTransactionType(transaction) === 'send'
+											? '-'
+											: getTransactionType(transaction) === 'receive'
+											? '+'
+											: ''
+									}}{{ formatCurrency(transaction.valueUSD, '$') }} USD</span
+								>
+							</div>
+							<span class="icon" @click="handleOpenOperation(transaction)"></span>
 						</div>
 					</div>
 					<div class="trans-info">
@@ -98,7 +119,7 @@
 									</th>
 									<th>
 										<p>Fee</p>
-										<span>{{ '0.0003 ' + currentWallet.currency }}</span>
+										<span>{{ '0.0003 ' + transaction.currentWallet.currency }}</span>
 									</th>
 									<th>
 										<p v-if="getTransactionType(transaction) === 'send'">To</p>
@@ -140,29 +161,20 @@
 </template>
 <script>
 export default {
-	props: ['currentWallet'],
+	props: ['datesWithTransactions'],
 	data() {
 		return {
 			openedOperation: null,
-			datesWithTransactions: [],
 		};
-	},
-	mounted() {
-		this.$store
-			.dispatch('wallet/GET_WALLET_OPERATIONS', {
-				currency: this.currentWallet.currency,
-				address: this.currentWallet.address,
-			})
-			.then((data) => {
-				this.datesWithTransactions = data;
-			});
 	},
 	methods: {
 		formatDate(date) {
-			const stringDate = date.toString();
+			const parsedDate = new Date(Date.parse(date));
+			const stringDate = parsedDate.toString();
+
 			const day = stringDate.slice(8, 10);
 			const month = stringDate.slice(4, 7);
-			const year = date.getFullYear();
+			const year = parsedDate.getFullYear();
 			return `${month} ${day}, ${year}`;
 		},
 		getTime(date) {
@@ -171,25 +183,26 @@ export default {
 		},
 		getFullTime(date) {
 			const parsedDate = new Date(Date.parse(date));
+
 			const day = parsedDate.getDate();
 			const month = Number(parsedDate.getMonth()) + 1;
 			const formattedMonth = month < 10 ? '0' + month : month;
 			const year = parsedDate.getFullYear();
 			return `${day}/${month}/${year} ${this.getTime(date)}`;
 		},
-		handleOpenOperation(url) {
-			if (this.openedOperation === url) {
+		handleOpenOperation(transaction) {
+			if (this.openedOperation === transaction.url + this.getTransactionType(transaction)) {
 				this.openedOperation = null;
 			} else {
-				this.openedOperation = url;
+				this.openedOperation = transaction.url + this.getTransactionType(transaction);
 			}
 		},
 		getTransactionType(transaction) {
 			if (!transaction.source.From && !transaction.source.To) {
 				return 'exchange';
-			} else if (transaction.source.From === this.currentWallet.address.toLowerCase()) {
+			} else if (transaction.source.From === transaction.currentWallet.address.toLowerCase()) {
 				return 'send';
-			} else if (transaction.source.To === this.currentWallet.address.toLowerCase()) {
+			} else if (transaction.source.To === transaction.currentWallet.address.toLowerCase()) {
 				return 'receive';
 			} else return 'unknown';
 		},

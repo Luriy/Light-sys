@@ -66,6 +66,10 @@ export default {
 			} else {
 				if (this.isPhysicalCardChecked || this.isVirtualCardChecked) {
 					this.isApplied.checked = true;
+				} else {
+					this.isPhysicalCardChecked = true;
+					this.isVirtualCardChecked = true;
+					this.isApplied.checked = true;
 				}
 			}
 

@@ -236,17 +236,17 @@ export default {
 				case 'BTC':
 					return {
 						toShow: 0.00035,
-						toPay: 0.0004,
+						toPay: 0.00035,
 					};
 				case 'ETH':
 					return {
 						toShow: 0.0005,
-						toPay: 0.0006,
+						toPay: 0.0005,
 					};
 				case 'LTC':
 					return {
 						toShow: 0.004,
-						toPay: 0.003,
+						toPay: 0.004,
 					};
 			}
 		},

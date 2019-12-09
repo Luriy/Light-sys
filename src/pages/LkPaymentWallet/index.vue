@@ -40,6 +40,20 @@
 		</div>
 
 		<div class="wallet-description" :class="{ active: isDescriptionOpened }">
+			<transition name="fade">
+				<div class="social-links__modal" v-show="isSocialLinksOpened">
+					<a
+						v-for="link in socialLinks"
+						:key="link.href"
+						class="social-links__modal-link"
+						:href="link.href"
+						target="_blank"
+					>
+						<img :src="link.image" alt="" class="social-links__modal-img" />
+						{{ link.text }}
+					</a>
+				</div>
+			</transition>
 			<div
 				class="flex justify-content-between align-items-center description-header-block"
 				@click="isDescriptionOpened = !isDescriptionOpened"
@@ -54,13 +68,11 @@
 					/>
 				</button>
 			</div>
+
 			<div class="wallet-description-outer" :class="{ active: isDescriptionOpened }">
 				<div class="flex justify-content-between align-items-start wallet-description-text-wrapper">
 					<div class="text">
-						Ethereum is a decentralized computing platform that runs smart contracts, which are
-						contracts thah execute withou human intervention. ETH popularized the idea programmable
-						transactions instead of only for money transfers. The platform is user for crowdfuundin
-						(ICOs) , the cretion of new digital assets, and more.
+						{{ descriptionText }}
 					</div>
 					<div class="social-links">
 						<button
@@ -69,46 +81,21 @@
 						>
 							<img src="@/assets/images/3-dots.svg" alt="Social links" />
 						</button>
-						<transition name="fade">
-							<div class="social-links__modal" v-show="isSocialLinksOpened">
-								<a class="social-links__modal-link" href="#">
-									<img
-										src="@/assets/images/wallet-link.svg"
-										alt=""
-										class="social-links__modal-img"
-									/>
-									Website
-								</a>
-								<a class="social-links__modal-link" href="#">
-									<img
-										src="@/assets/images/wallet-reddit.svg"
-										alt=""
-										class="social-links__modal-img"
-									/>
-									Reddit
-								</a>
-								<a class="social-links__modal-link" href="#">
-									<img
-										src="@/assets/images/wallet-twitter.svg"
-										alt=""
-										class="social-links__modal-img"
-									/>
-									Twitter
-								</a>
-							</div>
-						</transition>
 					</div>
 				</div>
 			</div>
 		</div>
-		<transactions-history :currentWallet="currentWallet"></transactions-history>
+		<transactions-history
+			:currentWallet="currentWallet"
+			:datesWithTransactions="datesWithTransactions"
+		></transactions-history>
 	</lk-layout>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import LkLayout from '@/layout/LkLayout';
-import TransactionsHistory from './TransactionsHistory';
+import TransactionsHistory from '@/components/TransactionsHistory';
 
 export default {
 	name: 'LkPaymentWallet',
@@ -125,11 +112,11 @@ export default {
 			isSocialLinksOpened: false,
 			isDescriptionOpened: false,
 			windowHandler: null,
+			datesWithTransactions: [],
 		};
 	},
 	mounted() {
 		const dropdown = document.querySelector('.social-links__modal');
-
 		this.windowHandler = ({ target }) => {
 			if (
 				!target.classList.contains('social-links__modal') &&
@@ -141,15 +128,78 @@ export default {
 		};
 		window.addEventListener('click', this.windowHandler);
 	},
-	beforeMount() {
+	beforeDestroy() {
+		window.removeEventListener('click', this.windowHandler);
+	},
+	created() {
 		this.currentWallet = this.wallets.find(
 			(wallet) => wallet.address === this.$route.params.address,
 		);
+		this.$store
+			.dispatch('wallet/GET_WALLET_OPERATIONS', {
+				currency: this.currentWallet.currency,
+				address: this.currentWallet.address,
+			})
+			.then((data) => {
+				this.datesWithTransactions = data;
+			});
 	},
 	computed: {
 		...mapGetters({
 			wallets: 'wallet/WALLETS',
 		}),
+		descriptionText() {
+			switch (this.$route.params.currency) {
+				case 'BTC':
+					return `The cryptocurrency that started it all, Bitcoin is the first digital currency to solve the "double spending" or counterfeiting problem without the aid of a central authority, such as a bank or a government, making Bitcoin truly peer-to-peer.`;
+				case 'ETH': {
+					return `Ethereum is a decentralized computing platform that runs smart contracts, which are
+						contracts thah execute withou human intervention. ETH popularized the idea programmable
+						transactions instead of only for money transfers. The platform is user for crowdfuundin
+						(ICOs) , the cretion of new digital assets, and more.`;
+				}
+			}
+		},
+		socialLinks() {
+			let links = [
+				{
+					text: 'Website',
+					image: require('@/assets/images/wallet-link.svg'),
+				},
+				{
+					text: 'Reddit',
+					image: require('@/assets/images/wallet-reddit.svg'),
+				},
+				{
+					text: 'Twitter',
+					image: require('@/assets/images/wallet-twitter.svg'),
+				},
+			];
+
+			links.forEach((link, index) => {
+				switch (this.$route.params.currency) {
+					case 'BTC':
+						links = links.filter((link) => link.text !== 'Twitter');
+						link.href =
+							index === 0
+								? 'https://bitcoin.org'
+								: index === 1
+								? 'https://www.reddit.com/r/Bitcoin/'
+								: null;
+					case 'ETH':
+						link.href =
+							index === 0
+								? 'https://ethereum.org/'
+								: index === 1
+								? 'https://www.reddit.com/r/ethereum/'
+								: index === 2
+								? 'https://twitter.com/ethereum'
+								: null;
+				}
+			});
+
+			return links;
+		},
 	},
 	methods: {
 		isShowLogotype(code) {
@@ -161,7 +211,9 @@ export default {
 <style scoped>
 .wallet-description {
 	transition: 0.5s;
-	padding-bottom: 40px;
+	padding-bottom: 25px;
+
+	position: relative;
 }
 .wallet-description.active {
 	padding-bottom: 0;
@@ -172,17 +224,14 @@ export default {
 	margin-bottom: 20px;
 	font-size: 16px;
 }
-.social-links {
-	position: relative;
-}
 .social-links__button {
 	padding: 5px 10px;
+	margin-left: 40px;
 }
 .social-links__modal {
 	position: absolute;
-	right: -5px;
-	top: 39px;
-	padding: 10px 13px 10px 10px;
+	right: 6px;
+	top: 98px;
 	border-radius: 8px;
 	background-color: #654d95;
 }
@@ -192,10 +241,18 @@ export default {
 	color: #fff;
 	text-decoration: none;
 	display: flex;
-	margin-bottom: 7px;
+	opacity: 0.7;
+	padding: 7px 13px 0px 10px;
+	transition: 0s;
+}
+.social-links__modal-link:hover {
+	opacity: 1;
 }
 .social-links__modal-link:last-of-type {
-	margin-bottom: 0;
+	padding-bottom: 10px;
+}
+.social-links__modal-link:first-of-type {
+	padding-top: 10px;
 }
 .social-links__modal-img {
 	margin-right: 7px;
@@ -217,7 +274,6 @@ export default {
 	font-size: 12px;
 	line-height: 21px;
 	color: rgba(255, 255, 255, 0.5);
-	max-width: 775px;
 }
 .wallet-description-text-wrapper {
 	transition: 0.2s;
@@ -232,7 +288,7 @@ export default {
 	overflow: hidden;
 }
 .wallet-description-outer.active {
-	padding-bottom: 55px;
+	padding-bottom: 25px;
 	max-height: 300px;
 	margin-top: 20px;
 }

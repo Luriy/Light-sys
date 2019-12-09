@@ -2,7 +2,7 @@
 	<lk-layout>
 		<div class="wallets-and-acccouts-page">
 			<div class="wallets-list">
-				<div class="wallets-block wallets-list_item">
+				<div class="wallets-block wallets-list_item left">
 					<div class="toggler">
 						<p>Wallets</p>
 						<div class="flex toggler__panel">
@@ -20,7 +20,7 @@
 					></wallets-list>
 				</div>
 
-				<div class="fiat-block wallets-list_item">
+				<div class="fiat-block wallets-list_item right">
 					<div class="toggler">
 						<p>Account and Cards</p>
 						<div class="flex toggler_panel">
@@ -43,11 +43,7 @@
 					<p>Operations history</p>
 				</div>
 				<div class="operations-history-list">
-					<operations-history-list-item
-						v-for="(operation, idx) in operationsWithUnconfirmed"
-						:key="idx"
-						:operation="operation"
-					></operations-history-list-item>
+					<transactions-history :datesWithTransactions="operations"></transactions-history>
 				</div>
 			</div>
 		</div>
@@ -57,7 +53,7 @@
 import { mapGetters } from 'vuex';
 import wallet from '@/store/modules/wallet';
 import LkLayout from '@/layout/LkLayout';
-import OperationsHistoryListItem from '@/components/OperationsHistoryListItem';
+import TransactionsHistory from '@/components/TransactionsHistory';
 import WalletsList from './components/WalletsList';
 import CardsList from './components/CardsList';
 import './styles.scss';
@@ -66,7 +62,7 @@ export default {
 	name: 'LkPaymentWallets',
 	components: {
 		LkLayout,
-		OperationsHistoryListItem,
+		TransactionsHistory,
 		WalletsList,
 		CardsList,
 	},
@@ -78,7 +74,7 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			operationsWithUnconfirmed: 'wallet/OPERATIONS_WITH_UNCONFIRMED',
+			operations: 'wallet/OPERATIONS',
 			wallets: 'wallet/WALLETS',
 			groupWallets: 'group/GROUP_WALLETS',
 			afterCreateWallet: 'wallet/AFTER_CREATE_WALLET',

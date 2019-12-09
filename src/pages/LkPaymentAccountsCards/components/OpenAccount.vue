@@ -9,8 +9,8 @@
 				<transition name="fade-medium">
 					<div
 						class="button-wrapper button-gradient"
-						v-show="isActive && isEditing"
 						@click="handleCancel"
+						v-show="isAccountsChanged && isActive"
 					>
 						<button class="add-cart-action-button cancel no-margin">
 							Cancel
@@ -20,22 +20,11 @@
 				<transition name="fade-medium">
 					<div
 						class="button-wrapper button-gradient"
-						v-show="isActive && isEditing"
 						@click="handleApply"
+						v-show="isAccountsChanged && isActive"
 					>
 						<button class="add-cart-action-button apply button-gradient">
 							Apply
-						</button>
-					</div>
-				</transition>
-				<transition name="fade-medium">
-					<div
-						class="button-wrapper button-gradient"
-						@click="handleEdit"
-						v-show="isActive && !isEditing"
-					>
-						<button class="add-cart-action-button cancel">
-							Edit
 						</button>
 					</div>
 				</transition>
@@ -85,19 +74,23 @@ export default {
 	},
 	data() {
 		return {
-			isEditing: false,
 			checkboxes: [],
+			initialCheckboxes: [],
 		};
 	},
 	mounted() {
-		this.$store.dispatch('currency/GET_ALL_CURRENCIES').then(() => {
-			this.checkboxes = this.currencies.map((currency, index) => ({
-				isChecked: false,
-				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-				id: index,
-			}));
-		});
-		this.$store.dispatch('currency/GET_USER_CURRENCIES');
+		this.checkboxes = this.currencies.map((currency, index) => ({
+			isChecked: false,
+			isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+			isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+			id: index,
+		}));
+		this.initialCheckboxes = this.currencies.map((currency, index) => ({
+			isChecked: false,
+			isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+			isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+			id: index,
+		}));
 	},
 	computed: {
 		...mapGetters({
@@ -105,43 +98,37 @@ export default {
 			userCurrencies: 'currency/USER_CURRENCIES',
 			groupCurrencies: 'group/GROUP_CURRENCIES',
 		}),
-		initialCheckboxes() {
-			return this.currencies.map((currency, index) => ({
-				isChecked: false,
-				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-				id: index,
-			}));
+		isAccountsChanged() {
+			if (this.initialCheckboxes.length && this.checkboxes.length) {
+				return !this.initialCheckboxes.every(
+					(initialCheckbox, index) =>
+						initialCheckbox.isChecked === this.checkboxes[index].isChecked,
+				);
+			} else return false;
 		},
 	},
 	methods: {
 		getCurrencyInfo,
 		handleMouseEnterCheckbox(index) {
-			if (this.isEditing) {
+			if (!this.checkboxes[index].isDisabled) {
 				this.checkboxes[index].isHovered = true;
 			} else return false;
 		},
 		handleMouseLeaveCheckbox(index) {
-			if (this.isEditing) {
+			if (!this.checkboxes[index].isDisabled) {
 				this.checkboxes[index].isHovered = false;
 			} else return false;
 		},
 		handleMouseClickCheckbox(index) {
-			if (this.isEditing) {
+			if (!this.checkboxes[index].isDisabled) {
 				this.checkboxes[index].isChecked = !this.checkboxes[index].isChecked;
 			} else return false;
 		},
 		handleCancel() {
 			this.$emit('onFreeze');
-			this.checkboxes = this.initialCheckboxes;
-			this.isEditing = false;
-		},
-		handleEdit() {
-			this.$emit('onFreeze');
-			this.isEditing = true;
-			this.checkboxes = this.checkboxes.map((checkbox) => ({
-				isChecked: checkbox.isHovered,
-				isHovered: false,
-				id: checkbox.id,
+			this.checkboxes = this.checkboxes.map((item, index) => ({
+				...item,
+				isChecked: this.initialCheckboxes[index].isChecked,
 			}));
 		},
 		handleApply() {
@@ -158,54 +145,73 @@ export default {
 				this.$store.dispatch('currency/ADD_USER_CURRENCY', { ValuteName: valute }).then((data) => {
 					if (data.success) {
 						this.$store.commit('currency/SET_USER_CURRENCIES', [valute, ...this.userCurrencies]);
-						this.$store.dispatch('group/SET_CURRENCIES_TO_GROUP', {
-							groupName: 'Other accounts',
-							currencies: [
-								...this.groupCurrencies.find(({ groupName }) => groupName === 'Other accounts')
-									.currencies,
+						const otherAccountsGroup = this.groupCurrencies.find(
+							({ groupName }) => groupName === 'Other accounts',
+						);
+						if (otherAccountsGroup) {
+							this.$store.dispatch('group/SET_CURRENCIES_TO_GROUP', {
+								groupName: 'Other accounts',
+								currencies: [
+									...otherAccountsGroup.currencies,
+									{
+										cards: [],
+										currency: valute,
+										code: getCurrencyInfo(valute).code,
+										fullName: getCurrencyInfo(valute).fullName,
+									},
+								],
+							});
+						} else {
+							this.$store.commit('group/SET_GROUP_CURRENCIES', [
+								...this.groupCurrencies,
 								{
-									cards: [],
-									currency: valute,
-									code: getCurrencyInfo(valute).code,
-									fullName: getCurrencyInfo(valute).fullName,
+									groupName: 'Other accounts',
+									currencies: [
+										{
+											cards: [],
+											currency: valute,
+											code: getCurrencyInfo(valute).code,
+											fullName: getCurrencyInfo(valute).fullName,
+										},
+									],
 								},
-							],
-						});
-
-						this.isEditing = false;
+							]);
+						}
 					}
 				});
 			});
 
-			const valutesToRemove = this.checkboxes
-				.filter((checkbox) => !checkbox.isChecked)
-				.map((checkbox) => this.currencies[checkbox.id])
-				.filter((checkbox) =>
-					this.userCurrencies.some((userCurrency) => userCurrency === checkbox),
-				);
+			// removing valutes
 
-			valutesToRemove.forEach((valute) => {
-				this.$store
-					.dispatch('currency/DELETE_USER_CURRENCY', { ValuteName: valute })
-					.then((data) => {
-						if (data.success) {
-							this.$store.commit(
-								'currency/SET_USER_CURRENCIES',
-								this.userCurrencies.filter((userCurrency) => userCurrency !== valute),
-							);
-							this.$store.commit(
-								'group/SET_GROUP_CURRENCIES',
-								this.groupCurrencies.map((group) => ({
-									...group,
-									currencies: group.currencies.filter(({ currency }) => currency !== valute),
-								})),
-							);
-							this.isEditing = false;
-						}
-					});
-			});
+			// const valutesToRemove = this.checkboxes
+			// 	.filter((checkbox) => !checkbox.isChecked)
+			// 	.map((checkbox) => this.currencies[checkbox.id])
+			// 	.filter((checkbox) =>
+			// 		this.userCurrencies.some((userCurrency) => userCurrency === checkbox),
+			// 	);
 
-			// console.log('valutesToAdd', valutesToAdd, 'valutesToRemove', valutesToRemove);
+			// valutesToRemove.forEach((valute) => {
+			// 	this.$store
+			// 		.dispatch('currency/DELETE_USER_CURRENCY', { ValuteName: valute })
+			// 		.then((data) => {
+			// 			if (data.success) {
+			// 				this.$store.commit(
+			// 					'currency/SET_USER_CURRENCIES',
+			// 					this.userCurrencies.filter((userCurrency) => userCurrency !== valute),
+			// 				);
+			// 				this.$store.commit(
+			// 					'group/SET_GROUP_CURRENCIES',
+			// 					this.groupCurrencies
+			// 						.map((group) => ({
+			// 							...group,
+			// 							currencies: group.currencies.filter(({ currency }) => currency !== valute),
+			// 						}))
+			// 						.filter((group) => group.currencies.length !== 0),
+			// 				);
+			// 				this.isEditing = false;
+			// 			}
+			// 		});
+			// });
 		},
 	},
 	watch: {
@@ -213,6 +219,13 @@ export default {
 			this.checkboxes = this.currencies.map((currency, index) => ({
 				isChecked: false,
 				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				id: index,
+			}));
+			this.initialCheckboxes = this.currencies.map((currency, index) => ({
+				isChecked: false,
+				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
 				id: index,
 			}));
 		},

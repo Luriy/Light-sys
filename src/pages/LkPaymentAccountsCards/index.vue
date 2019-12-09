@@ -13,7 +13,6 @@
 				</div>
 				<div class="accounts-list_wrapper_tabs">
 					<open-account
-						:userCurrencies="userCurrencies"
 						:isActive="tabs[0].isActive"
 						@onOpenTab="handleOpenTab(tabs[0], tabs)"
 						@onFreeze="handleFreeze"
@@ -173,17 +172,19 @@ export default {
 	},
 	mounted() {
 		this.$store.dispatch('card/GET_CARDS');
+		this.$store.dispatch('currency/GET_ALL_CURRENCIES');
 		this.$store.dispatch('currency/GET_USER_CURRENCIES');
 		this.$store.dispatch('common/GET_BANKS');
 	},
 	computed: {
 		...mapGetters({
 			userCurrencies: 'currency/USER_CURRENCIES',
+			currencies: 'currency/CURRENCIES',
 			banks: 'common/BANKS',
 			cards: 'card/CARDS',
 		}),
 		openCardCurrencies() {
-			return this.userCurrencies.map((currency) => {
+			return this.currencies.map((currency) => {
 				const { fullName, code } = getCurrencyInfo(currency);
 				return {
 					currency,
@@ -314,7 +315,7 @@ export default {
 		},
 	},
 	watch: {
-		userCurrencies(value) {
+		currencies(value) {
 			this.tabs[1].activeCurrencies = value.map(() => ({
 				isActive: false,
 			}));
