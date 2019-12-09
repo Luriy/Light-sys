@@ -96,7 +96,10 @@
                           {{wallet.currency}}
                         </span>
                             <span class="currency-divider">&#124;</span>
-                            <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            <span
+                              class="balance-reserve"
+                              :style="[wallet.isWallet ? {display: 'inline-block'} : '']"
+                            >{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
@@ -143,10 +146,6 @@
                           <div class="amount">
                             <div class="code btc">{{wallet.name}}</div>
                             <div class="value">
-                              <span>
-                                {{wallet.currency}}
-                              </span>
-                              <span class="currency-divider">&#124;</span>
                               <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                             </div>
                           </div>
@@ -274,7 +273,10 @@
                           {{wallet.currency}}
                         </span>
                             <span class="currency-divider">&#124;</span>
-                            <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
+                            <span
+                              class="balance-reserve"
+                              :style="[wallet.isWallet ? {display: 'inline-block'} : '']"
+                            >{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                           </div>
                         </div>
                       </div>
@@ -322,10 +324,6 @@
                           <div class="amount">
                             <div class="code btc">{{wallet.name}}</div>
                             <div class="value">
-                        <span>
-                          {{wallet.currency}}
-                        </span>
-                              <span class="currency-divider">&#124;</span>
                               <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                             </div>
                           </div>

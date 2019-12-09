@@ -436,7 +436,11 @@ $break-large: 1124px;
       .select-wrapper {
         overflow-y: auto;
         max-height: 454px;
-        padding-right: 20px;
+        padding-right: 5px;
+
+        @include respond-to(wide-screens) {
+          padding-right: 20px;
+        }
         scrollbar-width: thin;
         scrollbar-color: #2e0e52 transparent;
 
