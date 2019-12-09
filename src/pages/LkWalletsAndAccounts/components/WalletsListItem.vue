@@ -26,7 +26,11 @@
 						<img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title />
 						<img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc-ico.svg" width="12" />
 					</div>
-					<span>{{ wallet.currency }}</span>
+					<div class="flex flex-column">
+						<span :class="wallet.currency.toLowerCase()">{{
+							getCryptoInfo(wallet.currency).fullName
+						}}</span>
+					</div>
 				</div>
 				<div class="info" v-if="wallet.isAvailable">
 					<div class="balance">
@@ -64,6 +68,8 @@
 	</div>
 </template>
 <script>
+import getCryptoInfo from '@/functions/getCryptoInfo';
+
 export default {
 	props: ['wallet', 'isWalletsMovingAndDeleting', 'percentage', 'groupWallets'],
 	data() {
@@ -78,11 +84,14 @@ export default {
 				? `${
 						value['1h'].toFixed(2) < 0.01 && value['1h'].toFixed(2) > -0.01
 							? '0.00'
+							: value['1h'].toFixed(2) >= 0.01
+							? '+' + value['1h'].toFixed(2)
 							: value['1h'].toFixed(2)
 				  }%`
 				: '',
 	},
 	methods: {
+		getCryptoInfo,
 		handleClickLine() {
 			if (!this.isInputEditingActive) {
 				this.isInputEditingActive = true;

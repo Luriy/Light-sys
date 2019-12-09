@@ -51,7 +51,7 @@
 		></lk-popup-delete-card>
 		<lk-popup
 			v-show="editPopup.isOpened"
-			:popupSize="{ width: '530px', height: '360px' }"
+			:popupSize="{ width: '530px', height: '345px' }"
 			class="card-list-edit-popup"
 			@closeModal="handleCloseEditPopup"
 		>
