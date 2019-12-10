@@ -57,12 +57,6 @@ export default new Router({
 			beforeEnter: ifAuthenticated,
 		},
     {
-      path: '/settings/:setting',
-      name: 'Setting',
-      component: Setting,
-      beforeEnter: ifAuthenticated,
-    },
-    {
       path: '/register',
       name: 'Register',
       component: Register,
