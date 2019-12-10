@@ -10,7 +10,7 @@
 					v-show="isWalletsMovingAndDeleting"
 					@click="$emit('onOpenPopup', wallet.address, wallet.currency)"
 				>
-					<img src="@/assets/images/cross.svg" />
+					<img src="@/assets/images/icons/cross.svg" />
 				</div>
 			</transition>
 			<div class="wallet" :class="{ active: !isWalletsMovingAndDeleting }">
@@ -22,7 +22,7 @@
 				</div>
 				<div class="code">
 					<div :class="['image', wallet.currency.toLowerCase()]">
-						<img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc-ico.svg" alt title />
+						<img v-if="wallet.currency === 'BTC'" src="@/assets/images/icons/btc-ico.svg" alt title />
 						<img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title />
 						<img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc-ico.svg" width="12" />
 					</div>

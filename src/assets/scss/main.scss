@@ -1,3 +1,4 @@
+@import "common";
 /* HTML5 display-role reset for older browsers */
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   margin: 0;
@@ -39,7 +40,7 @@ q {
 
 body {
 	font-family:'Open Sans' !important;
-	background:#2c1559;
+	background: $second-dark;
 }
 body .v-application .title {
   font-family:'Open Sans' !important;
@@ -61,7 +62,6 @@ input::placeholder {
 b, strong {
 	font-weight: 700;
 }
-$eth: #7d8ef6;
 
 .v-application p {
   margin-bottom: 0!important;
@@ -83,6 +83,7 @@ $eth: #7d8ef6;
   color: #d3d3d3 !important;
   opacity: 1 !important;
 }
+
 
 // responsive breakpoints
 $break-small-portrait: 320px;
@@ -837,7 +838,7 @@ $break-large: 1124px;
 .wallets-list {
 	border-bottom-left-radius:50px;
 	border-top-left-radius:50px;
-	background:#1e0639;
+	background:$first-dark;
 	position:relative;
 	width: calc(100% + 5vw);
     padding: 5.2vh 2.5vw 0 1.5vw;
@@ -857,10 +858,10 @@ $break-large: 1124px;
         border-radius: 0 0 0 15px;
         bottom: 3px;
         left: 0;
-        background-image: linear-gradient(180deg, rgba(30, 6, 57, 0) 0%, #1e0639 100%);
+        background-image: linear-gradient(180deg, rgba(30, 6, 57, 0) 0%, $first-dark 100%);
       }
 		.wallets-list_item_body {
-      
+
 			overflow-y: auto;
     		max-height: calc(100% - 54px);
 		    padding-right: 0.1vw;
@@ -1297,7 +1298,7 @@ $break-large: 1124px;
 	margin-top: -4.3vh !important;
 	width: 60%;
 	height: 4.2vh;
-	background-image: linear-gradient(180deg, rgba(30, 6, 57, 0) 0%, #1e0639 100%);
+	background-image: linear-gradient(180deg, rgba(30, 6, 57, 0) 0%, $first-dark 100%);
 	margin-left: 3.2vw;
 }
 	@media(min-width: 1112px){
@@ -1642,7 +1643,7 @@ $break-large: 1124px;
 }
 
 .payments-icon {
-	background:url(../images/credit-card.svg) no-repeat center;
+	background:url(../images/icons/credit-card.svg) no-repeat center;
 }
 
 .exchange-icon {
@@ -1650,11 +1651,11 @@ $break-large: 1124px;
 }
 
 .checked-icon {
-  background:url(../images/checked.svg) no-repeat center;
+  background:url(../images/icons/checked.svg) no-repeat center;
 }
 
 .dashboard-icon {
-	background:url(../images/dashboard.svg) no-repeat center;
+	background:url(../images/icons/dashboard.svg) no-repeat center;
 }
 
 .marketplace-icon {
@@ -1662,19 +1663,19 @@ $break-large: 1124px;
 }
 
 .dapp-icon {
-	background:url(../images/checklist.svg) no-repeat center;
+	background:url(../images/icons/checklist.svg) no-repeat center;
 }
 
 .contract-icon {
-	background:url(../images/contract.svg) no-repeat center;
+	background:url(../images/icons/contract.svg) no-repeat center;
 }
 
 .trading-icon {
-	background:url(../images/bar-chart.svg) no-repeat center;
+	background:url(../images/icons/bar-chart.svg) no-repeat center;
 }
 
 .investment-icon {
-	background:url(../images/earnings.svg) no-repeat center;
+	background:url(../images/icons/earnings.svg) no-repeat center;
 }
 
 .lending-icon {
@@ -1686,7 +1687,7 @@ $break-large: 1124px;
 }
 
 .workflow-icon {
-	background:url(../images/docs-1.svg) no-repeat center;
+	background:url(../images/icons/docs-1.svg) no-repeat center;
 }
 
 .settings-icon {
@@ -2029,7 +2030,7 @@ $break-large: 1124px;
 				.trans-amount {
 					.icon {
             transform: rotate(180deg);
-            
+
 					}
 				}
 			}

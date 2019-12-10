@@ -39,7 +39,7 @@
 			</div>
 			<div class="code">
 				<template v-if="transaction.currency === 'BTC'">
-					<img src="@/assets/images/btc.png" alt title />
+					<img src="@/assets/images/crypto/btc.png" alt title />
 					<span class="btc">Bitcoin</span>
 				</template>
 				<template v-if="transaction.currency === 'ETH'">

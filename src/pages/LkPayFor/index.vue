@@ -210,15 +210,15 @@ export default {
 			windowHandler: null,
 			paymentTypes: [
 				{
-					icon: require('@/assets/images/credit-card.svg'),
+					icon: require('@/assets/images/icons/credit-card.svg'),
 					text: 'From card to card',
 				},
 				{
-					icon: require('@/assets/images/avatar.svg'),
+					icon: require('@/assets/images/icons/avatar.svg'),
 					text: 'To people',
 				},
 				{
-					icon: require('@/assets/images/contract.svg'),
+					icon: require('@/assets/images/icons/contract.svg'),
 					text: 'Payment by details',
 				},
 				{
@@ -226,11 +226,11 @@ export default {
 					text: 'SWIFT',
 				},
 				{
-					icon: require('@/assets/images/avatar.svg'),
+					icon: require('@/assets/images/icons/avatar.svg'),
 					text: 'To myself',
 				},
 				{
-					icon: require('@/assets/images/credit-card2.svg'),
+					icon: require('@/assets/images/icons/credit-card2.svg'),
 					text: 'Money request',
 				},
 			],
@@ -264,7 +264,7 @@ export default {
 					text: 'Gos services',
 				},
 				{
-					icon: require('@/assets/images/bus.svg'),
+					icon: require('@/assets/images/icons/bus.svg'),
 					text: 'Transport',
 				},
 				{
@@ -280,7 +280,7 @@ export default {
 					text: 'Games',
 				},
 				{
-					icon: require('@/assets/images/book.svg'),
+					icon: require('@/assets/images/icons/book.svg'),
 					text: 'Education',
 				},
 				{

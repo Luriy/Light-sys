@@ -2,7 +2,7 @@ export default [
 	{
 		to: '/dashboard',
 		text: 'Dashboard',
-		image: require('@/assets/images/dashboard.svg'),
+		image: require('@/assets/images/icons/dashboard.svg'),
 	},
 	{
 		to: '/wallets',
@@ -12,7 +12,7 @@ export default [
 	{
 		to: '/payments-and-transfer',
 		text: 'Payments and transfers',
-		image: require('@/assets/images/credit-card-sidebar.svg'),
+		image: require('@/assets/images/icons/credit-card-sidebar.svg'),
 	},
 	{
 		to: '/exchange',
@@ -27,22 +27,22 @@ export default [
 	{
 		to: '/dapp',
 		text: 'Dapp',
-		image: require('@/assets/images/checklist.svg'),
+		image: require('@/assets/images/icons/checklist.svg'),
 	},
 	{
 		to: '/smartcontract',
 		text: 'Smart Contract Designer',
-		image: require('@/assets/images/contract-sidebar.svg'),
+		image: require('@/assets/images/icons/contract-sidebar.svg'),
 	},
 	{
 		to: '/trading',
 		text: 'Trading',
-		image: require('@/assets/images/bar-chart.svg'),
+		image: require('@/assets/images/icons/bar-chart.svg'),
 	},
 	{
 		to: '/investment',
 		text: 'My investment',
-		image: require('@/assets/images/earnings.svg'),
+		image: require('@/assets/images/icons/earnings.svg'),
 	},
 	{
 		to: '/lending',
@@ -57,7 +57,7 @@ export default [
 	{
 		to: '/workflow',
 		text: 'Workflow',
-		image: require('@/assets/images/docs-1.svg'),
+		image: require('@/assets/images/icons/docs-1.svg'),
 	},
 	{
 		to: '/settings',

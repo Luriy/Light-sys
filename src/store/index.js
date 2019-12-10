@@ -3,7 +3,6 @@ import Vuex from 'vuex';
 import user from './modules/user';
 import auth from './modules/auth';
 import wallet from './modules/wallet';
-import account from './modules/account';
 import alerts from './modules/alerts';
 import common from './modules/common';
 import card from './modules/card';
@@ -20,7 +19,6 @@ export default new Vuex.Store({
 		auth,
 		user,
 		wallet,
-		account,
 		alerts,
 		exchange,
 		common,

@@ -6,8 +6,8 @@
 		@mouseenter="$emit('onMouseEnter')"
 		@mouseleave="$emit('onMouseLeave')"
 	>
-		<img src="@/assets/images/checkbox-tick-active.svg" v-if="isActive" />
-		<img src="@/assets/images/checkbox-tick-disabled.svg" v-if="isDisabled && !isActive" />
+		<img src="@/assets/images/icons/checkbox-tick-active.svg" v-if="isActive" />
+		<img src="@/assets/images/icons/checkbox-tick-disabled.svg" v-if="isDisabled && !isActive" />
 	</div>
 </template>
 <script>

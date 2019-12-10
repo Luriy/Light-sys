@@ -38,7 +38,7 @@
 					v-show="isEditing"
 					@click="handleOpenDeletePopup(item.Number, item.Psid)"
 				>
-					<img src="@/assets/images/cross.svg" />
+					<img src="@/assets/images/icons/cross.svg" />
 				</div>
 			</transition>
 		</div>

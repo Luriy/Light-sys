@@ -48,7 +48,8 @@ const mutations = {
 		state.status = 'loading';
 	},
 	[USER_SUCCESS]: (state, resp) => {
-		state.status = 'success';
+    console.log(resp);
+    state.status = 'success';
 		Vue.set(state, 'profile', resp);
 	},
 	[USER_ERROR]: (state) => {

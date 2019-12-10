@@ -14,6 +14,7 @@ import PasswordRecovery from '@/pages/PasswordRecovery';
 
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
+import Settings from '@/pages/LkPaymentSettings/index';
 
 import store from '../store';
 
@@ -50,11 +51,23 @@ export default new Router({
 			beforeEnter: ifNotAuthenticated,
 		},
 		{
-			path: '/register',
-			name: 'Register',
-			component: Register,
-			beforeEnter: ifNotAuthenticated,
+			path: '/settings',
+			name: 'Settings',
+			component: Settings,
+			beforeEnter: ifAuthenticated,
 		},
+    {
+      path: '/settings/:setting',
+      name: 'Setting',
+      component: Setting,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: Register,
+      beforeEnter: ifNotAuthenticated,
+    },
 		{
 			path: '/exchange',
 			name: 'LkPaymentExchange',

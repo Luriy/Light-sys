@@ -34,7 +34,7 @@
 							v-show="isCardsMovingAndDeleting"
 							@click="$emit('onOpenDeletePopup', card.Number, card.Psid)"
 						>
-							<img src="@/assets/images/cross.svg" />
+							<img src="@/assets/images/icons/cross.svg" />
 						</div>
 					</div>
 					<!-- ДЛЯ КРАСОТЫ -->
@@ -49,14 +49,14 @@
 							<div class="amount">
 								12, 500 <span v-html="item.code" style="font-weight: 400;"></span>
 							</div>
-							<div class="type"><img src="@/assets/images/cloud.svg" alt title /></div>
+							<div class="type"><img src="@/assets/images/icons/cloud.svg" alt title /></div>
 						</div>
 						<div
 							class="btn-remove"
 							v-show="isCardsMovingAndDeleting"
 							@click="$emit('onOpenDeletePopup', card.Number, card.Psid)"
 						>
-							<img src="@/assets/images/cross.svg" />
+							<img src="@/assets/images/icons/cross.svg" />
 						</div>
 					</div>
 					<!-- ДЛЯ КРАСОТЫ -->

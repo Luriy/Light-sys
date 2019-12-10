@@ -21,7 +21,7 @@
 					<div class="accounts-list_wrapper_tab" v-bind:class="{ active: tabs[1].isActive }">
 						<div class="accounts-list_wrapper_tab_header" v-on:click="handleOpenTab(tabs[1], tabs)">
 							<div class="icon">
-								<div class="image"><img src="@/assets/images/credit-card2.svg" alt title /></div>
+								<div class="image"><img src="@/assets/images/icons/credit-card2.svg" alt title /></div>
 								<p>Open a card</p>
 							</div>
 							<div class="flex align-items-center">

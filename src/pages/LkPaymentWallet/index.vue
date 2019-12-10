@@ -61,7 +61,7 @@
 				<div class="title" :class="{ active: isDescriptionOpened }">Description</div>
 				<button class="description-toggler flex align-items-center justify-content-center">
 					<img
-						src="@/assets/images/arrow-big.svg"
+						src="@/assets/images/icons/arrow-big.svg"
 						alt="Description toggler"
 						class="description-toggler-image"
 						:class="{ active: isDescriptionOpened }"

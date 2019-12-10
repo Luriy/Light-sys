@@ -2,7 +2,7 @@
   <lk-layout>
     <div class="wallet-block">
       <div class="block-title">
-        <img v-if="$route.params.currency.toUpperCase() === 'BTC'" src="@/assets/images/btc.png" alt title>
+        <img v-if="$route.params.currency.toUpperCase() === 'BTC'" src="@/assets/images/crypto/btc.png" alt title>
         <img v-if="$route.params.currency.toUpperCase() === 'ETH'" src="@/assets/images/eth.png" alt title>
         <router-link :to="{ name: 'LkPaymentWallet' }" class="close"><img src="@/assets/images/path.svg" alt title></router-link>
       </div>

@@ -12,7 +12,7 @@
 				</div>
 				<div class="balance">10 205.99 <span>USD</span></div>
 				<div class="notification">
-					<img src="@/assets/images/bell.svg" alt title />
+					<img src="@/assets/images/icons/bell.svg" alt title />
 					<span></span>
 				</div>
 				<div class="avatar" @click="isDropDownOpened = !isDropDownOpened">

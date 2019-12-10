@@ -66,7 +66,7 @@
                   </div>
                 </transition>
               </div>
-            </div>		
+            </div>
     			</form>
         </div>
         <div class="login-form" v-if="step === 3">
@@ -80,11 +80,11 @@
                 />
               </div>
               <div class="is-password-hidden-icon-block is-password-hidden-icon" @click="isPasswordHidden = !isPasswordHidden" v-if="isPasswordHidden">
-                <img           
+                <img
                   class=""
                   src="@/assets/images/eye-with-bar.svg"
                 />
-              </div>  
+              </div>
     				</div>
             <div class="login-form-input">
     					<input :type="isPasswordHidden ? 'password' : 'text'" v-model='repeatPassword' placeholder="Repeat password">
@@ -93,7 +93,7 @@
               <div class="flex align-items-center">
                 <img v-if="!isPasswordContainNumber" src="@/assets/images/cross.png" />
                 <!-- <div class="invalid-icon"></div> -->
-                <img src="@/assets/images/done.svg" v-else />
+                <img src="@/assets/images/icons/done.svg" v-else />
                 <p class="validation-text" :class="{ valid: isPasswordContainNumber }">
                   Your password must contain at least one number
                 </p>
@@ -101,7 +101,7 @@
               <div class="flex align-items-center">
                 <!-- <div class="invalid-icon" v-if="!isPasswordLongEnough"></div> -->
                 <img v-if="!isPasswordLongEnough" src="@/assets/images/cross.png" />
-                <img src="@/assets/images/done.svg" v-else />
+                <img src="@/assets/images/icons/done.svg" v-else />
                 <p class="validation-text" :class="{ valid: isPasswordLongEnough }">
                   Your password must be at least 6 characters long
                 </p>
@@ -109,7 +109,7 @@
               <div class="flex align-items-center">
                 <!-- <div class="invalid-icon" v-if="!isPasswordsMatch"></div> -->
                 <img v-if="!isPasswordsMatch" src="@/assets/images/cross.png" />
-                <img src="@/assets/images/done.svg" v-else />
+                <img src="@/assets/images/icons/done.svg" v-else />
                 <p class="validation-text" :class="{ valid: isPasswordsMatch }">
                   Passwords match
                 </p>
@@ -130,7 +130,7 @@
   </login-layout>
 </template>
 <style scoped>
-  
+
 </style>
 <script>
 import LoginLayout from '@/layout/LoginLayout';
@@ -191,17 +191,17 @@ export default {
         const errors = Object.values(resp[0]['Errors'])
 
         if(errors.length) {
-        	this.commonError = errors[0];       	
+        	this.commonError = errors[0];
         } else {
           this.step = 3;
           this.commonError = null;
           clearInterval(this.timer);
         }
-      })		
+      })
   	},
     setPassword() {
       const { isPasswordLongEnough, isPasswordContainNumber, isPasswordsMatch, loginType, password, user } = this;
-      
+
       if (isPasswordLongEnough && isPasswordContainNumber && isPasswordsMatch) {
         Axios({
           method: 'POST',
@@ -238,7 +238,7 @@ export default {
                     icon: 'done'
                   })
                 }, 1500)
-                
+
       		    })
               .catch(err => {
       			    this.commonError = err;
@@ -253,9 +253,9 @@ export default {
 
     if(loginType === 'Phone') {
     	const phone = user.replace(/[^0-9]/gim,'');
-   		params.append('Phone', phone); 
+   		params.append('Phone', phone);
    		params.append('Email', '');
-   	} else if (loginType === 'Email') { 
+   	} else if (loginType === 'Email') {
    		params.append('Email', user);
       params.append('Phone', '');
    	} else return null;
@@ -284,7 +284,7 @@ export default {
     },
     resendPin() {
       const { loginType, user } = this;
-      this.$store.dispatch('user/USER_RESEND_PASSWORD', { 
+      this.$store.dispatch('user/USER_RESEND_PASSWORD', {
         Email: loginType === 'Email' ? user : '',
         Phone: loginType === 'Phone' ? user : '',
       }).then((data) => {
@@ -297,7 +297,7 @@ export default {
         } else {
           this.commonError = data.errors[0];
         }
-        
+
       })
     }
   },
