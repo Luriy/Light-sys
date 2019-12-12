@@ -22,12 +22,12 @@ export default {
 		},
 	},
 	methods: {
-      closeDialog() {
-        this.$emit('closeModal', false);
-      },
-      repeatTransferRequest() {
-        this.$emit('repeatTransferRequest');
-      }
+		closeDialog() {
+			this.$emit('closeModal', false);
+		},
+		repeatTransferRequest() {
+			this.$emit('repeatTransferRequest');
+		},
 	},
 };
 </script>
@@ -45,11 +45,11 @@ export default {
 		line-height: 21px;
 	}
 
-  .exchange-ammount {
-    margin-top: 10px;
-    font-size: 16px;
-    @extend .status
-  }
+	.exchange-ammount {
+		margin-top: 10px;
+		font-size: 16px;
+		@extend .status;
+	}
 
 	.icon-wrapper {
 		width: 43px;
@@ -82,7 +82,7 @@ export default {
 
 	.transaction-info {
 		margin-top: 15px;
-    margin-bottom: 15px;
+		margin-bottom: 15px;
 	}
 
 	.images {
@@ -115,6 +115,7 @@ export default {
 		flex-direction: column;
 		justify-content: space-between;
 		align-items: center;
+		position: relative;
 	}
 }
 
@@ -217,28 +218,28 @@ export default {
 	}
 
 	.timer-body {
-      display: flex;
-      justify-content: center;
-      margin-top: 25px;
+		display: flex;
+		justify-content: center;
+		margin-top: 25px;
 
-      .title {
-        color: #ffffff;
-        opacity: 0.5;
-        font-size: 14px;
-        line-height: 21px;
-        margin-right: 5px;
-      }
+		.title {
+			color: #ffffff;
+			opacity: 0.5;
+			font-size: 14px;
+			line-height: 21px;
+			margin-right: 5px;
+		}
 
-      .timer {
-        color: #ffffff;
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 24px;
-      }
+		.timer {
+			color: #ffffff;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 24px;
+		}
 
-      .repeat-btn {
-        @extend .timer
-      }
+		.repeat-btn {
+			@extend .timer;
+		}
 	}
 
 	.number-input {
@@ -270,7 +271,7 @@ export default {
 	line-height: 21px;
 
 	.network-fee__title {
-      margin: 0;
+		margin: 0;
 
 		span {
 			text-transform: capitalize;

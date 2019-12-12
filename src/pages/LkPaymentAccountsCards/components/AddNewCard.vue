@@ -32,6 +32,7 @@
 								placeholder="Card number"
 								v-model="cardInfo.number"
 								maxlength="19"
+								inputmode="numeric"
 								@input="handleCardNumber"
 							/>
 							<div class="add-card-form__line"></div>
@@ -150,6 +151,7 @@ export default {
 		...mapGetters({
 			userCurrencies: 'currency/USER_CURRENCIES',
 			groupCurrencies: 'group/GROUP_CURRENCIES',
+			cards: 'card/CARDS',
 		}),
 	},
 	mounted() {
@@ -219,7 +221,7 @@ export default {
 				currentBank: { psid, currency },
 			} = this;
 
-			const validateError = VALIDATE_CARD({ number, name, psid });
+			const validateError = VALIDATE_CARD({ number, name, psid, currency, cards: this.cards });
 
 			if (validateError) {
 				this.error = validateError;

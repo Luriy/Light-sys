@@ -13,7 +13,7 @@
 			</div>
 			<div
 				class="active-group"
-				@click="handleRenameGroup"
+				@click="handleRenameGroup(group.groupName)"
 				v-else-if="groupWallets.length !== 1 && editingGroup !== group.groupName"
 			>
 				{{ group.groupName }}

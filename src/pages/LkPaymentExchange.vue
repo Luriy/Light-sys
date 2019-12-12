@@ -610,10 +610,8 @@
   import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
   import currencyList from '@/settings/currensyList'
   import { getAuthParams } from '@/functions/auth';
-
   let exchangePrice = null;
   let receivePrice = null;
-
   export default {
     name: 'LkPaymentExchange',
     components: {
@@ -912,13 +910,11 @@
           this.clearValues()
           return;
         }
-
         if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
           this.exchangeAmount = this.exchangeCurrency.balance > this.transferInfo.limit ? this.transferInfo.limit : this.exchangeCurrency.balance;
           this.receiveAmount = +(this.exchangeAmount * this.transferInfo.rate).toFixed(5);
           return;
         }
-
         if (!this.exchangeCurrency.isWallet) {
           exchangePrice = this.exchangeCurrency.currency === 'RUR'
             ? this.fiatInfo.RUR.USD
@@ -1203,7 +1199,6 @@
     padding:20px;
     z-index: 5;
     left: 0;
-
     .select-item {
       display: flex;
       position: relative;
@@ -1216,7 +1211,6 @@
         margin-bottom: 10px;
       }
     }
-
     .search-input {
       margin-bottom: 10px;
       input {
@@ -1248,22 +1242,18 @@
     font-size: 16px;
     font-weight: 600;
   }
-
   .success-popup_body {
     .middle-text {
       margin: 0 5px;
     }
   }
-
   .fiat-popup {
     .success-popup_title {
       position: relative;
-
       .fiat-icon {
         position: absolute;
         top: -33px;
       }
-
       .icon-wrapper {
         width: 67px;
         height: 67px;
@@ -1292,7 +1282,6 @@
         @extend .exchange_wallet
       }
     }
-
     .image-exchange-wrapper {
       margin-right: 5px;
       width: 50px;
@@ -1301,7 +1290,6 @@
       background-color: #543b88;
       display: flex;
       justify-content: center;
-
       img {
         width: 32px;
         height: 15px;
@@ -1312,11 +1300,9 @@
       margin-right: 0;
       margin-left: 5px;
     }
-
     .card-to-send-block {
       text-align: center;
       width: 285px;
-
       .message {
         color: #ffffff;
         font-size: 12px;
@@ -1344,21 +1330,18 @@
     line-height: 21px;
     text-transform: uppercase;
   }
-
   .select-line {
     flex-grow: 1;
     border-bottom: 1px solid #ffffff;
     opacity: 0.5;
     margin-bottom: 7px;
   }
-
   .filter-btn {
     color: #ffffff;
     font-size: 12px;
     font-weight: 600;
     line-height: 21px;
     text-transform: capitalize;
-
     &.active-list {
       border-radius: 5px;
       background-image: linear-gradient(270deg, #8e6ee4 0%, #d268bc 100%);

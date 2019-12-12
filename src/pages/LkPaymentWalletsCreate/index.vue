@@ -139,7 +139,7 @@ export default {
     })
   },
   filters: {
-    changePercent: value => `${value > 0 && '+' + value.toFixed(2).toString()}%`,
+    changePercent: value => `${(value > 0 ? '+' : '') + value.toFixed(2).toString()}%`,
   },
   mounted() {
     this.$store.dispatch('wallet/GET_TYPES');

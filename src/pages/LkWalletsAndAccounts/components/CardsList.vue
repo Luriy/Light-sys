@@ -13,7 +13,6 @@
 			</div>
 			<div
 				class="active-group"
-				:class="{ active: group.groupName.length === 0 }"
 				@click="handleRenameGroup(group.groupName)"
 				v-else-if="groupCurrencies.length !== 1 && editingGroup !== group.groupName"
 			>

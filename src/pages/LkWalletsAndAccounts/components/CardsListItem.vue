@@ -12,6 +12,7 @@
 				<div class="right">
 					<div class="flex justify-content-between">
 						<p class="balance">{{ '22,000' }}</p>
+						&nbsp;
 						<p class="balance-currency" v-html="item.code"></p>
 					</div>
 					<div class="wallet-toggle"></div>
@@ -19,7 +20,11 @@
 			</div>
 			<div class="wallet-last-transactions">
 				<transition-group name="slide-fade">
-					<div class="wallet-last-transactions-item" v-for="card in item.cards" :key="card.Number">
+					<div
+						class="wallet-last-transactions-item"
+						v-for="(card, index) in item.cards"
+						:key="card.Number + index"
+					>
 						<div class="from">
 							<div class="image">
 								<img :src="getBankImage(card.Psid, 'small')" alt title />
@@ -46,8 +51,9 @@
 							<span>NEO bank</span>
 						</div>
 						<div class="info">
-							<div class="amount">
-								12, 500 <span v-html="item.code" style="font-weight: 400;"></span>
+							<div class="amount flex">
+								12, 500&nbsp;
+								<p class="balance-currency" v-html="item.code"></p>
 							</div>
 							<div class="type"><img src="@/assets/images/icons/cloud.svg" alt title /></div>
 						</div>

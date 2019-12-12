@@ -97,7 +97,8 @@
 									:isOpened="walletSelect.isActive"
 									:wallets="wallets"
 									:cards="cards"
-									:fiatData="[]"
+									:banks="banks"
+									@onSelectItem="handleSelectItem"
 								></payment-types>
 							</transition>
 						</div>
@@ -156,6 +157,7 @@ export default {
 	},
 	mounted() {
 		this.$store.dispatch('common/GET_ALL_BALANCE');
+		this.$store.dispatch('common/GET_BANKS');
 		if (!this.wallets.length) {
 			this.$store.dispatch('wallet/GET_WALLETS');
 		}
@@ -181,6 +183,7 @@ export default {
 			allBalance: 'common/ALL_BALANCE',
 			wallets: 'wallet/WALLETS',
 			cards: 'card/CARDS',
+			banks: 'common/BANKS',
 		}),
 		allUsdBalance() {
 			const { BTCBalanceusd, ETHBalanceusd, LTCBalanceusd } = this.allBalance;
@@ -313,7 +316,8 @@ export default {
 
 			this.currentWallet = walletWithMaxBalance;
 		},
-		handleChangeCurrentWallet({ currency, balance, balanceUSD, address, isAvailable }) {
+		handleSelectItem(item) {
+			const { currency, balance, balanceUSD, address, isAvailable } = item;
 			if (isAvailable) {
 				this.walletSelect.isActive = false;
 				this.currentWallet = { currency, balance, balanceUSD, address };

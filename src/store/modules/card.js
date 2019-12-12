@@ -24,6 +24,7 @@ export default {
 				method: 'POST',
 				params: {
 					Comand: 'CardInfo',
+					Currency: true,
 					...getAuthParams(),
 				},
 			}).then(({ data }) => {

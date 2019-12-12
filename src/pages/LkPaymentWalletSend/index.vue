@@ -417,6 +417,10 @@ export default {
 
 				this.countdown = 59;
 
+				setTimeout(() => {
+					document.querySelector('.transfer-popup .number-input').focus();
+				}, 50);
+
 				this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
 					this.timer = setInterval(() => {
 						this.countdown--;
@@ -438,55 +442,19 @@ export default {
 				})
 				.then((data) => {
 					if (data.success) {
-						const firstTransactionObject = {
-							currentWallet: this.currentWallet.address.toLowerCase(),
-							url: data.data['Transaction_id: '],
-							time: new Date(Date.now()),
-							currency: this.currentWallet.currency,
-							value: this.cryptoCurrencyAmount,
-							valueUSD: this.currencyAmount,
-							source: {
-								From: this.paymentAddress.toLowerCase(),
-								To: this.currentWallet.address.toLowerCase(),
-							},
-							isLocal: true,
-						};
-						const secondTransactionObject = {
-							currentWallet: this.currentWallet.address.toLowerCase(),
-							url: data.data['Transaction_id: '],
-							time: new Date(Date.now()),
-							currency: this.currentWallet.currency,
-							value: this.cryptoCurrencyAmount,
-							valueUSD: this.currencyAmount,
-							source: {
-								To: this.paymentAddress.toLowerCase(),
-								From: this.currentWallet.address.toLowerCase(),
-							},
-							isLocal: true,
-						};
-						if (this.operations.length) {
-							this.$store.commit('wallet/SET_UNCONFIRMED_OPERATIONS', [
-								...this.unconfirmedOperations,
-								firstTransactionObject,
-								secondTransactionObject,
-							]);
-							this.sendPopup = false;
-							this.successPopup = true;
-						} else {
-							this.$store.dispatch('wallet/GET_OPERATIONS', this.wallets).then((operations) => {
-								this.$store.commit('wallet/SET_UNCONFIRMED_OPERATIONS', [
-									...this.unconfirmedOperations,
-									firstTransactionObject,
-									secondTransactionObject,
-								]);
-							});
-						}
+						this.sendPopup = false;
+						this.successPopup = true;
+
+						setTimeout(() => {
+							this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+							this.$store.dispatch('wallet/GET_WALLETS');
+						}, 5000);
+
+						setTimeout(() => {
+							this.successPopup = false;
+							this.clearData();
+						}, 7000);
 					}
-					setTimeout(() => {
-						this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
-						this.successPopup = false;
-						this.clearData();
-					}, 5000);
 				});
 		},
 	},

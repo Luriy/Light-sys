@@ -16,6 +16,8 @@
 						:isActive="tabs[0].isActive"
 						@onOpenTab="handleOpenTab(tabs[0], tabs)"
 						@onFreeze="handleFreeze"
+						:currencies="currencies"
+						:userCurrencies="userCurrencies"
 					></open-account>
 
 					<div class="accounts-list_wrapper_tab" v-bind:class="{ active: tabs[1].isActive }">
@@ -99,7 +101,10 @@
 												<div class="banks">
 													<div
 														class="image-plate"
-														v-for="item in getCardsByCurrency(item.currency, cards)"
+														v-for="item in uniqueizeArray(
+															getCardsByCurrency(item.currency, cards),
+															'Psid',
+														)"
 														:key="item.currency"
 													>
 														<img :src="getBankImage(item.Psid, 'small')" />
@@ -159,6 +164,7 @@ import { mapGetters } from 'vuex';
 import getCurrencyInfo from '@/functions/getCurrencyInfo';
 import getBankImage from '@/functions/getBankImage';
 import getCardsByCurrency from '@/functions/getCardsByCurrency';
+import uniqueizeArray from '@/functions/uniqueizeArray';
 
 export default {
 	name: 'LkPaymentWalletsWalletsList',
@@ -221,6 +227,7 @@ export default {
 	methods: {
 		getBankImage,
 		getCardsByCurrency,
+		uniqueizeArray,
 		handleOpenTab(currentTab, tabs, isBigTab = true) {
 			if (!this.freezeActive) {
 				if (this.tabs.indexOf(currentTab) === 1 && currentTab.isActive === true && isBigTab) {
