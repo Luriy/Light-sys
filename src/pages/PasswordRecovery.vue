@@ -6,7 +6,7 @@
 					<router-link to="/register">Sign up</router-link>
 					<router-link to="/login">Login in</router-link>
 				</div>
-				<transition name="fade-long">
+				<transition name="fade-long-absolute">
 					<div class="login-form" v-if="step === 1 && isLoaded">
 						<form @submit.prevent="getPin">
 							<p class="recovery-title">
@@ -29,7 +29,7 @@
 						</form>
 					</div>
 				</transition>
-				<transition name="fade-long">
+				<transition name="fade-long-absolute">
 					<div class="login-form" v-if="step === 2">
 						<form>
 							<div>
@@ -78,11 +78,7 @@
 										</div>
 										<p class="repeat-btn" v-if="countdown === 0" @click="getPin">Repeat</p>
 									</div>
-									<transition name="fade-long">
-										<div class="error-block" v-if="commonError">
-											<p class="error">{{ commonError }}</p>
-										</div>
-									</transition>
+									<error :error="commonError"></error>
 								</div>
 							</div>
 						</form>
@@ -104,7 +100,7 @@
 import LoginLayout from '@/layout/LoginLayout';
 import Axios from 'axios';
 import { API_URL } from '@/constants';
-import { parsePythonDataObject } from '@/functions/helpers';
+import { parsePythonDataObject, parsePythonArray } from '@/functions/helpers';
 import sha512 from 'js-sha512';
 import { AUTH_REQUEST } from '@/store/actions/auth';
 import checkLoginType from '@/functions/checkLoginType';
@@ -133,6 +129,7 @@ export default {
 	methods: {
 		checkLoginType,
 		getPin() {
+			this.commonError = null;
 			const { user, loginType } = this;
 			Axios({
 				url: API_URL,
@@ -152,6 +149,9 @@ export default {
 				} else {
 					this.step = 2;
 					this.countdown = 59;
+					setTimeout(() => {
+						document.querySelector('.login-form .number-input').focus();
+					}, 50);
 					this.timer = setInterval(() => {
 						this.countdown--;
 					}, 1000);
@@ -161,6 +161,7 @@ export default {
 		},
 		sendPin() {
 			const { user, loginType, smsCodes } = this;
+			this.commonError = null;
 
 			Axios({
 				url: API_URL,
@@ -171,8 +172,8 @@ export default {
 					Email: loginType === 'Email' ? user : '',
 					Pin: smsCodes.map((smsCode, index) => smsCode[index]).join(''),
 				},
-			}).then((resp) => {
-				const data = parsePythonDataObject(resp);
+			}).then(({ data: resp }) => {
+				const data = parsePythonArray(resp);
 
 				const errors = Object.values(data[0]['Errors']);
 

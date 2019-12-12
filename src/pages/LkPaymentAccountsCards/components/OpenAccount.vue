@@ -68,7 +68,7 @@ import { mapGetters } from 'vuex';
 import getCurrencyInfo from '@/functions/getCurrencyInfo';
 
 export default {
-	props: ['isActive'],
+	props: ['isActive', 'currencies', 'userCurrencies'],
 	components: {
 		Checkbox,
 	},
@@ -79,23 +79,19 @@ export default {
 		};
 	},
 	mounted() {
-		this.checkboxes = this.currencies.map((currency, index) => ({
-			isChecked: false,
-			isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-			isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-			id: index,
-		}));
-		this.initialCheckboxes = this.currencies.map((currency, index) => ({
-			isChecked: false,
-			isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-			isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-			id: index,
-		}));
+		if (!this.currenies || !this.userCurrencies) {
+			Promise.all([
+				(this.$store.dispatch('currency/GET_ALL_CURRENCIES'),
+				this.$store.dispatch('currency/GET_USER_CURRENCIES')),
+			]).then(() => {
+				this.setCheckboxes();
+			});
+		} else {
+			this.setCheckboxes();
+		}
 	},
 	computed: {
 		...mapGetters({
-			currencies: 'currency/CURRENCIES',
-			userCurrencies: 'currency/USER_CURRENCIES',
 			groupCurrencies: 'group/GROUP_CURRENCIES',
 		}),
 		isAccountsChanged() {
@@ -109,6 +105,20 @@ export default {
 	},
 	methods: {
 		getCurrencyInfo,
+		setCheckboxes() {
+			this.checkboxes = this.currencies.map((currency, index) => ({
+				isChecked: false,
+				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				id: index,
+			}));
+			this.initialCheckboxes = this.currencies.map((currency, index) => ({
+				isChecked: false,
+				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
+				id: index,
+			}));
+		},
 		handleMouseEnterCheckbox(index) {
 			if (!this.checkboxes[index].isDisabled) {
 				this.checkboxes[index].isHovered = true;
@@ -216,18 +226,10 @@ export default {
 	},
 	watch: {
 		userCurrencies() {
-			this.checkboxes = this.currencies.map((currency, index) => ({
-				isChecked: false,
-				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-				isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-				id: index,
-			}));
-			this.initialCheckboxes = this.currencies.map((currency, index) => ({
-				isChecked: false,
-				isHovered: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-				isDisabled: this.userCurrencies.some((userCurrency) => userCurrency === currency),
-				id: index,
-			}));
+			this.setCheckboxes();
+		},
+		currencies() {
+			this.setCheckboxes();
 		},
 	},
 };

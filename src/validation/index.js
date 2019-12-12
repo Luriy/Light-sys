@@ -1,5 +1,7 @@
+import getCardsByCurrency from '@/functions/getCardsByCurrency';
+
 export const VALIDATE_AMOUNT_TRANSFER_EXCHANGE = (value, balance, minAmount, currencyName) => {
-	if (Number(value).toFixed(2) <= Number(minAmount).toFixed(2)) {
+	if (Number(value).toFixed(2) < Number(minAmount).toFixed(2)) {
 		return `Amount must be more than ${minAmount} ${currencyName}`;
 	} else if (Number(value).toFixed(2) > Number(balance).toFixed(2)) {
 		return 'Amount must be less than balance of your wallet.';
@@ -14,9 +16,13 @@ export const VALIDATE_ADDRESS = (address, currencyName, currentAddress) => {
 		return `You can't make transfer to current wallet.`;
 	} else return null;
 };
-export const VALIDATE_CARD = ({ number, name, psid }) => {
+export const VALIDATE_CARD = ({ number, name, psid, cards, currency }) => {
 	if (number.toString().length < 19) {
 		return `Enter correct card number.`;
+	} else if (
+		getCardsByCurrency(currency, cards).some((card) => card.Number === number.replace(/\s+/g, ''))
+	) {
+		return `This card is already registered.`;
 	} else if (name.toString().length < 3) {
 		return `Enter correct full name.`;
 	} else if (!psid) {

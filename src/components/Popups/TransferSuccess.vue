@@ -45,6 +45,8 @@
 				</div>
 			</div>
 			<img class="popup__success-image" src="@/assets/images/success-popup.png" />
+		</div>
+		<div slot="body">
 			<div class="progress-bar"></div>
 		</div>
 	</lk-pop-up>
@@ -106,16 +108,19 @@ export default {
 .title {
 	width: 140px;
 }
+.exchange-popup_title {
+	position: static;
+}
 .exchange-popup_title,
 .exchange-popup_title > * {
 	z-index: 20;
 }
 .progress-bar {
-	width: 90%;
+	width: 80%;
 	position: absolute;
 	left: 50%;
 	transform: translateX(-50%);
-	bottom: -24px;
+	bottom: 0;
 	height: 2px;
 	box-shadow: 0 -2px 7px rgba(253, 165, 12, 0.93);
 	border-radius: 1px;

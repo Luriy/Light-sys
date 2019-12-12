@@ -36,7 +36,6 @@
 					text
 					small
 					@click="currentList = 'banks'"
-					v-if="fiatData.length"
 					>Banks</v-btn
 				>
 			</div>
@@ -50,29 +49,34 @@
 					class="select-item"
 					v-for="(wallet, index) of wallets"
 					:key="`wallet-${index}`"
-					@click="!wallet.statusNode ? $emit('onSelectWallet', wallet) : ''"
+					@click="wallet.isAvailable ? $emit('onSelectWallet', wallet) : ''"
 				>
-					<div class="select-item-disabled" v-if="wallet.statusNode">Temporarily unavailable</div>
-					<div class="icon">
-						<img v-if="wallet.currency === 'BTC'" src="@/assets/images/btc.png" alt title />
-						<img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth.png" alt title />
-						<img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc.svg" alt title />
+					<div
+						v-if="!wallet.isAvailable"
+						class="unavailable-block flex justify-content-center align-items-center"
+						:class="{ unavailable: !wallet.isAvailable }"
+					>
+						<p class="unavailable-text">Temporarily unavailable</p>
 					</div>
+					<img
+						:src="getCryptoInfo(wallet.currency).image.corner"
+						width="34"
+						alt
+						title
+						class="icon"
+					/>
 					<div class="amount">
-						<div class="code btc">{{ getCryptoInfo(wallet.currency).fullName }}</div>
+						<div class="code" :class="wallet.currency.toLowerCase()">
+							{{ wallet.currency }}
+							{{ getCryptoInfo(wallet.currency).fullName }}
+						</div>
 						<div class="value">
 							<span>
-								{{
-									wallet.isWallet
-										? wallet.balance
-										: `****${wallet.number.substr(wallet.number.length - 4)}`
-								}}
+								{{ wallet.balance.toFixed(5) }}
 								{{ wallet.currency }}
 							</span>
 							<span class="currency-divider">&#124;</span>
-							<span class="balance-reserve">{{
-								wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`
-							}}</span>
+							<span class="balance-reserve">${{ wallet.balanceUSD.toFixed(2) }} USD</span>
 						</div>
 					</div>
 				</div>
@@ -85,58 +89,47 @@
 				</div>
 				<div
 					class="select-item"
-					:class="{ unavailable: !wallet.isAvailable }"
-					v-for="(wallet, index) of cards"
+					v-for="(card, index) of cards"
 					:key="`fiat-${index}`"
-					@click="!wallet.statusNode ? $emit('onSelectWallet', wallet) : ''"
+					@click="$emit('onSelectItem', card)"
 				>
-					<div
-						v-if="!wallet.isAvailable"
-						class="unavailable-block flex justify-content-center align-items-center"
-					>
-						<p class="unavailable-text">Temporarily unavailable</p>
+					<div class="image-plate">
+						<img :src="getBankImage(card.Psid, 'small')" />
 					</div>
-					<div class="icon"></div>
-					<div class="amount">
-						<div class="code btc">{{ getCryptoInfo('') }}</div>
+					<div class="amount flex flex-column">
+						<span class="code">{{ banks.find(({ psid }) => psid == card.Psid).name }}</span>
 						<div class="value">
 							<span>
-								{{
-									wallet.isWallet
-										? wallet.balance
-										: `****${wallet.number.substr(wallet.number.length - 4)}`
-								}}
-								{{ wallet.currency }}
+								{{ `****${card.Number.slice(card.Number.length - 4)}` }}
+								{{ banks.find(({ psid }) => psid == card.Psid).valute }}
 							</span>
 							<span class="currency-divider">&#124;</span>
 							<span class="balance-reserve">{{
-								wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`
+								`Reserve: ${banks.find(({ psid }) => psid == card.Psid).reserve}`
 							}}</span>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div
-				class="select-item-fiat"
-				v-if="(currentList === 'banks' || currentList === 'all') && fiatData.length"
-			>
+			<div class="select-item-fiat" v-if="currentList === 'banks' || currentList === 'all'">
 				<div class="title-wrapper">
 					<span class="select-header">banks</span>
 					<span class="select-line"></span>
 				</div>
-				<div class="select-item" v-for="(wallet, index) of fiatData" :key="`fiat-${index}`">
-					<div class="icon"><img :src="wallet.icon" alt /></div>
+				<div class="select-item" v-for="(bank, index) of banks" :key="`fiat-${index}`">
+					<div class="image-plate">
+						<img :src="getBankImage(bank.psid, 'small')" alt />
+					</div>
+
 					<div class="amount">
-						<div class="code btc">{{ wallet.name }}</div>
+						<div class="code">{{ bank.name }}</div>
 						<div class="value">
 							<span>
-								{{ wallet.currency }}
+								{{ bank.valute }}
 							</span>
 							<span class="currency-divider">&#124;</span>
-							<span class="balance-reserve">{{
-								wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`
-							}}</span>
+							<span class="balance-reserve">{{ `Reserve: ${bank.reserve}` }}</span>
 						</div>
 					</div>
 				</div>
@@ -146,17 +139,26 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import getCryptoInfo from '@/functions/getCryptoInfo';
+import getBankImage from '@/functions/getBankImage';
 
 export default {
-	props: ['filteredWallets', 'isOpened', 'search', 'fiatData', 'wallets', 'cards'],
+	props: ['filteredWallets', 'isOpened', 'search', 'fiatData', 'wallets', 'cards', 'banks'],
 	data() {
 		return {
 			currentList: 'all',
 		};
 	},
+	methods: {
+		getCryptoInfo,
+		getBankImage,
+	},
 };
 </script>
 <style scoped lang="scss">
+.select {
+	cursor: pointer;
+}
 .select-body {
 	width: 100%;
 	top: 66px;
@@ -234,5 +236,48 @@ export default {
 	vertical-align: text-top;
 	font-size: 10px !important;
 	line-height: 23px !important;
+}
+.amount span {
+	font-size: 12px;
+	font-weight: 600;
+	color: #fff;
+}
+.amount .code {
+	font-size: 14px;
+	color: #fff;
+	font-weight: 600;
+}
+.icon {
+	margin-right: 12px;
+}
+.select .select-wrapper {
+	overflow-y: auto;
+	max-height: 454px;
+	scrollbar-width: thin;
+	scrollbar-color: #2e0e52 transparent;
+	padding-right: 20px;
+}
+.select .select-wrapper::-webkit-scrollbar-thumb,
+.select .select-wrapper::-webkit-scrollbar-thumb:hover {
+	width: 4px;
+	margin: 15px 0;
+	border-radius: 2.5px;
+	background-color: #2e0e52;
+}
+.select .select-wrapper::-webkit-scrollbar {
+	width: 4px;
+}
+.image-plate {
+	width: 37px;
+	height: 37px;
+	border-radius: 14px;
+	background-color: #7d62b3;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 12px;
+}
+.amount .code {
+	margin-bottom: -3px;
 }
 </style>

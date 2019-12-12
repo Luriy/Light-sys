@@ -6,7 +6,7 @@
 					<router-link to="/register">Sign up</router-link>
 					<router-link to="/login">Login in</router-link>
 				</div>
-				<transition name="fade-long">
+				<transition name="fade-long-absolute">
 					<div class="login-form" v-if="isLoaded">
 						<form @submit.prevent="login">
 							<div class="login-form-input">

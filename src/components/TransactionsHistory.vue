@@ -1,173 +1,213 @@
-<template v-if="datesWithTransactions.length">
-	<div class="trans-list__wrapper">
-		<div
-			class="trans-list"
-			v-for="datesWithTransaction in datesWithTransactions"
-			:key="datesWithTransaction.date.toString()"
-		>
-			<div class="trans-date">
-				<p>{{ formatDate(datesWithTransaction.date) }}</p>
-			</div>
+<template>
+	<div class="flex flex-column align-items-flex-end" v-if="operationsWithPagination.length">
+		<div class="trans-list__wrapper">
 			<div
-				class="trans-item operations-history-list-item"
-				v-for="transaction in datesWithTransaction.transactions"
-				:key="transaction.url + getTransactionType(transaction)"
-				:class="{
-					active: openedOperation === transaction.url + getTransactionType(transaction),
-					'plus-trans': getTransactionType(transaction) === 'receive',
-				}"
+				class="trans-list"
+				v-for="(datesWithTransaction, index) in activePaginationPage"
+				:key="datesWithTransaction.date.toString()"
 			>
-				<div class="trans-card">
-					<div class="trans-top">
-						<button class="btn">
-							<span class="icon">
-								<img
-									v-if="getTransactionType(transaction) === 'exchange'"
-									src="@/assets/images/transaction-exchange.svg"
-								/>
-								<img
-									v-else-if="getTransactionType(transaction) === 'send'"
-									src="@/assets/images/transaction-sent.svg"
-								/>
-								<img
-									v-else-if="getTransactionType(transaction) === 'receive'"
-									src="@/assets/images/transaction-received.svg"
-								/>
-							</span>
-							<div class="text">
-								<p v-if="getTransactionType(transaction) === 'exchange'">Exchanged</p>
-								<p v-else-if="getTransactionType(transaction) === 'send'">
-									Sent
-								</p>
-								<p v-else-if="getTransactionType(transaction) === 'receive'">
-									Received
-								</p>
-								<span>{{ getTime(transaction.time) }}</span>
-							</div>
+				<div class="trans-date">
+					<p>{{ formatDate(datesWithTransaction.date) }}</p>
+					<transition name="fade">
+						<button
+							:disabled="activePage === 0"
+							class="arrow-block flex align-items-center absolute"
+							:class="{ disabled: activePage === 0 }"
+							@click="throttle(handleClickMoveButton('top'), 1000)"
+							v-if="index === 0"
+						>
+							<img src="@/assets/images/arrow-up.svg" height="15" width="15" />
 						</button>
-						<div class="code">
-							<img
-								v-if="transaction.currentWallet.currency === 'BTC'"
-								src="@/assets/images/btc.png"
-								alt
-								title
-							/>
-							<img
-								v-if="transaction.currentWallet.currency === 'ETH'"
-								src="@/assets/images/eth.png"
-								alt
-								title
-							/>
-							<img
-								v-if="transaction.currentWallet.currency === 'LTC'"
-								src="@/assets/images/ltc.svg"
-								alt
-								title
-							/>
-							<span :class="transaction.currentWallet.currency.toLowerCase()">{{
-								transaction.currency
-							}}</span>
-						</div>
-						<div class="address" v-if="getTransactionType(transaction) === 'exchange'">
-							{{ transaction.source.address }}
-						</div>
-						<div class="address" v-else-if="getTransactionType(transaction) === 'receive'">
-							{{ transaction.source.From }}
-						</div>
-						<div class="address" v-else-if="getTransactionType(transaction) === 'send'">
-							{{ transaction.source.To }}
-						</div>
-						<div class="trans-amount">
-							<div class="amount">
-								<p>
-									{{
-										getTransactionType(transaction) === 'send'
-											? '-'
-											: getTransactionType(transaction) === 'receive'
-											? '+'
-											: ''
-									}}{{ formatCurrency(transaction.value, '', 5) }} {{ transaction.currency }}
-								</p>
-								<span
-									>{{
-										getTransactionType(transaction) === 'send'
-											? '-'
-											: getTransactionType(transaction) === 'receive'
-											? '+'
-											: ''
-									}}{{ formatCurrency(transaction.valueUSD, '$') }} USD</span
-								>
+					</transition>
+				</div>
+				<div
+					class="trans-item operations-history-list-item"
+					v-for="transaction in datesWithTransaction.transactions"
+					:key="transaction.url + transaction.type"
+					:class="{
+						active: openedOperation === transaction.url + transaction.type,
+						'plus-trans': transaction.type === 'receive',
+					}"
+				>
+					<div class="trans-card">
+						<div class="trans-top">
+							<button class="btn">
+								<span class="icon">
+									<img
+										v-if="transaction.type === 'exchange'"
+										src="@/assets/images/transaction-exchange.svg"
+									/>
+									<img
+										v-else-if="transaction.type === 'send'"
+										src="@/assets/images/transaction-sent.svg"
+									/>
+									<img
+										v-else-if="transaction.type === 'receive'"
+										src="@/assets/images/transaction-received.svg"
+									/>
+								</span>
+								<div class="text">
+									<p v-if="transaction.type === 'exchange'">Exchanged</p>
+									<p v-else-if="transaction.type === 'send'">
+										Sent
+									</p>
+									<p v-else-if="transaction.type === 'receive'">
+										Received
+									</p>
+									<span>{{ getTime(transaction.time) }}</span>
+								</div>
+							</button>
+							<div class="code">
+								<img
+									v-if="transaction.currentWallet.currency === 'BTC'"
+									src="@/assets/images/btc.png"
+									alt
+									title
+								/>
+								<img
+									v-if="transaction.currentWallet.currency === 'ETH'"
+									src="@/assets/images/eth.png"
+									alt
+									title
+								/>
+								<img
+									v-if="transaction.currentWallet.currency === 'LTC'"
+									src="@/assets/images/ltc.svg"
+									alt
+									title
+								/>
+								<span :class="transaction.currentWallet.currency.toLowerCase()">{{
+									transaction.currency
+								}}</span>
 							</div>
-							<span class="icon" @click="handleOpenOperation(transaction)"></span>
+							<div class="address" v-if="transaction.type === 'exchange'">
+								{{ transaction.source.address }}
+							</div>
+							<div class="address" v-else-if="transaction.type === 'receive'">
+								{{ transaction.source.From }}
+							</div>
+							<div class="address" v-else-if="transaction.type === 'send'">
+								{{ transaction.source.To }}
+							</div>
+							<div class="trans-amount">
+								<div class="amount">
+									<p>
+										{{ transaction.type === 'receive' ? '+' : ''
+										}}{{ formatCurrency(transaction.value, '', 5) }} {{ transaction.currency }}
+									</p>
+									<span
+										>{{ transaction.type === 'receive' ? '+' : ''
+										}}{{ formatCurrency(transaction.valueUSD, '$') }} USD</span
+									>
+								</div>
+								<span class="icon" @click="handleOpenOperation(transaction)"></span>
+							</div>
 						</div>
-					</div>
-					<div class="trans-info">
-						<table>
-							<thead>
-								<tr>
-									<th>
-										<p>Date</p>
-										<span>{{ getFullTime(transaction.time) }}</span>
-									</th>
-									<th>
-										<p>Transaction ID</p>
-										<span
-											><a :href="transaction.url" target="_blank" class="trans-id">{{
-												transaction.url.slice(24)
-											}}</a></span
-										>
-									</th>
-									<th>
-										<p>Fee</p>
-										<span>{{ '0.0003 ' + transaction.currentWallet.currency }}</span>
-									</th>
-									<th>
-										<p v-if="getTransactionType(transaction) === 'send'">To</p>
-										<p v-else-if="getTransactionType(transaction) === 'receive'">
-											From
-										</p>
-										<p v-else-if="getTransactionType(transaction) === 'exchange'">To</p>
+						<div class="trans-info">
+							<table>
+								<thead>
+									<tr>
+										<th>
+											<p>Date</p>
+											<span>{{ getFullTime(transaction.time) }}</span>
+										</th>
+										<th>
+											<p>Transaction ID</p>
+											<span
+												><a :href="transaction.url" target="_blank" class="trans-id">{{
+													getTransactionId(transaction.currency, transaction.url)
+												}}</a></span
+											>
+										</th>
+										<th>
+											<p>Fee</p>
+											<div class="flex flex-column">
+												<span>{{
+													Math.abs(transaction.fee).toFixed(5) +
+														' ' +
+														transaction.currentWallet.currency
+												}}</span>
+												<span>${{ Math.abs(transaction.feeUSD).toFixed(2) }} USD</span>
+											</div>
+										</th>
+										<th>
+											<p v-if="transaction.type === 'send'">To</p>
+											<p v-else-if="transaction.type === 'receive'">
+												From
+											</p>
+											<p v-else-if="transaction.type === 'exchange'">To</p>
 
-										<span v-if="getTransactionType(transaction) === 'send'">{{
-											transaction.source.To
-										}}</span>
-										<span v-else-if="getTransactionType(transaction) === 'receive'">{{
-											transaction.source.From
-										}}</span>
-										<span v-else-if="getTransactionType(transaction) === 'exchange'">{{
-											transaction.address
-										}}</span>
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								<!-- <tr>
-									<td>
-										<p>Now</p>
-										<span>{{ 'now balance' }}</span>
-									</td>
-									<td colspan="3">
-										<p>Feb 6th</p>
-										<span>{{ 'prev balance' }}</span>
-									</td>
-								</tr> -->
-							</tbody>
-						</table>
+											<span v-if="transaction.type === 'send'">{{ transaction.source.To }}</span>
+											<span v-else-if="transaction.type === 'receive'">{{
+												transaction.source.From
+											}}</span>
+											<span v-else-if="transaction.type === 'exchange'">{{
+												transaction.address
+											}}</span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- <tr>
+  									<td>
+  										<p>Now</p>
+  										<span>{{ 'now balance' }}</span>
+  									</td>
+  									<td colspan="3">
+  										<p>Feb 6th</p>
+  										<span>{{ 'prev balance' }}</span>
+  									</td>
+  								</tr> -->
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<transition name="fade">
+			<button
+				:disabled="activePage === operationsWithPagination.length - 1"
+				class="arrow-block arrow-block-bottom"
+				:class="{ disabled: activePage === operationsWithPagination.length - 1 }"
+				@click="throttle(handleClickMoveButton('bottom'), 1000)"
+			>
+				<img
+					src="@/assets/images/arrow-up.svg"
+					height="15"
+					width="15"
+					style="transform: rotate(180deg);"
+				/>
+			</button>
+		</transition>
 	</div>
 </template>
 <script>
+import throttle from '@/functions/throttle';
+
 export default {
-	props: ['datesWithTransactions'],
+	props: ['operationsWithPagination'],
 	data() {
 		return {
 			openedOperation: null,
+			activePage: 0,
+			containerMaxHeight: 2500,
 		};
 	},
+	computed: {
+		activePaginationPage() {
+			return this.operationsWithPagination[this.activePage];
+		},
+	},
 	methods: {
+		throttle,
+		handleClickMoveButton(direction) {
+			if (direction === 'top') {
+				this.activePage--;
+			} else {
+				this.activePage++;
+			}
+		},
 		formatDate(date) {
 			const parsedDate = new Date(Date.parse(date));
 			const stringDate = parsedDate.toString();
@@ -185,28 +225,68 @@ export default {
 			const parsedDate = new Date(Date.parse(date));
 
 			const day = parsedDate.getDate();
+			const formattedDay = day < 10 ? '0' + day : day;
 			const month = Number(parsedDate.getMonth()) + 1;
 			const formattedMonth = month < 10 ? '0' + month : month;
 			const year = parsedDate.getFullYear();
-			return `${day}/${month}/${year} ${this.getTime(date)}`;
+			return `${formattedDay}/${month}/${year} ${this.getTime(date)}`;
 		},
 		handleOpenOperation(transaction) {
-			if (this.openedOperation === transaction.url + this.getTransactionType(transaction)) {
+			if (this.openedOperation === transaction.url + transaction.type) {
 				this.openedOperation = null;
 			} else {
-				this.openedOperation = transaction.url + this.getTransactionType(transaction);
+				this.openedOperation = transaction.url + transaction.type;
 			}
 		},
-		getTransactionType(transaction) {
-			if (!transaction.source.From && !transaction.source.To) {
-				return 'exchange';
-			} else if (transaction.source.From === transaction.currentWallet.address.toLowerCase()) {
-				return 'send';
-			} else if (transaction.source.To === transaction.currentWallet.address.toLowerCase()) {
-				return 'receive';
-			} else return 'unknown';
+		getTransactionId(transactionCurrency, transactionUrl) {
+			switch (transactionCurrency) {
+				case 'BTC':
+					return transactionUrl.slice(37);
+				case 'ETH':
+					return transactionUrl.slice(24);
+				case 'LTC':
+					return transactionUrl.slice();
+			}
 		},
 	},
 };
 </script>
-<style></style>
+<style>
+.arrow-block {
+	background-color: rgba(59, 38, 101, 0.8);
+	width: 30px;
+	height: 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	cursor: pointer;
+	margin-right: 5px;
+}
+.arrow-block.disabled,
+.arrow-block.disabled img {
+	opacity: 0;
+}
+.arrow-block img {
+	opacity: 0.8;
+}
+.arrow-block:hover {
+	background-color: rgba(59, 38, 101, 1);
+	box-shadow: 0 0 7px rgba(59, 38, 101, 1);
+}
+.arrow-block:hover img {
+	opacity: 1;
+}
+.arrow-block-bottom {
+	margin-bottom: 30px;
+}
+.trans-date {
+	position: relative;
+}
+.arrow-block.absolute {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 0;
+}
+</style>

@@ -6,7 +6,7 @@
   				<router-link to="/register">Sign up</router-link>
   				<router-link to="/login">Login in</router-link>
   			</div>
-        <transition name="fade-long">
+        <transition name="fade-long-absolute">
       		<div class="login-form" v-if="step === 1 && isLoaded">
       			<form @submit.prevent="register">
       				<div class="login-form-input">
@@ -19,112 +19,116 @@
       			</form>
           </div>
         </transition>
-        <div class="login-form" v-if="step === 2">
-    			<form>
-            <div>
-              <div class="exchange-popup_title">
-                <p class="transaction">Confirmation</p>
-                <div class="phone-question" v-if="loginType === 'Phone'">
-                  <p class="question">We sent an SMS confirmation to the number</p>
-                  <div class="number-block">
-                    <p class="number">{{user}}</p>
-                    <router-link class="link" to="/">Wrong number?</router-link>
+        <transition name="fade-long-absolute">
+          <div class="login-form" v-if="step === 2">
+      			<form>
+              <div>
+                <div class="exchange-popup_title">
+                  <p class="transaction">Confirmation</p>
+                  <div class="phone-question" v-if="loginType === 'Phone'">
+                    <p class="question">We sent an SMS confirmation to the number</p>
+                    <div class="number-block">
+                      <p class="number">{{user}}</p>
+                      <router-link class="link" to="/">Wrong number?</router-link>
+                    </div>
+                  </div>
+                  <div class="email-question" v-else-if="loginType === 'Email'">
+                    <p class="question">We sent an email confirmation to the email</p>
+                    <div class="number-block">
+                      <p class="number">{{user}}</p>
+                      <router-link class="link" to="/">Wrong email?</router-link>
+                    </div>
                   </div>
                 </div>
-                <div class="email-question" v-else-if="loginType === 'Email'">
-                  <p class="question">We sent an email confirmation to the email</p>
-                  <div class="number-block">
-                    <p class="number">{{user}}</p>
-                    <router-link class="link" to="/">Wrong email?</router-link>
+                <div slot='smsNumber' class="exchange-popup_sms-number">
+                  <div class="flex justify-content-between">
+                    <input
+                      v-bind:key="index"
+                      class="number-input"
+                      v-for="(input, index) in smsCodes"
+                      v-model="input[index]"
+                      @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : registerApprove()"
+                      placeholder="_"
+                      type="text"
+                      maxLength="1"
+                      size="1"
+                      min="0"
+                      max="9" pattern="[0-9]{1}"
+                    />
                   </div>
+                  <div class="timer-body">
+                    <div class="title">Resend code:</div>
+                    <div class="timer" v-if="countdown > 0">00:{{`${countdown < 10 ? '0' : ''}${countdown}`}} Sec</div>
+                    <p class="repeat-btn" v-if="countdown === 0" @click="resendPin">Repeat</p>
+                  </div>
+                  <transition name="fade">
+                    <div class="error-block" v-if="commonError">
+                      <p class="error">{{commonError}}</p>
+                    </div>
+                  </transition>
                 </div>
-              </div>
-              <div slot='smsNumber' class="exchange-popup_sms-number">
-                <div class="flex justify-content-between">
-                  <input
-                    v-bind:key="index"
-                    class="number-input"
-                    v-for="(input, index) in smsCodes"
-                    v-model="input[index]"
-                    @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : registerApprove()"
-                    placeholder="_"
-                    type="text"
-                    maxLength="1"
-                    size="1"
-                    min="0"
-                    max="9" pattern="[0-9]{1}"
+              </div>		
+      			</form>
+          </div>
+        </transition>
+        <transition name="fade-long-absolute">
+          <div class="login-form" v-if="step === 3">
+            <form @submit.prevent="setPassword">
+              <div class="login-form-input">
+      					<input :type="isPasswordHidden ? 'password' : 'text'" v-model='password' placeholder="Password">
+                <div class="is-password-hidden-icon-block is-password-hidden-icon" @click="isPasswordHidden = !isPasswordHidden" v-if="!isPasswordHidden">
+                  <img
+                    class=""
+                    src="@/assets/images/eye.svg"
                   />
                 </div>
-                <div class="timer-body">
-                  <div class="title">Resend code:</div>
-                  <div class="timer" v-if="countdown > 0">00:{{`${countdown < 10 ? '0' : ''}${countdown}`}} Sec</div>
-                  <p class="repeat-btn" v-if="countdown === 0" @click="resendPin">Repeat</p>
+                <div class="is-password-hidden-icon-block is-password-hidden-icon" @click="isPasswordHidden = !isPasswordHidden" v-if="isPasswordHidden">
+                  <img           
+                    class=""
+                    src="@/assets/images/eye-with-bar.svg"
+                  />
+                </div>  
+      				</div>
+              <div class="login-form-input">
+      					<input :type="isPasswordHidden ? 'password' : 'text'" v-model='repeatPassword' placeholder="Repeat password">
+      				</div>
+              <div class="validation-block flex flex-column">
+                <div class="flex align-items-center">
+                  <img v-if="!isPasswordContainNumber" src="@/assets/images/cross.png" />
+                  <!-- <div class="invalid-icon"></div> -->
+                  <img src="@/assets/images/done.svg" v-else />
+                  <p class="validation-text" :class="{ valid: isPasswordContainNumber }">
+                    Your password must contain at least one number
+                  </p>
                 </div>
-                <transition name="fade">
-                  <div class="error-block" v-if="commonError">
-                    <p class="error">{{commonError}}</p>
-                  </div>
-                </transition>
+                <div class="flex align-items-center">
+                  <!-- <div class="invalid-icon" v-if="!isPasswordLongEnough"></div> -->
+                  <img v-if="!isPasswordLongEnough" src="@/assets/images/cross.png" />
+                  <img src="@/assets/images/done.svg" v-else />
+                  <p class="validation-text" :class="{ valid: isPasswordLongEnough }">
+                    Your password must be at least 6 characters long
+                  </p>
+                </div>
+                <div class="flex align-items-center">
+                  <!-- <div class="invalid-icon" v-if="!isPasswordsMatch"></div> -->
+                  <img v-if="!isPasswordsMatch" src="@/assets/images/cross.png" />
+                  <img src="@/assets/images/done.svg" v-else />
+                  <p class="validation-text" :class="{ valid: isPasswordsMatch }">
+                    Passwords match
+                  </p>
+                </div>
               </div>
-            </div>		
-    			</form>
-        </div>
-        <div class="login-form" v-if="step === 3">
-          <form @submit.prevent="setPassword">
-            <div class="login-form-input">
-    					<input :type="isPasswordHidden ? 'password' : 'text'" v-model='password' placeholder="Password">
-              <div class="is-password-hidden-icon-block is-password-hidden-icon" @click="isPasswordHidden = !isPasswordHidden" v-if="!isPasswordHidden">
-                <img
-                  class=""
-                  src="@/assets/images/eye.svg"
-                />
-              </div>
-              <div class="is-password-hidden-icon-block is-password-hidden-icon" @click="isPasswordHidden = !isPasswordHidden" v-if="isPasswordHidden">
-                <img           
-                  class=""
-                  src="@/assets/images/eye-with-bar.svg"
-                />
-              </div>  
-    				</div>
-            <div class="login-form-input">
-    					<input :type="isPasswordHidden ? 'password' : 'text'" v-model='repeatPassword' placeholder="Repeat password">
-    				</div>
-            <div class="validation-block flex flex-column">
-              <div class="flex align-items-center">
-                <img v-if="!isPasswordContainNumber" src="@/assets/images/cross.png" />
-                <!-- <div class="invalid-icon"></div> -->
-                <img src="@/assets/images/done.svg" v-else />
-                <p class="validation-text" :class="{ valid: isPasswordContainNumber }">
-                  Your password must contain at least one number
-                </p>
-              </div>
-              <div class="flex align-items-center">
-                <!-- <div class="invalid-icon" v-if="!isPasswordLongEnough"></div> -->
-                <img v-if="!isPasswordLongEnough" src="@/assets/images/cross.png" />
-                <img src="@/assets/images/done.svg" v-else />
-                <p class="validation-text" :class="{ valid: isPasswordLongEnough }">
-                  Your password must be at least 6 characters long
-                </p>
-              </div>
-              <div class="flex align-items-center">
-                <!-- <div class="invalid-icon" v-if="!isPasswordsMatch"></div> -->
-                <img v-if="!isPasswordsMatch" src="@/assets/images/cross.png" />
-                <img src="@/assets/images/done.svg" v-else />
-                <p class="validation-text" :class="{ valid: isPasswordsMatch }">
-                  Passwords match
-                </p>
-              </div>
-            </div>
-            <div class="login-form-button">
-    					<button type="submit" class="btn">Register</button>
-    				</div>
-            <transition name="fade">
-              <div class="error-block" v-if="commonError">
-                <p class="error">{{commonError}}</p>
-              </div>
-            </transition>
-    			</form>
-        </div>
+              <div class="login-form-button">
+      					<button type="submit" class="btn">Register</button>
+      				</div>
+              <transition name="fade">
+                <div class="error-block" v-if="commonError">
+                  <p class="error">{{commonError}}</p>
+                </div>
+              </transition>
+      			</form>
+          </div>
+        </transition>
       </div>
   	</div>
   </login-layout>
@@ -275,6 +279,9 @@ export default {
         } else {
           this.step = 2;
           this.commonError = null;
+          setTimeout(() => {
+						document.querySelector('.login-form .number-input').focus();
+					}, 50);
           this.countdown = 59;
           this.timer = setInterval(() => {
             this.countdown--

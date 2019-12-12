@@ -43,6 +43,9 @@ body {
 }
 body .v-application .title {
   font-family:'Open Sans' !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
 }
 
 .material-icons {
@@ -912,7 +915,7 @@ $break-large: 1124px;
             overflow: visible;
 						.wallet-last-transactions {
 							opacity: 1;
-							max-height: 65vh;
+							max-height: 2000px;
 							margin-top: 12px;
 						}
 						.wallet-toggle {
@@ -1002,17 +1005,7 @@ $break-large: 1124px;
 								color: #fff;
 								font-weight: 600;
               }
-              .balance-currency {
-                font-family: "Helvetica", sans-serif !important;
-                font-weight: 400;
-                min-width: 15px;
-                color: #fff;
-                line-height: 21px;
-                margin-top: 1px;
-                text-align: right;
-                font-size: 14px;
-                display: inline-block;
-              }
+              
 							.wallet-toggle {
 								margin-left: 35px;
 								position:relative;
@@ -1168,6 +1161,8 @@ $break-large: 1124px;
 }
 
 .operations-history {
+  
+  margin-right: -2vw;
 	margin-bottom: 25px;
 	margin-top: 3.9vh;
 	.title {
@@ -1558,7 +1553,6 @@ $break-large: 1124px;
 
 	}
 	&-list {
-
 
 		&-item {
 
@@ -1998,8 +1992,10 @@ $break-large: 1124px;
 }
 .trans-list {
   &__wrapper {
-    margin-bottom: 25px;
+    margin-bottom: 15px;
+    width: 100%;
   }
+  
 	.trans-date {
 
     border-bottom:1px solid #3b2665;
@@ -2050,7 +2046,8 @@ $break-large: 1124px;
 			transition: .5s;
 			position:relative;
 			width: calc(100% + 20px);
-			left: -10px;
+      left: -10px;
+      margin-right: -10px;
 			border-radius:17px;
 			overflow: hidden;
 			.trans-info {
@@ -2075,7 +2072,7 @@ $break-large: 1124px;
     					border-bottom:1px dashed rgba(255,255,255,.3);
     				}
 					th, td {
-						padding:10px 16px 18px;
+						padding: 5px 15px 10px;
 						&:not(:last-child) {
 							border-right:1px solid #3b2665;
 						}
@@ -2935,6 +2932,7 @@ $break-large: 1124px;
     font-size: 36px;
     font-weight: 600;
     line-height: 21px;
+    position: relative;
     &::placeholder {
       color: #ffffff;
       font-size: 14px;
@@ -3034,11 +3032,9 @@ $break-large: 1124px;
     padding: 0 20px;
   }
 }
-body .v-application .title {
-  font-size: inherit !important;
-  font-weight: inherit !important;
-  letter-spacing: inherit !important;
-  line-height: inherit !important;
+body .v-application .error {
+  background-color: transparent !important;
+    border-color: transparent !important;
 }
 .unavailable-text {
   font-size: 16px;
@@ -3070,4 +3066,14 @@ button {
   @include respond-to(wide-screens) {
     display: inline-block;
   }
+}
+.balance-currency {
+  font-family: "Helvetica", sans-serif !important;
+  font-weight: 400;
+  color: #fff;
+  line-height: 21px;
+  margin-top: 1px;
+  text-align: right;
+  font-size: 14px;
+  display: inline-block;
 }

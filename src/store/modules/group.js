@@ -41,6 +41,7 @@ export default {
 					};
 				}),
 			}));
+			localStorage.setItem('stateGroupWallets', JSON.stringify(state.groupWallets));
 		},
 		SET_GROUP_CURRENCIES: (state, payload) => {
 			state.groupCurrencies = payload;

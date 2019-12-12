@@ -40,9 +40,12 @@ export default {
 		UPDATE_WALLET: ({ wallets }, { wallet, amount }) => {
 			wallets.find((item) => {
 				if (item.address === wallet) {
-					item.balance = item.balance + amount;
+					console.log(item.balance, Number(amount));
+					item.balance = item.balance + Number(amount);
+					console.log(item.balance, Number(amount));
 				}
 			});
+			localStorage.setItem('stateWalletsWallets', JSON.stringify(wallets));
 		},
 		SET_TYPES: (state, payload) => {
 			state.types = payload;
@@ -311,6 +314,7 @@ export default {
 					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
 						() => (window.location.href = `/login`),
 					);
+					return { success: false };
 				} else if (Object.keys(Errors).length) {
 					const errKey = Object.keys(Errors)[0];
 					commit(
@@ -322,6 +326,7 @@ export default {
 						},
 						{ root: true },
 					);
+					return { success: false };
 				} else {
 					commit(
 						'alerts/setNotification',
@@ -331,7 +336,8 @@ export default {
 							icon: 'close',
 						},
 						{ root: true },
-					);
+          );
+          return { success: false };
 				}
 			});
 		},
@@ -427,82 +433,123 @@ export default {
 				},
 			}).then(({ data }) => {
 				const parsedData = parsePythonArray(data)['1'].return;
-
-				const dates = [];
 				const transactions = Object.values(parsedData).map((item) => {
 					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-					if (
-						// * 1000 - because in js milliseconds, + hour
-						dates.every(
-							(date) =>
-								date.getDate() !== itemDate.getDate() ||
-								date.getMonth() !== itemDate.getMonth() ||
-								date.getFullYear() !== itemDate.getFullYear(),
-						)
-					) {
-						dates.push(itemDate);
-					}
 					return {
-						source: item,
-						currency,
-						address: item.address || item.To,
+						source: {
+							To: item.address,
+							From: item.address,
+							...item,
+						},
+						currency: currency,
+						address: item.address, // FIXME: Адрес не работает корректно
 						time: itemDate,
 						url: item.Url,
 						value: item.value,
 						valueUSD: item.valueUSD,
 						currentWallet: {
-							address,
-							currency,
+							address: address,
+							currency: currency,
 						},
+						fee: item.Fee || 0,
+						feeUSD: item.FeeUsd || 0,
+						type: (item.From
+						? item.From.toLowerCase() === address.toLowerCase()
+						: item.value < 0)
+							? 'send'
+							: 'receive',
 					};
 				});
 
-				let datesWithTransactions = [];
+				const transactionsPerPage = 20;
+				let transactionsWithPagination = new Array(
+					Math.ceil(transactions.length / transactionsPerPage),
+				).fill([]);
+				const filterByDateTimeFunc = (a, b) => {
+					if (a.time < b.time) return -1;
+					else if (a.time > b.time) return 1;
+					else return 0;
+				};
+				const filterByDateFunc = (a, b) => {
+					if (a.date < b.date) return -1;
+					else if (a.date > b.date) return 1;
+					else return 0;
+				};
 
-				transactions.forEach((transaction) => {
-					const date = dates.find((date) => {
-						return (
-							date.getDate() === transaction.time.getDate() &&
-							date.getMonth() === transaction.time.getMonth() &&
-							date.getFullYear() === transaction.time.getFullYear()
-						);
+				transactions.sort(filterByDateTimeFunc);
+				transactions.reverse();
+
+				transactions.forEach((item, index) => {
+					const currentIndex = Math.floor(index / transactionsPerPage);
+					transactionsWithPagination[currentIndex] = [
+						...transactionsWithPagination[currentIndex],
+						item,
+					];
+				});
+
+				transactionsWithPagination = transactionsWithPagination.map((transactions) => {
+					let datesWithTransactions = [];
+					const dates = [];
+					transactions.forEach(({ time }) => {
+						if (
+							dates.every(
+								(date) =>
+									date.getDate() !== time.getDate() ||
+									date.getMonth() !== time.getMonth() ||
+									date.getFullYear() !== time.getFullYear(),
+							)
+						) {
+							dates.push(time);
+						}
 					});
 
-					const addedTransObject = datesWithTransactions.find(
-						({ date: dateTrans }) =>
-							dateTrans.getDate() === date.getDate() &&
-							dateTrans.getMonth() === date.getMonth() &&
-							dateTrans.getFullYear() === date.getFullYear(),
-					);
-					if (addedTransObject) {
-						addedTransObject.transactions = [...addedTransObject.transactions, transaction];
-					} else {
-						datesWithTransactions = [
-							...datesWithTransactions,
-							{
-								date,
-								transactions: [
-									...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
-									transaction,
-								],
-							},
-						];
-					}
+					transactions.forEach((transaction) => {
+						const date = dates.find((date) => {
+							return (
+								date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
+								date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
+								date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
+							);
+						});
+
+						const addedTransObject = datesWithTransactions.find(
+							({ date: dateTrans }) =>
+								new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
+								new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
+								new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
+						);
+						if (addedTransObject) {
+							addedTransObject.transactions = [...addedTransObject.transactions, transaction];
+						} else {
+							datesWithTransactions = [
+								...datesWithTransactions,
+								{
+									date,
+									transactions: [
+										...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
+										transaction,
+									],
+								},
+							];
+						}
+					});
+
+					datesWithTransactions = datesWithTransactions.map((obj) => {
+						return {
+							...obj,
+							transactions: obj.transactions.slice(),
+						};
+					});
+					datesWithTransactions.sort(filterByDateFunc);
+					return datesWithTransactions.reverse();
 				});
 
-				datesWithTransactions = datesWithTransactions.map((obj) => {
-					return {
-						...obj,
-						transactions: obj.transactions.reverse(),
-					};
-				});
-
-				return datesWithTransactions.reverse();
+				return transactionsWithPagination;
 			});
 		},
 		GET_OPERATIONS: async (store, { wallets }) => {
 			const { commit } = store;
-			const dates = [];
+
 			let transactions = (
 				await Promise.all(
 					wallets.map(async (wallet) => {
@@ -533,21 +580,15 @@ export default {
 
 						const transactions = Object.values(parsePythonArray(data)[1].return).map((item) => {
 							const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-							if (
-								dates.every(
-									(date) =>
-										date.getDate() !== itemDate.getDate() ||
-										date.getMonth() !== itemDate.getMonth() ||
-										date.getFullYear() !== itemDate.getFullYear(),
-								)
-							) {
-								dates.push(itemDate);
-							}
 
 							return {
-								source: item,
+								source: {
+									To: item.address,
+									From: item.address,
+									...item,
+								},
 								currency: wallet.currency,
-								address: item.address || item.To, // FIXME: Адрес не работает корректно
+								address: item.address, // FIXME: Адрес не работает корректно
 								time: itemDate,
 								url: item.Url,
 								value: item.value,
@@ -556,6 +597,13 @@ export default {
 									address: wallet.address,
 									currency: wallet.currency,
 								},
+								fee: item.Fee || 0,
+								feeUSD: item.FeeUsd || 0,
+								type: (item.From
+								? item.From.toLowerCase() === wallet.address.toLowerCase()
+								: item.value < 0)
+									? 'send'
+									: 'receive',
 							};
 						});
 
@@ -564,75 +612,91 @@ export default {
 				)
 			).flat();
 
-			if (store.state.unconfirmedOperations.length) {
-				commit(
-					'SET_UNCONFIRMED_OPERATIONS',
-					store.state.unconfirmedOperations.filter((unconf) =>
-						transactions.every((trans) => trans.url !== unconf.url),
-					),
-				);
-			}
-
-			// transactions = [...store.state.unconfirmedOperations, transactions];
-
-			let datesWithTransactions = [];
-
-			transactions.forEach((transaction) => {
-				const date = dates.find((date) => {
-					return (
-						date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
-						date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
-						date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
-					);
-				});
-
-				const addedTransObject = datesWithTransactions.find(
-					({ date: dateTrans }) =>
-						new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
-						new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
-						new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
-				);
-				if (addedTransObject) {
-					addedTransObject.transactions = [...addedTransObject.transactions, transaction];
-				} else {
-					datesWithTransactions = [
-						...datesWithTransactions,
-						{
-							date,
-							transactions: [
-								...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
-								transaction,
-							],
-						},
-					];
-				}
-			});
-
+			const transactionsPerPage = 20;
+			let transactionsWithPagination = new Array(
+				Math.ceil(transactions.length / transactionsPerPage),
+			).fill([]);
 			const filterByDateTimeFunc = (a, b) => {
 				if (a.time < b.time) return -1;
 				else if (a.time > b.time) return 1;
 				else return 0;
 			};
-			const filterfilterByDateFunc = (a, b) => {
+			const filterByDateFunc = (a, b) => {
 				if (a.date < b.date) return -1;
 				else if (a.date > b.date) return 1;
 				else return 0;
 			};
 
-			datesWithTransactions = datesWithTransactions.map((obj) => {
-				return {
-					...obj,
-					transactions: obj.transactions
-						.slice()
-						.sort(filterByDateTimeFunc)
-						.reverse(),
-				};
+			transactions.sort(filterByDateTimeFunc);
+			transactions.reverse();
+
+			transactions.forEach((item, index) => {
+				const currentIndex = Math.floor(index / transactionsPerPage);
+				transactionsWithPagination[currentIndex] = [
+					...transactionsWithPagination[currentIndex],
+					item,
+				];
 			});
 
-			datesWithTransactions.sort(filterfilterByDateFunc);
+			transactionsWithPagination = transactionsWithPagination.map((transactions) => {
+				let datesWithTransactions = [];
+				const dates = [];
+				transactions.forEach(({ time }) => {
+					if (
+						dates.every(
+							(date) =>
+								date.getDate() !== time.getDate() ||
+								date.getMonth() !== time.getMonth() ||
+								date.getFullYear() !== time.getFullYear(),
+						)
+					) {
+						dates.push(time);
+					}
+				});
 
-			store.commit('SET_OPERATIONS', datesWithTransactions.slice().reverse());
-			return datesWithTransactions.reverse();
+				transactions.forEach((transaction) => {
+					const date = dates.find((date) => {
+						return (
+							date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
+							date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
+							date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
+						);
+					});
+
+					const addedTransObject = datesWithTransactions.find(
+						({ date: dateTrans }) =>
+							new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
+							new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
+							new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
+					);
+					if (addedTransObject) {
+						addedTransObject.transactions = [...addedTransObject.transactions, transaction];
+					} else {
+						datesWithTransactions = [
+							...datesWithTransactions,
+							{
+								date,
+								transactions: [
+									...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
+									transaction,
+								],
+							},
+						];
+					}
+				});
+
+				datesWithTransactions = datesWithTransactions.map((obj) => {
+					return {
+						...obj,
+						transactions: obj.transactions.slice(),
+					};
+				});
+				datesWithTransactions.sort(filterByDateFunc);
+				return datesWithTransactions.reverse();
+			});
+
+			commit('SET_OPERATIONS', transactionsWithPagination);
+			return transactionsWithPagination;
 		},
 		// SEND: (store, { currency, from, to, amount }) => {
 		//   Axios({

@@ -87,7 +87,7 @@
 		</div>
 		<transactions-history
 			:currentWallet="currentWallet"
-			:datesWithTransactions="datesWithTransactions"
+			:operationsWithPagination="operationsWithPagination"
 		></transactions-history>
 	</lk-layout>
 </template>
@@ -112,7 +112,7 @@ export default {
 			isSocialLinksOpened: false,
 			isDescriptionOpened: false,
 			windowHandler: null,
-			datesWithTransactions: [],
+			operationsWithPagination: [],
 		};
 	},
 	mounted() {
@@ -141,7 +141,7 @@ export default {
 				address: this.currentWallet.address,
 			})
 			.then((data) => {
-				this.datesWithTransactions = data;
+				this.operationsWithPagination = data;
 			});
 	},
 	computed: {

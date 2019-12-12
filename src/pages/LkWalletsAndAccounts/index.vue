@@ -43,7 +43,7 @@
 					<p>Operations history</p>
 				</div>
 				<div class="operations-history-list">
-					<transactions-history :datesWithTransactions="operations"></transactions-history>
+					<transactions-history :operationsWithPagination="operations"></transactions-history>
 				</div>
 			</div>
 		</div>
