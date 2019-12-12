@@ -96,7 +96,7 @@
                 <div class="flex align-items-center">
                   <img v-if="!isPasswordContainNumber" src="@/assets/images/cross.png" />
                   <!-- <div class="invalid-icon"></div> -->
-                  <img src="@/assets/images/done.svg" v-else />
+                  <img src="@/assets/images/icons/done.svg" v-else />
                   <p class="validation-text" :class="{ valid: isPasswordContainNumber }">
                     Your password must contain at least one number
                   </p>
@@ -104,7 +104,7 @@
                 <div class="flex align-items-center">
                   <!-- <div class="invalid-icon" v-if="!isPasswordLongEnough"></div> -->
                   <img v-if="!isPasswordLongEnough" src="@/assets/images/cross.png" />
-                  <img src="@/assets/images/done.svg" v-else />
+                  <img src="@/assets/images/icons/done.svg" v-else />
                   <p class="validation-text" :class="{ valid: isPasswordLongEnough }">
                     Your password must be at least 6 characters long
                   </p>
@@ -112,7 +112,7 @@
                 <div class="flex align-items-center">
                   <!-- <div class="invalid-icon" v-if="!isPasswordsMatch"></div> -->
                   <img v-if="!isPasswordsMatch" src="@/assets/images/cross.png" />
-                  <img src="@/assets/images/done.svg" v-else />
+                  <img src="@/assets/images/icons/done.svg" v-else />
                   <p class="validation-text" :class="{ valid: isPasswordsMatch }">
                     Passwords match
                   </p>

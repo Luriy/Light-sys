@@ -12,6 +12,8 @@ export default {
 		fiatPsids: {},
 		exchangeData: [],
 		transferInfo: {},
+    availableWalletDirections: {},
+    availableFiatDirections: {},
 		fiatInfo: {},
         fiatData: {},
 		exchangeSucces: false,
@@ -23,6 +25,8 @@ export default {
 		FIAT_INFO: (state) => state.fiatInfo,
 		FIAT_DATA: (state) => state.fiatData,
 		EXCHANGE_SUCCES: (state) => state.exchangeSucces,
+    AVAILABLE_WALLET_DIRECTIONS: (state) => state.availableWalletDirections,
+    AVAILABLE_FIAT_DIRECTIONS: (state) => state.availableFiatDirections,
 	},
 	mutations: {
 		SET_FIAT_PSIDS: (state, payload) => (state.fiatPsids = payload),
@@ -31,6 +35,8 @@ export default {
 		SET_FIAT_INFO: (state, payload) => (state.fiatInfo = payload),
         SET_FIAT_DATA: (state, payload) => (state.fiatData = payload),
 		SET_EXCHANGE_SUCCES: (state, payload) => (state.exchangeSucces = payload),
+    SET_AVAILABLE_WALLET_DIRECTIONS: (state, payload) => (state.availableWalletDirections = payload),
+    SET_AVAILABLE_FIAT_DIRECTIONS: (state, payload) => (state.availableFiatDirections = payload),
 	},
 	actions: {
 		GET_TRANSFER_INFO: ({ commit }, { exchange, receive }) => {
@@ -133,6 +139,8 @@ export default {
 				fiatKeys.forEach((key) => {
 					fiat[key].name = decodeURIComponent(fiat[key].name);
 				});
+        commit('SET_AVAILABLE_WALLET_DIRECTIONS', walletsResult.StatusCryptoExchange);
+        commit('SET_AVAILABLE_FIAT_DIRECTIONS', walletsResult.StatusCryptofiatPsid);
 				const resultWallets = Object.keys(walletsResult)
 						.reduce((acc, walletCurrency) => {
 							acc.push(
@@ -141,6 +149,7 @@ export default {
 									number: item.Walet,
 									status: item.Status,
 									statusNode: walletsResult[`StatusNode${walletCurrency}`],
+                  directionStatus: 0,
 									currency: walletCurrency,
 									balance: item.Balance ? item.Balance.toFixed(5) : '0.00',
 									balanceUSD: item.Balance ? item.BalanceUsd.toFixed(2) : '0.00',
@@ -152,18 +161,22 @@ export default {
 						}, [])
 						.filter(({ status }) => status !== 'Frozen')
             .filter(({ currency }) => currency !== 'Group');
-				const	resultCards = Object.keys(cards).map((card) => {
+        const	resultCards = Object.keys(cards).map((card) => {
 						const { name, reserve, valute } = fiat[+cards[card].Psid];
 						return {
 							fullName: name,
-							icon: fiatList[cards[card].Psid] && fiatList[cards[card].Psid].icon.big ? fiatList[+cards[card].Psid].icon.big : fiatList['111'].icon.big,
+							icon: fiatList[cards[card].Psid] && fiatList[cards[card].Psid].icon.big
+                ? fiatList[+cards[card].Psid].icon.big
+                : fiatList['111'].icon.big,
 							currency: valute,
 							reserve,
+              status: cards[card].Status,
 							number: cards[card].Number,
 							psid: +cards[card].Psid,
 							holder: cards[card].Holder,
 						};
-					});
+					}).filter(({ status }) => status !== 'Frozen');
+
         commit('SET_EXCHANGE_DATA', [...resultWallets, ...resultCards]);
         const resultPsids = Object.keys(fiat).map(item => {
           return {

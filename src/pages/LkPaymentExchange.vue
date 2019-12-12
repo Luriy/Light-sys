@@ -51,14 +51,15 @@
                              small
                              @click="currentExchangeList = 'all'"
                       >All</v-btn>
+
                       <v-btn
                         class="filter-btn"
                         :class="{'active-list': currentExchangeList === 'wallets'}"
                         text
                         small
                         @click="currentExchangeList = 'wallets'"
-                      >My wallets
-                      </v-btn>
+                      >My wallets</v-btn>
+
                       <v-btn
                         class="filter-btn"
                         :class="{'active-list': currentExchangeList === 'cards'}"
@@ -66,6 +67,7 @@
                         small
                         @click="currentExchangeList = 'cards'"
                       >My cards</v-btn>
+
                       <v-btn
                         class="filter-btn"
                         :class="{'active-list': currentExchangeList === 'banks'}"
@@ -261,9 +263,10 @@
                         class="select-item"
                         v-for="(wallet, index) of filteredReceiveWallets.filter(({isWallet}) => (isWallet))"
                         :key="`wallet-${index}`"
-                        @click="!wallet.statusNode ? selectReceiveWallet(wallet) : ''"
+                        @click="!wallet.statusNode && !wallet.directionStatus ? selectReceiveWallet(wallet) : ''"
                       >
                         <div class="select-item-disabled" v-if="wallet.statusNode">Temporarily unavailable</div>
+                        <div class="select-item-disabled" v-if="wallet.directionStatus">Direction unavailable</div>
                         <div class="icon"><img :src="wallet.icon" alt title></div>
                         <div class="amount">
                           <div class="code btc">{{wallet.fullName}}</div>
@@ -846,6 +849,7 @@
         } else {
           this.getFiatInfo();
         }
+        this.checkExchangeDirection()
       },
       getFiatExchange() {
         this.$store.dispatch('exchange/GET_FIAT_EXCHANGE');
@@ -867,6 +871,7 @@
       },
       selectExchangeWallet(wallet) {
         this.clearValues();
+        this.checkExchangeDirection();
         this.exchangeCurrency = wallet;
         this.exchangeModal = false;
         if (wallet.isWallet) {
@@ -880,6 +885,16 @@
         this.receiveAmount = '0.00';
         this.exchangeUSD = '0.00';
         this.receiveUSD = '0.00';
+      },
+      checkExchangeDirection() {
+        if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
+          const directionStatus = this.availableWalletDirections[`${this.exchangeCurrency.currency}${this.receiveCurrency.currency}`];
+          this.filteredReceiveWallets.forEach(wallet => {
+            if (wallet.currency === this.receiveCurrency.currency && wallet.isWallet) {
+              wallet.directionStatus = directionStatus;
+            }
+          })
+        }
       },
       selectReceiveWallet(wallet) {
         this.clearValues();
@@ -1161,6 +1176,12 @@
       },
       isLoading() {
         return this.$store.getters['alerts/loading'];
+      },
+      availableWalletDirections() {
+        return this.$store.getters['exchange/AVAILABLE_WALLET_DIRECTIONS'];
+      },
+      availableFiatDirections() {
+        return this.$store.getters['exchange/AVAILABLE_FIAT_DIRECTIONS'];
       }
     },
     created() {
