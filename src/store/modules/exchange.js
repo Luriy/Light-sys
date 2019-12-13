@@ -135,32 +135,27 @@ export default {
 				const	{ Result: fiat } = fiatResult;
 				const	{ Cards: cards } = cardsResult;
 				const	fiatKeys = Object.keys(fiat);
+				const currencyKeys = Object.keys(currensyList);
+        console.log('walletsResult', walletsResult);
+        console.log('currencyKeys', currencyKeys);
 
-				fiatKeys.forEach((key) => {
+        fiatKeys.forEach((key) => {
 					fiat[key].name = decodeURIComponent(fiat[key].name);
 				});
         commit('SET_AVAILABLE_WALLET_DIRECTIONS', walletsResult.StatusCryptoExchange);
         commit('SET_AVAILABLE_FIAT_DIRECTIONS', walletsResult.StatusCryptofiatPsid);
-				const resultWallets = Object.keys(walletsResult)
-						.reduce((acc, walletCurrency) => {
-							acc.push(
-								...Object.values(walletsResult[walletCurrency]).map((item) => ({
-									...currensyList[walletCurrency],
-									number: item.Walet,
-									status: item.Status,
-									statusNode: walletsResult[`StatusNode${walletCurrency}`],
-                  directionStatus: 0,
-									currency: walletCurrency,
-									balance: item.Balance ? item.Balance.toFixed(5) : '0.00',
-									balanceUSD: item.Balance ? item.BalanceUsd.toFixed(2) : '0.00',
-									psid: +fiatKeys.filter((item) => fiat[item].valute === walletCurrency)[0],
-									isWallet: true,
-								})),
-							);
-							return acc;
-						}, [])
-						.filter(({ status }) => status !== 'Frozen')
-            .filter(({ currency }) => currency !== 'Group');
+        const resultWallets = currencyKeys.reduce((acc, currencyKey) => ([...acc, walletsResult[currencyKey].values().map(item => ({
+            ...currensyList[currencyKey],
+            number: item.Walet,
+            status: item.Status,
+            statusNode: walletsResult[`StatusNode${currencyKey}`],
+            directionStatus: 0,
+            currency: currencyKey,
+            balance: item.Balance ? item.Balance.toFixed(5) : '0.00',
+            balanceUSD: item.BalanceUsd ? item.BalanceUsd.toFixed(2) : '0.00',
+            psid: +fiatKeys.find((item) => fiat[item].valute === currencyKey),
+            isWallet: true,
+          }))]), []);
         const	resultCards = Object.keys(cards).map((card) => {
 						const { name, reserve, valute } = fiat[+cards[card].Psid];
 						return {
@@ -170,6 +165,7 @@ export default {
                 : fiatList['111'].icon.big,
 							currency: valute,
 							reserve,
+              directionStatus: walletsResult.StatusCryptofiatPsid[+cards[card].Psid],
               status: cards[card].Status,
 							number: cards[card].Number,
 							psid: +cards[card].Psid,
