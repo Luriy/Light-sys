@@ -13,9 +13,8 @@ export default {
 		exchangeData: [],
 		transferInfo: {},
     availableWalletDirections: {},
-    availableFiatDirections: {},
 		fiatInfo: {},
-        fiatData: {},
+    fiatData: {},
 		exchangeSucces: false,
 	},
 	getters: {
@@ -26,17 +25,46 @@ export default {
 		FIAT_DATA: (state) => state.fiatData,
 		EXCHANGE_SUCCES: (state) => state.exchangeSucces,
     AVAILABLE_WALLET_DIRECTIONS: (state) => state.availableWalletDirections,
-    AVAILABLE_FIAT_DIRECTIONS: (state) => state.availableFiatDirections,
 	},
 	mutations: {
 		SET_FIAT_PSIDS: (state, payload) => (state.fiatPsids = payload),
 		SET_EXCHANGE_DATA: (state, payload) => (state.exchangeData = payload),
 		SET_TRANSFER_INFO: (state, payload) => (state.transferInfo = payload),
 		SET_FIAT_INFO: (state, payload) => (state.fiatInfo = payload),
-        SET_FIAT_DATA: (state, payload) => (state.fiatData = payload),
+    SET_FIAT_DATA: (state, payload) => (state.fiatData = payload),
 		SET_EXCHANGE_SUCCES: (state, payload) => (state.exchangeSucces = payload),
     SET_AVAILABLE_WALLET_DIRECTIONS: (state, payload) => (state.availableWalletDirections = payload),
-    SET_AVAILABLE_FIAT_DIRECTIONS: (state, payload) => (state.availableFiatDirections = payload),
+    UPDATE_FIAT_DIRECTION_STATUS: (state, directions) => {
+      state.fiatData.forEach(item => {
+        if (directions.some(direction => (direction === item.psid))) {
+          item.directionStatus = 0
+        } else {
+          item.directionStatus = 1
+        }
+      });
+      state.exchangeData.forEach(item => {
+        if (directions.some(direction => (direction === item.psid))) {
+          item.directionStatus = 0
+        } else {
+          item.directionStatus = 1
+        }
+      });
+    },
+    UPDATE_WALLETS_DIRECTION_STATUS: (state, { direction, receive }) => {
+      state.exchangeData.forEach(item => {
+        if (item.isWallet && item.currency === receive) {
+          item.directionStatus = state.availableWalletDirections[direction]
+        }
+      });
+    },
+    CLEAR_DIRECTIONS: (state) => {
+      state.fiatData.forEach(item => {
+        item.directionStatus = 0;
+      });
+      state.exchangeData.forEach(item => {
+        item.directionStatus = 0;
+      });
+    }
 	},
 	actions: {
 		GET_TRANSFER_INFO: ({ commit }, { exchange, receive }) => {
@@ -51,6 +79,14 @@ export default {
 				return commit('SET_TRANSFER_INFO', result);
 			});
 		},
+    SET_FIAT_DIRECTIONS: ({ commit }, directions) => {
+      commit('CLEAR_DIRECTIONS');
+      commit('UPDATE_FIAT_DIRECTION_STATUS', directions);
+    },
+    SET_WALLET_DIRECTIONS: ({ commit }, direction) => {
+      commit('CLEAR_DIRECTIONS');
+      commit('UPDATE_WALLETS_DIRECTION_STATUS', direction);
+    },
 		GET_FIAT_INFO: ({ commit }, { exchange, receive }) => {
 			commit('alerts/setLoading', '#673AB7', { root: true });
 			return Axios({
@@ -123,6 +159,7 @@ export default {
 				params: {
 					Comand: 'CardInfo',
 					...getAuthParams(),
+          StatusExchange: 1
 				},
 			});
 			Promise.all([fiatPsids, allWallets, cardsList]).then(function(values) {
@@ -136,15 +173,12 @@ export default {
 				const	{ Cards: cards } = cardsResult;
 				const	fiatKeys = Object.keys(fiat);
 				const currencyKeys = Object.keys(currensyList);
-        console.log('walletsResult', walletsResult);
-        console.log('currencyKeys', currencyKeys);
 
         fiatKeys.forEach((key) => {
 					fiat[key].name = decodeURIComponent(fiat[key].name);
 				});
-        commit('SET_AVAILABLE_WALLET_DIRECTIONS', walletsResult.StatusCryptoExchange);
-        commit('SET_AVAILABLE_FIAT_DIRECTIONS', walletsResult.StatusCryptofiatPsid);
-        const resultWallets = currencyKeys.reduce((acc, currencyKey) => ([...acc, walletsResult[currencyKey].values().map(item => ({
+
+        const resultWallets = currencyKeys.reduce((acc, currencyKey) => ([...acc, Object.values(walletsResult[currencyKey]).map(item => ({
             ...currensyList[currencyKey],
             number: item.Walet,
             status: item.Status,
@@ -155,7 +189,8 @@ export default {
             balanceUSD: item.BalanceUsd ? item.BalanceUsd.toFixed(2) : '0.00',
             psid: +fiatKeys.find((item) => fiat[item].valute === currencyKey),
             isWallet: true,
-          }))]), []);
+          }))]), []).reduce((acc, res) => acc.concat(res.filter(({ status }) => status !== 'Frozen')), []);
+
         const	resultCards = Object.keys(cards).map((card) => {
 						const { name, reserve, valute } = fiat[+cards[card].Psid];
 						return {
@@ -165,25 +200,30 @@ export default {
                 : fiatList['111'].icon.big,
 							currency: valute,
 							reserve,
-              directionStatus: walletsResult.StatusCryptofiatPsid[+cards[card].Psid],
+              statusNode: cards[card].StatusExchange,
+              directionStatus: 0,
               status: cards[card].Status,
 							number: cards[card].Number,
 							psid: +cards[card].Psid,
 							holder: cards[card].Holder,
+              ...(!cards[card].StatusExchange && { directions: Object.values(cards[card].ExchangeVariable) })
 						};
 					}).filter(({ status }) => status !== 'Frozen');
 
-        commit('SET_EXCHANGE_DATA', [...resultWallets, ...resultCards]);
         const resultPsids = Object.keys(fiat).map(item => {
           return {
-           name: fiat[item].name,
-           psid: fiat[item].psid,
-           icon: fiatList[fiat[item].psid] && fiatList[fiat[item].psid].icon.big ? fiatList[fiat[item].psid].icon.big : fiatList['111'].icon.big,
-           currency: fiat[item].valute,
-           reserve: fiat[item].reserve
-         }
+            name: fiat[item].name,
+            psid: fiat[item].psid,
+            directionStatus: 0,
+            icon: fiatList[fiat[item].psid] && fiatList[fiat[item].psid].icon.big ? fiatList[fiat[item].psid].icon.big : fiatList['111'].icon.big,
+            currency: fiat[item].valute,
+            reserve: fiat[item].reserve
+          }
         });
+
+        commit('SET_EXCHANGE_DATA', [...resultWallets, ...resultCards]);
         commit('SET_FIAT_DATA', resultPsids);
+        commit('SET_AVAILABLE_WALLET_DIRECTIONS', walletsResult.StatusCryptoExchange);
 			});
 		},
 		POST_WALLETS: ({ commit }, { transferData, pair: { exchange, receive } }) => {
