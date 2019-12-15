@@ -87,6 +87,9 @@ b, strong {
   opacity: 1 !important;
 }
 
+.v-input__slot {
+  border-radius: 17px!important;
+}
 
 // responsive breakpoints
 $break-small-portrait: 320px;
@@ -1006,7 +1009,7 @@ $break-large: 1124px;
 								color: #fff;
 								font-weight: 600;
               }
-              
+
 							.wallet-toggle {
 								margin-left: 35px;
 								position:relative;
@@ -1162,7 +1165,7 @@ $break-large: 1124px;
 }
 
 .operations-history {
-  
+
   margin-right: -2vw;
 	margin-bottom: 25px;
 	margin-top: 3.9vh;
@@ -1996,7 +1999,7 @@ $break-large: 1124px;
     margin-bottom: 15px;
     width: 100%;
   }
-  
+
 	.trans-date {
 
     border-bottom:1px solid #3b2665;
