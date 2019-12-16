@@ -340,6 +340,11 @@ $break-large: 1124px;
                 -webkit-box-shadow: none!important;
                 min-height: 0;
 
+                .v-input__prepend-inner {
+                  min-height: 31px;
+                  padding-top: 2px;
+                }
+
                 .v-input__icon {
                   width: initial;
                   min-width: 0;

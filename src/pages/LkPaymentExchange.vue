@@ -61,6 +61,7 @@
                       >My wallets</v-btn>
 
                       <v-btn
+                        v-if="!receiveCurrency.holder"
                         class="filter-btn"
                         :class="{'active-list': currentExchangeList === 'cards'}"
                         text
@@ -107,8 +108,8 @@
                       </div>
                     </div>
 
-                    <div class="select-item-fiat" v-if="currentExchangeList === 'cards' || currentExchangeList === 'all'">
-                      <div class="title-wrapper">
+                    <div class="select-item-fiat" v-if="!receiveCurrency.holder && currentExchangeList === 'cards' || currentExchangeList === 'all'">
+                      <div class="title-wrapper" v-if="!receiveCurrency.holder">
                         <span class="select-header">my cards</span>
                         <span class="select-line"></span>
                       </div>
@@ -481,7 +482,8 @@
                     Network Fee
                   </p>
                   <p class="btc-value">
-                    {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? types[exchangeCurrency.name].minerFee : 0}} {{exchangeCurrency.currency}}
+                    {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? types[exchangeCurrency.name].minerFee : 0}}
+                    {{exchangeCurrency.currency}}
                   </p>
                   <p>${{exchangeCurrency.isWallet ? (types[exchangeCurrency.name].price * transferInfo.minerFee).toFixed(3) : 0}}</p>
                 </div>
@@ -933,6 +935,8 @@
         if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
           this.exchangeAmount = this.exchangeCurrency.balance > this.transferInfo.limit ? this.transferInfo.limit : this.exchangeCurrency.balance;
           this.receiveAmount = +(this.exchangeAmount * this.transferInfo.rate).toFixed(5);
+          this.exchangeUSD = +(this.exchangeAmount * exchangePrice).toFixed(2);
+          this.receiveUSD = +(this.receiveAmount * receivePrice).toFixed(2);
           return;
         }
         if (!this.exchangeCurrency.isWallet) {
@@ -964,7 +968,9 @@
           return;
         }
         if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
-          this.exchangeAmount = this.exchangeCurrency.balance > this.transferInfo.limit ? this.transferInfo.limit / 2 : this.exchangeCurrency.balance / 2;
+          this.exchangeAmount = this.exchangeCurrency.balance > this.transferInfo.limit
+            ? this.transferInfo.limit / 2
+            : this.exchangeCurrency.balance / 2;
           this.receiveAmount = +(this.exchangeAmount * this.transferInfo.rate).toFixed(5);
           this.exchangeUSD = +(this.exchangeAmount * exchangePrice).toFixed(2);
           this.receiveUSD = +(this.receiveAmount * receivePrice).toFixed(2);
