@@ -24,7 +24,12 @@
 	margin-right: 20px;
 }
 .button-wrapper.no-margin {
-	margin-right: 0;
+	margin-right: 0 !important;
+}
+.add-card__wrapper {
+	@media screen and (max-width: 1180px) {
+		flex-direction: column;
+	}
 }
 .add-cart-action-button.cancel {
 	background-color: #4d3779;
@@ -63,14 +68,17 @@
 	}
 }
 .add-card-form {
-	max-width: 520px;
 	width: 100%;
 	border-radius: 8px;
 	border: 1px solid #7e64b3;
 	padding: 22px 25px;
 	width: 100%;
 	margin-right: 25px;
-	margin-bottom: 20px;
+	@media screen and (max-width: 1180px) {
+		margin-right: 0;
+		margin-bottom: 20px;
+		max-width: 420px;
+	}
 
 	&__line {
 		margin-top: 10px;
@@ -118,6 +126,10 @@
 			font-size: 14px;
 			font-weight: 600;
 			color: #fff;
+
+			@media screen and (max-width: 1080px) {
+				margin-top: 12px;
+			}
 		}
 
 		&__number-and-date {
@@ -147,12 +159,11 @@
 			margin-bottom: 0;
 		}
 		&__body {
-			padding-right: 10px;
 			scrollbar-width: thin;
 			scrollbar-color: #947dc1 transparent;
 
 			&::-webkit-scrollbar {
-				width: 13px;
+				width: 4px;
 			}
 			&::-webkit-scrollbar-track {
 				background: transparent;
@@ -160,14 +171,9 @@
 			&::-webkit-scrollbar-thumb,
 			&::-webkit-scrollbar-thumb:hover {
 				cursor: pointer;
-				width: 13px;
-				margin: 15px 0;
 				border-radius: 1px;
 				background-color: #947dc1;
-			}
-			&::-webkit-scrollbar-thumb {
-				box-shadow: inset -3px 0 0 5px #7a5db4;
-				-webkit-box-shadow: inset -3px 0 0 5px #7a5db4;
+				width: 4px;
 			}
 		}
 

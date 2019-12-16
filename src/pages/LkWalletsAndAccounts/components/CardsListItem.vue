@@ -10,8 +10,8 @@
 					<span>{{ item.fullName }}</span>
 				</div>
 				<div class="right">
-					<div class="flex justify-content-between">
-						<p class="balance">{{ '22,000' }}</p>
+					<div class="flex justify-content-between align-items-center">
+						<p class="balance">{{ '22.000' }}</p>
 						&nbsp;
 						<p class="balance-currency" v-html="item.code"></p>
 					</div>
@@ -52,7 +52,7 @@
 						</div>
 						<div class="info">
 							<div class="amount flex">
-								12, 500&nbsp;
+								12.500&nbsp;
 								<p class="balance-currency" v-html="item.code"></p>
 							</div>
 							<div class="type"><img src="@/assets/images/icons/cloud.svg" alt title /></div>

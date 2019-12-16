@@ -16,7 +16,7 @@
 							@click="throttle(handleClickMoveButton('top'), 1000)"
 							v-if="index === 0"
 						>
-							<img src="@/assets/images/arrow-up.svg" height="15" width="15" />
+							<img src="@/assets/images/arrow-up.svg" height="16" width="16" />
 						</button>
 					</transition>
 				</div>
@@ -30,7 +30,7 @@
 					}"
 				>
 					<div class="trans-card">
-						<div class="trans-top">
+						<div class="trans-top" @click="handleOpenOperation(transaction)">
 							<button class="btn">
 								<span class="icon">
 									<img
@@ -100,7 +100,7 @@
 										}}{{ formatCurrency(transaction.valueUSD, '$') }} USD</span
 									>
 								</div>
-								<span class="icon" @click="handleOpenOperation(transaction)"></span>
+								<span class="icon"></span>
 							</div>
 						</div>
 						<div class="trans-info">
@@ -127,7 +127,14 @@
 														' ' +
 														transaction.currentWallet.currency
 												}}</span>
-												<span>${{ Math.abs(transaction.feeUSD).toFixed(2) }} USD</span>
+												<span
+													>${{
+														Math.abs(transaction.feeUSD).toFixed(2) == 0
+															? 0.01
+															: Math.abs(transaction.feeUSD).toFixed(2)
+													}}
+													USD</span
+												>
 											</div>
 										</th>
 										<th>
@@ -174,8 +181,8 @@
 			>
 				<img
 					src="@/assets/images/arrow-up.svg"
-					height="15"
-					width="15"
+					height="16"
+					width="16"
 					style="transform: rotate(180deg);"
 				/>
 			</button>
@@ -288,5 +295,8 @@ export default {
 	top: 50%;
 	transform: translateY(-50%);
 	right: 0;
+}
+.trans-top {
+	cursor: pointer;
 }
 </style>
