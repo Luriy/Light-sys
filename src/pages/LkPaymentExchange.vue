@@ -139,8 +139,10 @@
                         <span class="select-header">banks</span>
                         <span class="select-line"></span>
                       </div>
-                        <div
+                        <router-link
+                          tag="div"
                           class="select-item"
+                          to="/wallets/accounts-and-cards"
                           v-for="(wallet, index) of fiatData"
                           :key="`fiat-${index}`"
                         >
@@ -151,7 +153,7 @@
                               <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                             </div>
                           </div>
-                        </div>
+                        </router-link>
                     </div>
                   </div>
                 </div>
@@ -239,6 +241,7 @@
                       >My wallets</v-btn>
 
                       <v-btn
+                        v-if="!exchangeCurrency.holder"
                         class="filter-btn"
                         :class="{'active-list': currentReceiveList === 'cards'}"
                         text
@@ -285,8 +288,8 @@
                       </div>
                     </div>
 
-                    <div class="select-item-wallet" v-if="currentReceiveList === 'cards' || currentReceiveList === 'all'">
-                      <div class="title-wrapper">
+                    <div class="select-item-wallet" v-if="!exchangeCurrency.holder && currentReceiveList === 'cards' || currentReceiveList === 'all'">
+                      <div class="title-wrapper" v-if="!exchangeCurrency.holder">
                         <span class="select-header">my cards</span>
                         <span class="select-line"></span>
                       </div>
@@ -317,12 +320,14 @@
                         <span class="select-header">banks</span>
                         <span class="select-line"></span>
                       </div>
-                      <router-link to="/wallets/accounts-and-cards" tag="div">
-                        <div
+                        <router-link
+                          tag="div"
+                          :to="!wallet.directionStatus ? '/wallets/accounts-and-cards' : '/exchange'"
                           class="select-item"
                           v-for="(wallet, index) of fiatData"
                           :key="`fiat-${index}`"
                         >
+                          <div class="select-item-disabled" v-if="wallet.directionStatus">Direction unavailable</div>
                           <div class="icon"><img :src="wallet.icon" alt></div>
                           <div class="amount">
                             <div class="code btc">{{wallet.name}}</div>
@@ -330,8 +335,7 @@
                               <span class="balance-reserve">{{wallet.isWallet ? `$${wallet.balanceUSD}` : `Reserve: ${wallet.reserve}`}}</span>
                             </div>
                           </div>
-                        </div>
-                      </router-link>
+                        </router-link>
                     </div>
                   </div>
                 </div>
@@ -888,12 +892,13 @@
       },
       checkExchangeDirection() {
         if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
-          const directionStatus = this.availableWalletDirections[`${this.exchangeCurrency.currency}${this.receiveCurrency.currency}`];
-          this.filteredReceiveWallets.forEach(wallet => {
-            if (wallet.currency === this.receiveCurrency.currency && wallet.isWallet) {
-              wallet.directionStatus = directionStatus;
-            }
-          })
+          this.$store.dispatch('exchange/SET_WALLET_DIRECTIONS',
+            {
+              direction: `${this.exchangeCurrency.currency}${this.receiveCurrency.currency}`,
+              receive: this.receiveCurrency.currency
+            });
+        } else if (!this.exchangeCurrency.isWallet) {
+          this.$store.dispatch('exchange/SET_FIAT_DIRECTIONS', this.exchangeCurrency.directions);
         }
       },
       selectReceiveWallet(wallet) {

@@ -87,6 +87,9 @@ b, strong {
   opacity: 1 !important;
 }
 
+.v-input__slot {
+  border-radius: 17px!important;
+}
 
 // responsive breakpoints
 $break-small-portrait: 320px;
@@ -188,7 +191,7 @@ $break-large: 1124px;
 	    background: #3b2665;
 	    z-index: 2;
 	    left: calc(50% - 17.5px);
-	    top: 78px;
+	    top: 74px;
 	    transition: .3s;
 	    &.active {
 	    	transform: rotate(180deg);
@@ -1031,7 +1034,7 @@ $break-large: 1124px;
 								color: #fff;
 								font-weight: 600;
               }
-              
+
 							.wallet-toggle {
                 margin-left: 80px;
                 @media screen and (max-width: 1400px) {
@@ -1198,7 +1201,7 @@ $break-large: 1124px;
 }
 
 .operations-history {
-  @media screen and (max-width: 1050px) {
+  @media screen and (max-width: 1400px) {
     margin-right: -2vw;
     margin-top: 25px;
   }
@@ -2076,7 +2079,7 @@ $break-large: 1124px;
     margin-bottom: 15px;
     width: 100%;
   }
-  
+
 	.trans-date {
 
     border-bottom:1px solid #3b2665;

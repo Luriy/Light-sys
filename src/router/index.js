@@ -6,6 +6,7 @@ import LkWalletsAndAccounts from '@/pages/LkWalletsAndAccounts';
 import LkPaymentWalletSend from '@/pages/LkPaymentWalletSend/index';
 import LkPaymentWalletReceive from '@/pages/LkPaymentWalletReceive';
 import LkPaymentExchange from '@/pages/LkPaymentExchange';
+import LkSmartContract from '@/pages/LkSmartContract'
 // import LkPaymentSendEth from '@/pages/LkPaymentSendEth'
 import LkPaymentWalletsCreate from '@/pages/LkPaymentWalletsCreate/index';
 import LkPaymentAccountsCards from '@/pages/LkPaymentAccountsCards/index';
@@ -116,6 +117,11 @@ export default new Router({
 			path: '/payments-and-transfer',
 			redirect: '/payments-and-transfer/pay-for',
 		},
+        {
+          path: '/smartcontract',
+          component: LkSmartContract,
+          beforeEnter: ifAuthenticated,
+        },
 		{
 			path: '/password-recovery',
 			component: PasswordRecovery,

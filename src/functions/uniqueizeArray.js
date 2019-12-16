@@ -3,7 +3,6 @@ export default function uniqueizeArray(array, key) {
 	array.map((item) => {
 		if (
 			uniqueArray.some((uniqItem) => {
-				console.log(uniqItem[key], item[key], key);
 				return uniqItem[key] === item[key];
 			})
 		) {
