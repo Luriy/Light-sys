@@ -110,7 +110,7 @@
 						<div class="send-form-totals-total">
 							<div class="text">{{ currencyName(currency) }} Network Fee</div>
 							<div class="value">
-								<span>0.00021 BTC</span>
+								<span>0.00021 {{ currency }}</span>
 								<span>$0.04</span>
 							</div>
 						</div>
@@ -370,7 +370,7 @@ export default {
 				this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency / 2).toFixed(5);
 				this.remainingCurrency = (this.initialBalance.currency / 2).toFixed(2);
 			} else if (name === 'Min') {
-				this.cryptoCurrencyAmount = this.minAmount.toPay;
+				this.cryptoCurrencyAmount = this.minAmount.toPay.toFixed(5);
 				this.currencyAmount = this.cryptoToCurrency(this.minAmount.toPay);
 				const remainingCryptoCurrency = this.initialBalance.cryptoCurrency - this.minAmount.toPay;
 				this.remainingCryptoCurrency =
@@ -399,10 +399,11 @@ export default {
 			this.clearData();
 		},
 		onSendSms() {
+			this.error = null;
 			const validateErrorAmount = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(
 				this.cryptoCurrencyAmount,
 				this.initialBalance.cryptoCurrency,
-				this.minAmount.toShow,
+				this.minAmount.toPay,
 				this.currency,
 			);
 			const validateErrorAddress = VALIDATE_ADDRESS(
@@ -412,7 +413,6 @@ export default {
 			);
 
 			if (validateErrorAmount === null && validateErrorAddress === null) {
-				this.error = null;
 				this.sendPopup = true;
 
 				this.countdown = 59;

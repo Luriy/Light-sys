@@ -22,7 +22,7 @@
 			</transition>
 		</div>
 		<div class="accounts-list_wrapper_tab_body">
-			<div class="flex align-items-center justify-content-between">
+			<div class="flex align-items-center justify-content-between add-card__wrapper">
 				<form class="add-card-form">
 					<div class="add-card-form__inputs-block">
 						<div class="flex flex-column">
@@ -184,6 +184,7 @@ export default {
 			}
 
 			if (inputType === 'insertFromPaste') {
+				console.log(this.cardInfo);
 				this.cardInfo.number = formatCardNumber(this.cardInfo.number);
 			}
 		},
@@ -221,7 +222,7 @@ export default {
 				currentBank: { psid, currency },
 			} = this;
 
-			const validateError = VALIDATE_CARD({ number, name, psid, currency, cards: this.cards });
+			const validateError = VALIDATE_CARD({ number, name, psid, cards: this.cards });
 
 			if (validateError) {
 				this.error = validateError;

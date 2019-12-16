@@ -236,12 +236,14 @@ export default {
 						...Object.keys(returnData.Group).map((key) => {
 							return {
 								groupName: decodeURI(key),
-								wallets: Object.values(returnData.Group[key]).map((address) =>
-									result.find((res) => res.address === address),
-								),
+								wallets: Object.values(returnData.Group[key])
+									.map((address) =>
+										result.find((res) => res.address.toLowerCase() === address.toLowerCase()),
+									)
+									.filter((item) => !!item),
 							};
 						}),
-					];
+					].filter(({ wallets }) => wallets.length !== 0);
 
 					if (!groups.some((group) => group.groupName === 'Other wallets')) {
 						groups.push({
@@ -336,8 +338,8 @@ export default {
 							icon: 'close',
 						},
 						{ root: true },
-          );
-          return { success: false };
+					);
+					return { success: false };
 				}
 			});
 		},
