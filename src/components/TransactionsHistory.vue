@@ -46,7 +46,7 @@
 										src="@/assets/images/transaction-received.svg"
 									/>
 								</span>
-								<div class="text">
+								<div class="text transaction-status">
 									<p v-if="transaction.type === 'exchange'">Exchanged</p>
 									<p v-else-if="transaction.type === 'send'">
 										Sent
@@ -77,7 +77,7 @@
 									title
 								/>
 								<span :class="transaction.currentWallet.currency.toLowerCase()">{{
-									transaction.currency
+									getCryptoInfo(transaction.currency).fullName
 								}}</span>
 							</div>
 							<div class="address" v-if="transaction.type === 'exchange'">
@@ -92,11 +92,21 @@
 							<div class="trans-amount">
 								<div class="amount">
 									<p>
-										{{ transaction.type === 'receive' ? '+' : ''
+										{{
+											transaction.type === 'receive'
+												? '+'
+												: transaction.type === 'send' && transaction.value > 0
+												? '-'
+												: ''
 										}}{{ formatCurrency(transaction.value, '', 5) }} {{ transaction.currency }}
 									</p>
 									<span
-										>{{ transaction.type === 'receive' ? '+' : ''
+										>{{
+											transaction.type === 'receive'
+												? '+'
+												: transaction.type === 'send' && transaction.value > 0
+												? '-'
+												: ''
 										}}{{ formatCurrency(transaction.valueUSD, '$') }} USD</span
 									>
 								</div>
@@ -104,58 +114,55 @@
 							</div>
 						</div>
 						<div class="trans-info">
-							<table>
-								<thead>
-									<tr>
-										<th>
-											<p>Date</p>
-											<span>{{ getFullTime(transaction.time) }}</span>
-										</th>
-										<th>
-											<p>Transaction ID</p>
-											<span
-												><a :href="transaction.url" target="_blank" class="trans-id">{{
-													getTransactionId(transaction.currency, transaction.url)
-												}}</a></span
-											>
-										</th>
-										<th>
-											<p>Fee</p>
-											<div class="flex flex-column">
-												<span>{{
-													Math.abs(transaction.fee).toFixed(5) +
-														' ' +
-														transaction.currentWallet.currency
-												}}</span>
-												<span
-													>${{
-														Math.abs(transaction.feeUSD).toFixed(2) == 0
-															? 0.01
-															: Math.abs(transaction.feeUSD).toFixed(2)
-													}}
-													USD</span
-												>
-											</div>
-										</th>
-										<th>
-											<p v-if="transaction.type === 'send'">To</p>
-											<p v-else-if="transaction.type === 'receive'">
-												From
-											</p>
-											<p v-else-if="transaction.type === 'exchange'">To</p>
+							<div class="table">
+								<div class="th">
+									<p>Date</p>
+									<span>{{ getFullTime(transaction.time) }}</span>
+								</div>
+								<div class="th">
+									<p>Transaction ID</p>
+									<span
+										><a :href="transaction.url" target="_blank" class="trans-id">{{
+											getTransactionId(transaction.currency, transaction.url)
+										}}</a></span
+									>
+								</div>
+								<div class="th">
+									<p>Fee</p>
+									<div class="fee-row">
+										<span :class="transaction.currentWallet.currency.toLowerCase()"
+											>{{
+												Math.abs(transaction.fee).toFixed(5) +
+													' ' +
+													transaction.currentWallet.currency
+											}}
+										</span>
+										<span class="divider">&nbsp;&nbsp;</span>
+										<span
+											>${{
+												Math.abs(transaction.feeUSD).toFixed(2) == 0 && transaction.feeUSD !== 0
+													? 0.01
+													: Math.abs(transaction.feeUSD).toFixed(2)
+											}}
+											USD</span
+										>
+									</div>
+								</div>
+								<div class="th">
+									<p v-if="transaction.type === 'send'">To</p>
+									<p v-else-if="transaction.type === 'receive'">
+										From
+									</p>
+									<p v-else-if="transaction.type === 'exchange'">To</p>
 
-											<span v-if="transaction.type === 'send'">{{ transaction.source.To }}</span>
-											<span v-else-if="transaction.type === 'receive'">{{
-												transaction.source.From
-											}}</span>
-											<span v-else-if="transaction.type === 'exchange'">{{
-												transaction.address
-											}}</span>
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									<!-- <tr>
+									<span v-if="transaction.type === 'send'">{{ transaction.source.To }}</span>
+									<span v-else-if="transaction.type === 'receive'">{{
+										transaction.source.From
+									}}</span>
+									<span v-else-if="transaction.type === 'exchange'">{{ transaction.address }}</span>
+								</div>
+								<!-- <div>
+									<tr>
   									<td>
   										<p>Now</p>
   										<span>{{ 'now balance' }}</span>
@@ -164,9 +171,9 @@
   										<p>Feb 6th</p>
   										<span>{{ 'prev balance' }}</span>
   									</td>
-  								</tr> -->
-								</tbody>
-							</table>
+  								</tr>
+								</div> -->
+							</div>
 						</div>
 					</div>
 				</div>
@@ -191,6 +198,7 @@
 </template>
 <script>
 import throttle from '@/functions/throttle';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	props: ['operationsWithPagination'],
@@ -208,6 +216,7 @@ export default {
 	},
 	methods: {
 		throttle,
+		getCryptoInfo,
 		handleClickMoveButton(direction) {
 			if (direction === 'top') {
 				this.activePage--;
@@ -258,7 +267,7 @@ export default {
 	},
 };
 </script>
-<style>
+<style lang="scss" scoped>
 .arrow-block {
 	background-color: rgba(59, 38, 101, 0.8);
 	width: 30px;
@@ -298,5 +307,18 @@ export default {
 }
 .trans-top {
 	cursor: pointer;
+}
+.fee-row {
+	.divider {
+		display: none;
+	}
+	display: flex;
+	flex-direction: column;
+	@media screen and (max-width: 1200px) {
+		flex-direction: row;
+		.divider {
+			display: inline;
+		}
+	}
 }
 </style>

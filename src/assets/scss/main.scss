@@ -858,44 +858,51 @@ $break-large: 1124px;
 	background:$first-dark;
 	position:relative;
 	width: 100% !important;
-  padding: 40px 60px 0 50px;
+  padding: 35px 50px 0 50px;
 	display: flex;
 	justify-content: space-between;
   height: 570px !important;
-  border-radius: 50px 0 0 50px;
 
   @media screen and (max-width: 1400px) {
     height: 540px !important;
-    padding: 40px 60px 0 40px;
+    border-radius: 50px 0 0 50px;
+    padding: 30px 60px 0 30px;
     width: calc(100% + 60px) !important;
   }
-  @media screen and (max-width: 1050px) {
+  @media screen and (max-width: 1200px) {
     height: 380px !important;
-    padding: 30px 30px 0 30px;
+    padding: 25px 30px 0 20px;
     width: calc(100% + 30px) !important;
   }
   
 
 	.wallets-list_item {
-		width:calc(50% - 1.6vw);
-      overflow: hidden;
-      position: relative;
+    width:calc(50% - 45px);
+    @media screen and (max-width: 1400px) {
+      width:calc(50% - 28px);
+    }
+    @media screen and (max-width: 1200px) {
+      width:calc(50% - 12px);
+    }
+    overflow: hidden;
+    position: relative;
       &:after {
         content: '';
         position: absolute;
         width: 100%;
         height: 32px;
-        bottom: 0;
+        border-radius: 0 0 0 20px;
+        bottom: -5px;
         left: 0;
         background-image: linear-gradient(180deg, rgba(30, 6, 57, 0) 0%, $first-dark 100%);
       }
 		.wallets-list_item_body {
-
+      padding-bottom: 15px;
 			overflow-y: auto;
-    		max-height: calc(100% - 42px);
-		    padding-right: 0.1vw;
-  			scrollbar-width: thin;
-  			scrollbar-color: #2e0e52 transparent;
+  		max-height: calc(100% - 42px);
+	    padding-right: 0.1vw;
+			scrollbar-width: thin;
+			scrollbar-color: #2e0e52 transparent;
 
 			&::-webkit-scrollbar {
 				width: 0 !important;
@@ -924,7 +931,7 @@ $break-large: 1124px;
         margin-bottom: 0px;
         position: relative;
 
-        @media screen and (max-width: 1050px) {
+        @media screen and (max-width: 1200px) {
           padding: 0 12px 0 8px;
           border-radius: 13px;
         }
@@ -946,8 +953,7 @@ $break-large: 1124px;
             overflow: visible;
 						.wallet-last-transactions {
 							opacity: 1;
-							max-height: 2000px;
-							margin-top: 12px;
+							max-height: 700px;
 						}
 						.wallet-toggle {
 							transform: rotate(180deg);
@@ -968,6 +974,10 @@ $break-large: 1124px;
               position: relative;
               .btn-remove {
                 left: -21px;
+
+                @media screen and (max-width: 1200px) {
+                  left: -16px;
+                }
               }
 							.from {
 								display: flex;
@@ -975,13 +985,12 @@ $break-large: 1124px;
 									width: 240px;
 									align-items:center;
 								.image {
-									width: 2.7vw;
-									height: 4.8vh;
+                  min-width: 36px;
 									display: flex;
 									justify-content: center;
-									align-items:center;
+									align-items:flex-start;
 
-									margin-right: 1vw;
+									margin: 0 10px 0 0;
 								}
 								span {
 									color: #fff;
@@ -1012,7 +1021,7 @@ $break-large: 1124px;
 						justify-content: space-between;
             width: 100%;
             min-height: 61px;
-            @media screen and (max-width: 1050px) {
+            @media screen and (max-width: 1200px) {
               min-height: 46px;
             }
 
@@ -1041,9 +1050,15 @@ $break-large: 1124px;
               }
 
 							.wallet-toggle {
-                margin-left: 80px;
-                @media screen and (max-width: 1400px) {
+                margin-left: 70px;
+                @media screen and (max-width: 1600px) {
+                  margin-left: 50px;
+                }
+                @media screen and (max-width: 1500px) {
                   margin-left: 35px;
+                }
+                @media screen and (max-width: 1350px) {
+                  margin-left: 15px;
                 }
 								
 								position:relative;
@@ -1089,7 +1104,7 @@ $break-large: 1124px;
 							font-weight: 600;
 							color: #fff;
               opacity: .5;
-              @media screen and (max-width: 1050px) {
+              @media screen and (max-width: 1200px) {
                 font-size: 12px;
                 line-height: 12px;
                 margin-top: 4px;
@@ -1273,20 +1288,26 @@ $break-large: 1124px;
 
 				p {
 					width: 100%;
-					font-size: 0.875rem;
+					font-size: 16px;
 					font-weight: 600;
 					line-height:21px;
-					color: #db5353;
+          color: #db5353;
+          @media screen and (max-width: 1200px) {
+            font-size: 14px;
+          }
 				}
 
 				span {
 					width:100%;
 					display: block;
 					opacity: 0.5;
-					font-size: 0.75rem;
+					font-size: 14px;
 					font-weight: 600;
 					line-height: 21px;
-					color: #ffffff;
+          color: #ffffff;
+          @media screen and (max-width: 1200px) {
+            font-size: 12px;
+          }
 				}
 			}
 			.code {
@@ -1368,9 +1389,9 @@ $break-large: 1124px;
 			height: 70.7vh;
 
 			.wallets-list_item {
-				width:calc(50% - 2vw);
 
 				.wallets-list_item_body {
+          padding-left: 10px;
           padding-right: 1.5vw;
           display: block;
 
@@ -1379,14 +1400,14 @@ $break-large: 1124px;
 				}
 				.wallet {
         height: 61px;
-        @media screen and (max-width: 1050px) {
+        @media screen and (max-width: 1200px) {
           height: 46px;
         }
 
 				&.fiat-wallet {
           min-height: 61px;
           max-height: 61px;
-          @media screen and (max-width: 1050px) {
+          @media screen and (max-width: 1200px) {
             min-height: 46px;
             max-height: 46px;
           }
@@ -1398,8 +1419,12 @@ $break-large: 1124px;
 
 					.wallet-last-transactions {
 						&-item {
-							height: 61px;
-							padding: 10px 0 10px 0;
+              height: 45px;
+              display: flex;
+              align-items: center;
+              &:last-of-type {
+                margin-bottom: 5px;
+              }
 
 							.info {
 								.amount {
@@ -1424,7 +1449,7 @@ $break-large: 1124px;
 						p {
 							font-size: 0.875rem;
               line-height: 18px;
-              @media screen and (max-width: 1050px) {
+              @media screen and (max-width: 1200px) {
                 font-size: 13px;
                 line-height: 13px;
               }
@@ -1454,7 +1479,7 @@ $break-large: 1124px;
               height: 17px;
               width: 1px;
               background-color: #6f569f;
-              top: 16px;
+              bottom: 0;
             }
 					}
 				}
@@ -1468,23 +1493,23 @@ $break-large: 1124px;
 						align-items:center;
 						width: 37px;
             height: 37px;
-            @media screen and (max-width: 1050px) {
+            @media screen and (max-width: 1200px) {
               width: 30px;
               height: 30px;
               line-height: 30px;
               border-radius: 11px;
             }
             img {
-              width: 17px;
-              @media screen and (max-width: 1050px) {
-                width: 10px;
+              width: 11px;
+              @media screen and (max-width: 1200px) {
+                width: 9px;
               }
             }
 					}
 					span {
             color: #fff;
             font-size: 1rem;
-            @media screen and (max-width: 1050px) {
+            @media screen and (max-width: 1200px) {
               font-size: 14px;
             }
 					}
@@ -1665,7 +1690,7 @@ $break-large: 1124px;
 .lk-wrapper .sidebar {
 	padding: 133px 60px 0 30px;
   width: 314px;
-  @media screen and (max-width: 1050px) {
+  @media screen and (max-width: 1200px) {
     width: 266px;
   }
 	ul {
@@ -1788,7 +1813,7 @@ $break-large: 1124px;
 		display: flex;
     justify-content: space-between;
     
-    @media screen and (max-width: 1050px) {
+    @media screen and (max-width: 1200px) {
       padding-left: 0px;
     }
 	}
@@ -1939,10 +1964,10 @@ $break-large: 1124px;
 .lk-wrapper .content {
 	width: calc(100% - 314px);
 	background:#260848;
-	border-radius:50px;
+	border-radius: 50px 0 0 50px;
 	min-height: 100vh;
   padding:115px 60px 0 60px;
-  @media screen and (max-width: 1050px) {
+  @media screen and (max-width: 1200px) {
     padding:115px 30px 0 30px;
     width: calc(100% - 266px);
   }
@@ -2089,6 +2114,9 @@ $break-large: 1124px;
 
     border-bottom:1px solid #3b2665;
     padding: 15px 0;
+    @media screen and (max-width: 1200px) {
+      padding: 9px 0;
+    }
     p {
       font-size: 12px;
       opacity: .5;
@@ -2107,6 +2135,9 @@ $break-large: 1124px;
 	.trans-item {
     margin-right: 0;
     padding: 12px 0;
+    @media screen and (max-width: 1200px) {
+      padding: 6px 0;
+    }
     border-bottom:1px solid #3b2665;
 		&.active {
 			.trans-top {
@@ -2124,13 +2155,14 @@ $break-large: 1124px;
 					padding-top:1px;
 					padding-bottom:25px;
 					opacity: 1;
-					max-height: 500px;
+          max-height: 500px;
+          @media screen and (max-width: 1200px) {
+            padding-bottom: 10px;
+          }
 				}
 			}
     }
-    .btn {
-      width: 18%;
-    }
+    
 		.trans-card {
 			transition: .5s;
 			position:relative;
@@ -2140,43 +2172,49 @@ $break-large: 1124px;
 			border-radius:17px;
 			overflow: hidden;
 			.trans-info {
-				margin-top: 4px;
+        margin-top: 4px;
+        @media screen and (max-width: 1200px) {
+          margin-top: 0px;
+        }
 				padding:0px 41px 0 68px;
 				opacity: 0;
 				transition: .5s;
 				max-height: 0;
 				overflow: hidden;
-				table {
+				.table {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          @media screen and (max-width: 1300px) {
+            grid-template-columns: repeat(3, minmax(100px, 300px));
+            .th:not(:last-of-type) {
+              border-bottom: 1px solid #3b2665;
+            }
+            .th:nth-of-type(3) {
+              border-right: none !important;
+            }
+          }
 					width: 100%;
 					text-align:left;
 					border:1px solid #3b2665;
 					border:none;
-					border-collapse:collapse;
-    				box-shadow: 0 0 0 1px #3b2665;
-    				border-radius:8px;
-    				overflow: hidden;
-    				a {
-    					text-decoration: none;
-    					// padding-bottom:3px;
-    					border-bottom:1px dashed rgba(255,255,255,.3);
-    				}
-					th, td {
+  				box-shadow: 0 0 0 1px #3b2665;
+  				border-radius:8px;
+  				overflow: hidden;
+  				a {
+  					text-decoration: none;
+  					// padding-bottom:3px;
+  					border-bottom:1px dashed rgba(255,255,255,.3);
+          }
+
+					.th, .td {
 						padding: 5px 15px 10px;
-						&:not(:last-child) {
+						&:not(:last-of-type) {
 							border-right:1px solid #3b2665;
-						}
-					}
-					tr {
-						border-bottom:1px solid #3b2665;
-						&:last-child {
-							td:first-child {
-							    border-bottom-left-radius: 8px;
-							}
-							td:last-child {
-							    border-bottom-right-radius: 8px;
-							}
-						}
-					}
+            }
+            @media screen and (max-width: 1200px) {
+              padding: 3px 10px 7px;
+            }
+          }
 					p {
 						font-size: 12px;
 						color: #fff;
@@ -2186,7 +2224,10 @@ $break-large: 1124px;
 					}
 					span {
 						font-size: 14px;
-						color: #fff;
+            color: #fff;
+            @media screen and (max-width: 1200px) {
+              font-size: 13px;
+            }
 					}
 				}
 			}
@@ -2199,7 +2240,14 @@ $break-large: 1124px;
 
 				> * {
 					width: 25%;
-				}
+        }
+        
+        .btn {
+          @media screen and (max-width: 1400px) {
+            width: 170px !important;
+            min-width: 170px !important;
+          }
+        }
 
 				.address {
 					font-size: 14px;
@@ -2207,13 +2255,26 @@ $break-large: 1124px;
 					line-height: 21px;
 					color: #ffffff;
           opacity: .5;
-          width: 35%;
+          width: 25%;
+          @media screen and (max-width: 1400px) {
+            width: auto !important;
+            text-overflow: ellipsis; 
+            overflow: hidden; 
+            white-space: nowrap;
+          }
+          @media screen and (max-width: 1200px) {
+            font-size: 12px;
+          }
 				}
 
 				.code {
 					display: flex;
           align-items:center;
           width: 15% !important;
+          @media screen and (max-width: 1400px) {
+            width: 130px !important;
+            min-width: 130px !important;
+          }
 					img {
 						max-height:24px;
 						margin-right: 6px;
@@ -2228,7 +2289,10 @@ $break-large: 1124px;
 						}
 						&.eth {
 							color: #7d8ef6
-						}
+            }
+            @media screen and (max-width: 1200px) {
+              font-size: 13px;
+            }
 					}
 				}
 
@@ -2240,7 +2304,7 @@ $break-large: 1124px;
 					.icon {
 						position:relative;
 						display: inline-block;
-						width:20px;
+						min-width:20px;
 						height: 20px;
 						border-radius:9px;
 						background:#3b2665;
@@ -2273,14 +2337,21 @@ $break-large: 1124px;
 						align-items:center;
 						.icon {
 							display: flex;
-							width: 43px;
+							min-width: 43px;
               line-height: 43px;
               height: 43px;
               justify-content: center;
               align-items: center;
 							background:#3b2665;
 							border-radius:17px;
-							margin-right: 15px;
+              margin-right: 15px;
+              @media screen and (max-width: 1200px) {
+                min-width: 34px;
+                line-height: 34px;
+                height: 34px;
+                border-radius:11px;
+                margin-right: 9px;
+              }
 						}
 
 						.text {
@@ -2288,14 +2359,20 @@ $break-large: 1124px;
 							text-align:left;
 							color: #fff;
 							p {
-								font-size: 16px;
-								font-weight: 600;
+								font-size: 14px;
+                font-weight: 600;
+                @media screen and (max-width: 1200px) {
+                  font-size: 13px;
+                }
 							}
 							span {
 								line-height: 21px;
 								opacity: .5;
 								font-size: 14px;
-								font-weight: 600;
+                font-weight: 600;
+                @media screen and (max-width: 1200px) {
+                  font-size: 13px;
+                }
 							}
 						}
 					}
@@ -2745,6 +2822,14 @@ $break-large: 1124px;
   align-items: center;
   z-index: 1000;
   cursor: pointer;
+
+  @media screen and (max-width: 1200px) {
+    width: 22px;
+    height: 22px;
+    img {
+      width: 9px;
+    }
+  }
 }
 .under-wallet-block {
 	width: 100%;
@@ -2767,17 +2852,19 @@ $break-large: 1124px;
 	height: 4px;
 }
 .group-wrapper {
-  &:last-of-type {
-    margin-bottom: 20px;
+  &:first-of-type .active-group {
+    padding-top: 0;
   }
   .active-group {
     color: #fff;
     font-weight: 500;
-    margin-bottom: 15px;
-    padding-top: 5px;
+    margin-bottom: 13px;
+    padding-top: 3px;
 
-    &:first-of-type {
+    @media screen and (max-width: 1200px) {
+      margin-bottom: 10px;
       padding-top: 0;
+      font-size: 14px;
     }
   }
 }
@@ -2792,7 +2879,7 @@ $break-large: 1124px;
     .btn-remove {
       position: absolute;
       left: -10px;
-      top: 30px;
+      top: 50%;
       transform: translateY(-50%);
     }
   }
@@ -2803,14 +2890,14 @@ $break-large: 1124px;
   }
 }
 .add-group-input-wrapper {
-      height: 32px;
-      border-radius: 4px;
-      border: 1px solid #745e9f;
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-      padding: 0 8px;
-    }
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #745e9f;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  padding: 0 8px;
+}
 .success-popup_title {
   display: flex;
   flex-direction: column;
@@ -2985,6 +3072,7 @@ $break-large: 1124px;
       font-weight: 600;
       line-height: 21px !important;
       cursor: pointer;
+      margin-bottom: 0 !important;
     }
 
     .title {
@@ -3160,8 +3248,11 @@ button {
   font-weight: 400;
   color: #fff;
   line-height: 21px;
-  margin-top: 2px;
+  margin-top: 1px;
   text-align: right;
   font-size: 14px;
   display: inline-block;
+  @media screen and (max-width: 1200px) {
+    margin-top: 2px;
+  }
 }

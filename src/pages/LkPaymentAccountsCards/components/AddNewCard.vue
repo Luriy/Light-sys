@@ -57,7 +57,7 @@
 									</div>
 									<div class="select__title">{{ currentBank.name }}</div>
 								</div>
-								<div class="toggle"></div>
+								<div class="toggle" :class="{ opened: isActive }"></div>
 							</div>
 							<transition name="fade">
 								<div class="select__body flex flex-column" v-show="select.isActive">
@@ -84,7 +84,7 @@
 				<div class="flex flex-column align-items-center virtual-card__wrapper">
 					<div class="virtual-card">
 						<div class="flex justify-content-between align-items-center" style="height: 25px;">
-							<img :src="getBankImage(this.currentBank.psid, 'small')" alt />
+							<img :src="currentBank.psid ? getBankImage(currentBank.psid, 'small') : null" alt />
 							<p class="virtual-card__currency">{{ this.currentBank.currency }}</p>
 						</div>
 						<div class="flex flex-column">

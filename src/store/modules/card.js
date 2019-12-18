@@ -25,6 +25,7 @@ export default {
 				params: {
 					Comand: 'CardInfo',
 					Currency: true,
+					BankName: true,
 					...getAuthParams(),
 				},
 			}).then(({ data }) => {

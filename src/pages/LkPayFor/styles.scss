@@ -114,10 +114,11 @@
 	.select__curency-name {
 		font-size: 14px;
 		font-weight: 600;
+		color: #fff;
 	}
 	.select__balance {
 		font-size: 12px;
-		font-weight: 500;
+		font-weight: 600;
 		color: #fff;
 	}
 	.payment-block {
@@ -229,5 +230,20 @@
 		height: 43px;
 		border-radius: 17px;
 		background-color: #7156a5;
+	}
+	.image-plate {
+		width: 37px;
+		height: 37px;
+		border-radius: 14px;
+		background-color: #7d62b3;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-right: 12px;
+	}
+	.select__header {
+		.currency-divider {
+			transform: translateY(-1px);
+		}
 	}
 }

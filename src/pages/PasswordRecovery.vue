@@ -57,11 +57,7 @@
 											class="number-input"
 											v-for="(input, index) in smsCodes"
 											v-model="input[index]"
-											@keyup="
-												index !== smsCodes.length - 1
-													? $event.target.nextElementSibling.focus()
-													: sendPin()
-											"
+											@keyup="handleSmsKeyUp($event, index)"
 											placeholder="_"
 											type="text"
 											maxLength="1"
@@ -76,7 +72,7 @@
 										<div class="timer" v-if="countdown > 0">
 											00:{{ `${countdown < 10 ? '0' : ''}${countdown}` }} Sec
 										</div>
-										<p class="repeat-btn" v-if="countdown === 0" @click="getPin">Repeat</p>
+										<p class="repeat-btn" v-if="countdown === 0" @click="repeatPin">Repeat</p>
 									</div>
 									<error :error="commonError"></error>
 								</div>
@@ -128,7 +124,20 @@ export default {
 	},
 	methods: {
 		checkLoginType,
-		getPin() {
+		handleSmsKeyUp(e, index) {
+			if (e.key === 'Backspace') {
+				this.smsCodes[index][index] = '';
+				if (index !== 0) {
+					e.target.previousElementSibling.focus();
+				}
+			} else if (e.key === 'Tab') {
+				return false;
+			} else {
+				index !== this.smsCodes.length - 1 ? e.target.nextElementSibling.focus() : this.sendPin();
+			}
+		},
+		getPin(params = { withRepeat: false }) {
+			const { withRepeat } = params;
 			this.commonError = null;
 			const { user, loginType } = this;
 			Axios({
@@ -148,16 +157,29 @@ export default {
 					this.commonError = errors[0];
 				} else {
 					this.step = 2;
-					this.countdown = 59;
-					setTimeout(() => {
-						document.querySelector('.login-form .number-input').focus();
-					}, 50);
-					this.timer = setInterval(() => {
-						this.countdown--;
-					}, 1000);
+					if (!withRepeat) {
+						this.countdown = 59;
+						setTimeout(() => {
+							document.querySelector('.login-form .number-input').focus();
+						}, 50);
+						this.timer = setInterval(() => {
+							this.countdown--;
+						}, 1000);
+					}
 				}
 			});
 			this.step = 2;
+		},
+		repeatPin() {
+			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
+			this.countdown = 59;
+			setTimeout(() => {
+				document.querySelector('.login-form .number-input').focus();
+			}, 50);
+			this.timer = setInterval(() => {
+				this.countdown--;
+			}, 1000);
+			this.getPin({ withRepeat: true });
 		},
 		sendPin() {
 			const { user, loginType, smsCodes } = this;
@@ -176,33 +198,28 @@ export default {
 				const data = parsePythonArray(resp);
 
 				const errors = Object.values(data[0]['Errors']);
-
 				if (errors.length) {
 					this.commonError = errors[0];
 				} else if (data[1].return['New Password'] === 'generated') {
 					const params = new URLSearchParams();
-					params.append('Phone', loginType === 'Phone' ? user : '');
+					params.append('Phone', loginType === 'Phone' ? user.replace(/[^0-9]/gim, '') : '');
 					params.append('Email', loginType === 'Email' ? user : '');
 					params.append('Password', sha512(data[1].return.Password));
 					params.append('Comand', 'CheckLoginPassword');
 
-					this.$store
-						.dispatch(AUTH_REQUEST, params)
-						.then(() => {
-							clearInterval(this.timer);
-							this.commonError = null;
-							this.$router.push('/');
-							this.$store.commit('alerts/setNotification', {
-								message: `We have sent your new password to your ${loginType.toLowerCase()}`,
-								status: 'success-status',
-								icon: 'done',
-							});
-						})
-						.catch((err) => {
-							this.commonError = err;
+					this.$store.dispatch(AUTH_REQUEST, params).then(() => {
+						clearInterval(this.timer);
+						this.commonError = null;
+						this.$router.push('/');
+						this.$store.commit('alerts/setNotification', {
+							message: `We have sent your new password to your ${loginType.toLowerCase()}`,
+							status: 'success-status',
+							icon: 'done',
 						});
+					});
 				} else {
-					this.commonError = 'Unknown error';
+					this.commonError = 'Password recovery is unavailable now. Please try again later';
+					this.setTimeout(() => this.$router.push('/login'), 2000);
 				}
 			});
 		},
@@ -216,3 +233,4 @@ export default {
 	},
 };
 </script>
+<style scoped></style>

@@ -332,6 +332,9 @@
 	}
 }
 .card-list-edit-popup {
+	.button-wrapper {
+		margin: 25px 0 35px;
+	}
 	.image-plate {
 		width: 53px;
 		height: 53px;
@@ -426,4 +429,7 @@ body .v-application .mb-10 {
 		font-size: 14px;
 		color: #fff;
 	}
+}
+.toggle.opened {
+	transform: rotate(180deg);
 }

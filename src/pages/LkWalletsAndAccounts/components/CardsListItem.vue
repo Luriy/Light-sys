@@ -11,8 +11,8 @@
 				</div>
 				<div class="right">
 					<div class="flex justify-content-between align-items-center">
-						<p class="balance">{{ '22.000' }}</p>
-						&nbsp;
+						<p class="balance">{{ '22.000' }}&nbsp;</p>
+
 						<p class="balance-currency" v-html="item.code"></p>
 					</div>
 					<div class="wallet-toggle"></div>
