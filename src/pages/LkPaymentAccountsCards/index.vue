@@ -63,7 +63,7 @@
 									</div>
 								</transition>
 
-								<div class="toggle active"></div>
+								<div class="toggle active" :class="{ opened: tabs[1].isActive }"></div>
 							</div>
 						</div>
 
@@ -122,10 +122,14 @@
 														:isEditing="isEditing"
 													></add-native-card>
 												</transition>
-
 												<div
 													class="toggle"
-													:class="{ active: getCardsByCurrency(item.currency, cards).length }"
+													:class="{
+														active: getCardsByCurrency(item.currency, cards).length,
+														opened: tabs[1].activeCurrencies.length
+															? tabs[1].activeCurrencies[index].isActive
+															: false,
+													}"
 												></div>
 											</div>
 										</div>

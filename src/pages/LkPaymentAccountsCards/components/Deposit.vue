@@ -5,7 +5,7 @@
 				<div class="image"><img src="@/assets/images/wallet2.svg" alt title /></div>
 				<p>Deposits</p>
 			</div>
-			<div class="toggle"></div>
+			<div class="toggle" :class="{ opened: isActive }"></div>
 		</div>
 
 		<div class="accounts-list_wrapper_tab_body deposit">

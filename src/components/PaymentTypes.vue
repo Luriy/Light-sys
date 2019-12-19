@@ -49,7 +49,7 @@
 					class="select-item"
 					v-for="(wallet, index) of wallets"
 					:key="`wallet-${index}`"
-					@click="wallet.isAvailable ? $emit('onSelectWallet', wallet) : ''"
+					@click="wallet.isAvailable ? $emit('onSelectItem', wallet) : ''"
 				>
 					<div
 						v-if="!wallet.isAvailable"
@@ -91,17 +91,17 @@
 					class="select-item"
 					v-for="(card, index) of cards"
 					:key="`fiat-${index}`"
-					@click="$emit('onSelectItem', card)"
+					@click="$emit('onSelectItem', card, banks.find(({ psid }) => psid == card.Psid).reserve)"
 				>
 					<div class="image-plate">
 						<img :src="getBankImage(card.Psid, 'small')" />
 					</div>
 					<div class="amount flex flex-column">
-						<span class="code">{{ banks.find(({ psid }) => psid == card.Psid).name }}</span>
+						<span class="code">{{ card.Name }}</span>
 						<div class="value">
 							<span>
 								{{ `****${card.Number.slice(card.Number.length - 4)}` }}
-								{{ banks.find(({ psid }) => psid == card.Psid).valute }}
+								{{ card.Currency }}
 							</span>
 							<span class="currency-divider">&#124;</span>
 							<span class="balance-reserve">{{
@@ -117,7 +117,12 @@
 					<span class="select-header">banks</span>
 					<span class="select-line"></span>
 				</div>
-				<div class="select-item" v-for="(bank, index) of banks" :key="`fiat-${index}`">
+				<div
+					class="select-item"
+					v-for="(bank, index) of banks"
+					:key="`fiat-${index}`"
+					@click="$emit('onSelectItem', bank)"
+				>
 					<div class="image-plate">
 						<img :src="getBankImage(bank.psid, 'small')" alt />
 					</div>
@@ -279,5 +284,8 @@ export default {
 }
 .amount .code {
 	margin-bottom: -3px;
+}
+.select-item {
+	cursor: pointer;
 }
 </style>

@@ -28,7 +28,7 @@
 						</button>
 					</div>
 				</transition>
-				<div class="toggle"></div>
+				<div class="toggle" :class="{ opened: isActive }"></div>
 			</div>
 		</div>
 		<div class="accounts-list_wrapper_tab_body">

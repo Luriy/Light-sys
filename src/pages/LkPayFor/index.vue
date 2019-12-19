@@ -15,18 +15,8 @@
 						</div>
 						<div class="select">
 							<div class="select__header" @click="walletSelect.isActive = true">
-								<div class="flex align-items-center">
-									<img
-										v-if="currentWallet.currency === 'LTC'"
-										src="@/assets/images/ltc.svg"
-										width="34"
-									/>
-									<img
-										v-else-if="currentWallet.currency === 'ETH'"
-										src="@/assets/images/eth.png"
-										width="34"
-									/>
-									<img v-else src="@/assets/images/btc.png" width="34" />
+								<div class="flex align-items-center" v-if="currentType === 'wallet'">
+									<img :src="getCryptoInfo(currentWallet.currency).image.corner" width="34" />
 									<div class="flex flex-column select__wallet-info">
 										<span
 											class="select__curency-name"
@@ -40,6 +30,37 @@
 											{{ `${Number(currentWallet.balance).toFixed(5)} ${currentWallet.currency}` }}
 											{{ `$${Number(currentWallet.balanceUSD).toFixed(2)} USD` }}
 										</span>
+									</div>
+								</div>
+								<div class="flex align-items-center" v-else-if="currentType === 'card'">
+									<div class="image-plate">
+										<img :src="getBankImage(currentCard.psid, 'small')" alt />
+									</div>
+									<div class="flex flex-column">
+										<span class="select__curency-name">{{ currentCard.name }}</span>
+										<div class="select__balance">
+											<span>
+												{{ `****${currentCard.number.slice(currentCard.number.length - 4)}` }}
+												{{ currentCard.currency }}
+											</span>
+											<span class="currency-divider">&#124;</span>
+											<span class="balance-reserve">{{ `Reserve: ${currentCard.reserve}` }}</span>
+										</div>
+									</div>
+								</div>
+								<div class="flex align-items-center" v-else-if="currentType === 'bank'">
+									<div class="image-plate">
+										<img :src="getBankImage(currentBank.psid, 'small')" alt />
+									</div>
+									<div class="flex flex-column">
+										<span class="select__curency-name">{{ currentBank.name }}</span>
+										<div class="select__balance">
+											<span>
+												{{ currentBank.currency }}
+											</span>
+											<span class="currency-divider">&#124;</span>
+											<span class="balance-reserve">{{ `Reserve: ${currentBank.reserve}` }}</span>
+										</div>
 									</div>
 								</div>
 								<div class="select__expand">
@@ -146,6 +167,7 @@ import LkLayout from '@/layout/LkLayout';
 import PaymentsAndTransfer from '@/layout/LkPaymentsAndTransfer';
 import PaymentTypes from '@/components/PaymentTypes';
 import getCryptoInfo from '@/functions/getCryptoInfo';
+import getBankImage from '@/functions/getBankImage';
 import './styles.scss';
 
 export default {
@@ -204,11 +226,25 @@ export default {
 				isActive: false,
 			},
 			activePaymentDirection: null,
+			currentType: 'wallet',
 			currentWallet: {
 				currency: 'BTC',
-				balance: '0.00000',
-				balanceUSD: '0.00',
+				balanceUSD: '0.00000',
+				balance: '0.00',
 				address: null,
+			},
+			currentCard: {
+				name: null,
+				number: null,
+				currency: null,
+				reserve: null,
+				psid: null,
+			},
+			currentBank: {
+				name: null,
+				currency: null,
+				reserve: null,
+				psid: null,
 			},
 			windowHandler: null,
 			paymentTypes: [
@@ -307,6 +343,7 @@ export default {
 	},
 	methods: {
 		getCryptoInfo,
+		getBankImage,
 		setInitialCurrentWallet() {
 			const walletsBalancesArray = this.wallets.map((wallet) => wallet.balanceUSD);
 			const maxBalanceIndex = walletsBalancesArray.indexOf(
@@ -316,12 +353,37 @@ export default {
 
 			this.currentWallet = walletWithMaxBalance;
 		},
-		handleSelectItem(item) {
-			const { currency, balance, balanceUSD, address, isAvailable } = item;
-			if (isAvailable) {
+		handleSelectItem(item, cardReserve) {
+			console.log('f');
+			if (item.address) {
+				const { currency, balance, balanceUSD, address, isAvailable } = item;
+				if (isAvailable) {
+					this.currentType = 'wallet';
+					this.walletSelect.isActive = false;
+					this.currentWallet = { currency, balance, balanceUSD, address };
+				} else return false;
+			} else if (item.Number) {
+				this.currentType = 'card';
+				const { Name, Currency, Psid } = item;
 				this.walletSelect.isActive = false;
-				this.currentWallet = { currency, balance, balanceUSD, address };
-			} else return false;
+				this.currentCard = {
+					name: Name,
+					currency: Currency,
+					reserve: cardReserve,
+					number: item.Number,
+					psid: Psid,
+				};
+			} else if (item.reserve) {
+				const { name, psid, valute, reserve } = item;
+				this.walletSelect.isActive = false;
+				this.currentType = 'bank';
+				this.currentBank = {
+					name,
+					currency: valute,
+					reserve,
+					psid,
+				};
+			}
 		},
 		handleChangePaymentsDirection(name) {
 			if (name === this.activePaymentDirection) {
