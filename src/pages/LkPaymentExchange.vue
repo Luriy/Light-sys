@@ -173,7 +173,7 @@
                 >
                   <div class="exchange-amount_input" :class="exchangeCurrency.currency.toLowerCase()">
                     <v-text-field
-                      v-model.lazy.number="exchangeAmount"
+                      v-model="exchangeAmount"
                       :hide-details="true"
                       :rules="exchangeAmountRules"
                       :color="exchangeCurrency.isWallet ? exchangeCurrency.color : '#fff'"
@@ -183,7 +183,7 @@
                   </div>
                   <div class="exchange-amount_input">
                     <v-text-field
-                      v-model.number.lazy="exchangeUSD"
+                      v-model.lazy="exchangeUSD"
                       class="dollars_input"
                       @input="exchangeUSDChange"
                       color="#fff"
@@ -345,7 +345,7 @@
               <div class="exchange-amount">
                 <div class="exchange-amount_input" :class="receiveCurrency.currency.toLowerCase()">
                   <v-text-field
-                    v-model.number.lazy="receiveAmount"
+                    v-model.lazy="receiveAmount"
                     :hide-details="true"
                     :rules="receiveAmountRules"
                     @input="receiveChange"
@@ -356,7 +356,7 @@
 
                 <div class="exchange-amount_input">
                   <v-text-field
-                    v-model.number.lazy="receiveUSD"
+                    v-model.lazy="receiveUSD"
                     @input="receiveUSDChange"
                     class="dollars_input"
                     color="#fff"
@@ -430,13 +430,14 @@
                 <img :src="exchangeCurrency.icon" alt title>
               </div>
               <p class="transaction">Confirmation <br> exchange
+                $
                 {{
                   exchangeUSD && typeof exchangeUSD === 'number' ? exchangeUSD.toFixed(2) : exchangeUSD
                 }} USD</p>
               <div class="phone-question" v-if="user.Phone">
                 <p class="question">We sent an SMS conformation to the number</p>
                 <div class="number-block">
-                  <p class="number">{{user.Phone}}</p>
+                  <p class="number">{{formatPhoneNumber(user.Phone)}}</p>
                   <router-link class="link" to="/">Wrong number?</router-link>
                 </div>
               </div>
@@ -454,7 +455,7 @@
                 v-for="(input, index) in smsCodes"
                 :key="index"
                 v-model="input[index]"
-                @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : send()"
+                @keyup="smsChange($event, index)"
                 placeholder="_"
                 type="text"
                 maxLength="1"
@@ -494,7 +495,7 @@
                     'Reserve'
                     }}
                    </p>
-                  <p class="btc-value" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
+                  <p class="btc-value" style="margin-right: 37px" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
                     {{exchangeCurrency.balance}} {{exchangeCurrency.currency}}
                   </p>
                   <p>
@@ -612,8 +613,8 @@
     </v-card>
   </lk-layout>
 </template>
-
 <script>
+  import formatPhoneNumber from '@/functions/formatPhoneNumber';
   import LkLayout from '@/layout/LkLayout'
   import LkPopUp from '@/layout/LkPopUp';
   import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
@@ -676,25 +677,36 @@
             return false
           },
           value => {
-          if (this.exchangeCurrency.isWallet) {
-            if (value > this.transferInfo.limit) {
-              this.errorMsg = ('Ammount cannot be more than limit');
-              this.showError = true;
-              return 'Ammount cannot be more than limit'
+            if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
+              if (value < this.transferInfo.minimum) {
+                this.showError = true;
+                this.errorMsg = (`Minimum value of transactions is ${this.transferInfo.minimum.toFixed(5)}`);
+                return `Minimum value of transactions is ${this.transferInfo.minimum}`
+              }
             }
-          }
-          this.showError = false;
-          return false
+            this.showError = false;
+            return false
           },
           value => {
-          if (!this.exchangeCurrency.isWallet) {
-            if (value > this.exchangeCurrency.reserve) {
-              this.errorMsg = ('Ammount cannot be more than reserve');
-              this.showError = true;
-              return 'Ammount cannot be more than reserve'
+            if (this.exchangeCurrency.isWallet) {
+              if (value > this.transferInfo.limit) {
+                this.errorMsg = ('Ammount cannot be more than limit');
+                this.showError = true;
+                return 'Ammount cannot be more than limit'
+              }
             }
-          }
-          return false
+            this.showError = false;
+            return false
+          },
+          value => {
+            if (!this.exchangeCurrency.isWallet) {
+              if (value > this.exchangeCurrency.reserve) {
+                this.errorMsg = ('Ammount cannot be more than reserve');
+                this.showError = true;
+                return 'Ammount cannot be more than reserve'
+              }
+            }
+            return false
           },
           value => {
             if (!this.exchangeCurrency.isWallet) {
@@ -712,6 +724,17 @@
             if (!+value) {
               this.errorMsg = ('Required');
               return 'Required'
+            }
+            this.showError = false;
+            return false
+          },
+          value => {
+            if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
+              if (value < this.transferInfo.minimum) {
+                this.showError = true;
+                this.errorMsg = (`Minimum value of transactions is ${this.transferInfo.minimum.toFixed(5)}`);
+                return `Minimum value of transactions is ${this.transferInfo.minimum}`
+              }
             }
             this.showError = false;
             return false
@@ -806,12 +829,21 @@
           });
         }
       },
+      smsChange(event, index) {
+        if (event.key !== 'Backspace') {
+          if (index !== (this.smsCodes.length - 1)) {
+            event.target.nextElementSibling.focus()
+          } else {
+            this.send()
+          }
+        }
+      },
       exchange() {
         if (this.$refs.exchangeForm.validate()) {
           this.showError = false;
           this.exchangePopup = !this.exchangePopup;
           this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
-           this.setTimer()
+            this.setTimer()
           });
         } else {
           this.showError = true;

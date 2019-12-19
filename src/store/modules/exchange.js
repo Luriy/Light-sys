@@ -199,7 +199,7 @@ export default {
                 ? fiatList[+cards[card].Psid].icon.big
                 : fiatList['111'].icon.big,
 							currency: valute,
-							reserve,
+							reserve: (reserve).toFixed(2),
               statusNode: cards[card].StatusExchange,
               directionStatus: 0,
               status: cards[card].Status,
@@ -215,9 +215,12 @@ export default {
             name: fiat[item].name,
             psid: fiat[item].psid,
             directionStatus: 0,
-            icon: fiatList[fiat[item].psid] && fiatList[fiat[item].psid].icon.big ? fiatList[fiat[item].psid].icon.big : fiatList['111'].icon.big,
+            icon: fiatList[fiat[item].psid] && fiatList[fiat[item].psid].icon.big
+              ? fiatList[fiat[item].psid].icon.big
+              : Object.keys(currensyList).some(currency => currency === fiat[item].valute) ? currensyList[fiat[item].valute].icon
+              : fiatList['111'].icon.big,
             currency: fiat[item].valute,
-            reserve: fiat[item].reserve
+            reserve: (fiat[item].reserve).toFixed(2)
           }
         });
 

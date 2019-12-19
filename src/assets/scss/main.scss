@@ -320,7 +320,13 @@ $break-large: 1124px;
         .v-text-field {
           margin: 0;
           padding: 0;
+          &.error--text {
+            &.v-input {
+              color: transparent!important;
+            }
+          }
         }
+
   			&_input {
   				position:relative;
           .dollar {
@@ -342,7 +348,7 @@ $break-large: 1124px;
 
                 .v-input__prepend-inner {
                   min-height: 31px;
-                  padding-top: 2px;
+                  padding-top: 3px;
                 }
 
                 .v-input__icon {
@@ -636,7 +642,7 @@ $break-large: 1124px;
 					.column {
 						width:calc(50% - 25px);
             margin-bottom: 35px;
-            
+
             @media screen and (max-width: 1050px) {
               width: 100%;
             }
@@ -838,7 +844,7 @@ $break-large: 1124px;
 					border-radius: 14px;
 					background-color: #614990;
           margin-right: 10px;
-          
+
 				}
 				p {
 					font-size: 16px;
@@ -874,7 +880,7 @@ $break-large: 1124px;
     padding: 30px 30px 0 30px;
     width: calc(100% + 30px) !important;
   }
-  
+
 
 	.wallets-list_item {
 		width:calc(50% - 1.6vw);
@@ -1045,7 +1051,7 @@ $break-large: 1124px;
                 @media screen and (max-width: 1400px) {
                   margin-left: 35px;
                 }
-								
+
 								position:relative;
 								width: 20px;
 								height: 20px;
@@ -1787,7 +1793,7 @@ $break-large: 1124px;
 	    padding-left: 60px;
 		display: flex;
     justify-content: space-between;
-    
+
     @media screen and (max-width: 1050px) {
       padding-left: 0px;
     }

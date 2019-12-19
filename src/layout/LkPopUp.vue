@@ -263,7 +263,6 @@ export default {
 .network-fee,
 .balance {
 	display: flex;
-	justify-content: space-between;
 	padding: 0 15px;
 	opacity: 0.5;
 	color: #ffffff;
@@ -272,6 +271,7 @@ export default {
 
 	.network-fee__title {
 		margin: 0;
+    flex-grow: 1;
 
 		span {
 			text-transform: capitalize;
