@@ -459,9 +459,7 @@
                 placeholder="_"
                 type="text"
                 maxLength="1"
-                size="1"
-                min="0"
-                max="9" pattern="[0-9]{1}"
+                size="1" min="0" max="9" pattern="[0-9]{1}"
               />
 
               <div class="timer-body">
@@ -811,7 +809,7 @@
               receive: capitalizeFirstLetter(this.receiveCurrency.currency.toLowerCase())
             }
           }).then(() => {
-            this.smsCodes.forEach((smsCode, index) => { smsCode[index] = '' })
+            this.clearSms()
           });
         } else {
           this.$store.dispatch('exchange/POST_FIAT', {
@@ -825,7 +823,7 @@
             Psid2: this.receiveCurrency.psid,
             LastName: this.exchangeCurrency.isWallet ? this.receiveCurrency.holder : this.exchangeCurrency.holder,
           }).then(() => {
-            this.smsCodes.forEach((smsCode, index) => { smsCode[index] = '' })
+            this.clearSms()
           });
         }
       },
@@ -856,7 +854,11 @@
       },
       setData() {
         if (this.wallets && this.wallets.length) {
-          this.exchangeCurrency = this.wallets.filter(({ currency }) => currency === 'BTC')[0];
+          this.exchangeCurrency = this.wallets.filter((currency) => {
+            if (!currency.statusNode) {
+              return currency
+            }
+          })[0];
           this.receiveCurrency = this.wallets.filter(({ currency }) => currency === 'ETH')[0];
         }
       },
@@ -876,6 +878,7 @@
         this.exchangeModal = false;
         this.search = '';
       },
+      formatPhoneNumber,
       toggleCurrency() {
         this.clearValues();
         let c = this.exchangeCurrency;
@@ -891,6 +894,9 @@
       },
       getFiatExchange() {
         this.$store.dispatch('exchange/GET_FIAT_EXCHANGE');
+      },
+      clearSms() {
+        this.smsCodes.forEach((smsCode, index) => { smsCode[index] = '' })
       },
       getTransferInfo() {
         this.$store.dispatch('exchange/GET_TRANSFER_INFO', {
@@ -953,6 +959,7 @@
         }
       },
       repeatTransferRequest() {
+        this.clearSms();
         this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
           this.isRepeat = false;
           this.setTimer();

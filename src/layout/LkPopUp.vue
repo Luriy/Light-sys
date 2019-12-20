@@ -29,6 +29,12 @@ export default {
 			this.$emit('repeatTransferRequest');
 		},
 	},
+  mounted () {
+    const smsInput = document.getElementsByClassName('number-input');
+    if (smsInput && smsInput.length) {
+      smsInput[0].focus();
+    }
+  }
 };
 </script>
 

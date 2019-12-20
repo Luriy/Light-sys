@@ -164,7 +164,6 @@ export default {
 			});
 			Promise.all([fiatPsids, allWallets, cardsList]).then(function(values) {
 				commit('alerts/setLoading', false, { root: true });
-				// const { Errors } = response[0];
 				const parsedData = values.map((item) => {
 						return parsePythonArray(item.data)['1'].return;
 					});
