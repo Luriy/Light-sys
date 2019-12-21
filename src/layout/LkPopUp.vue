@@ -94,6 +94,10 @@ export default {
 	.images {
 		display: flex;
 		margin: 15px 0;
+
+    img {
+      align-self: center;
+    }
 	}
 
 	.success_arrows {

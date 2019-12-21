@@ -544,10 +544,9 @@
                 <div class="balance">
                   <p class="success_title">Remaining balance</p>
                   <p class="middle-text">
-                    {{exchangeCurrency.balance && typeof exchangeCurrency.balance !== 'string' ?
-                    balance.toFixed(3) : 0}}
+                    {{exchangeCurrency.balance}}
                     {{exchangeCurrency.currency}} </p>
-                  <p> ${{exchangeCurrency.balanceUSD.toFixed(3)}} </p>
+                  <p v-if="exchangeCurrency.isWallet"> ${{exchangeCurrency.balanceUSD}} </p>
                 </div>
               </div>
             </div>
@@ -630,6 +629,7 @@
       return {
         currentExchangeList: 'all',
         currentReceiveList: 'all',
+        firstStart: true,
         receiveModal: false,
         exchangeModal: false,
         errorMsg: '',
@@ -761,9 +761,9 @@
           },
           value => {
             if (!this.receiveCurrency.isWallet) {
-              if (value < this.fiatInfo.in_min) {
+              if (value < this.fiatInfo.in_min && this.firstStart) {
                 this.showError = true;
-                this.errorMsg = ('Ammount cannot be more than reserve');
+                this.errorMsg = ('Ammount cannot be less than min ammount of transaction');
                 return 'Ammount cannot be less than min ammount of transaction'
               }
             }
@@ -798,8 +798,8 @@
         if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
           this.$store.dispatch('exchange/POST_WALLETS', {
             transferData: {
-              From: this.exchangeCurrency.address,
-              To: this.receiveCurrency.address,
+              From: this.exchangeCurrency.number,
+              To: this.receiveCurrency.number,
               Amount: this.exchangeAmount,
               Token: token,
               ...getAuthParams()
@@ -859,7 +859,11 @@
               return currency
             }
           })[0];
-          this.receiveCurrency = this.wallets.filter(({ currency }) => currency === 'ETH')[0];
+          this.receiveCurrency = this.wallets.filter(item => {
+            if (item.holder && !item.statusNode) {
+              return item
+            }
+          })[0];
         }
       },
       exchangeAction() {
@@ -915,8 +919,8 @@
       },
       selectExchangeWallet(wallet) {
         this.clearValues();
-        this.checkExchangeDirection();
         this.exchangeCurrency = wallet;
+        this.checkExchangeDirection();
         this.exchangeModal = false;
         if (wallet.isWallet) {
           this.getTransferInfo();
@@ -931,15 +935,20 @@
         this.receiveUSD = '0.00';
       },
       checkExchangeDirection() {
-        if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
-          this.$store.dispatch('exchange/SET_WALLET_DIRECTIONS',
-            {
-              direction: `${this.exchangeCurrency.currency}${this.receiveCurrency.currency}`,
-              receive: this.receiveCurrency.currency
-            });
+        if (this.exchangeCurrency.isWallet) {
+          this.$store.dispatch('exchange/CHECK_WALLET_DIRECTIONS', {
+              from: this.exchangeCurrency.currency
+          });
         } else if (!this.exchangeCurrency.isWallet) {
           this.$store.dispatch('exchange/SET_FIAT_DIRECTIONS', this.exchangeCurrency.directions);
         }
+
+        // if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
+        //   this.$store.dispatch('exchange/SET_WALLET_DIRECTIONS',
+        //     {
+        //       direction: `${this.exchangeCurrency.currency}${this.receiveCurrency.currency}`,
+        //       receive: this.receiveCurrency.currency
+        //     });
       },
       selectReceiveWallet(wallet) {
         this.clearValues();
@@ -1227,12 +1236,6 @@
       isLoading() {
         return this.$store.getters['alerts/loading'];
       },
-      availableWalletDirections() {
-        return this.$store.getters['exchange/AVAILABLE_WALLET_DIRECTIONS'];
-      },
-      availableFiatDirections() {
-        return this.$store.getters['exchange/AVAILABLE_FIAT_DIRECTIONS'];
-      }
     },
     created() {
       this.getFiatExchange();
@@ -1241,7 +1244,10 @@
     },
     watch: {
       wallets() {
-        this.setData()
+        this.setData();
+        this.checkExchangeDirection();
+        this.getFiatInfo();
+        this.firstStart = false;
       },
       countdown(value) {
         if (value === 0) {
