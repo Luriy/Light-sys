@@ -480,11 +480,13 @@
                     <span>{{exchangeCurrency.name}}</span>
                     Network Fee
                   </p>
-                  <p class="btc-value">
-                    {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? types[exchangeCurrency.name].minerFee : 0}}
+                  <p class="btc-value" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
+                    {{transferInfo.minerFee || 0}}
                     {{exchangeCurrency.currency}}
                   </p>
-                  <p>${{exchangeCurrency.isWallet ? (types[exchangeCurrency.name].price * transferInfo.minerFee).toFixed(3) : 0}}</p>
+                  <p v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
+                    ${{(transferInfo.minerFee * types[exchangeCurrency.name].price).toFixed(2)}}
+                  </p>
                 </div>
                 <div class="balance" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {justifyContent: 'flex-end'} : ''">
                   <p class="network-fee__title" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {flexGrow: '1'} : ''">
@@ -807,7 +809,8 @@
             pair: {
               exchange: capitalizeFirstLetter(this.exchangeCurrency.currency.toLowerCase()),
               receive: capitalizeFirstLetter(this.receiveCurrency.currency.toLowerCase())
-            }
+            },
+            usdAmmount: this.exchangeCurrency.exchangeUSD
           }).then(() => {
             this.clearSms()
           });
@@ -828,7 +831,9 @@
         }
       },
       smsChange(event, index) {
-        if (event.key !== 'Backspace') {
+        if (event.key === 'ArrowLeft') {
+          event.target.previousSibling.focus()
+        } else if (event.key !== 'Backspace') {
           if (index !== (this.smsCodes.length - 1)) {
             event.target.nextElementSibling.focus()
           } else {
@@ -854,11 +859,11 @@
       },
       setData() {
         if (this.wallets && this.wallets.length) {
-          this.exchangeCurrency = this.wallets.filter((currency) => {
-            if (!currency.statusNode) {
-              return currency
+          this.exchangeCurrency = this.wallets.filter((item) => {
+            if (item.currency === 'ETH' && !item.statusNode) {
+              return item
             }
-          })[0];
+          })[0] || this.wallets.filter((item) => (!item.statusNode))[0];
           this.receiveCurrency = this.wallets.filter(item => {
             if (item.holder && !item.statusNode) {
               return item
@@ -981,6 +986,8 @@
           return;
         }
         if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
+          exchangePrice = this.types[this.exchangeCurrency.name].price;
+          receivePrice = this.types[this.receiveCurrency.name].price;
           this.exchangeAmount = this.exchangeCurrency.balance > this.transferInfo.limit ? this.transferInfo.limit : this.exchangeCurrency.balance;
           this.receiveAmount = +(this.exchangeAmount * this.transferInfo.rate).toFixed(5);
           this.exchangeUSD = +(this.exchangeAmount * exchangePrice).toFixed(2);
@@ -1003,7 +1010,7 @@
           receivePrice = this.receiveCurrency.currency === 'RUR'
             ? this.fiatInfo.RUR.USD
             : this.fiatInfo.USD[this.receiveCurrency.currency];
-          this.exchangeAmount = +(this.transferInfo.limit).toFixed(5);
+          this.exchangeAmount = this.exchangeCurrency.balance;
           this.receiveAmount = +(this.exchangeAmount * this.fiatInfo.out).toFixed(2);
           this.exchangeUSD = +(this.exchangeAmount * exchangePrice).toFixed(2);
           this.receiveUSD = +(this.receiveAmount / receivePrice).toFixed(2);
@@ -1016,6 +1023,8 @@
           return;
         }
         if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
+          exchangePrice = this.types[this.exchangeCurrency.name].price;
+          receivePrice = this.types[this.receiveCurrency.name].price;
           this.exchangeAmount = this.exchangeCurrency.balance > this.transferInfo.limit
             ? this.transferInfo.limit / 2
             : this.exchangeCurrency.balance / 2;
@@ -1040,7 +1049,7 @@
           receivePrice = this.receiveCurrency.currency === 'RUR'
             ? this.fiatInfo.RUR.USD
             : this.fiatInfo.USD[this.receiveCurrency.currency];
-          const exchangeAmount = this.transferInfo.limit / 2
+          const exchangeAmount = this.exchangeCurrency.balance / 2
           this.exchangeAmount = exchangeAmount.toFixed(5);
           this.receiveAmount = +(exchangeAmount * this.fiatInfo.out).toFixed(2);
           this.exchangeUSD = +(exchangeAmount * exchangePrice).toFixed(2);

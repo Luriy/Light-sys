@@ -66,12 +66,15 @@ export default {
         item.directionStatus = 0;
       });
     },
-    UPDATE_WALLET: ({ wallets }, { wallet, amount }) => {
+    UPDATE_WALLET: ({ wallets }, { wallet, amount, usdAmmount }) => {
+      console.log('wallet, amount, usdAmmount', wallet, amount, usdAmmount);
       wallets.find((item) => {
         if (item.address === wallet) {
+          console.log(item);
           console.log(item.balance, Number(amount));
-          item.balance = item.balance + Number(amount);
-          console.log(item.balance, Number(amount));
+          item.balance = item.balance + +amount;
+          item.balanceUSD = item.balanceUSD + usdAmmount;
+          console.log('after', item);
         }
       });
       localStorage.setItem('stateWalletsWallets', JSON.stringify(wallets));
@@ -252,7 +255,7 @@ export default {
         commit('SET_AVAILABLE_WALLET_DIRECTIONS', walletsResult.StatusCryptoExchange);
 			});
 		},
-		POST_WALLETS: ({ commit }, { transferData, pair: { exchange, receive } }) => {
+		POST_WALLETS: ({ commit }, { transferData, pair: { exchange, receive } }, usdAmmount) => {
 			return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -266,7 +269,7 @@ export default {
 				const responseData = response[1];
         if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
           commit('SET_EXCHANGE_SUCCES', true);
-          // commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount });
+          commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount, ...transferData.usdAmmount, ...usdAmmount });
 				} else if (Object.keys(Errors).length) {
 					const errKey = Object.keys(Errors)[0];
 					commit(
