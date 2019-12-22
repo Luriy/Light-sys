@@ -27,6 +27,7 @@ export default {
     AVAILABLE_WALLET_DIRECTIONS: (state) => state.availableWalletDirections,
 	},
 	mutations: {
+    SET_DIRECTION_STATUS: (state, { index, directionStatus }) => (state.exchangeData[index].directionStatus = directionStatus),
 		SET_FIAT_PSIDS: (state, payload) => (state.fiatPsids = payload),
 		SET_EXCHANGE_DATA: (state, payload) => (state.exchangeData = payload),
 		SET_TRANSFER_INFO: (state, payload) => (state.transferInfo = payload),
@@ -64,7 +65,17 @@ export default {
       state.exchangeData.forEach(item => {
         item.directionStatus = 0;
       });
-    }
+    },
+    UPDATE_WALLET: ({ wallets }, { wallet, amount }) => {
+      wallets.find((item) => {
+        if (item.address === wallet) {
+          console.log(item.balance, Number(amount));
+          item.balance = item.balance + Number(amount);
+          console.log(item.balance, Number(amount));
+        }
+      });
+      localStorage.setItem('stateWalletsWallets', JSON.stringify(wallets));
+    },
 	},
 	actions: {
 		GET_TRANSFER_INFO: ({ commit }, { exchange, receive }) => {
@@ -82,6 +93,19 @@ export default {
     SET_FIAT_DIRECTIONS: ({ commit }, directions) => {
       commit('CLEAR_DIRECTIONS');
       commit('UPDATE_FIAT_DIRECTION_STATUS', directions);
+    },
+    CHECK_WALLET_DIRECTIONS: ({ commit, state }, { from, to }) => {
+      commit('CLEAR_DIRECTIONS');
+      Object.keys(state.availableWalletDirections).forEach(direction => {
+        if (direction.startsWith(from) && state.availableWalletDirections[direction]) {
+          const currency = direction.replace(from, '');
+          state.exchangeData.forEach((item, index) => {
+            if (item.currency === currency) {
+              commit('SET_DIRECTION_STATUS', { index, directionStatus: 1 });
+            }
+          });
+        }
+      });
     },
     SET_WALLET_DIRECTIONS: ({ commit }, direction) => {
       commit('CLEAR_DIRECTIONS');
@@ -164,7 +188,6 @@ export default {
 			});
 			Promise.all([fiatPsids, allWallets, cardsList]).then(function(values) {
 				commit('alerts/setLoading', false, { root: true });
-				// const { Errors } = response[0];
 				const parsedData = values.map((item) => {
 						return parsePythonArray(item.data)['1'].return;
 					});
@@ -199,7 +222,7 @@ export default {
                 ? fiatList[+cards[card].Psid].icon.big
                 : fiatList['111'].icon.big,
 							currency: valute,
-							reserve,
+							reserve: (reserve).toFixed(2),
               statusNode: cards[card].StatusExchange,
               directionStatus: 0,
               status: cards[card].Status,
@@ -215,9 +238,12 @@ export default {
             name: fiat[item].name,
             psid: fiat[item].psid,
             directionStatus: 0,
-            icon: fiatList[fiat[item].psid] && fiatList[fiat[item].psid].icon.big ? fiatList[fiat[item].psid].icon.big : fiatList['111'].icon.big,
+            icon: fiatList[fiat[item].psid] && fiatList[fiat[item].psid].icon.big
+              ? fiatList[fiat[item].psid].icon.big
+              : Object.keys(currensyList).some(currency => currency === fiat[item].valute) ? currensyList[fiat[item].valute].icon
+              : fiatList['111'].icon.big,
             currency: fiat[item].valute,
-            reserve: fiat[item].reserve
+            reserve: (fiat[item].reserve).toFixed(2)
           }
         });
 
@@ -238,9 +264,9 @@ export default {
 				const response = parsePythonArray(data);
 				const { Errors } = response[0];
 				const responseData = response[1];
-				if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
-					commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount });
-					commit('SET_EXCHANGE_SUCCES', true);
+        if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
+          commit('SET_EXCHANGE_SUCCES', true);
+          // commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount });
 				} else if (Object.keys(Errors).length) {
 					const errKey = Object.keys(Errors)[0];
 					commit(

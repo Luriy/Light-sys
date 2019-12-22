@@ -29,6 +29,12 @@ export default {
 			this.$emit('repeatTransferRequest');
 		},
 	},
+  mounted () {
+    const smsInput = document.getElementsByClassName('number-input');
+    if (smsInput && smsInput.length) {
+      smsInput[0].focus();
+    }
+  }
 };
 </script>
 
@@ -88,6 +94,10 @@ export default {
 	.images {
 		display: flex;
 		margin: 15px 0;
+
+    img {
+      align-self: center;
+    }
 	}
 
 	.success_arrows {
@@ -263,7 +273,6 @@ export default {
 .network-fee,
 .balance {
 	display: flex;
-	justify-content: space-between;
 	padding: 0 15px;
 	opacity: 0.5;
 	color: #ffffff;
@@ -272,6 +281,7 @@ export default {
 
 	.network-fee__title {
 		margin: 0;
+    flex-grow: 1;
 
 		span {
 			text-transform: capitalize;

@@ -320,7 +320,13 @@ $break-large: 1124px;
         .v-text-field {
           margin: 0;
           padding: 0;
+          &.error--text {
+            &.v-input {
+              color: transparent!important;
+            }
+          }
         }
+
   			&_input {
   				position:relative;
           .dollar {
@@ -342,7 +348,7 @@ $break-large: 1124px;
 
                 .v-input__prepend-inner {
                   min-height: 31px;
-                  padding-top: 2px;
+                  padding-top: 3px;
                 }
 
                 .v-input__icon {
@@ -637,7 +643,7 @@ $break-large: 1124px;
 					.column {
 						width:calc(50% - 25px);
             margin-bottom: 35px;
-            
+
             @media screen and (max-width: 1050px) {
               width: 100%;
             }
@@ -839,7 +845,7 @@ $break-large: 1124px;
 					border-radius: 14px;
 					background-color: #614990;
           margin-right: 10px;
-          
+
 				}
 				p {
 					font-size: 16px;
@@ -875,7 +881,7 @@ $break-large: 1124px;
     padding: 25px 30px 0 20px;
     width: calc(100% + 30px) !important;
   }
-  
+
 
 	.wallets-list_item {
     width:calc(50% - 45px);
@@ -1064,6 +1070,17 @@ $break-large: 1124px;
 
 							 
 							.wallet-toggle {
+                margin-left: 70px;
+                @media screen and (max-width: 1600px) {
+                  margin-left: 50px;
+                }
+                @media screen and (max-width: 1500px) {
+                  margin-left: 35px;
+                }
+                @media screen and (max-width: 1350px) {
+                  margin-left: 15px;
+                }
+
 								position:relative;
 								width: 20px;
 								height: 20px;
@@ -1813,7 +1830,7 @@ $break-large: 1124px;
 	    padding-left: 60px;
 		display: flex;
     justify-content: space-between;
-    
+
     @media screen and (max-width: 1200px) {
       padding-left: 0px;
     }
@@ -2163,7 +2180,7 @@ $break-large: 1124px;
 				}
 			}
     }
-    
+
 		.trans-card {
 			transition: .5s;
 			position:relative;
@@ -2255,7 +2272,7 @@ $break-large: 1124px;
 				> * {
 					width: 25%;
         }
-        
+
         .btn {
           @media screen and (max-width: 1400px) {
             width: 170px !important;
@@ -2272,8 +2289,8 @@ $break-large: 1124px;
           width: 25%;
           @media screen and (max-width: 1400px) {
             width: auto !important;
-            text-overflow: ellipsis; 
-            overflow: hidden; 
+            text-overflow: ellipsis;
+            overflow: hidden;
             white-space: nowrap;
           }
           @media screen and (max-width: 1200px) {

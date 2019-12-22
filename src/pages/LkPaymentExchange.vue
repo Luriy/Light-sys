@@ -173,7 +173,7 @@
                 >
                   <div class="exchange-amount_input" :class="exchangeCurrency.currency.toLowerCase()">
                     <v-text-field
-                      v-model.lazy.number="exchangeAmount"
+                      v-model="exchangeAmount"
                       :hide-details="true"
                       :rules="exchangeAmountRules"
                       :color="exchangeCurrency.isWallet ? exchangeCurrency.color : '#fff'"
@@ -183,7 +183,7 @@
                   </div>
                   <div class="exchange-amount_input">
                     <v-text-field
-                      v-model.number.lazy="exchangeUSD"
+                      v-model.lazy="exchangeUSD"
                       class="dollars_input"
                       @input="exchangeUSDChange"
                       color="#fff"
@@ -345,7 +345,7 @@
               <div class="exchange-amount">
                 <div class="exchange-amount_input" :class="receiveCurrency.currency.toLowerCase()">
                   <v-text-field
-                    v-model.number.lazy="receiveAmount"
+                    v-model.lazy="receiveAmount"
                     :hide-details="true"
                     :rules="receiveAmountRules"
                     @input="receiveChange"
@@ -356,7 +356,7 @@
 
                 <div class="exchange-amount_input">
                   <v-text-field
-                    v-model.number.lazy="receiveUSD"
+                    v-model.lazy="receiveUSD"
                     @input="receiveUSDChange"
                     class="dollars_input"
                     color="#fff"
@@ -430,13 +430,14 @@
                 <img :src="exchangeCurrency.icon" alt title>
               </div>
               <p class="transaction">Confirmation <br> exchange
+                $
                 {{
                   exchangeUSD && typeof exchangeUSD === 'number' ? exchangeUSD.toFixed(2) : exchangeUSD
                 }} USD</p>
               <div class="phone-question" v-if="user.Phone">
                 <p class="question">We sent an SMS conformation to the number</p>
                 <div class="number-block">
-                  <p class="number">{{user.Phone}}</p>
+                  <p class="number">{{formatPhoneNumber(user.Phone)}}</p>
                   <router-link class="link" to="/">Wrong number?</router-link>
                 </div>
               </div>
@@ -454,13 +455,11 @@
                 v-for="(input, index) in smsCodes"
                 :key="index"
                 v-model="input[index]"
-                @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : send()"
+                @keyup="smsChange($event, index)"
                 placeholder="_"
                 type="text"
                 maxLength="1"
-                size="1"
-                min="0"
-                max="9" pattern="[0-9]{1}"
+                size="1" min="0" max="9" pattern="[0-9]{1}"
               />
 
               <div class="timer-body">
@@ -494,7 +493,7 @@
                     'Reserve'
                     }}
                    </p>
-                  <p class="btc-value" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
+                  <p class="btc-value" style="margin-right: 37px" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
                     {{exchangeCurrency.balance}} {{exchangeCurrency.currency}}
                   </p>
                   <p>
@@ -545,10 +544,9 @@
                 <div class="balance">
                   <p class="success_title">Remaining balance</p>
                   <p class="middle-text">
-                    {{exchangeCurrency.balance && typeof exchangeCurrency.balance !== 'string' ?
-                    balance.toFixed(3) : 0}}
+                    {{exchangeCurrency.balance}}
                     {{exchangeCurrency.currency}} </p>
-                  <p> ${{exchangeCurrency.balanceUSD.toFixed(3)}} </p>
+                  <p v-if="exchangeCurrency.isWallet"> ${{exchangeCurrency.balanceUSD}} </p>
                 </div>
               </div>
             </div>
@@ -612,8 +610,8 @@
     </v-card>
   </lk-layout>
 </template>
-
 <script>
+  import formatPhoneNumber from '@/functions/formatPhoneNumber';
   import LkLayout from '@/layout/LkLayout'
   import LkPopUp from '@/layout/LkPopUp';
   import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
@@ -631,6 +629,7 @@
       return {
         currentExchangeList: 'all',
         currentReceiveList: 'all',
+        firstStart: true,
         receiveModal: false,
         exchangeModal: false,
         errorMsg: '',
@@ -676,25 +675,36 @@
             return false
           },
           value => {
-          if (this.exchangeCurrency.isWallet) {
-            if (value > this.transferInfo.limit) {
-              this.errorMsg = ('Ammount cannot be more than limit');
-              this.showError = true;
-              return 'Ammount cannot be more than limit'
+            if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
+              if (value < this.transferInfo.minimum) {
+                this.showError = true;
+                this.errorMsg = (`Minimum value of transactions is ${this.transferInfo.minimum.toFixed(5)}`);
+                return `Minimum value of transactions is ${this.transferInfo.minimum}`
+              }
             }
-          }
-          this.showError = false;
-          return false
+            this.showError = false;
+            return false
           },
           value => {
-          if (!this.exchangeCurrency.isWallet) {
-            if (value > this.exchangeCurrency.reserve) {
-              this.errorMsg = ('Ammount cannot be more than reserve');
-              this.showError = true;
-              return 'Ammount cannot be more than reserve'
+            if (this.exchangeCurrency.isWallet) {
+              if (value > this.transferInfo.limit) {
+                this.errorMsg = ('Ammount cannot be more than limit');
+                this.showError = true;
+                return 'Ammount cannot be more than limit'
+              }
             }
-          }
-          return false
+            this.showError = false;
+            return false
+          },
+          value => {
+            if (!this.exchangeCurrency.isWallet) {
+              if (value > this.exchangeCurrency.reserve) {
+                this.errorMsg = ('Ammount cannot be more than reserve');
+                this.showError = true;
+                return 'Ammount cannot be more than reserve'
+              }
+            }
+            return false
           },
           value => {
             if (!this.exchangeCurrency.isWallet) {
@@ -712,6 +722,17 @@
             if (!+value) {
               this.errorMsg = ('Required');
               return 'Required'
+            }
+            this.showError = false;
+            return false
+          },
+          value => {
+            if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
+              if (value < this.transferInfo.minimum) {
+                this.showError = true;
+                this.errorMsg = (`Minimum value of transactions is ${this.transferInfo.minimum.toFixed(5)}`);
+                return `Minimum value of transactions is ${this.transferInfo.minimum}`
+              }
             }
             this.showError = false;
             return false
@@ -740,9 +761,9 @@
           },
           value => {
             if (!this.receiveCurrency.isWallet) {
-              if (value < this.fiatInfo.in_min) {
+              if (value < this.fiatInfo.in_min && this.firstStart) {
                 this.showError = true;
-                this.errorMsg = ('Ammount cannot be more than reserve');
+                this.errorMsg = ('Ammount cannot be less than min ammount of transaction');
                 return 'Ammount cannot be less than min ammount of transaction'
               }
             }
@@ -777,8 +798,8 @@
         if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
           this.$store.dispatch('exchange/POST_WALLETS', {
             transferData: {
-              From: this.exchangeCurrency.address,
-              To: this.receiveCurrency.address,
+              From: this.exchangeCurrency.number,
+              To: this.receiveCurrency.number,
               Amount: this.exchangeAmount,
               Token: token,
               ...getAuthParams()
@@ -788,7 +809,7 @@
               receive: capitalizeFirstLetter(this.receiveCurrency.currency.toLowerCase())
             }
           }).then(() => {
-            this.smsCodes.forEach((smsCode, index) => { smsCode[index] = '' })
+            this.clearSms()
           });
         } else {
           this.$store.dispatch('exchange/POST_FIAT', {
@@ -802,8 +823,17 @@
             Psid2: this.receiveCurrency.psid,
             LastName: this.exchangeCurrency.isWallet ? this.receiveCurrency.holder : this.exchangeCurrency.holder,
           }).then(() => {
-            this.smsCodes.forEach((smsCode, index) => { smsCode[index] = '' })
+            this.clearSms()
           });
+        }
+      },
+      smsChange(event, index) {
+        if (event.key !== 'Backspace') {
+          if (index !== (this.smsCodes.length - 1)) {
+            event.target.nextElementSibling.focus()
+          } else {
+            this.send()
+          }
         }
       },
       exchange() {
@@ -811,7 +841,7 @@
           this.showError = false;
           this.exchangePopup = !this.exchangePopup;
           this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
-           this.setTimer()
+            this.setTimer()
           });
         } else {
           this.showError = true;
@@ -824,8 +854,16 @@
       },
       setData() {
         if (this.wallets && this.wallets.length) {
-          this.exchangeCurrency = this.wallets.filter(({ currency }) => currency === 'BTC')[0];
-          this.receiveCurrency = this.wallets.filter(({ currency }) => currency === 'ETH')[0];
+          this.exchangeCurrency = this.wallets.filter((currency) => {
+            if (!currency.statusNode) {
+              return currency
+            }
+          })[0];
+          this.receiveCurrency = this.wallets.filter(item => {
+            if (item.holder && !item.statusNode) {
+              return item
+            }
+          })[0];
         }
       },
       exchangeAction() {
@@ -844,6 +882,7 @@
         this.exchangeModal = false;
         this.search = '';
       },
+      formatPhoneNumber,
       toggleCurrency() {
         this.clearValues();
         let c = this.exchangeCurrency;
@@ -859,6 +898,9 @@
       },
       getFiatExchange() {
         this.$store.dispatch('exchange/GET_FIAT_EXCHANGE');
+      },
+      clearSms() {
+        this.smsCodes.forEach((smsCode, index) => { smsCode[index] = '' })
       },
       getTransferInfo() {
         this.$store.dispatch('exchange/GET_TRANSFER_INFO', {
@@ -877,8 +919,8 @@
       },
       selectExchangeWallet(wallet) {
         this.clearValues();
-        this.checkExchangeDirection();
         this.exchangeCurrency = wallet;
+        this.checkExchangeDirection();
         this.exchangeModal = false;
         if (wallet.isWallet) {
           this.getTransferInfo();
@@ -893,15 +935,20 @@
         this.receiveUSD = '0.00';
       },
       checkExchangeDirection() {
-        if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
-          this.$store.dispatch('exchange/SET_WALLET_DIRECTIONS',
-            {
-              direction: `${this.exchangeCurrency.currency}${this.receiveCurrency.currency}`,
-              receive: this.receiveCurrency.currency
-            });
+        if (this.exchangeCurrency.isWallet) {
+          this.$store.dispatch('exchange/CHECK_WALLET_DIRECTIONS', {
+              from: this.exchangeCurrency.currency
+          });
         } else if (!this.exchangeCurrency.isWallet) {
           this.$store.dispatch('exchange/SET_FIAT_DIRECTIONS', this.exchangeCurrency.directions);
         }
+
+        // if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
+        //   this.$store.dispatch('exchange/SET_WALLET_DIRECTIONS',
+        //     {
+        //       direction: `${this.exchangeCurrency.currency}${this.receiveCurrency.currency}`,
+        //       receive: this.receiveCurrency.currency
+        //     });
       },
       selectReceiveWallet(wallet) {
         this.clearValues();
@@ -921,6 +968,7 @@
         }
       },
       repeatTransferRequest() {
+        this.clearSms();
         this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
           this.isRepeat = false;
           this.setTimer();
@@ -1188,12 +1236,6 @@
       isLoading() {
         return this.$store.getters['alerts/loading'];
       },
-      availableWalletDirections() {
-        return this.$store.getters['exchange/AVAILABLE_WALLET_DIRECTIONS'];
-      },
-      availableFiatDirections() {
-        return this.$store.getters['exchange/AVAILABLE_FIAT_DIRECTIONS'];
-      }
     },
     created() {
       this.getFiatExchange();
@@ -1202,7 +1244,10 @@
     },
     watch: {
       wallets() {
-        this.setData()
+        this.setData();
+        this.checkExchangeDirection();
+        this.getFiatInfo();
+        this.firstStart = false;
       },
       countdown(value) {
         if (value === 0) {
