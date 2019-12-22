@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-column align-items-flex-end" v-if="operationsWithPagination.length">
+	<div class="flex flex-column align-items-flex-end">
 		<div class="trans-list__wrapper">
 			<div
 				class="trans-list"
@@ -114,20 +114,18 @@
 							</div>
 						</div>
 						<div class="trans-info">
-							<div class="table">
+							<div class="table" :class="{ 'without-fee': transaction.type === 'receive' }">
 								<div class="th">
 									<p>Date</p>
 									<span>{{ getFullTime(transaction.time) }}</span>
 								</div>
 								<div class="th">
 									<p>Transaction ID</p>
-									<span
-										><a :href="transaction.url" target="_blank" class="trans-id">{{
-											getTransactionId(transaction.currency, transaction.url)
-										}}</a></span
-									>
+									<a :href="transaction.url" target="_blank" class="trans-id">{{
+										getTransactionId(transaction.currency, transaction.url)
+									}}</a>
 								</div>
-								<div class="th">
+								<div class="th" v-if="transaction.type !== 'receive'">
 									<p>Fee</p>
 									<div class="fee-row">
 										<span :class="transaction.currentWallet.currency.toLowerCase()"

@@ -11,7 +11,7 @@
 			<img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" alt title />
 			<p class="transaction">
 				Confirmation <br />
-				send {{ currencyAmount }} USD
+				send ${{ currencyAmount }} USD
 			</p>
 			<div class="phone-question" v-if="user.Phone">
 				<p class="question">We sent an SMS confirmation to the number</p>
@@ -34,9 +34,7 @@
 				v-for="(input, index) in smsCodes"
 				:key="input + index"
 				v-model="input[index]"
-				@keyup="
-					index !== smsCodes.length - 1 ? $event.target.nextElementSibling.focus() : $emit('onSend')
-				"
+				@keyup="$emit('onSmsKeyUp', $event, index)"
 				placeholder="_"
 				type="text"
 				maxLength="1"

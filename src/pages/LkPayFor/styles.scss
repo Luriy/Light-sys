@@ -10,10 +10,13 @@
 		justify-content: space-between;
 		margin: 0 35px 25px;
 	}
+	.balance {
+		min-width: max-content;
+	}
 	.balance__title {
 		color: #ffffff;
 		font-size: 14px;
-		margin-bottom: 8px;
+		margin-bottom: 2px;
 	}
 	.balance__amount {
 		font-size: 18px;
@@ -23,7 +26,14 @@
 	}
 	.select {
 		width: 100%;
-		max-width: 640px;
+		max-width: 850px;
+		@media screen and (max-width: 1600px) {
+			max-width: 700px;
+		}
+		@media screen and (max-width: 1400px) {
+			max-width: 650px;
+			margin-left: 50px;
+		}
 		border-radius: 14px;
 		background-color: #4d3779;
 		position: relative;
@@ -125,6 +135,7 @@
 		border-radius: 32px;
 		background-color: #301c57;
 		padding: 30px;
+		margin-bottom: 40px;
 	}
 	.select__expand {
 		width: 20px;
@@ -140,17 +151,31 @@
 		}
 	}
 	.payment-types {
-		display: flex;
-		flex-wrap: wrap;
-		padding-bottom: 25px;
+		display: grid;
+		grid-template-columns: repeat(6, max-content);
+		grid-column-gap: 90px;
+		@media screen and (max-width: 1700px) {
+			grid-column-gap: 50px;
+		}
+		@media screen and (max-width: 1450px) {
+			grid-column-gap: 30px;
+		}
+		@media screen and (max-width: 1350px) {
+			display: flex;
+			flex-wrap: wrap;
+			padding-bottom: 0;
+		}
 		border-bottom: 1px solid #4f377f;
+		padding-bottom: 25px;
 	}
 	.payment-type {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		margin-right: 28px;
 		cursor: pointer;
+		@media screen and (max-width: 1350px) {
+			margin: 0 25px 25px 0;
+		}
 	}
 	.payment-type:last-of-type {
 		margin-right: 0;
@@ -178,7 +203,8 @@
 	}
 	.payment-directions {
 		display: grid;
-		grid-template-columns: repeat(6, 127px);
+		grid-template-columns: repeat(auto-fit, 127px);
+		grid-template-rows: repeat(auto-fit, 127px);
 		grid-gap: 15px;
 		margin-top: 25px;
 	}
@@ -235,7 +261,7 @@
 		width: 37px;
 		height: 37px;
 		border-radius: 14px;
-		background-color: #7d62b3;
+		background-color: #684e9c;
 		display: flex;
 		justify-content: center;
 		align-items: center;

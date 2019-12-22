@@ -139,6 +139,7 @@
 				:currencyAmount="currencyAmount"
 				:cryptoCurrencyAmount="cryptoCurrencyAmount"
 				:countdown="countdown"
+				@onSmsKeyUp="handleSmsKeyUp"
 			></lk-transfer-confirmation-popup>
 			<lk-transfer-success-popup
 				:successPopup="successPopup"
@@ -397,6 +398,18 @@ export default {
 			this.timeout = 59;
 			clearInterval(this.timer);
 			this.clearData();
+		},
+		handleSmsKeyUp(e, index) {
+			if (e.key === 'Backspace') {
+				this.smsCodes[index][index] = '';
+				if (index !== 0) {
+					e.target.previousElementSibling.focus();
+				}
+			} else if (e.key === 'Tab') {
+				return false;
+			} else {
+				index !== this.smsCodes.length - 1 ? e.target.nextElementSibling.focus() : this.onSend();
+			}
 		},
 		onSendSms() {
 			this.error = null;
