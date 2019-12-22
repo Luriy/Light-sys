@@ -47,7 +47,7 @@
                       class="number-input"
                       v-for="(input, index) in smsCodes"
                       v-model="input[index]"
-                      @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : registerApprove()"
+                      @keyup="handleSmsKeyUp($event, index)"
                       placeholder="_"
                       type="text"
                       maxLength="1"
@@ -61,11 +61,7 @@
                     <div class="timer" v-if="countdown > 0">00:{{`${countdown < 10 ? '0' : ''}${countdown}`}} Sec</div>
                     <p class="repeat-btn" v-if="countdown === 0" @click="resendPin">Repeat</p>
                   </div>
-                  <transition name="fade">
-                    <div class="error-block" v-if="commonError">
-                      <p class="error">{{commonError}}</p>
-                    </div>
-                  </transition>
+                  <error :error="commonError"></error>
                 </div>
               </div>
       			</form>
@@ -121,11 +117,7 @@
               <div class="login-form-button">
       					<button type="submit" class="btn">Register</button>
       				</div>
-              <transition name="fade">
-                <div class="error-block" v-if="commonError">
-                  <p class="error">{{commonError}}</p>
-                </div>
-              </transition>
+              <error :error="commonError"></error>
       			</form>
           </div>
         </transition>
@@ -178,6 +170,18 @@ export default {
   },
   methods: {
     checkLoginType,
+    handleSmsKeyUp(e, index) {
+			if (e.key === 'Backspace') {
+				this.smsCodes[index][index] = '';
+				if (index !== 0) {
+					e.target.previousElementSibling.focus();
+				}
+			} else if (e.key === 'Tab') {
+				return false;
+			} else {
+				index !== this.smsCodes.length - 1 ? e.target.nextElementSibling.focus() : this.registerApprove();
+			}
+		},
   	registerApprove: function(){
 	    const { smsCodes, user, loginType } = this;
 
@@ -291,6 +295,14 @@ export default {
     },
     resendPin() {
       const { loginType, user } = this;
+      this.smsCodes = [
+        {0: ''},
+        {1: ''},
+        {2: ''},
+        {3: ''},
+        {4: ''},
+        {5: ''},
+      ];
       this.$store.dispatch('user/USER_RESEND_PASSWORD', {
         Email: loginType === 'Email' ? user : '',
         Phone: loginType === 'Phone' ? user : '',

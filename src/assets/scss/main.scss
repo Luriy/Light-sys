@@ -529,6 +529,7 @@ $break-large: 1124px;
 
 
 .accounts-list {
+  margin-bottom: 40px;
 	.title {
 		display: flex;
 		justify-content: space-between;
@@ -891,7 +892,7 @@ $break-large: 1124px;
         position: absolute;
         width: 100%;
         height: 32px;
-        border-radius: 0 0 0 20px;
+        border-radius: 0 0 0 25px;
         bottom: -5px;
         left: 0;
         background-image: linear-gradient(180deg, rgba(30, 6, 57, 0) 0%, $first-dark 100%);
@@ -921,6 +922,18 @@ $break-large: 1124px;
 				text-decoration: none;
 			}
 			.wallet {
+        .wallet-toggle, .progress {
+          margin-left: 70px;
+          @media screen and (max-width: 1600px) {
+            margin-left: 50px;
+          }
+          @media screen and (max-width: 1500px) {
+            margin-left: 35px;
+          }
+          @media screen and (max-width: 1350px) {
+            margin-left: 15px;
+          }
+        } 
         width: 100%;
 				border-radius: 17px;
 				background-color: #3b2665;
@@ -1049,18 +1062,8 @@ $break-large: 1124px;
 								font-weight: 600;
               }
 
+							 
 							.wallet-toggle {
-                margin-left: 70px;
-                @media screen and (max-width: 1600px) {
-                  margin-left: 50px;
-                }
-                @media screen and (max-width: 1500px) {
-                  margin-left: 35px;
-                }
-                @media screen and (max-width: 1350px) {
-                  margin-left: 15px;
-                }
-								
 								position:relative;
 								width: 20px;
 								height: 20px;
@@ -1087,7 +1090,6 @@ $break-large: 1124px;
 					.balance {
 						text-transform: uppercase;
 						text-align: right;
-            margin-right: 1vw;
             display: flex;
             justify-content: space-between;
             flex-direction: column;
@@ -1442,7 +1444,6 @@ $break-large: 1124px;
 					.balance {
 						text-transform: uppercase;
 						text-align: right;
-            margin-right: 1vw;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -2125,7 +2126,7 @@ $break-large: 1124px;
     }
   }
   .trans-id {
-    max-width: 120px;
+    max-width: 200px;
     display: block;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -2180,11 +2181,24 @@ $break-large: 1124px;
 				opacity: 0;
 				transition: .5s;
 				max-height: 0;
-				overflow: hidden;
+        overflow: hidden;
+        .table.without-fee {
+          grid-template-columns: repeat(3, 1fr);
+          @media screen and (max-width: 1300px) {
+            grid-template-columns: repeat(2, minmax(100px, 100%));
+            .th:not(:last-of-type) {
+              border-bottom: 1px solid #3b2665;
+            }
+            .th:nth-of-type(2) {
+              border-right: none !important;
+            }
+          }
+        }
 				.table {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          @media screen and (max-width: 1300px) {
+
+          @media screen and (max-width: 1400px) {
             grid-template-columns: repeat(3, minmax(100px, 300px));
             .th:not(:last-of-type) {
               border-bottom: 1px solid #3b2665;

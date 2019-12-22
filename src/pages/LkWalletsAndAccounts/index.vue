@@ -38,7 +38,7 @@
 					></cards-list>
 				</div>
 			</div>
-			<div class="operations-history">
+			<div class="operations-history" v-if="operations.length">
 				<div class="title">
 					<p>Operations history</p>
 				</div>

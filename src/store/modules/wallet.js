@@ -317,6 +317,17 @@ export default {
 						() => (window.location.href = `/login`),
 					);
 					return { success: false };
+				} else if (Object.values(Errors).includes('Error token')) {
+					commit(
+						'alerts/setNotification',
+						{
+							message: 'PIN is not correct',
+							status: 'error-status',
+							icon: 'close',
+						},
+						{ root: true },
+					);
+					return { success: false };
 				} else if (Object.keys(Errors).length) {
 					const errKey = Object.keys(Errors)[0];
 					commit(

@@ -82,7 +82,10 @@
 				</div>
 			</div>
 
-			<div class="select-item-fiat" v-if="currentList === 'cards' || currentList === 'all'">
+			<div
+				class="select-item-fiat"
+				v-if="(currentList === 'cards' || currentList === 'all') && cards.length"
+			>
 				<div class="title-wrapper">
 					<span class="select-header">my cards</span>
 					<span class="select-line"></span>
@@ -257,11 +260,15 @@ export default {
 }
 .select .select-wrapper {
 	overflow-y: auto;
-	max-height: 454px;
+	max-height: 340px;
+	@media screen and (max-width: 1200px) {
+		max-height: 300px;
+	}
 	scrollbar-width: thin;
 	scrollbar-color: #2e0e52 transparent;
 	padding-right: 20px;
 }
+
 .select .select-wrapper::-webkit-scrollbar-thumb,
 .select .select-wrapper::-webkit-scrollbar-thumb:hover {
 	width: 4px;
