@@ -66,9 +66,9 @@ export default {
         item.directionStatus = 0;
       });
     },
-    UPDATE_WALLET: ({ wallets }, { wallet, amount, usdAmmount }) => {
+    UPDATE_WALLET: ({ exchangeData }, { wallet, amount, usdAmmount }) => {
       console.log('wallet, amount, usdAmmount', wallet, amount, usdAmmount);
-      wallets.find((item) => {
+      exchangeData.find((item) => {
         if (item.address === wallet) {
           console.log(item);
           console.log(item.balance, Number(amount));
@@ -256,7 +256,8 @@ export default {
 			});
 		},
 		POST_WALLETS: ({ commit }, { transferData, pair: { exchange, receive } }, usdAmmount) => {
-			return Axios({
+      console.log(usdAmmount);
+      return Axios({
 				url: API_URL,
 				method: 'POST',
 				params: {
@@ -269,7 +270,7 @@ export default {
 				const responseData = response[1];
         if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
           commit('SET_EXCHANGE_SUCCES', true);
-          commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount, ...transferData.usdAmmount, ...usdAmmount });
+          commit('UPDATE_WALLET', { wallet: transferData.To, amount: transferData.Amount, ...transferData.usdAmmount, usdAmmount });
 				} else if (Object.keys(Errors).length) {
 					const errKey = Object.keys(Errors)[0];
 					commit(
