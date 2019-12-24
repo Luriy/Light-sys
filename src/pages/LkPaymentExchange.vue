@@ -430,9 +430,8 @@
                 <img :src="exchangeCurrency.icon" alt title>
               </div>
               <p class="transaction">Confirmation <br> exchange
-                $
                 {{
-                  exchangeUSD && typeof exchangeUSD === 'number' ? exchangeUSD.toFixed(2) : exchangeUSD
+                  exchangeUSD && typeof exchangeUSD === 'number' ? `$${exchangeUSD.toFixed(2)}` : `$${exchangeUSD}`
                 }} USD</p>
               <div class="phone-question" v-if="user.Phone">
                 <p class="question">We sent an SMS conformation to the number</p>
@@ -470,23 +469,24 @@
             </div>
             <div slot='body' class="exchange-popup_body">
               <div class="exchange-popup_info">
-                <p class="from">{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
+                <p class="from" :style="{color: exchangeCurrency.color}">{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
                 <img src="@/assets/images/exchange-arrs.svg" alt title>
-                <p class="to">{{receiveAmount}} {{receiveCurrency.currency}}</p>
+                <p class="to" :style="{color: receiveCurrency.color}">{{receiveAmount}} {{receiveCurrency.currency}}</p>
               </div>
               <div class="exchange-block_fee">
                 <div class="network-fee" :style="!exchangeCurrency.isWallet ? {justifyContent: 'flex-end'} : ''">
                   <p class="network-fee__title" :style="!exchangeCurrency.isWallet ? {flexGrow: '1'} : ''">
-                    <span>{{exchangeCurrency.name}}</span>
+                    <span>{{receiveCurrency.name}}</span>
                     Network Fee
                   </p>
                   <p class="btc-value" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
                     {{transferInfo.minerFee || 0}}
-                    {{exchangeCurrency.currency}}
+                    {{receiveCurrency.currency}}
                   </p>
                   <p v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
-                    ${{(transferInfo.minerFee * types[exchangeCurrency.name].price).toFixed(2)}}
+                    ${{(transferInfo.minerFee * types[receiveCurrency.name].price).toFixed(2)}}
                   </p>
+                  <p v-else>0</p>
                 </div>
                 <div class="balance" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {justifyContent: 'flex-end'} : ''">
                   <p class="network-fee__title" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {flexGrow: '1'} : ''">
@@ -509,14 +509,14 @@
               </div>
             </div>
             <div slot='buttons' class="exchange-popup_buttons">
-              <button class="back" @click="exchangePopup = false">Back</button>
+              <button class="back" @click="closeExchangePopup">Back</button>
             </div>
           </lk-pop-up>
 
           <lk-pop-up
             v-if="exchangeSucces"
             class="exchange-popup"
-            :popup-size="{width: '346px', height: '387px'}"
+            :popup-size="{width: '346px', height: '387px', borderRadius: '47px'}"
             @closeModal="closeModal"
           >
             <div slot='title' class="success-popup_title">
@@ -526,33 +526,45 @@
               <p class="status">Success</p>
             </div>
             <div slot='body' class="success-popup_body">
+              <p class="from" :style="{color: exchangeCurrency.color || '#fff'}">{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
               <div class="images">
                 <img :src="exchangeCurrency.icon" alt title>
                 <img class="success_arrows" src="@/assets/images/exchange-arrs.svg" alt title>
                 <img :src="receiveCurrency.icon" alt title>
               </div>
-              <p class="to">{{receiveAmount}} {{receiveCurrency.currency}}</p>
+              <p class="to" :style="{color: receiveCurrency.color || '#fff'}">{{receiveAmount}} {{receiveCurrency.currency}}</p>
               <div class="transaction-info">
                 <div class="network-fee">
                   <p class="network-fee__title" :style="!exchangeCurrency.isWallet ? {flexGrow: '1'} : ''">
-                    <span>{{exchangeCurrency.name}}</span>
+                    <span>{{receiveCurrency.name}}</span>
                     Network Fee
                   </p>
-                  <p class="btc-value" style="margin-left: 5px;">
-                    {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? ` ${transferInfo.minerFee}` : 0}} {{exchangeCurrency.currency}}
+                  <p class="ml-10">
+                    {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? ` ${transferInfo.minerFee}` : 0}} {{receiveCurrency.currency}}
                   </p>
-                  <p> ${{exchangeCurrency.isWallet ? (types[exchangeCurrency.name].price * transferInfo.minerFee).toFixed(3) : 0}}</p>
+                  <p class="flex-grow-1" style="text-align: right">
+                    ${{receiveCurrency.isWallet
+                    ? (types[receiveCurrency.name].price * transferInfo.minerFee).toFixed(3)
+                    : 0
+                    }}</p>
                 </div>
                 <div class="balance">
                   <p class="success_title">Remaining balance</p>
-                  <p class="middle-text">
+                  <p class="middle-text ml-10">
                     {{exchangeCurrency.balance}}
                     {{exchangeCurrency.currency}} </p>
-                  <p v-if="exchangeCurrency.isWallet"> ${{exchangeCurrency.balanceUSD}} </p>
+                  <p v-if="exchangeCurrency.isWallet" class="flex-grow-1" style="text-align: right"> ${{exchangeCurrency.balanceUSD}} </p>
                 </div>
               </div>
+              <v-progress-linear
+                class="mt-7"
+                value="75"
+                color="#fda50c"
+                height="2"
+              ></v-progress-linear>
             </div>
           </lk-pop-up>
+
           <lk-pop-up
             v-if="false"
             class="exchange-popup fiat-popup"
@@ -680,7 +692,7 @@
             if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
               if (value < this.transferInfo.minimum) {
                 this.showError = true;
-                this.errorMsg = (`Minimum value of transactions is ${this.transferInfo.minimum.toFixed(5)}`);
+                this.errorMsg = (`Minimum value of transactions is ${this.transferInfo.minimum}`);
                 return `Minimum value of transactions is ${this.transferInfo.minimum}`
               }
             }
@@ -810,7 +822,7 @@
               exchange: capitalizeFirstLetter(this.exchangeCurrency.currency.toLowerCase()),
               receive: capitalizeFirstLetter(this.receiveCurrency.currency.toLowerCase())
             },
-            usdAmmount: this.exchangeCurrency.exchangeUSD
+            usdAmmount: this.exchangeUSD
           }).then(() => {
             this.clearSms()
           });
@@ -829,6 +841,11 @@
             this.clearSms()
           });
         }
+      },
+      closeExchangePopup() {
+        this.exchangePopup = false;
+        clearInterval(this.timer);
+        this.countdown = 59;
       },
       smsChange(event, index) {
         if (event.key === 'ArrowLeft') {
@@ -1064,7 +1081,7 @@
           if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
             exchangePrice = this.types[this.exchangeCurrency.name].price;
             receivePrice = this.types[this.receiveCurrency.name].price;
-            this.exchangeAmount = +(this.transferInfo.minimum).toFixed(5);
+            this.exchangeAmount = +(this.transferInfo.minimum);
             this.receiveAmount = +(this.exchangeAmount * this.transferInfo.rate).toFixed(5);
             this.exchangeUSD = +(this.exchangeAmount * exchangePrice).toFixed(2);
             this.receiveUSD = +(this.receiveAmount * receivePrice).toFixed(2);

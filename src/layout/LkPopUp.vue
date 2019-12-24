@@ -71,24 +71,23 @@ export default {
 }
 
 .success-popup_body {
-	flex-grow: 1;
-	display: flex;
+  width: 80%;
+  flex-grow: 1;
+  display: flex;
 	flex-direction: column;
 	align-items: center;
+  justify-content: flex-end;
 
-	.from {
-		margin-top: 15px;
-		color: #fda50c;
-	}
-
-	.to {
-		margin-top: 15px;
-		color: #7d8ef6;
-	}
+  .from, .to {
+    margin-top: 16px;
+    font-weight: 600;
+    line-height: 27.2px;
+  }
 
 	.transaction-info {
 		margin-top: 15px;
 		margin-bottom: 15px;
+    width: 100%;
 	}
 
 	.images {
@@ -97,11 +96,13 @@ export default {
 
     img {
       align-self: center;
+      max-width: 34px;
+      max-height: 39px;
     }
 	}
 
 	.success_arrows {
-		margin: 0 5px;
+		margin: 0 26px;
 	}
 }
 
@@ -273,7 +274,6 @@ export default {
 .network-fee,
 .balance {
 	display: flex;
-	padding: 0 15px;
 	opacity: 0.5;
 	color: #ffffff;
 	font-size: 12px;
@@ -281,7 +281,7 @@ export default {
 
 	.network-fee__title {
 		margin: 0;
-    flex-grow: 1;
+    /*flex-grow: 1;*/
 
 		span {
 			text-transform: capitalize;
