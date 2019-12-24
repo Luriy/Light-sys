@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-column align-items-flex-end">
+	<div class="flex flex-column align-items-flex-end" v-if="operationsWithPagination.length">
 		<div class="trans-list__wrapper">
 			<div
 				class="trans-list"
@@ -114,7 +114,13 @@
 							</div>
 						</div>
 						<div class="trans-info">
-							<div class="table" :class="{ 'without-fee': transaction.type === 'receive' }">
+							<div
+								class="table"
+								:class="{
+									'without-fee': transaction.type === 'receive',
+									'with-fee': transaction.type !== 'receive',
+								}"
+							>
 								<div class="th">
 									<p>Date</p>
 									<span>{{ getFullTime(transaction.time) }}</span>
@@ -122,12 +128,12 @@
 								<div class="th">
 									<p>Transaction ID</p>
 									<a :href="transaction.url" target="_blank" class="trans-id">{{
-										getTransactionId(transaction.currency, transaction.url)
+										getTransactionId(transaction.url)
 									}}</a>
 								</div>
 								<div class="th" v-if="transaction.type !== 'receive'">
 									<p>Fee</p>
-									<div class="fee-row">
+									<div class="flex fee-wrapper">
 										<span :class="transaction.currentWallet.currency.toLowerCase()"
 											>{{
 												Math.abs(transaction.fee).toFixed(5) +
@@ -135,7 +141,7 @@
 													transaction.currentWallet.currency
 											}}
 										</span>
-										<span class="divider">&nbsp;&nbsp;</span>
+										<span class="divider">|</span>
 										<span
 											>${{
 												Math.abs(transaction.feeUSD).toFixed(2) == 0 && transaction.feeUSD !== 0
@@ -145,6 +151,10 @@
 											USD</span
 										>
 									</div>
+								</div>
+								<div class="th">
+									<p>Confirmations</p>
+									<span>{{ transaction.confirmations }}</span>
 								</div>
 								<div class="th">
 									<p v-if="transaction.type === 'send'">To</p>
@@ -180,7 +190,7 @@
 		<transition name="fade">
 			<button
 				:disabled="activePage === operationsWithPagination.length - 1"
-				class="arrow-block arrow-block-bottom"
+				class="arrow-block"
 				:class="{ disabled: activePage === operationsWithPagination.length - 1 }"
 				@click="throttle(handleClickMoveButton('bottom'), 1000)"
 			>
@@ -252,15 +262,9 @@ export default {
 				this.openedOperation = transaction.url + transaction.type;
 			}
 		},
-		getTransactionId(transactionCurrency, transactionUrl) {
-			switch (transactionCurrency) {
-				case 'BTC':
-					return transactionUrl.slice(37);
-				case 'ETH':
-					return transactionUrl.slice(24);
-				case 'LTC':
-					return transactionUrl.slice();
-			}
+		getTransactionId(transactionUrl) {
+			const splittedString = transactionUrl.split('/');
+			return splittedString[splittedString.length - 1];
 		},
 	},
 };
@@ -291,9 +295,6 @@ export default {
 .arrow-block:hover img {
 	opacity: 1;
 }
-.arrow-block-bottom {
-	margin-bottom: 30px;
-}
 .trans-date {
 	position: relative;
 }
@@ -306,17 +307,12 @@ export default {
 .trans-top {
 	cursor: pointer;
 }
-.fee-row {
-	.divider {
-		display: none;
-	}
-	display: flex;
-	flex-direction: column;
+.divider {
+	transform: translateY(-2px);
+	font-size: 15px !important;
+	margin: 0 3px;
 	@media screen and (max-width: 1200px) {
-		flex-direction: row;
-		.divider {
-			display: inline;
-		}
+		font-size: 14px !important;
 	}
 }
 </style>

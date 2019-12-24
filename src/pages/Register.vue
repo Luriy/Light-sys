@@ -191,7 +191,7 @@ export default {
         params: {
           Comand: 'AccountActivationPhone',
           Email: loginType === 'Email' ? user : '',
-          Phone: loginType === 'Phone' ? user : '',
+          Phone: loginType === 'Phone' ? user.replace(/[^0-9]/gim, '') : '',
           Pin: smsCodes.map((smsCode, index) =>smsCode[index]).join('')
         }
       }).then(resp => {
@@ -217,7 +217,7 @@ export default {
           params: {
             Comand: 'PasswordInstall',
             Email: loginType === 'Email' ? user : '',
-            Phone: loginType === 'Phone' ? user : '',
+            Phone: loginType === 'Phone' ? user.replace(/[^0-9]/gim, '') : '',
             Password: password,
           }
         }).then(resp => {
@@ -231,12 +231,19 @@ export default {
           } else {
             const params = new URLSearchParams();
             params.append('Phone', loginType === 'Phone' ? user : '');
-            params.append('Email', loginType === 'Email' ? user : '');
+            params.append('Email', loginType === 'Email' ? user.replace(/[^0-9]/gim, '') : '');
             params.append('Password', sha512(password));
         		params.append('Comand', 'CheckLoginPassword');
 
             this.$store.dispatch(AUTH_REQUEST, params)
               .then(() => {
+                const currenciesAddedByDefault = ['RUR', 'USD'];
+                currenciesAddedByDefault.forEach(currency => {
+                  this.$store.dispatch('currency/ADD_USER_CURRENCY', { ValuteName: currency })
+                }).then(() => {
+                  this.$store.dispatch('currency/GET_USER_CURRENCIES');
+                })
+                
       		    	this.commonError = null;
                 this.$router.push('/wallets');
                 setTimeout(() => {
@@ -303,20 +310,14 @@ export default {
         {4: ''},
         {5: ''},
       ];
+      this.commonError = null;
+      this.countdown = 59;
+      this.timer = setInterval(() => {
+        this.countdown--
+      }, 1000)
       this.$store.dispatch('user/USER_RESEND_PASSWORD', {
         Email: loginType === 'Email' ? user : '',
         Phone: loginType === 'Phone' ? user : '',
-      }).then((data) => {
-        if (data.success) {
-          this.commonError = null;
-          this.countdown = 59;
-          this.timer = setInterval(() => {
-            this.countdown--
-          }, 1000)
-        } else {
-          this.commonError = data.errors[0];
-        }
-
       })
     }
   },

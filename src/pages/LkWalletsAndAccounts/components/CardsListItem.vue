@@ -111,16 +111,23 @@ export default {
 		},
 		handleSaveGroup() {
 			this.isInputEditingActive = false;
-			const clonedGroupCurrencies = [...this.groupCurrencies];
-			clonedGroupCurrencies.unshift({
-				groupName: this.groupName,
-				currencies: [],
-			});
-			this.$store.commit('group/SET_GROUP_CURRENCIES', clonedGroupCurrencies);
-			this.$store.dispatch('group/CREATE_CURRENCY_GROUP', {
-				GroupName: this.groupName,
-				currencies: [],
-			});
+			const isNewGroupNameAlreadyExist = this.groupCurrencies.some(
+				({ groupName }) => groupName === this.groupName,
+			);
+
+			if (!isNewGroupNameAlreadyExist) {
+				const clonedGroupCurrencies = [...this.groupCurrencies];
+				clonedGroupCurrencies.unshift({
+					groupName: this.groupName,
+					currencies: [],
+				});
+				this.$store.commit('group/SET_GROUP_CURRENCIES', clonedGroupCurrencies);
+				this.$store.dispatch('group/CREATE_CURRENCY_GROUP', {
+					GroupName: this.groupName,
+					currencies: [],
+				});
+			}
+			this.groupName = 'Group name';
 		},
 	},
 };

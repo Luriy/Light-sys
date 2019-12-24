@@ -132,7 +132,7 @@
 				:currency="currency"
 				:fullCurrencyName="getCryptoInfo(currency).fullName"
 				@onSend="onSend"
-				@onSendSms="onSendSms"
+				@onRepeatSms="onRepeatSms"
 				:user="user"
 				:smsCodes="smsCodes"
 				:paymentAddress="paymentAddress"
@@ -271,15 +271,8 @@ export default {
 			this.isSelectWalletOpened = false;
 			this.error = null;
 			this.sendPopup = false;
-			(this.smsCodes = [
-				{ 0: '' },
-				{ 1: '' },
-				{ 2: '' },
-				{ 3: '' }, // <- делай это в цикле
-				{ 4: '' },
-				{ 5: '' },
-			]),
-				clearInterval(this.timer);
+			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
+			clearInterval(this.timer);
 			this.timer = null;
 			this.countdown = 59;
 		},
@@ -411,6 +404,17 @@ export default {
 				index !== this.smsCodes.length - 1 ? e.target.nextElementSibling.focus() : this.onSend();
 			}
 		},
+		onRepeatSms() {
+			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
+			this.countdown = 59;
+			this.timer = setInterval(() => {
+				this.countdown--;
+			}, 1000);
+
+			setTimeout(() => {
+				document.querySelector('.transfer-popup .number-input').focus();
+			}, 50);
+		},
 		onSendSms() {
 			this.error = null;
 			const validateErrorAmount = VALIDATE_AMOUNT_TRANSFER_EXCHANGE(
@@ -446,7 +450,7 @@ export default {
 		onSend() {
 			const token = this.smsCodes.map((smsCode, index) => smsCode[index]).join('');
 			this.$store
-				.dispatch('wallet/POST_TRANSFER_CRYPTO', {
+				.dispatch('transfer/TRANSFER_CRYPTO', {
 					currency: capitalizeFirstLetter(this.$route.params.currency.toLowerCase()),
 					from: this.$route.params.address,
 					to: this.paymentAddress,

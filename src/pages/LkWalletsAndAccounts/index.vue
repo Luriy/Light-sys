@@ -74,7 +74,7 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			operations: 'wallet/OPERATIONS',
+			operations: 'transactionsHistory/ALL_TRANSACTIONS',
 			wallets: 'wallet/WALLETS',
 			groupWallets: 'group/GROUP_WALLETS',
 			afterCreateWallet: 'wallet/AFTER_CREATE_WALLET',
@@ -84,14 +84,18 @@ export default {
 		if (!this.afterCreateWallet) {
 			if (this.wallets.length) {
 				this.$store.dispatch('wallet/GET_WALLETS', { wallets: this.wallets });
-				this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+				this.$store.dispatch('transactionsHistory/GET_ALL_TRANSACTIONS', {
+					wallets: this.wallets,
+				});
 			} else {
 				this.$store.dispatch('wallet/GET_WALLETS').then(() => {
-					this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+					this.$store.dispatch('transactionsHistory/GET_ALL_TRANSACTIONS', {
+						wallets: this.wallets,
+					});
 				});
 			}
 		} else {
-			this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+			this.$store.dispatch('transactions_history/GET_ALL_TRANSACTIONS', { wallets: this.wallets });
 		}
 	},
 	methods: {

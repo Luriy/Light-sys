@@ -136,7 +136,7 @@ export default {
 			(wallet) => wallet.address === this.$route.params.address,
 		);
 		this.$store
-			.dispatch('wallet/GET_WALLET_OPERATIONS', {
+			.dispatch('transactionsHistory/GET_WALLET_TRANSACTIONS', {
 				currency: this.currentWallet.currency,
 				address: this.currentWallet.address,
 			})
@@ -154,9 +154,12 @@ export default {
 					return `The cryptocurrency that started it all, Bitcoin is the first digital currency to solve the "double spending" or counterfeiting problem without the aid of a central authority, such as a bank or a government, making Bitcoin truly peer-to-peer.`;
 				case 'ETH': {
 					return `Ethereum is a decentralized computing platform that runs smart contracts, which are
-						contracts thah execute withou human intervention. ETH popularized the idea programmable
-						transactions instead of only for money transfers. The platform is user for crowdfuundin
-						(ICOs) , the cretion of new digital assets, and more.`;
+						contracts thah execute without human intervention. ETH popularized the idea programmable
+						transactions instead of only for money transfers. The platform is used for crowdfunding
+            (ICOs), the creation of new digital assets, and more.`;
+				}
+				case 'LTC': {
+					return "Litecoin is a cryptocurrency similar to Bitcoin. The goal of Litecoin is to provide fast transaction confirmations. Created by ex-Google employee Charlie Lee, Litecoin is often considered the silver to Bitcoin's gold.";
 				}
 			}
 		},
@@ -186,6 +189,7 @@ export default {
 								: index === 1
 								? 'https://www.reddit.com/r/Bitcoin/'
 								: null;
+						break;
 					case 'ETH':
 						link.href =
 							index === 0
@@ -195,6 +199,17 @@ export default {
 								: index === 2
 								? 'https://twitter.com/ethereum'
 								: null;
+						break;
+					case 'LTC':
+						link.href =
+							index === 0
+								? 'https://litecoin.com/'
+								: index === 1
+								? 'https://www.reddit.com/r/litecoin/'
+								: index === 2
+								? 'https://twitter.com/LitecoinProject'
+								: null;
+						break;
 				}
 			});
 
@@ -234,6 +249,7 @@ export default {
 	top: 98px;
 	border-radius: 8px;
 	background-color: #654d95;
+	z-index: 15;
 }
 .social-links__modal-link {
 	font-size: 14px;

@@ -35,6 +35,7 @@ export default {
 					const newWallet = wallets.find((wallet) => wallet.address === groupWallet.address);
 					return {
 						...groupWallet,
+						address: newWallet.address,
 						balance: newWallet.balance,
 						balanceUSD: newWallet.balanceUSD,
 						isAvailable: newWallet.isAvailable,

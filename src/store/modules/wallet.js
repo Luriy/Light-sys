@@ -17,8 +17,6 @@ export default {
 		wallets: JSON.parse(localStorage.getItem('stateWalletsWallets')) || [],
 		types: JSON.parse(localStorage.getItem('stateTypes')) || {},
 		percentage: JSON.parse(localStorage.getItem('statePercentage')) || {},
-		operations: JSON.parse(localStorage.getItem('stateWalletsOperations')) || [],
-		unconfirmedOperations: JSON.parse(localStorage.getItem('stateUnconfirmedOperations')) || [],
 		afterCreateWallet: false,
 	},
 	getters: {
@@ -26,10 +24,7 @@ export default {
 		WALLETS: (state) => state.wallets,
 		TYPES: (state) => state.types,
 		PERCENTAGE: (state) => state.percentage,
-		OPERATIONS: (state) => state.operations,
 		AFTER_CREATE_WALLET: (state) => state.afterCreateWallet,
-		OPERATIONS_WITH_UNCONFIRMED: (state) => [...state.operations, ...state.unconfirmedOperations],
-		UNCONFIRMED_OPERATIONS: (state) => state.unconfirmedOperations,
 	},
 	mutations: {
 		SET_PAGE_DETAIL: (state, payload) => (state.pageDetail = payload),
@@ -55,15 +50,7 @@ export default {
 			state.percentage = payload;
 			localStorage.setItem('statePercentage', JSON.stringify(payload));
 		},
-		SET_OPERATIONS: (state, payload) => {
-			state.operations = payload;
-			localStorage.setItem('stateWalletsOperations', JSON.stringify(payload));
-		},
 		SET_AFTER_CREATE_WALLET: (state, payload) => (state.afterCreateWallet = payload),
-		SET_UNCONFIRMED_OPERATIONS: (state, payload) => {
-			state.unconfirmedOperations = payload;
-			localStorage.setItem('stateUnconfirmedOperations', JSON.stringify(payload));
-		},
 	},
 	actions: {
 		GET_PAGE_DETAIL: ({ dispatch, commit }, { currency, address }) => {
@@ -250,6 +237,16 @@ export default {
 							groupName: 'Other wallets',
 							wallets: result.filter((wallet) => wallet.group === ''),
 						});
+					} else {
+						const otherWalletsGroup = groups.find(({ groupName }) => groupName === 'Other wallets');
+						result.map((item) => {
+							const isGroupsContainsCurrentWallet = groups.some(({ wallets }) =>
+								wallets.some(({ address }) => address === item.address),
+							);
+							if (!isGroupsContainsCurrentWallet) {
+								otherWalletsGroup.wallets.push(item);
+							}
+						});
 					}
 
 					commit('SET_WALLETS', result);
@@ -293,68 +290,6 @@ export default {
 				}
 			});
 		},
-		POST_TRANSFER_CRYPTO: (state, { amount, from, to, token, currency }) => {
-			const { commit, dispatch } = state;
-			return Axios({
-				url: API_URL,
-				method: 'POST',
-				params: {
-					Comand: `${currency}Transfer`,
-					...getAuthParams(),
-					From: from,
-					To: to,
-					Token: token,
-					Amount: amount,
-				},
-			}).then(({ data }) => {
-				const response = parsePythonArray(data);
-				const { Errors } = response[0];
-				const responseData = response[1];
-				if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
-					return { success: true, data: responseData.return };
-				} else if (Object.values(Errors).includes('Wrong password')) {
-					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
-						() => (window.location.href = `/login`),
-					);
-					return { success: false };
-				} else if (Object.values(Errors).includes('Error token')) {
-					commit(
-						'alerts/setNotification',
-						{
-							message: 'PIN is not correct',
-							status: 'error-status',
-							icon: 'close',
-						},
-						{ root: true },
-					);
-					return { success: false };
-				} else if (Object.keys(Errors).length) {
-					const errKey = Object.keys(Errors)[0];
-					commit(
-						'alerts/setNotification',
-						{
-							message: Errors[errKey],
-							status: 'error-status',
-							icon: 'close',
-						},
-						{ root: true },
-					);
-					return { success: false };
-				} else {
-					commit(
-						'alerts/setNotification',
-						{
-							message: 'Unknown error',
-							status: 'error-status',
-							icon: 'close',
-						},
-						{ root: true },
-					);
-					return { success: false };
-				}
-			});
-		},
-
 		GET_TYPES: async (store) => {
 			const [{ data: nodeData }, { data }] = await Promise.all([
 				Axios({
@@ -436,300 +371,5 @@ export default {
 
 			return { types, percentage };
 		},
-		GET_WALLET_OPERATIONS: (store, { currency, address }) => {
-			return Axios({
-				url: API_URL,
-				method: 'POST',
-				params: {
-					Comand: `AllTransactions${capitalizeFirstLetter(currency.toLowerCase())}`,
-					Wallet: address,
-				},
-			}).then(({ data }) => {
-				const parsedData = parsePythonArray(data)['1'].return;
-				const transactions = Object.values(parsedData).map((item) => {
-					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-					return {
-						source: {
-							To: item.address,
-							From: item.address,
-							...item,
-						},
-						currency: currency,
-						address: item.address, // FIXME: Адрес не работает корректно
-						time: itemDate,
-						url: item.Url,
-						value: item.value,
-						valueUSD: item.valueUSD,
-						currentWallet: {
-							address: address,
-							currency: currency,
-						},
-						fee: item.Fee || 0,
-						feeUSD: item.FeeUsd || 0,
-						type: (item.From
-						? item.From.toLowerCase() === address.toLowerCase()
-						: item.value < 0)
-							? 'send'
-							: 'receive',
-					};
-				});
-
-				const transactionsPerPage = 20;
-				let transactionsWithPagination = new Array(
-					Math.ceil(transactions.length / transactionsPerPage),
-				).fill([]);
-				const filterByDateTimeFunc = (a, b) => {
-					if (a.time < b.time) return -1;
-					else if (a.time > b.time) return 1;
-					else return 0;
-				};
-				const filterByDateFunc = (a, b) => {
-					if (a.date < b.date) return -1;
-					else if (a.date > b.date) return 1;
-					else return 0;
-				};
-
-				transactions.sort(filterByDateTimeFunc);
-				transactions.reverse();
-
-				transactions.forEach((item, index) => {
-					const currentIndex = Math.floor(index / transactionsPerPage);
-					transactionsWithPagination[currentIndex] = [
-						...transactionsWithPagination[currentIndex],
-						item,
-					];
-				});
-
-				transactionsWithPagination = transactionsWithPagination.map((transactions) => {
-					let datesWithTransactions = [];
-					const dates = [];
-					transactions.forEach(({ time }) => {
-						if (
-							dates.every(
-								(date) =>
-									date.getDate() !== time.getDate() ||
-									date.getMonth() !== time.getMonth() ||
-									date.getFullYear() !== time.getFullYear(),
-							)
-						) {
-							dates.push(time);
-						}
-					});
-
-					transactions.forEach((transaction) => {
-						const date = dates.find((date) => {
-							return (
-								date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
-								date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
-								date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
-							);
-						});
-
-						const addedTransObject = datesWithTransactions.find(
-							({ date: dateTrans }) =>
-								new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
-								new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
-								new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
-						);
-						if (addedTransObject) {
-							addedTransObject.transactions = [...addedTransObject.transactions, transaction];
-						} else {
-							datesWithTransactions = [
-								...datesWithTransactions,
-								{
-									date,
-									transactions: [
-										...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
-										transaction,
-									],
-								},
-							];
-						}
-					});
-
-					datesWithTransactions = datesWithTransactions.map((obj) => {
-						return {
-							...obj,
-							transactions: obj.transactions.slice(),
-						};
-					});
-					datesWithTransactions.sort(filterByDateFunc);
-					return datesWithTransactions.reverse();
-				});
-
-				return transactionsWithPagination;
-			});
-		},
-		GET_OPERATIONS: async (store, { wallets }) => {
-			const { commit } = store;
-
-			let transactions = (
-				await Promise.all(
-					wallets.map(async (wallet) => {
-						let Comand;
-
-						switch (wallet.currency) {
-							case 'BTC':
-								Comand = 'AllTransactionsBtc';
-								break;
-							case 'ETH':
-								Comand = 'AllTransactionsEth';
-								break;
-							case 'LTC':
-								Comand = 'AllTransactionsLtc';
-								break;
-							default:
-								throw new Error('Unknown currency');
-						}
-
-						const { data } = await Axios({
-							url: API_URL,
-							method: 'POST',
-							params: {
-								Comand,
-								Wallet: wallet.address,
-							},
-						});
-
-						const transactions = Object.values(parsePythonArray(data)[1].return).map((item) => {
-							const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-
-							return {
-								source: {
-									To: item.address,
-									From: item.address,
-									...item,
-								},
-								currency: wallet.currency,
-								address: item.address, // FIXME: Адрес не работает корректно
-								time: itemDate,
-								url: item.Url,
-								value: item.value,
-								valueUSD: item.valueUSD,
-								currentWallet: {
-									address: wallet.address,
-									currency: wallet.currency,
-								},
-								fee: item.Fee || 0,
-								feeUSD: item.FeeUsd || 0,
-								type: (item.From
-								? item.From.toLowerCase() === wallet.address.toLowerCase()
-								: item.value < 0)
-									? 'send'
-									: 'receive',
-							};
-						});
-
-						return transactions;
-					}),
-				)
-			).flat();
-
-			const transactionsPerPage = 20;
-			let transactionsWithPagination = new Array(
-				Math.ceil(transactions.length / transactionsPerPage),
-			).fill([]);
-			const filterByDateTimeFunc = (a, b) => {
-				if (a.time < b.time) return -1;
-				else if (a.time > b.time) return 1;
-				else return 0;
-			};
-			const filterByDateFunc = (a, b) => {
-				if (a.date < b.date) return -1;
-				else if (a.date > b.date) return 1;
-				else return 0;
-			};
-
-			transactions.sort(filterByDateTimeFunc);
-			transactions.reverse();
-
-			transactions.forEach((item, index) => {
-				const currentIndex = Math.floor(index / transactionsPerPage);
-				transactionsWithPagination[currentIndex] = [
-					...transactionsWithPagination[currentIndex],
-					item,
-				];
-			});
-
-			transactionsWithPagination = transactionsWithPagination.map((transactions) => {
-				let datesWithTransactions = [];
-				const dates = [];
-				transactions.forEach(({ time }) => {
-					if (
-						dates.every(
-							(date) =>
-								date.getDate() !== time.getDate() ||
-								date.getMonth() !== time.getMonth() ||
-								date.getFullYear() !== time.getFullYear(),
-						)
-					) {
-						dates.push(time);
-					}
-				});
-
-				transactions.forEach((transaction) => {
-					const date = dates.find((date) => {
-						return (
-							date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
-							date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
-							date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
-						);
-					});
-
-					const addedTransObject = datesWithTransactions.find(
-						({ date: dateTrans }) =>
-							new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
-							new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
-							new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
-					);
-					if (addedTransObject) {
-						addedTransObject.transactions = [...addedTransObject.transactions, transaction];
-					} else {
-						datesWithTransactions = [
-							...datesWithTransactions,
-							{
-								date,
-								transactions: [
-									...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
-									transaction,
-								],
-							},
-						];
-					}
-				});
-
-				datesWithTransactions = datesWithTransactions.map((obj) => {
-					return {
-						...obj,
-						transactions: obj.transactions.slice(),
-					};
-				});
-				datesWithTransactions.sort(filterByDateFunc);
-				return datesWithTransactions.reverse();
-			});
-
-			commit('SET_OPERATIONS', transactionsWithPagination);
-			return transactionsWithPagination;
-		},
-		// SEND: (store, { currency, from, to, amount }) => {
-		//   Axios({
-		//     url: API_URL,
-		//     method: 'POST',
-		//     params: {
-		//       Comand: 'TransferToken',
-		//       ...getAuthParams(),
-		//     }
-		//   }).then(({ data }) => {
-		//     console.log(data);
-		//   })
-
-		//   // let Comand;
-
-		//   // switch (currency) {
-		//   //   case 'BTC': Comand = 'BtcTransfer'; break;
-		//   //   case 'ETH': Comand = 'EthTransfer'; break;
-		//   //   default: throw 'Unknown currency';
-		//   // }
-		// },
 	},
 };

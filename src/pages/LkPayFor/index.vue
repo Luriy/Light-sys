@@ -14,7 +14,7 @@
 							>
 						</div>
 						<div class="select">
-							<div class="select__header" @click="walletSelect.isActive = true">
+							<div class="select__header" @click="walletSelect.isActive = !walletSelect.isActive">
 								<div class="flex align-items-center" v-if="currentType === 'wallet'">
 									<img :src="getCryptoInfo(currentWallet.currency).image.corner" width="34" />
 									<div class="flex flex-column select__wallet-info">
@@ -50,7 +50,7 @@
 								</div>
 								<div class="flex align-items-center" v-else-if="currentType === 'bank'">
 									<div class="image-plate">
-										<img :src="getBankImage(currentBank.psid, 'small')" alt />
+										<img :src="getBankImage(currentBank.psid, 'small')" />
 									</div>
 									<div class="flex flex-column">
 										<span class="select__curency-name">{{ currentBank.name }}</span>
@@ -67,8 +67,7 @@
 									<img src="@/assets/images/triangle.svg" width="6" height="4" />
 								</div>
 							</div>
-							<transition name="fade">
-								<!-- <div class="select__body" v-show="walletSelect.isActive">
+							<!-- <div class="select__body" v-show="walletSelect.isActive">
 									<div
 										class="select__body-item flex justify-content-between align-items-center"
 										:class="{
@@ -113,25 +112,30 @@
 										}}</span>
 									</div>
 								</div> -->
-								<payment-types
-									:search="search"
-									:isOpened="walletSelect.isActive"
-									:wallets="wallets"
-									:cards="cards"
-									:banks="banks"
-									@onSelectItem="handleSelectItem"
-								></payment-types>
-							</transition>
+							<payment-types
+								:search="search"
+								:isOpened="walletSelect.isActive"
+								:wallets="wallets"
+								:cards="cards"
+								:banks="banks"
+								@onSelectItem="handleSelectItem"
+							></payment-types>
 						</div>
 					</div>
 					<div class="payment-block">
-						<div class="payment-types">
-							<div class="payment-type" v-for="paymentType in paymentTypes" :key="paymentType.text">
-								<div class="icon-block">
-									<img :src="paymentType.icon" alt title />
-								</div>
-								<div class="text-block">
-									{{ paymentType.text }}
+						<div class="payment-types__wrapper">
+							<div class="payment-types">
+								<div
+									class="payment-type"
+									v-for="paymentType in paymentTypes"
+									:key="paymentType.text"
+								>
+									<div class="icon-block">
+										<img :src="paymentType.icon" alt title />
+									</div>
+									<div class="text-block">
+										{{ paymentType.text }}
+									</div>
 								</div>
 							</div>
 						</div>

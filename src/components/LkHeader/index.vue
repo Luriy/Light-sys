@@ -1,6 +1,5 @@
 <template>
 	<div class="header">
-		<router-link to="/" class="logo"><img src="@/assets/images/logo.png" alt title/></router-link>
 		<div class="right">
 			<div class="search">
 				<input type="text" name="search" placeholder="Search" />

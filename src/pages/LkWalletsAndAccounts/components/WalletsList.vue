@@ -14,7 +14,9 @@
 			<div
 				class="active-group"
 				@click="handleRenameGroup(group.groupName)"
-				v-else-if="groupWallets.length !== 1 && editingGroup !== group.groupName"
+				v-else-if="
+					groupWallets.length !== 1 && editingGroup !== group.groupName && group.groupName !== ''
+				"
 			>
 				{{ group.groupName }}
 			</div>
@@ -36,7 +38,7 @@
 	</div>
 	<div v-else class="wallets-list_item_body">
 		<div class="group-wrapper" v-for="group in groupWallets" :key="group.groupName">
-			<div class="active-group" v-if="groupWallets.length !== 1">
+			<div class="active-group" v-if="groupWallets.length !== 1 && group.groupName !== ''">
 				{{ group.groupName }}
 			</div>
 			<wallets-list-item
@@ -145,10 +147,17 @@ export default {
 			);
 		},
 		handleSaveRenameGroup() {
-			this.$store.dispatch('group/RENAME_WALLET_GROUP', {
-				oldGroupName: this.editingGroup,
-				newGroupName: this.newGroupName,
-			});
+			const isNewGroupNameAlreadyExist = this.groupWallets.some(
+				({ groupName }) => groupName === this.newGroupName,
+			);
+
+			if (!isNewGroupNameAlreadyExist) {
+				this.$store.dispatch('group/RENAME_WALLET_GROUP', {
+					oldGroupName: this.editingGroup,
+					newGroupName: this.newGroupName,
+				});
+			}
+
 			this.editingGroup = null;
 			this.newGroupName = null;
 		},

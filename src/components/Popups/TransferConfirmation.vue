@@ -49,7 +49,7 @@
 				<div class="timer" v-show="countdown > 0">
 					00:{{ `${countdown < 10 ? '0' : ''}${countdown}` }} Sec
 				</div>
-				<p class="repeat-btn" v-show="countdown === 0" @click="$emit('onSendSms')">Repeat</p>
+				<p class="repeat-btn" v-show="countdown === 0" @click="$emit('onRepeatSms')">Repeat</p>
 			</div>
 		</div>
 		<div slot="body" class="exchange-popup_body">
@@ -120,5 +120,8 @@ export default {
 }
 .exchange-popup_body {
 	width: 620px !important;
+}
+.network-fee {
+	justify-content: space-between;
 }
 </style>
