@@ -514,7 +514,7 @@
           </lk-pop-up>
 
           <lk-pop-up
-            v-if="true"
+            v-if="exchangeSucces"
             class="exchange-popup"
             :popup-size="{width: '346px', height: '387px', borderRadius: '47px'}"
             @closeModal="closeModal"
