@@ -15,7 +15,7 @@ export default {
 		availableWalletDirections: {},
 		fiatInfo: {},
 		fiatData: {},
-		exchangeSucces: false,
+		exchangeStatus: {}
 	},
 	getters: {
 		FIAT_PSIDS: (state) => state.fiatPsids,
@@ -23,7 +23,7 @@ export default {
 		TRANSFER_INFO: (state) => state.transferInfo,
 		FIAT_INFO: (state) => state.fiatInfo,
 		FIAT_DATA: (state) => state.fiatData,
-		EXCHANGE_SUCCES: (state) => state.exchangeSucces,
+		EXCHANGE_SUCCES: (state) => state.exchangeStatus,
 		AVAILABLE_WALLET_DIRECTIONS: (state) => state.availableWalletDirections,
 	},
 	mutations: {
@@ -34,7 +34,7 @@ export default {
 		SET_TRANSFER_INFO: (state, payload) => (state.transferInfo = payload),
 		SET_FIAT_INFO: (state, payload) => (state.fiatInfo = payload),
 		SET_FIAT_DATA: (state, payload) => (state.fiatData = payload),
-		SET_EXCHANGE_SUCCES: (state, payload) => (state.exchangeSucces = payload),
+		SET_EXCHANGE_SUCCES: (state, payload) => (state.exchangeStatus = payload),
 		SET_AVAILABLE_WALLET_DIRECTIONS: (state, payload) =>
 			(state.availableWalletDirections = payload),
 		UPDATE_FIAT_DIRECTION_STATUS: (state, directions) => {
@@ -79,7 +79,7 @@ export default {
 					console.log('after', item);
 				}
 			});
-			localStorage.setItem('stateWalletsWallets', JSON.stringify(wallets));
+			// localStorage.setItem('stateWalletsWallets', JSON.stringify(wallets));
 		},
 	},
 	actions: {
@@ -272,9 +272,8 @@ export default {
 				commit('SET_AVAILABLE_WALLET_DIRECTIONS', walletsResult.StatusCryptoExchange);
 			});
 		},
-		POST_WALLETS: ({ commit }, { transferData, pair: { exchange, receive } }, usdAmmount) => {
-			console.log(usdAmmount);
-			return Axios({
+		POST_WALLETS: ({ commit }, { transferData, usdAmmount, pair: { exchange, receive } }) => {
+      return Axios({
 				url: API_URL,
 				method: 'POST',
 				params: {
@@ -282,11 +281,12 @@ export default {
 					...transferData,
 				},
 			}).then(({ data }) => {
-				const response = parsePythonArray(data);
+        commit('SET_EXCHANGE_SUCCES', { status: 'exchange', show: true, progress: 75 });
+        const response = parsePythonArray(data);
 				const { Errors } = response[0];
 				const responseData = response[1];
 				if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
-					commit('SET_EXCHANGE_SUCCES', true);
+					commit('SET_EXCHANGE_SUCCES', { status: 'success', show: true, progress: 100 });
 					commit('UPDATE_WALLET', {
 						wallet: transferData.To,
 						amount: transferData.Amount,
@@ -294,6 +294,7 @@ export default {
 						usdAmmount,
 					});
 				} else if (Object.keys(Errors).length) {
+          commit('SET_EXCHANGE_SUCCES', {});
 					const errKey = Object.keys(Errors)[0];
 					commit(
 						'alerts/setNotification',
@@ -305,6 +306,7 @@ export default {
 						{ root: true },
 					);
 				} else {
+          commit('SET_EXCHANGE_SUCCES', {});
 					commit(
 						'alerts/setNotification',
 						{

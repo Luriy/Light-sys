@@ -475,7 +475,7 @@
               </div>
               <div class="exchange-block_fee">
                 <div class="network-fee" :style="!exchangeCurrency.isWallet ? {justifyContent: 'flex-end'} : ''">
-                  <p class="network-fee__title" :style="!exchangeCurrency.isWallet ? {flexGrow: '1'} : ''">
+                  <p class="network-fee__title ml-4" :style="!exchangeCurrency.isWallet ? {flexGrow: '1'} : ''">
                     <span>{{receiveCurrency.name}}</span>
                     Network Fee
                   </p>
@@ -483,22 +483,22 @@
                     {{transferInfo.minerFee || 0}}
                     {{receiveCurrency.currency}}
                   </p>
-                  <p v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
+                  <p class="flex-grow-1 usd-fee mr-4" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
                     ${{(transferInfo.minerFee * types[receiveCurrency.name].price).toFixed(2)}}
                   </p>
                   <p v-else>0</p>
                 </div>
                 <div class="balance" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {justifyContent: 'flex-end'} : ''">
-                  <p class="network-fee__title" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {flexGrow: '1'} : ''">
+                  <p class="network-fee__title ml-4" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {flexGrow: '1'} : ''">
                     {{
                     exchangeCurrency.isWallet && receiveCurrency.isWallet ? 'Remaining balance' :
                     'Reserve'
                     }}
                    </p>
-                  <p class="btc-value" style="margin-right: 37px" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
+                  <p class="btc-value" style="width: 53.3%"  v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
                     {{exchangeCurrency.balance}} {{exchangeCurrency.currency}}
                   </p>
-                  <p>
+                  <p class="flex-grow-1 mr-4" style="text-align: right">
                     {{
                       exchangeCurrency.isWallet && receiveCurrency.isWallet ?
                       `$${exchangeCurrency.balanceUSD}` : exchangeCurrency.reserve ||
@@ -514,7 +514,7 @@
           </lk-pop-up>
 
           <lk-pop-up
-            v-if="exchangeSucces"
+            v-if="exchangeSucces.show"
             class="exchange-popup"
             :popup-size="{width: '346px', height: '387px', borderRadius: '47px'}"
             @closeModal="closeModal"
@@ -523,7 +523,7 @@
               <div class="icon-wrapper">
                 <i class="icon checked-icon">Success icon</i>
               </div>
-              <p class="status">Success</p>
+              <p class="status">{{exchangeSucces.status}}</p>
             </div>
             <div slot='body' class="success-popup_body">
               <p class="from" :style="{color: exchangeCurrency.color || '#fff'}">{{exchangeAmount}} {{exchangeCurrency.currency}}</p>
@@ -539,7 +539,7 @@
                     <span>{{receiveCurrency.name}}</span>
                     Network Fee
                   </p>
-                  <p class="ml-10">
+                  <p class="ml-8">
                     {{exchangeCurrency.isWallet && receiveCurrency.isWallet ? ` ${transferInfo.minerFee}` : 0}} {{receiveCurrency.currency}}
                   </p>
                   <p class="flex-grow-1" style="text-align: right">
@@ -557,8 +557,8 @@
                 </div>
               </div>
               <v-progress-linear
+                v-model="exchangeSucces.progress"
                 class="mt-7"
-                value="75"
                 color="#fda50c"
                 height="2"
               ></v-progress-linear>
@@ -818,11 +818,11 @@
               Token: token,
               ...getAuthParams()
             },
+            usdAmmount: this.exchangeUSD,
             pair: {
               exchange: capitalizeFirstLetter(this.exchangeCurrency.currency.toLowerCase()),
               receive: capitalizeFirstLetter(this.receiveCurrency.currency.toLowerCase())
             },
-            usdAmmount: this.exchangeUSD
           }).then(() => {
             this.clearSms()
           });
@@ -1286,6 +1286,13 @@
         if (!status) {
           clearInterval(this.timer);
           this.countdown = 59;
+        }
+      },
+      exchangeSucces(value) {
+        if (value.status === 'success') {
+          setTimeout(() => {
+            this.$store.dispatch('exchange/SET_SUCCES', {})
+          }, 5000);
         }
       }
     }

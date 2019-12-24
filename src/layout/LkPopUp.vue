@@ -49,6 +49,7 @@ export default {
 		font-size: 36px;
 		font-weight: 600;
 		line-height: 21px;
+    text-transform: capitalize;
 	}
 
 	.exchange-ammount {
@@ -288,8 +289,13 @@ export default {
 		}
 	}
 
+  .usd-fee {
+    text-align: right;
+  }
+
 	.btc-value {
-		margin-right: 30px;
+    width: 52%;
+    text-align: right;
 	}
 }
 
