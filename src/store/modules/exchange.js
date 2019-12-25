@@ -68,13 +68,12 @@ export default {
 				item.directionStatus = 0;
 			});
 		},
-		UPDATE_WALLET: ({ exchangeData }, { wallet, amount, usdAmmount }) => {
-			console.log('wallet, amount, usdAmmount', wallet, amount, usdAmmount);
-			exchangeData.find((item) => {
-				if (item.address === wallet) {
-					console.log(item);
+		UPDATE_WALLET: (state, { wallet, amount, usdAmmount }) => {
+      state.exchangeData.find((item) => {
+				if (item.number === wallet) {
+					console.log('item.address === wallet', item);
 					console.log(item.balance, Number(amount));
-					item.balance = item.balance + +amount;
+					item.balance = item.balance + (+amount);
 					item.balanceUSD = item.balanceUSD + usdAmmount;
 					console.log('after', item);
 				}
@@ -273,6 +272,7 @@ export default {
 			});
 		},
 		POST_WALLETS: ({ commit }, { transferData, usdAmmount, pair: { exchange, receive } }) => {
+      commit('SET_EXCHANGE_SUCCES', { status: 'exchange', show: true, progress: 75 });
       return Axios({
 				url: API_URL,
 				method: 'POST',
@@ -281,7 +281,6 @@ export default {
 					...transferData,
 				},
 			}).then(({ data }) => {
-        commit('SET_EXCHANGE_SUCCES', { status: 'exchange', show: true, progress: 75 });
         const response = parsePythonArray(data);
 				const { Errors } = response[0];
 				const responseData = response[1];
