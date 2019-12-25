@@ -1081,7 +1081,7 @@
           if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
             exchangePrice = this.types[this.exchangeCurrency.name].price;
             receivePrice = this.types[this.receiveCurrency.name].price;
-            this.exchangeAmount = +(this.transferInfo.minimum);
+            this.exchangeAmount = (this.transferInfo.minimum + this.transferInfo.minerFee).toFixed(5);
             this.receiveAmount = +(this.exchangeAmount * this.transferInfo.rate).toFixed(5);
             this.exchangeUSD = +(this.exchangeAmount * exchangePrice).toFixed(2);
             this.receiveUSD = +(this.receiveAmount * receivePrice).toFixed(2);
