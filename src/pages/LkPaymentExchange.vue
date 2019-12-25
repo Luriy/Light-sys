@@ -38,7 +38,7 @@
                   <div class="toggle"></div>
                 </div>
 
-                <div class="select-body" v-if="exchangeModal">
+                <div class="select-body" v-if="exchangeModal" ref="exchangeSelectModal" @blur="closeExchange">
                   <div class="select-wrapper">
                     <div class="search-input">
                       <input type="text" v-model="search" name="" placeholder="Search">
@@ -217,7 +217,7 @@
                   <div class="toggle"></div>
                 </div>
 
-                <div class="select-body" v-if="receiveModal">
+                <div class="select-body" v-if="receiveModal" ref="receiveSelectModal" @blur="closeReceive">
                   <div class="select-wrapper">
                     <div class="search-input">
                       <input type="" name="" v-model="search" placeholder="Search">
@@ -700,7 +700,7 @@
             return false
           },
           value => {
-            if (this.exchangeCurrency.isWallet) {
+            if (this.exchangeCurrency.isWallet && this.receiveCurrency.isWallet) {
               if (value > this.transferInfo.limit) {
                 this.errorMsg = ('Ammount cannot be more than limit');
                 this.showError = true;
@@ -842,6 +842,12 @@
           });
         }
       },
+      closeExchange() {
+        this.exchangeModal = false;
+      },
+      closeReceive() {
+        this.receiveModal = false;
+      },
       closeExchangePopup() {
         this.exchangePopup = false;
         clearInterval(this.timer);
@@ -889,6 +895,9 @@
         }
       },
       exchangeAction() {
+        setTimeout(() => {
+          this.$refs.exchangeSelectModal.focus();
+        }, 0);
         this.exchangeModal = !this.exchangeModal;
         this.receiveModal = false;
         this.search = '';
@@ -900,6 +909,9 @@
         this.receiveModal = false;
       },
       receiveAction() {
+        setTimeout(() => {
+          this.$refs.receiveSelectModal.focus();
+        }, 0);
         this.receiveModal = !this.receiveModal;
         this.exchangeModal = false;
         this.search = '';
@@ -943,8 +955,8 @@
         this.clearValues();
         this.exchangeCurrency = wallet;
         this.checkExchangeDirection();
-        this.exchangeModal = false;
-        if (wallet.isWallet) {
+        this.closeExchange();
+        if (wallet.isWallet && this.receiveCurrency.isWallet) {
           this.getTransferInfo();
         } else {
           this.getFiatInfo();
@@ -1099,7 +1111,7 @@
             receivePrice = this.receiveCurrency.currency === 'RUR'
               ? this.fiatInfo.RUR.USD
               : this.fiatInfo.USD[this.receiveCurrency.currency];
-            this.exchangeAmount = +(this.transferInfo.minimum).toFixed(5);
+            this.exchangeAmount = +this.fiatInfo.in_min;
             this.receiveAmount = +(this.exchangeAmount * this.fiatInfo.out).toFixed(2);
             this.exchangeUSD = +(this.exchangeAmount * exchangePrice).toFixed(2);
             this.receiveUSD = +(this.receiveAmount / receivePrice).toFixed(2);
