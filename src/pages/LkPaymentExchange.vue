@@ -455,7 +455,7 @@
                 :key="index"
                 v-model="input[index]"
                 @keyup="smsChange($event, index)"
-                placeholder="_"
+                placeholder="_____"
                 type="text"
                 maxLength="1"
                 size="1" min="0" max="9" pattern="[0-9]{1}"
@@ -486,7 +486,7 @@
                   <p class="flex-grow-1 usd-fee mr-4" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
                     ${{(transferInfo.minerFee * types[receiveCurrency.name].price).toFixed(2)}}
                   </p>
-                  <p v-else>0</p>
+                  <p v-else class="flex-grow-1 mr-4" style="text-align: right">0</p>
                 </div>
                 <div class="balance" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {justifyContent: 'flex-end'} : ''">
                   <p class="network-fee__title ml-4" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {flexGrow: '1'} : ''">
@@ -852,6 +852,7 @@
         this.exchangePopup = false;
         clearInterval(this.timer);
         this.countdown = 59;
+        this.setTimer()
       },
       smsChange(event, index) {
         if (event.key === 'ArrowLeft') {

@@ -255,6 +255,7 @@ export default {
 	}
 
 	.number-input {
+    margin: 0 15px;
 		width: 50px;
 		height: 50px;
 		border-radius: 8px;
