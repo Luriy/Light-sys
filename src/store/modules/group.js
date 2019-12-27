@@ -32,7 +32,9 @@ export default {
 			state.groupWallets = state.groupWallets.map((group) => ({
 				...group,
 				wallets: group.wallets.map((groupWallet) => {
-					const newWallet = wallets.find((wallet) => wallet.address === groupWallet.address);
+					const newWallet = wallets.find(
+						(wallet) => wallet.address.toLowerCase() === groupWallet.address.toLowerCase(),
+					);
 					return {
 						...groupWallet,
 						address: newWallet.address,

@@ -121,7 +121,11 @@ export default {
 .exchange-popup_body {
 	width: 620px !important;
 }
-.network-fee {
+.network-fee,
+.balance {
 	justify-content: space-between;
+}
+.exchange-block_fee {
+	padding: 0 15px;
 }
 </style>

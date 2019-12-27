@@ -3,6 +3,7 @@ import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
 import { API_URL } from '@/constants';
 import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
+import filterTransactionsByPaginationAndDate from '@/functions/filterTransactionsByPaginationAndDate';
 
 export default {
 	namespaced: true,
@@ -38,9 +39,8 @@ export default {
 					},
 				}),
 			]).then(([{ data }, { data: exchangeData }]) => {
-				console.log(exchangeData);
 				const parsedData = parsePythonArray(data)['1'].return;
-				const allTransactions = Object.values(parsedData).map((item) => {
+				let allTransactions = Object.values(parsedData).map((item) => {
 					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
 					return {
 						source: {
@@ -58,6 +58,7 @@ export default {
 							address: address,
 							currency: currency,
 						},
+						confirmations: item.Confirmations || 0,
 						fee: item.Fee || 0,
 						feeUSD: item.FeeUsd || 0,
 						type: (item.From
@@ -68,123 +69,90 @@ export default {
 					};
 				});
 
-				const parsedExchangeData = parsePythonArray(exchangeData)['1'].return;
-				const exchangeTransactions = Object.values(parsedExchangeData).map((item) => {
-					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-					return {
-						source: {
-							To: item.address,
-							From: item.address,
-							...item,
-						},
-						currency: currency,
-						address: item.address, // FIXME: Адрес не работает корректно
-						time: itemDate,
-						url: item.Url,
-						value: item.value,
-						valueUSD: item.valueUSD,
-						currentWallet: {
-							address: address,
-							currency: currency,
-						},
-						fee: item.Fee || 0,
-						feeUSD: item.FeeUsd || 0,
-						type: 'exchange',
-					};
-				});
+				const parsedExchangeData = parsePythonArray(exchangeData)['1'].return.Result;
+				const exchangeTransactions = Object.values(parsedExchangeData)
+					.map((item) => {
+						const isCurrentWalletTransaction =
+							(item.withdraw && item.withdraw.toLowerCase()) === address.toLowerCase() ||
+							(item.deposit && item.deposit.toLowerCase()) === address.toLowerCase() ||
+							(item.To && item.To.toLowerCase() === address.toLowerCase()) ||
+							(item.From && item.From.toLowerCase() === address.toLowerCase());
+						if (isCurrentWalletTransaction) {
+							const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
+							return [
+								{
+									source: {
+										From: null,
+										To: item.withdraw,
+										...item,
+									},
+									currency: item.incomingType, // send exchange
+									currentWallet: {
+										address: item.withdraw,
+										currency: item.incomingType,
+									},
+									time: itemDate,
+									url: item.transactionURL,
+									value: item.incomingCoin,
+									valueUSD: 0.0001,
+									fee: item.Fee || 0,
+									feeUSD: item.FeeUsd || 0,
+									type: 'exchange-send',
+								},
+								{
+									source: {
+										To: null,
+										From: item.deposit,
+										...item,
+									},
+									currency: item.outgoingType, // receive exchange
+									currentWallet: {
+										address: item.deposit,
+										currency: item.outgoingType,
+									},
+									time: itemDate,
+									url: item.transactionURL,
+									value: item.outgoingCoin,
+									valueUSD: 0.0001,
+									fee: item.Fee || 0,
+									feeUSD: item.FeeUsd || 0,
+									type: 'exchange-receive',
+								},
+							];
+						} else {
+							return null;
+						}
+					})
+					.flat()
+					.filter(
+						(item) =>
+							!!item &&
+							!!item.url &&
+							item.currentWallet.currency === currency &&
+							item.source.status !== 'failed',
+					);
+
+				// allTransactions = allTransactions.filter(
+				// 	(item) =>
+				// 		!exchangeTransactions.some(
+				// 			({ url, source }) =>
+				// 				url === item.url ||
+				// 				(typeof source.withdraw === 'string' && source.withdraw.toLowerCase()) ===
+				// 					(item.source.From ? item.source.From.toLowerCase() : 'stringforexcludeequality'),
+				// 		),
+				// );
+
+				allTransactions = allTransactions.filter(
+					(item) => !exchangeTransactions.some(({ url }) => url === item.url),
+				);
 
 				const transactions = [...allTransactions, ...exchangeTransactions];
 
-				const transactionsPerPage = 20;
-				let transactionsWithPagination = new Array(
-					Math.ceil(transactions.length / transactionsPerPage),
-				).fill([]);
-				const filterByDateTimeFunc = (a, b) => {
-					if (a.time < b.time) return -1;
-					else if (a.time > b.time) return 1;
-					else return 0;
-				};
-				const filterByDateFunc = (a, b) => {
-					if (a.date < b.date) return -1;
-					else if (a.date > b.date) return 1;
-					else return 0;
-				};
-
-				transactions.sort(filterByDateTimeFunc);
-				transactions.reverse();
-
-				transactions.forEach((item, index) => {
-					const currentIndex = Math.floor(index / transactionsPerPage);
-					transactionsWithPagination[currentIndex] = [
-						...transactionsWithPagination[currentIndex],
-						item,
-					];
-				});
-
-				transactionsWithPagination = transactionsWithPagination.map((transactions) => {
-					let datesWithTransactions = [];
-					const dates = [];
-					transactions.forEach(({ time }) => {
-						if (
-							dates.every(
-								(date) =>
-									date.getDate() !== time.getDate() ||
-									date.getMonth() !== time.getMonth() ||
-									date.getFullYear() !== time.getFullYear(),
-							)
-						) {
-							dates.push(time);
-						}
-					});
-
-					transactions.forEach((transaction) => {
-						const date = dates.find((date) => {
-							return (
-								date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
-								date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
-								date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
-							);
-						});
-
-						const addedTransObject = datesWithTransactions.find(
-							({ date: dateTrans }) =>
-								new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
-								new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
-								new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
-						);
-						if (addedTransObject) {
-							addedTransObject.transactions = [...addedTransObject.transactions, transaction];
-						} else {
-							datesWithTransactions = [
-								...datesWithTransactions,
-								{
-									date,
-									transactions: [
-										...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
-										transaction,
-									],
-								},
-							];
-						}
-					});
-
-					datesWithTransactions = datesWithTransactions.map((obj) => {
-						return {
-							...obj,
-							transactions: obj.transactions.slice(),
-						};
-					});
-					datesWithTransactions.sort(filterByDateFunc);
-					return datesWithTransactions.reverse();
-				});
-
-				return transactionsWithPagination;
+				return filterTransactionsByPaginationAndDate({ transactions, transactionsPerPage: 20 });
 			});
 		},
-		GET_ALL_TRANSACTIONS: async (store, { wallets }) => {
-			const { commit } = store;
-
-			let transactions = (
+		GET_CRYPTO_TRANSFER_TRANSACTIONS: async (store, { wallets }) => {
+			const transactions = (
 				await Promise.all(
 					wallets.map(async (wallet) => {
 						const { data } = await Axios({
@@ -215,7 +183,7 @@ export default {
 									address: wallet.address,
 									currency: wallet.currency,
 								},
-								confirmations: item.Confirmations,
+								confirmations: item.Confirmations || 0,
 								fee: item.Fee || 0,
 								feeUSD: item.FeeUsd || 0,
 								type: (item.From
@@ -231,91 +199,127 @@ export default {
 				)
 			).flat();
 
-			const transactionsPerPage = 20;
-			let transactionsWithPagination = new Array(
-				Math.ceil(transactions.length / transactionsPerPage),
-			).fill([]);
-			const filterByDateTimeFunc = (a, b) => {
-				if (a.time < b.time) return -1;
-				else if (a.time > b.time) return 1;
-				else return 0;
-			};
-			const filterByDateFunc = (a, b) => {
-				if (a.date < b.date) return -1;
-				else if (a.date > b.date) return 1;
-				else return 0;
-			};
-
-			transactions.sort(filterByDateTimeFunc);
-			transactions.reverse();
-
-			transactions.forEach((item, index) => {
-				const currentIndex = Math.floor(index / transactionsPerPage);
-				transactionsWithPagination[currentIndex] = [
-					...transactionsWithPagination[currentIndex],
-					item,
-				];
+			return filterTransactionsByPaginationAndDate({
+				transactions: transactions,
+				transactionsPerPage: 20,
 			});
-
-			transactionsWithPagination = transactionsWithPagination.map((transactions) => {
-				let datesWithTransactions = [];
-				const dates = [];
-				transactions.forEach(({ time }) => {
-					if (
-						dates.every(
-							(date) =>
-								date.getDate() !== time.getDate() ||
-								date.getMonth() !== time.getMonth() ||
-								date.getFullYear() !== time.getFullYear(),
-						)
-					) {
-						dates.push(time);
-					}
-				});
-
-				transactions.forEach((transaction) => {
-					const date = dates.find((date) => {
-						return (
-							date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
-							date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
-							date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
-						);
-					});
-
-					const addedTransObject = datesWithTransactions.find(
-						({ date: dateTrans }) =>
-							new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
-							new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
-							new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
-					);
-					if (addedTransObject) {
-						addedTransObject.transactions = [...addedTransObject.transactions, transaction];
-					} else {
-						datesWithTransactions = [
-							...datesWithTransactions,
-							{
-								date,
-								transactions: [
-									...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
-									transaction,
-								],
+		},
+		GET_CRYPTO_EXCHANGE_TRANSACTIONS: async () => {
+			const { data } = await Axios({
+				url: API_URL,
+				method: 'POST',
+				params: {
+					Comand: 'EthBtcEthHistory',
+					...getAuthParams(),
+				},
+			});
+			const parsedData = parsePythonArray(data)['1'].return.Result;
+			const transactions = Object.values(parsedData)
+				.map((item) => {
+					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
+					return [
+						{
+							source: {
+								To: item.withdraw,
+								From: null,
+								...item,
 							},
-						];
-					}
-				});
+							currency: item.incomingType, // Receive exchange
+							secondCurrency: item.outgoingType,
+							currentWallet: {
+								address: item.deposit,
+								currency: item.incomingType,
+							},
+							time: itemDate,
+							url: item.transactionURL,
+							value: item.incomingCoin,
+							valueUSD: 0.0001,
+							fee: item.Fee || 0,
+							feeUSD: item.FeeUsd || 0,
+							type: 'exchange-send',
+						},
+						{
+							source: {
+								From: item.deposit,
+								To: null,
+								...item,
+							},
+							currency: item.outgoingType, // Send exchange
+							secondCurrency: item.incomingType,
+							currentWallet: {
+								address: item.withdraw,
+								currency: item.outgoingType,
+							},
+							time: itemDate,
+							url: item.transactionURL,
+							value: item.outgoingCoin,
+							valueUSD: 0.0001,
+							fee: item.Fee || 0,
+							feeUSD: item.FeeUsd || 0,
+							type: 'exchange-receive',
+						},
+					].filter((item) => !!item.url);
+				})
+				.flat();
 
-				datesWithTransactions = datesWithTransactions.map((obj) => {
-					return {
-						...obj,
-						transactions: obj.transactions.slice(),
-					};
-				});
-				datesWithTransactions.sort(filterByDateFunc);
-				return datesWithTransactions.reverse();
+			return filterTransactionsByPaginationAndDate({
+				transactions,
+				transactionsPerPage: 20,
 			});
+		},
+		GET_CRYPTO_FIAT_TRANSACTIONS: async () => {
+			const { data } = await Axios({
+				url: API_URL,
+				method: 'POST',
+				params: {
+					Comand: 'TranzactionCryptoFiat',
+					...getAuthParams(),
+				},
+			});
+			const parsedData = Object.values(parsePythonArray(data)['1'].return.Info);
+			return parsedData.filter((item) => Object.values(item).length);
+		},
+		GET_ALL_TRANSACTIONS: async (store, { wallets }) => {
+			const { commit, dispatch } = store;
 
-			commit('SET_ALL_TRANSACTIONS', transactionsWithPagination);
-			return transactionsWithPagination;
+			const [
+				cryptoTransferTransactions,
+				exchangeTransactions,
+				cryptoFiatTransferTransactions,
+			] = await Promise.all([
+				dispatch('GET_CRYPTO_TRANSFER_TRANSACTIONS', { wallets }),
+				dispatch('GET_CRYPTO_EXCHANGE_TRANSACTIONS'),
+				dispatch('GET_CRYPTO_FIAT_TRANSACTIONS'),
+			]);
+
+			console.log(cryptoFiatTransferTransactions);
+
+			const transactions = [
+				{
+					name: 'crypto-transfer',
+					icon: {
+						src: require('@/assets/images/transaction-sent.svg'),
+						width: 15,
+					},
+					transactions: cryptoTransferTransactions,
+				},
+				{
+					name: 'crypto-exchange',
+					icon: {
+						src: require('@/assets/images/transaction-exchange.svg'),
+						width: 12,
+					},
+					transactions: exchangeTransactions,
+				},
+			];
+
+			// const transactionsWithPagination = filterTransactionsByPaginationAndDate({
+			// 	transactions,
+			// 	transactionsPerPage: 20,
+			// });
+
+			commit('SET_ALL_TRANSACTIONS', transactions);
+			return transactions;
 		},
 	},
 };

@@ -35,9 +35,7 @@ export default {
 		UPDATE_WALLET: ({ wallets }, { wallet, amount }) => {
 			wallets.find((item) => {
 				if (item.address === wallet) {
-					console.log(item.balance, Number(amount));
 					item.balance = item.balance + Number(amount);
-					console.log(item.balance, Number(amount));
 				}
 			});
 			localStorage.setItem('stateWalletsWallets', JSON.stringify(wallets));
@@ -251,11 +249,13 @@ export default {
 
 					commit('SET_WALLETS', result);
 
-					if (!rootState.group.groupWallets.length) {
-						commit('group/SET_GROUP_WALLETS', groups, { root: true });
-					} else {
-						commit('group/UPDATE_GROUP_WALLETS', { wallets: result }, { root: true });
-					}
+					commit('group/SET_GROUP_WALLETS', groups, { root: true });
+
+					// if (!rootState.group.groupWallets.length) {
+					// 	commit('group/SET_GROUP_WALLETS', groups, { root: true });
+					// } else {
+					// 	commit('group/UPDATE_GROUP_WALLETS', { wallets: result }, { root: true });
+					// }
 
 					return { wallets: result, groups };
 				}

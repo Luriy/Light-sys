@@ -167,6 +167,7 @@ import Error from '@/components/Error';
 import LkTransferConfirmationPopup from '@/components/Popups/TransferConfirmation';
 import LkTransferSuccessPopup from '@/components/Popups/TransferSuccess';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
+import EnterCode from '@/components/EnterCode';
 
 export default {
 	components: {
@@ -175,6 +176,7 @@ export default {
 		Error,
 		LkTransferConfirmationPopup,
 		LkTransferSuccessPopup,
+		EnterCode,
 	},
 	data() {
 		return {
@@ -393,15 +395,16 @@ export default {
 			this.clearData();
 		},
 		handleSmsKeyUp(e, index) {
+			const inputs = document.querySelectorAll('input.number-input');
 			if (e.key === 'Backspace') {
-				this.smsCodes[index][index] = '';
 				if (index !== 0) {
-					e.target.previousElementSibling.focus();
+					inputs[index - 1].focus();
 				}
+				this.smsCodes[index][index] = '';
 			} else if (e.key === 'Tab') {
 				return false;
 			} else {
-				index !== this.smsCodes.length - 1 ? e.target.nextElementSibling.focus() : this.onSend();
+				index !== this.smsCodes.length - 1 ? inputs[index + 1].focus() : this.onSend();
 			}
 		},
 		onRepeatSms() {

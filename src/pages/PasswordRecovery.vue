@@ -51,22 +51,7 @@
 									</div>
 								</div>
 								<div slot="smsNumber" class="exchange-popup_sms-number">
-									<div class="flex justify-content-between">
-										<input
-											v-bind:key="index"
-											class="number-input"
-											v-for="(input, index) in smsCodes"
-											v-model="input[index]"
-											@keyup="handleSmsKeyUp($event, index)"
-											placeholder="_"
-											type="text"
-											maxLength="1"
-											size="1"
-											min="0"
-											max="9"
-											pattern="[0-9]{1}"
-										/>
-									</div>
+									<enter-code :smsCodes="smsCodes" @onSmsKeyUp="handleSmsKeyUp"></enter-code>
 									<div class="timer-body">
 										<div class="title">Resend code:</div>
 										<div class="timer" v-if="countdown > 0">
@@ -84,14 +69,6 @@
 		</div>
 	</login-layout>
 </template>
-<style scoped>
-.recovery-title {
-	opacity: 0.65;
-}
-.transaction {
-	padding-top: 0;
-}
-</style>
 <script>
 import LoginLayout from '@/layout/LoginLayout';
 import Axios from 'axios';
@@ -101,11 +78,13 @@ import sha512 from 'js-sha512';
 import { AUTH_REQUEST } from '@/store/actions/auth';
 import checkLoginType from '@/functions/checkLoginType';
 import Error from '@/components/Error';
+import EnterCode from '@/components/EnterCode';
 
 export default {
 	components: {
 		LoginLayout,
 		Error,
+		EnterCode,
 	},
 	data() {
 		return {
@@ -125,15 +104,16 @@ export default {
 	methods: {
 		checkLoginType,
 		handleSmsKeyUp(e, index) {
+			const inputs = document.querySelectorAll('input.number-input');
 			if (e.key === 'Backspace') {
-				this.smsCodes[index][index] = '';
 				if (index !== 0) {
-					e.target.previousElementSibling.focus();
+					inputs[index - 1].focus();
 				}
+				this.smsCodes[index][index] = '';
 			} else if (e.key === 'Tab') {
 				return false;
 			} else {
-				index !== this.smsCodes.length - 1 ? e.target.nextElementSibling.focus() : this.sendPin();
+				index !== this.smsCodes.length - 1 ? inputs[index + 1].focus() : this.sendPin();
 			}
 		},
 		getPin(params = { withRepeat: false }) {
@@ -233,4 +213,11 @@ export default {
 	},
 };
 </script>
-<style scoped></style>
+<style scoped>
+.recovery-title {
+	opacity: 0.65;
+}
+.transaction {
+	padding-top: 0;
+}
+</style>
