@@ -1,14 +1,11 @@
 <template>
-	<div
-		class="flex flex-column align-items-flex-end position-relative"
-		v-if="operationsWithPagination.every(({ transactions }) => transactions.length)"
-	>
+	<div class="flex flex-column align-items-flex-end position-relative">
 		<div class="transaction-types position-absolute d-flex">
 			<button
 				class="transaction-type"
 				:class="{ active: type.name === activeTransactionType }"
 				@click="handleClickTransactionType(type.name)"
-				v-for="type in operationsWithPagination"
+				v-for="type in operationsWithPagination.filter(({ transactions }) => transactions.length)"
 				:key="type.name"
 			>
 				<img :src="type.icon.src" :width="type.icon.width" />

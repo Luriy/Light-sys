@@ -38,7 +38,10 @@
 					></cards-list>
 				</div>
 			</div>
-			<div class="operations-history" v-if="operations.length">
+			<div
+				class="operations-history"
+				v-if="operations.some(({ transactions }) => transactions.length)"
+			>
 				<div class="title">
 					<p>Operations history</p>
 				</div>

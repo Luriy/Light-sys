@@ -131,15 +131,12 @@
 				:remainingCurrency="remainingCurrency"
 				:currency="currency"
 				:fullCurrencyName="getCryptoInfo(currency).fullName"
-				@onSend="onSend"
-				@onRepeatSms="onRepeatSms"
 				:user="user"
-				:smsCodes="smsCodes"
 				:paymentAddress="paymentAddress"
 				:currencyAmount="currencyAmount"
 				:cryptoCurrencyAmount="cryptoCurrencyAmount"
 				:countdown="countdown"
-				@onSmsKeyUp="handleSmsKeyUp"
+				@onRepeatSms="onRepeatSms"
 			></lk-transfer-confirmation-popup>
 			<lk-transfer-success-popup
 				:successPopup="successPopup"
@@ -189,7 +186,6 @@ export default {
 			isSelectWalletOpened: false,
 			successPopup: false,
 			sendPopup: false,
-			smsCodes: [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }],
 			timer: null,
 			countdown: 59,
 			isTransferSuccess: false,
@@ -228,8 +224,6 @@ export default {
 		...mapGetters({
 			wallets: 'wallet/WALLETS',
 			types: 'wallet/TYPES',
-			operations: 'wallet/OPERATIONS',
-			unconfirmedOperations: 'wallet/UNCONFIRMED_OPERATIONS',
 		}),
 		currentWallet() {
 			return this.wallets.find((wallet) => wallet.address == this.$route.params.address);
@@ -394,21 +388,7 @@ export default {
 			clearInterval(this.timer);
 			this.clearData();
 		},
-		handleSmsKeyUp(e, index) {
-			const inputs = document.querySelectorAll('input.number-input');
-			if (e.key === 'Backspace') {
-				if (index !== 0) {
-					inputs[index - 1].focus();
-				}
-				this.smsCodes[index][index] = '';
-			} else if (e.key === 'Tab') {
-				return false;
-			} else {
-				index !== this.smsCodes.length - 1 ? inputs[index + 1].focus() : this.onSend();
-			}
-		},
 		onRepeatSms() {
-			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
 			this.countdown = 59;
 			this.timer = setInterval(() => {
 				this.countdown--;
@@ -449,33 +429,6 @@ export default {
 			} else {
 				this.error = validateErrorAmount || validateErrorAddress;
 			}
-		},
-		onSend() {
-			const token = this.smsCodes.map((smsCode, index) => smsCode[index]).join('');
-			this.$store
-				.dispatch('transfer/TRANSFER_CRYPTO', {
-					currency: capitalizeFirstLetter(this.$route.params.currency.toLowerCase()),
-					from: this.$route.params.address,
-					to: this.paymentAddress,
-					amount: Number(this.cryptoCurrencyAmount).toFixed(5),
-					token,
-				})
-				.then((data) => {
-					if (data.success) {
-						this.sendPopup = false;
-						this.successPopup = true;
-
-						setTimeout(() => {
-							this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
-							this.$store.dispatch('wallet/GET_WALLETS');
-						}, 5000);
-
-						setTimeout(() => {
-							this.successPopup = false;
-							this.clearData();
-						}, 7000);
-					}
-				});
 		},
 	},
 	watch: {

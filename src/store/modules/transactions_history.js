@@ -152,52 +152,53 @@ export default {
 			});
 		},
 		GET_CRYPTO_TRANSFER_TRANSACTIONS: async (store, { wallets }) => {
-			const transactions = (
-				await Promise.all(
-					wallets.map(async (wallet) => {
-						const { data } = await Axios({
-							url: API_URL,
-							method: 'POST',
-							params: {
-								Comand: `AllTransactions${capitalizeFirstLetter(wallet.currency.toLowerCase())}`,
-								Wallet: wallet.address,
-							},
-						});
-
-						const transactions = Object.values(parsePythonArray(data)[1].return).map((item) => {
-							const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-
-							return {
-								source: {
-									To: item.address,
-									From: item.address,
-									...item,
+			const transactions =
+				(
+					await Promise.all(
+						wallets.map(async (wallet) => {
+							const { data } = await Axios({
+								url: API_URL,
+								method: 'POST',
+								params: {
+									Comand: `AllTransactions${capitalizeFirstLetter(wallet.currency.toLowerCase())}`,
+									Wallet: wallet.address,
 								},
-								currency: wallet.currency,
-								address: item.address, // FIXME: Адрес не работает корректно
-								time: itemDate,
-								url: item.Url,
-								value: item.value,
-								valueUSD: item.valueUSD,
-								currentWallet: {
-									address: wallet.address,
+							});
+
+							const transactions = Object.values(parsePythonArray(data)[1].return).map((item) => {
+								const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
+
+								return {
+									source: {
+										To: item.address,
+										From: item.address,
+										...item,
+									},
 									currency: wallet.currency,
-								},
-								confirmations: item.Confirmations || 0,
-								fee: item.Fee || 0,
-								feeUSD: item.FeeUsd || 0,
-								type: (item.From
-								? item.From.toLowerCase() === wallet.address.toLowerCase()
-								: item.value < 0)
-									? 'send'
-									: 'receive',
-							};
-						});
+									address: item.address, // FIXME: Адрес не работает корректно
+									time: itemDate,
+									url: item.Url,
+									value: item.value,
+									valueUSD: item.valueUSD,
+									currentWallet: {
+										address: wallet.address,
+										currency: wallet.currency,
+									},
+									confirmations: item.Confirmations || 0,
+									fee: item.Fee || 0,
+									feeUSD: item.FeeUsd || 0,
+									type: (item.From
+									? item.From.toLowerCase() === wallet.address.toLowerCase()
+									: item.value < 0)
+										? 'send'
+										: 'receive',
+								};
+							});
 
-						return transactions;
-					}),
-				)
-			).flat();
+							return transactions;
+						}),
+					)
+				).flat() || [];
 
 			return filterTransactionsByPaginationAndDate({
 				transactions: transactions,
@@ -213,7 +214,7 @@ export default {
 					...getAuthParams(),
 				},
 			});
-			const parsedData = parsePythonArray(data)['1'].return.Result;
+			const parsedData = parsePythonArray(data)['1'].return.Result || [];
 			const transactions = Object.values(parsedData)
 				.map((item) => {
 					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
@@ -276,7 +277,7 @@ export default {
 					...getAuthParams(),
 				},
 			});
-			const parsedData = Object.values(parsePythonArray(data)['1'].return.Info);
+			const parsedData = Object.values(parsePythonArray(data)['1'].return.Info) || [];
 			return parsedData.filter((item) => Object.values(item).length);
 		},
 		GET_ALL_TRANSACTIONS: async (store, { wallets }) => {

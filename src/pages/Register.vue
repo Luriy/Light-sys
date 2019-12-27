@@ -42,19 +42,7 @@
                 </div>
                 <div slot='smsNumber' class="exchange-popup_sms-number">
                   <div class="flex justify-content-between">
-                    <input
-                      v-bind:key="index"
-                      class="number-input"
-                      v-for="(input, index) in smsCodes"
-                      v-model="input[index]"
-                      @keyup="handleSmsKeyUp($event, index)"
-                      placeholder="_"
-                      type="text"
-                      maxLength="1"
-                      size="1"
-                      min="0"
-                      max="9" pattern="[0-9]{1}"
-                    />
+                    <enter-code :smsCodes="smsCodes" @onSmsKeyUp="handleSmsKeyUp"></enter-code>
                   </div>
                   <div class="timer-body">
                     <div class="title">Resend code:</div>
@@ -137,11 +125,13 @@ import sha512 from 'js-sha512';
 import { AUTH_REQUEST, AUTH_LOGOUT } from '@/store/actions/auth'
 import checkLoginType from '@/functions/checkLoginType'
 import Error from '@/components/Error';
+import EnterCode from '@/components/EnterCode';
 
 export default {
   components: {
     LoginLayout,
-    Error
+    Error,
+    EnterCode,
   },
   data() {
   	return {
@@ -171,15 +161,16 @@ export default {
   methods: {
     checkLoginType,
     handleSmsKeyUp(e, index) {
+      const inputs = document.querySelectorAll('input.number-input');
 			if (e.key === 'Backspace') {
-				this.smsCodes[index][index] = '';
 				if (index !== 0) {
-					e.target.previousElementSibling.focus();
-				}
+					inputs[index - 1].focus();
+        }
+        this.smsCodes[index][index] = '';
 			} else if (e.key === 'Tab') {
 				return false;
 			} else {
-				index !== this.smsCodes.length - 1 ? e.target.nextElementSibling.focus() : this.registerApprove();
+				index !== this.smsCodes.length - 1 ? inputs[index + 1].focus() : this.registerApprove();
 			}
 		},
   	registerApprove: function(){

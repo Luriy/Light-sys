@@ -29,27 +29,13 @@
 			</div>
 		</div>
 		<div slot="smsNumber" class="exchange-popup_sms-number">
-			<input
-				class="number-input"
-				v-for="(input, index) in smsCodes"
-				:key="input + index"
-				v-model="input[index]"
-				@keyup="$emit('onSmsKeyUp', $event, index)"
-				placeholder="_"
-				type="text"
-				maxLength="1"
-				size="1"
-				min="0"
-				max="9"
-				pattern="[0-9]{1}"
-			/>
-
+			<enter-code :smsCodes="smsCodes" @onSmsKeyUp="handleSmsKeyUp"></enter-code>
 			<div class="timer-body">
 				<div class="title">Resend code:</div>
 				<div class="timer" v-show="countdown > 0">
 					00:{{ `${countdown < 10 ? '0' : ''}${countdown}` }} Sec
 				</div>
-				<p class="repeat-btn" v-show="countdown === 0" @click="$emit('onRepeatSms')">Repeat</p>
+				<p class="repeat-btn" v-show="countdown === 0" @click="onRepeatSms">Repeat</p>
 			</div>
 		</div>
 		<div slot="body" class="exchange-popup_body">
@@ -91,10 +77,12 @@
 <script>
 import LkPopUp from '@/layout/LkPopUp';
 import formatPhoneNumber from '@/functions/formatPhoneNumber';
+import EnterCode from '@/components/EnterCode';
 
 export default {
 	components: {
 		LkPopUp,
+		EnterCode,
 	},
 	props: [
 		'sendPopup',
@@ -103,14 +91,62 @@ export default {
 		'currencyAmount',
 		'cryptoCurrencyAmount',
 		'currency',
-		'smsCodes',
 		'user',
 		'paymentAddress',
 		'countdown',
 		'fullCurrencyName',
 	],
+	data() {
+		return {
+			smsCodes: [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }],
+		};
+	},
 	methods: {
 		formatPhoneNumber,
+		onSend() {
+			const token = this.smsCodes.map((smsCode, index) => smsCode[index]).join('');
+			this.$store
+				.dispatch('transfer/TRANSFER_CRYPTO', {
+					currency: capitalizeFirstLetter(this.$route.params.currency.toLowerCase()),
+					from: this.$route.params.address,
+					to: this.paymentAddress,
+					amount: Number(this.cryptoCurrencyAmount).toFixed(5),
+					token,
+				})
+				.then((data) => {
+					if (data.success) {
+						this.sendPopup = false;
+						this.successPopup = true;
+
+						setTimeout(() => {
+							this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+							this.$store.dispatch('wallet/GET_WALLETS');
+						}, 5000);
+
+						setTimeout(() => {
+							this.successPopup = false;
+							this.clearData();
+						}, 7000);
+					}
+				});
+		},
+		handleSmsKeyUp(e, index) {
+			const inputs = document.querySelectorAll('input.number-input');
+			if (e.key === 'Backspace') {
+				if (index !== 0) {
+					inputs[index - 1].focus();
+				}
+				this.smsCodes[index][index] = '';
+			} else if (e.key === 'Tab') {
+				return false;
+			} else {
+				index !== this.smsCodes.length - 1 ? inputs[index + 1].focus() : this.onSend();
+			}
+		},
+		onRepeatSms() {
+			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
+			this.$emit('onRepeatSms');
+		},
 	},
 };
 </script>
@@ -127,5 +163,8 @@ export default {
 }
 .exchange-block_fee {
 	padding: 0 15px;
+}
+.exchange-popup_sms-number {
+	width: 65%;
 }
 </style>
