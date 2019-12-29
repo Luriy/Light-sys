@@ -32,14 +32,6 @@ export default {
 			state.wallets = payload;
 			localStorage.setItem('stateWalletsWallets', JSON.stringify(payload));
 		},
-		UPDATE_WALLET: ({ wallets }, { wallet, amount }) => {
-			wallets.find((item) => {
-				if (item.address === wallet) {
-					item.balance = item.balance + Number(amount);
-				}
-			});
-			localStorage.setItem('stateWalletsWallets', JSON.stringify(wallets));
-		},
 		SET_TYPES: (state, payload) => {
 			state.types = payload;
 			localStorage.setItem('stateTypes', JSON.stringify(payload));
@@ -180,7 +172,7 @@ export default {
 					);
 					return { error: true };
 				} else {
-					const result = Object.keys(returnData)
+					const wallets = Object.keys(returnData)
 						.reduce((acc, walletCurrency) => {
 							if (
 								walletCurrency === 'BTC' ||
@@ -217,39 +209,14 @@ export default {
 					//     }
 					//   })
 					// })
-					const groups = [
-						...Object.keys(returnData.Group).map((key) => {
-							return {
-								groupName: decodeURI(key),
-								wallets: Object.values(returnData.Group[key])
-									.map((address) =>
-										result.find((res) => res.address.toLowerCase() === address.toLowerCase()),
-									)
-									.filter((item) => !!item),
-							};
-						}),
-					].filter(({ wallets }) => wallets.length !== 0);
 
-					if (!groups.some((group) => group.groupName === 'Other wallets')) {
-						groups.push({
-							groupName: 'Other wallets',
-							wallets: result.filter((wallet) => wallet.group === ''),
-						});
-					} else {
-						const otherWalletsGroup = groups.find(({ groupName }) => groupName === 'Other wallets');
-						result.map((item) => {
-							const isGroupsContainsCurrentWallet = groups.some(({ wallets }) =>
-								wallets.some(({ address }) => address === item.address),
-							);
-							if (!isGroupsContainsCurrentWallet) {
-								otherWalletsGroup.wallets.push(item);
-							}
-						});
-					}
+					commit('SET_WALLETS', wallets);
 
-					commit('SET_WALLETS', result);
-
-					commit('group/SET_GROUP_WALLETS', groups, { root: true });
+					commit(
+						'group/SET_AND_TRANSFORM_WALLETS_TO_GROUPS',
+						{ group: returnData.Group, wallets },
+						{ root: true },
+					);
 
 					// if (!rootState.group.groupWallets.length) {
 					// 	commit('group/SET_GROUP_WALLETS', groups, { root: true });
@@ -257,11 +224,30 @@ export default {
 					// 	commit('group/UPDATE_GROUP_WALLETS', { wallets: result }, { root: true });
 					// }
 
-					return { wallets: result, groups };
+					return { wallets };
 				}
 			});
 		},
+		UPDATE_WALLETS_BALANCE: ({ commit }) => {
+			const currencies = ['BTC', 'ETH', 'LTC'];
+			currencies.map(async (currency) => {
+				const { data } = await Axios({
+					url: API_URL,
+					method: 'POST',
+					params: {
+						Comand: `AllBalance${currency}`,
+						...getAuthParams(),
+					},
+				});
+				const parsedData = parsePythonArray(data)['1'].return.Result;
+				const parsedArray = Object.keys(parsedData).map((key) => ({
+					address: key,
+					balance: 1,
+				}));
+			});
 
+			// console.log(walletsWithNewBalance);
+		},
 		GET_TRANSFER_TOKEN: ({ commit, dispatch }, user) => {
 			return Axios({
 				url: API_URL,

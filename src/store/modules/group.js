@@ -14,6 +14,40 @@ export default {
 		GROUP_CURRENCIES: (state) => state.groupCurrencies,
 	},
 	mutations: {
+		SET_AND_TRANSFORM_WALLETS_TO_GROUPS: (state, { group, wallets }) => {
+			const groups = [
+				...Object.keys(group).map((key) => {
+					return {
+						groupName: decodeURI(key),
+						wallets: Object.values(group[key])
+							.map((address) =>
+								wallets.find((res) => res.address.toLowerCase() === address.toLowerCase()),
+							)
+							.filter((item) => !!item),
+					};
+				}),
+			].filter(({ wallets }) => wallets.length !== 0);
+
+			if (!groups.some((group) => group.groupName === 'Other wallets')) {
+				groups.push({
+					groupName: 'Other wallets',
+					wallets: wallets.filter((wallet) => wallet.group === ''),
+				});
+			} else {
+				const otherWalletsGroup = groups.find(({ groupName }) => groupName === 'Other wallets');
+				wallets.map((item) => {
+					const isGroupsContainsCurrentWallet = groups.some(({ wallets }) =>
+						wallets.some(({ address }) => address === item.address),
+					);
+					if (!isGroupsContainsCurrentWallet) {
+						otherWalletsGroup.wallets.push(item);
+					}
+				});
+			}
+
+			state.groupWallets = groups;
+			localStorage.setItem('stateGroupWallets', JSON.stringify(groups));
+		},
 		SET_GROUP_WALLETS: (state, payload) => {
 			state.groupWallets = payload;
 			localStorage.setItem('stateGroupWallets', JSON.stringify(payload));

@@ -1,5 +1,8 @@
 <template>
-	<div class="flex flex-column align-items-flex-end position-relative">
+	<div
+		class="flex flex-column align-items-flex-end position-relative"
+		v-if="operationsWithPagination.some(({ transactions }) => transactions.length)"
+	>
 		<div class="transaction-types position-absolute d-flex">
 			<button
 				class="transaction-type"
@@ -15,7 +18,7 @@
 			<div class="trans-list__wrapper">
 				<div
 					class="trans-list"
-					v-for="(datesWithTransaction, index) in activeTransactions"
+					v-for="(datesWithTransaction, index) in activeTransactions[activePage]"
 					:key="datesWithTransaction.date.toString()"
 				>
 					<div class="trans-date">
@@ -26,7 +29,6 @@
 								class="arrow-block flex align-items-center absolute"
 								:class="{ disabled: activePage === 0 }"
 								@click="throttle(handleClickMoveButton('top'), 1000)"
-								v-if="index === 0"
 							>
 								<img src="@/assets/images/arrow-up.svg" height="16" width="16" />
 							</button>
@@ -39,8 +41,7 @@
 						:class="{
 							exchange: transaction.type.includes('exchange'),
 							active: openedOperation === transaction.url + transaction.type,
-							'plus-trans':
-								transaction.type === 'receive' || transaction.type === 'exchange-receive',
+							'plus-trans': transaction.type.includes('receive'),
 						}"
 					>
 						<div class="trans-card">
@@ -52,20 +53,34 @@
 											src="@/assets/images/transaction-exchange.svg"
 										/>
 										<img
-											v-else-if="transaction.type === 'send'"
+											v-else-if="
+												transaction.type.includes('send') && !transaction.type.includes('exchange')
+											"
 											src="@/assets/images/transaction-sent.svg"
 										/>
 										<img
-											v-else-if="transaction.type === 'receive'"
+											v-else-if="
+												transaction.type.includes('receive') &&
+													!transaction.type.includes('exchange')
+											"
 											src="@/assets/images/transaction-received.svg"
 										/>
 									</span>
 									<div class="text transaction-status">
 										<p v-if="transaction.type.includes('exchange')">Exchanged</p>
-										<p v-else-if="transaction.type === 'send'">
+										<p
+											v-else-if="
+												transaction.type.includes('send') && !transaction.type.includes('exchange')
+											"
+										>
 											Sent
 										</p>
-										<p v-else-if="transaction.type === 'receive'">
+										<p
+											v-else-if="
+												transaction.type.includes('receive') &&
+													!transaction.type.includes('exchange')
+											"
+										>
 											Received
 										</p>
 										<span>{{ getTime(transaction.time) }}</span>
@@ -73,19 +88,33 @@
 								</button>
 								<div class="code">
 									<div class="flex flex-column code-column">
-										<div class="flex" v-if="transaction.type === 'exchange-receive'">
+										<div
+											class="flex align-items-center"
+											v-if="transaction.type === 'exchange-receive'"
+										>
 											<img :src="getCryptoInfo(transaction.secondCurrency).image.corner" />
 											<span :class="transaction.secondCurrency.toLowerCase()">{{
 												getCryptoInfo(transaction.secondCurrency).fullName
 											}}</span>
 										</div>
-										<div class="flex">
-											<img :src="getCryptoInfo(transaction.currency).image.corner" />
-											<span :class="transaction.currency.toLowerCase()">{{
-												getCryptoInfo(transaction.currency).fullName
+										<div class="flex align-items-center">
+											<img
+												:src="
+													transaction.isCard
+														? getBankImage(transaction.psid, 'small')
+														: getCryptoInfo(transaction.currency).image.corner
+												"
+											/>
+											<span :class="!transaction.isCard && transaction.currency.toLowerCase()">{{
+												transaction.isCard
+													? getCurrencyInfo(transaction.currency).fullName
+													: getCryptoInfo(transaction.currency).fullName
 											}}</span>
 										</div>
-										<div class="flex" v-if="transaction.type === 'exchange-send'">
+										<div
+											class="flex align-items-center"
+											v-if="transaction.type === 'exchange-send'"
+										>
 											<img :src="getCryptoInfo(transaction.secondCurrency).image.corner" />
 											<span :class="transaction.secondCurrency.toLowerCase()">{{
 												getCryptoInfo(transaction.secondCurrency).fullName
@@ -95,13 +124,25 @@
 								</div>
 								<div
 									class="address"
-									v-if="transaction.type === 'receive' || transaction.type === 'exchange-receive'"
+									:class="{
+										isNotCryptoFiat: !(
+											transaction.type === 'crypto-fiat-receive' ||
+											transaction.type === 'crypto-fiat-send'
+										),
+									}"
+									v-if="transaction.type.includes('receive')"
 								>
 									{{ transaction.source.From }}
 								</div>
 								<div
 									class="address"
-									v-else-if="transaction.type === 'send' || transaction.type === 'exchange-send'"
+									:class="{
+										isNotCryptoFiat: !(
+											transaction.type === 'crypto-fiat-receive' ||
+											transaction.type === 'crypto-fiat-send'
+										),
+									}"
+									v-else-if="transaction.type.includes('send')"
 								>
 									{{ transaction.source.To }}
 								</div>
@@ -109,20 +150,23 @@
 									<div class="amount">
 										<p>
 											{{
-												transaction.type === 'receive' || transaction.type === 'exchange-receive'
+												transaction.type.includes('receive')
 													? '+'
-													: (transaction.type === 'send' && transaction.value > 0) ||
-													  transaction.type === 'exchange-send'
+													: transaction.type.includes('send') && transaction.value > 0
 													? '-'
 													: ''
-											}}{{ formatCurrency(transaction.value, '', 5) }} {{ transaction.currency }}
+											}}{{
+												transaction.isCard
+													? Number(transaction.value).toFixed(2)
+													: Number(transaction.value).toFixed(5)
+											}}
+											{{ transaction.currency }}
 										</p>
 										<span
 											>{{
-												transaction.type === 'receive' || transaction.type === 'exchange-receive'
+												transaction.type.includes('receive')
 													? '+'
-													: (transaction.type === 'send' && transaction.value > 0) ||
-													  transaction.type === 'exchange-send'
+													: transaction.type.includes('send') && transaction.value > 0
 													? '-'
 													: ''
 											}}{{ formatCurrency(transaction.valueUSD, '$') }} USD</span
@@ -139,6 +183,8 @@
 											transaction.type === 'receive' || transaction.type === 'exchange-send',
 										'with-fee': transaction.type === 'send',
 										'exchange-receive': transaction.type === 'exchange-receive',
+										'crypto-fiat-receive': transaction.type === 'crypto-fiat-receive',
+										'crypto-fiat-send': transaction.type === 'crypto-fiat-send',
 									}"
 								>
 									<div class="th">
@@ -148,7 +194,10 @@
 									<div class="th">
 										<p>Transaction ID</p>
 										<a :href="transaction.url" target="_blank" class="trans-id">{{
-											getTransactionId(transaction.url)
+											transaction.type === 'crypto-fiat-send' ||
+											transaction.type === 'crypto-fiat-receive'
+												? transaction.url.slice(12)
+												: getTransactionId(transaction.url)
 										}}</a>
 									</div>
 									<div class="th" v-if="!transaction.type.includes('receive')">
@@ -172,31 +221,36 @@
 											>
 										</div>
 									</div>
-									<div class="th" v-if="!transaction.type.includes('exchange')">
+									<div
+										class="th"
+										v-if="
+											!transaction.type.includes('exchange') &&
+												transaction.type !== 'crypto-fiat-receive' &&
+												transaction.type !== 'crypto-fiat-send'
+										"
+									>
 										<p>Confirmations</p>
 										<span>{{ transaction.confirmations }}</span>
 									</div>
 									<div class="th">
-										<p v-if="transaction.type === 'send' || transaction.type === 'exchange-send'">
+										<p v-if="transaction.type.includes('send')">
 											To
 										</p>
-										<p
-											v-else-if="
-												transaction.type === 'receive' || transaction.type === 'exchange-receive'
-											"
-										>
+										<p v-else-if="transaction.type.includes('receive')">
 											From
 										</p>
-										<span
-											v-if="transaction.type === 'send' || transaction.type === 'exchange-send'"
-											>{{ transaction.source.To }}</span
-										>
-										<span
-											v-else-if="
-												transaction.type === 'receive' || transaction.type === 'exchange-receive'
-											"
-											>{{ transaction.source.From }}</span
-										>
+										<span v-if="transaction.type.includes('send')">{{
+											transaction.source.To
+										}}</span>
+										<span v-else-if="transaction.type.includes('receive')">{{
+											transaction.source.From
+										}}</span>
+									</div>
+									<div class="th" v-if="transaction.type === 'crypto-fiat-receive'">
+										<p>
+											To
+										</p>
+										<span>{{ transaction.source.To }}</span>
 									</div>
 									<!-- <div>
 									<tr>
@@ -220,9 +274,9 @@
 
 		<transition name="fade">
 			<button
-				:disabled="activePage === operationsWithPagination.length - 1"
+				:disabled="activePage === activeTransactions.length - 1"
 				class="arrow-block"
-				:class="{ disabled: activePage === operationsWithPagination.length - 1 }"
+				:class="{ disabled: activePage === activeTransactions.length - 1 }"
 				@click="throttle(handleClickMoveButton('bottom'), 1000)"
 			>
 				<img
@@ -238,6 +292,8 @@
 <script>
 import throttle from '@/functions/throttle';
 import getCryptoInfo from '@/functions/getCryptoInfo';
+import getBankImage from '@/functions/getBankImage';
+import getCurrencyInfo from '@/functions/getCurrencyInfo';
 
 export default {
 	props: ['operationsWithPagination'],
@@ -250,13 +306,17 @@ export default {
 	},
 	computed: {
 		activeTransactions() {
-			return this.operationsWithPagination.find(({ name }) => name === this.activeTransactionType)
-				.transactions[this.activePage];
+			const currentTransactionsType = this.operationsWithPagination.find(
+				({ name }) => name === this.activeTransactionType,
+			);
+			return currentTransactionsType ? currentTransactionsType.transactions : [];
 		},
 	},
 	methods: {
 		throttle,
 		getCryptoInfo,
+		getBankImage,
+		getCurrencyInfo,
 		handleClickMoveButton(direction) {
 			if (direction === 'top') {
 				this.activePage--;
@@ -355,7 +415,7 @@ export default {
 	transform: translateY(-2px);
 	font-size: 15px !important;
 	margin: 0 3px;
-	@media screen and (max-width: 1200px) {
+	@media screen and (max-width: 1250px) {
 		font-size: 14px !important;
 	}
 }
@@ -364,7 +424,7 @@ export default {
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 15;
-	@media screen and (max-width: 1200px) {
+	@media screen and (max-width: 1250px) {
 		top: 4px;
 	}
 }
@@ -385,5 +445,16 @@ export default {
 	&.active {
 		border: 1px solid rgba(255, 255, 255, 0.5);
 	}
+}
+
+.trans-top {
+	@media screen and (min-width: 1400px) {
+		display: grid !important;
+		grid-template-columns: repeat(4, 25%);
+		& > * {
+			width: 100% !important;
+		}
+	}
+	display: flex !important;
 }
 </style>

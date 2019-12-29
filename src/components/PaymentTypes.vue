@@ -264,7 +264,7 @@ export default {
 .select .select-wrapper {
 	overflow-y: auto;
 	max-height: 340px;
-	@media screen and (max-width: 1200px) {
+	@media screen and (max-width: 1250px) {
 		max-height: 300px;
 	}
 	scrollbar-width: thin;

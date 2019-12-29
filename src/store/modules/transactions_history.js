@@ -4,6 +4,8 @@ import { getAuthParams } from '@/functions/auth';
 import { API_URL } from '@/constants';
 import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
 import filterTransactionsByPaginationAndDate from '@/functions/filterTransactionsByPaginationAndDate';
+import formatCardNumber from '@/functions/formatCardNumber';
+import getWalletBlockchainLink from '@/functions/getWalletBlockchainLink';
 
 export default {
 	namespaced: true,
@@ -20,136 +22,110 @@ export default {
 		},
 	},
 	actions: {
-		GET_WALLET_TRANSACTIONS: (store, { currency, address }) => {
-			return Promise.all([
-				Axios({
-					url: API_URL,
-					method: 'POST',
-					params: {
-						Comand: `AllTransactions${capitalizeFirstLetter(currency.toLowerCase())}`,
-						Wallet: address,
-					},
-				}),
-				Axios({
-					url: API_URL,
-					method: 'POST',
-					params: {
-						Comand: 'EthBtcEthHistory',
-						...getAuthParams(),
-					},
-				}),
-			]).then(([{ data }, { data: exchangeData }]) => {
-				const parsedData = parsePythonArray(data)['1'].return;
-				let allTransactions = Object.values(parsedData).map((item) => {
-					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-					return {
-						source: {
-							To: item.address,
-							From: item.address,
-							...item,
-						},
-						currency: currency,
-						address: item.address, // FIXME: Адрес не работает корректно
-						time: itemDate,
-						url: item.Url,
-						value: item.value,
-						valueUSD: item.valueUSD,
-						currentWallet: {
-							address: address,
-							currency: currency,
-						},
-						confirmations: item.Confirmations || 0,
-						fee: item.Fee || 0,
-						feeUSD: item.FeeUsd || 0,
-						type: (item.From
-						? item.From.toLowerCase() === address.toLowerCase()
-						: item.value < 0)
-							? 'send'
-							: 'receive',
-					};
-				});
-
-				const parsedExchangeData = parsePythonArray(exchangeData)['1'].return.Result;
-				const exchangeTransactions = Object.values(parsedExchangeData)
-					.map((item) => {
-						const isCurrentWalletTransaction =
-							(item.withdraw && item.withdraw.toLowerCase()) === address.toLowerCase() ||
-							(item.deposit && item.deposit.toLowerCase()) === address.toLowerCase() ||
-							(item.To && item.To.toLowerCase() === address.toLowerCase()) ||
-							(item.From && item.From.toLowerCase() === address.toLowerCase());
-						if (isCurrentWalletTransaction) {
-							const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-							return [
-								{
-									source: {
-										From: null,
-										To: item.withdraw,
-										...item,
-									},
-									currency: item.incomingType, // send exchange
-									currentWallet: {
-										address: item.withdraw,
-										currency: item.incomingType,
-									},
-									time: itemDate,
-									url: item.transactionURL,
-									value: item.incomingCoin,
-									valueUSD: 0.0001,
-									fee: item.Fee || 0,
-									feeUSD: item.FeeUsd || 0,
-									type: 'exchange-send',
-								},
-								{
-									source: {
-										To: null,
-										From: item.deposit,
-										...item,
-									},
-									currency: item.outgoingType, // receive exchange
-									currentWallet: {
-										address: item.deposit,
-										currency: item.outgoingType,
-									},
-									time: itemDate,
-									url: item.transactionURL,
-									value: item.outgoingCoin,
-									valueUSD: 0.0001,
-									fee: item.Fee || 0,
-									feeUSD: item.FeeUsd || 0,
-									type: 'exchange-receive',
-								},
-							];
-						} else {
-							return null;
-						}
-					})
-					.flat()
-					.filter(
-						(item) =>
-							!!item &&
-							!!item.url &&
-							item.currentWallet.currency === currency &&
-							item.source.status !== 'failed',
-					);
-
-				// allTransactions = allTransactions.filter(
-				// 	(item) =>
-				// 		!exchangeTransactions.some(
-				// 			({ url, source }) =>
-				// 				url === item.url ||
-				// 				(typeof source.withdraw === 'string' && source.withdraw.toLowerCase()) ===
-				// 					(item.source.From ? item.source.From.toLowerCase() : 'stringforexcludeequality'),
-				// 		),
-				// );
-
-				allTransactions = allTransactions.filter(
-					(item) => !exchangeTransactions.some(({ url }) => url === item.url),
-				);
-
-				const transactions = [...allTransactions, ...exchangeTransactions];
-
-				return filterTransactionsByPaginationAndDate({ transactions, transactionsPerPage: 20 });
+		GET_WALLET_TRANSACTIONS: async (store, { currency, address }) => {
+			const { data } = await Axios({
+				url: API_URL,
+				method: 'POST',
+				params: {
+					Comand: `AllTransactions${capitalizeFirstLetter(currency.toLowerCase())}`,
+					Wallet: address,
+				},
 			});
+			const parsedData = parsePythonArray(data)['1'].return;
+			let transactions = Object.values(parsedData).map((item) => {
+				const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
+				return {
+					source: {
+						To: item.address,
+						From: item.address,
+						...item,
+					},
+					currency: currency,
+					address: item.address, // FIXME: Адрес не работает корректно
+					time: itemDate,
+					url: item.Url,
+					value: item.value,
+					valueUSD: item.valueUSD,
+					currentWallet: {
+						address: address,
+						currency: currency,
+					},
+					confirmations: item.Confirmations || 0,
+					fee: item.Fee || 0,
+					feeUSD: item.FeeUsd || 0,
+					type: (item.From
+					? item.From.toLowerCase() === address.toLowerCase()
+					: item.value < 0)
+						? 'send'
+						: 'receive',
+				};
+			});
+
+			const parsedExchangeData = parsePythonArray(exchangeData)['1'].return.Result;
+			const exchangeTransactions = Object.values(parsedExchangeData)
+				.map((item) => {
+					const isCurrentWalletTransaction =
+						(item.withdraw && item.withdraw.toLowerCase()) === address.toLowerCase() ||
+						(item.deposit && item.deposit.toLowerCase()) === address.toLowerCase() ||
+						(item.To && item.To.toLowerCase() === address.toLowerCase()) ||
+						(item.From && item.From.toLowerCase() === address.toLowerCase());
+					if (isCurrentWalletTransaction) {
+						const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
+						return [
+							{
+								source: {
+									From: null,
+									To: item.withdraw,
+									...item,
+								},
+								currency: item.incomingType, // send exchange
+								currentWallet: {
+									address: item.withdraw,
+									currency: item.incomingType,
+								},
+								time: itemDate,
+								url: item.transactionURL,
+								value: item.incomingCoin,
+								valueUSD: 0.0001,
+								fee: item.Fee || 0,
+								feeUSD: item.FeeUsd || 0,
+								type: 'exchange-send',
+							},
+							{
+								source: {
+									To: null,
+									From: item.deposit,
+									...item,
+								},
+								currency: item.outgoingType, // receive exchange
+								currentWallet: {
+									address: item.deposit,
+									currency: item.outgoingType,
+								},
+								time: itemDate,
+								url: item.transactionURL,
+								value: item.outgoingCoin,
+								valueUSD: 0.0001,
+								fee: item.Fee || 0,
+								feeUSD: item.FeeUsd || 0,
+								type: 'exchange-receive',
+							},
+						];
+					} else {
+						return null;
+					}
+				})
+				.flat()
+				.filter(
+					(item) =>
+						!!item &&
+						!!item.url &&
+						item.currentWallet.currency === currency &&
+						item.source.status !== 'failed',
+				)
+				.filter((item) => !exchangeTransactions.some(({ url }) => url === item.url));
+
+			return filterTransactionsByPaginationAndDate({ transactions, transactionsPerPage: 20 });
 		},
 		GET_CRYPTO_TRANSFER_TRANSACTIONS: async (store, { wallets }) => {
 			const transactions =
@@ -205,7 +181,7 @@ export default {
 				transactionsPerPage: 20,
 			});
 		},
-		GET_CRYPTO_EXCHANGE_TRANSACTIONS: async () => {
+		GET_CRYPTO_EXCHANGE_TRANSACTIONS: async (store, { singleWallet }) => {
 			const { data } = await Axios({
 				url: API_URL,
 				method: 'POST',
@@ -215,7 +191,16 @@ export default {
 				},
 			});
 			const parsedData = parsePythonArray(data)['1'].return.Result || [];
+
 			const transactions = Object.values(parsedData)
+				.filter((transaction) =>
+					singleWallet
+						? (transaction.withdraw ? transaction.withdraw.toLowerCase() : false) ===
+								singleWallet.address ||
+						  (transaction.deposit ? transaction.deposit.toLowerCase() : false) ===
+								singleWallet.address
+						: true,
+				)
 				.map((item) => {
 					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
 					return [
@@ -234,9 +219,9 @@ export default {
 							time: itemDate,
 							url: item.transactionURL,
 							value: item.incomingCoin,
-							valueUSD: 0.0001,
-							fee: item.Fee || 0,
-							feeUSD: item.FeeUsd || 0,
+							valueUSD: item.incomingUSD,
+							fee: item.incomingCoin - item.outcomingUSD * (item.incomingCoin / item.incomingUSD),
+							feeUSD: item.incomingUSD - item.outcomingUSD,
 							type: 'exchange-send',
 						},
 						{
@@ -254,9 +239,7 @@ export default {
 							time: itemDate,
 							url: item.transactionURL,
 							value: item.outgoingCoin,
-							valueUSD: 0.0001,
-							fee: item.Fee || 0,
-							feeUSD: item.FeeUsd || 0,
+							valueUSD: item.outcomingUSD,
 							type: 'exchange-receive',
 						},
 					].filter((item) => !!item.url);
@@ -268,19 +251,98 @@ export default {
 				transactionsPerPage: 20,
 			});
 		},
-		GET_CRYPTO_FIAT_TRANSACTIONS: async () => {
-			const { data } = await Axios({
-				url: API_URL,
-				method: 'POST',
-				params: {
-					Comand: 'TranzactionCryptoFiat',
-					...getAuthParams(),
-				},
-			});
+		GET_CRYPTO_FIAT_TRANSACTIONS: async ({ dispatch }, { singleWallet }) => {
+			const [{ data }, allPsids] = await Promise.all([
+				Axios({
+					url: API_URL,
+					method: 'POST',
+					params: {
+						Comand: 'TranzactionCryptoFiat',
+						...getAuthParams(),
+					},
+				}),
+				dispatch('exchange/GET_FIAT_PSIDS', {}, { root: true }),
+			]);
+
 			const parsedData = Object.values(parsePythonArray(data)['1'].return.Info) || [];
-			return parsedData.filter((item) => Object.values(item).length);
+			let transactions = parsedData.filter((item) => Object.values(item).length);
+
+			if (singleWallet) {
+				transactions = transactions.filter(
+					(transaction) =>
+						(transaction.from ? transaction.from.toLowerCase() : false) ===
+							singleWallet.address.toLowerCase() ||
+						(transaction.to ? transaction.to.toLowerCase() : false) ===
+							singleWallet.address.toLowerCase(),
+				);
+			}
+
+			transactions = transactions
+				.map((item) => {
+					const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
+					const psid1Info = Object.values(allPsids).find(
+						({ name }) => name === decodeURI(item.psid1),
+					);
+					const psid2Info = Object.values(allPsids).find(({ name }) => {
+						return name === decodeURI(item.psid2);
+					});
+					const isPsid1Fiat = !isNaN(item.psid1);
+					return [
+						{
+							source: {
+								To: isPsid1Fiat ? item.to : formatCardNumber(item.to) || null,
+								...item,
+							},
+							currency: psid1Info.valute, // send transfer
+							currentWallet: {
+								address: item.from,
+								currency: psid1Info.valute,
+							},
+							isCard: isPsid1Fiat,
+							psid: psid1Info.psid,
+							time: itemDate,
+							value: item.in || 0,
+							valueUSD: item.inUSD || 0,
+							fee: item.in && item.out ? item.in - item.outUSD * (item.in / item.inUSD) : 0,
+							feeUSD: item.inUSD && item.outUSD ? item.inUSD - item.outUSD : 0,
+							type: 'crypto-fiat-send',
+							url: getWalletBlockchainLink(
+								isPsid1Fiat ? psid2Info.valute : psid1Info.valute,
+								isPsid1Fiat ? item.to : item.from,
+							),
+						},
+						{
+							source: {
+								From: isPsid1Fiat ? formatCardNumber(item.from) : item.from || null,
+								To: isPsid1Fiat ? item.to : formatCardNumber(item.to) || null,
+								...item,
+							},
+							currency: psid2Info.valute, // receive transfer
+							currentWallet: {
+								address: item.from,
+								currency: psid2Info.valute,
+							},
+							isCard: !isPsid1Fiat,
+							psid: psid2Info.psid,
+							time: itemDate,
+							value: item.out || 0,
+							valueUSD: item.outUSD || 0,
+							type: 'crypto-fiat-receive',
+							url: getWalletBlockchainLink(
+								isPsid1Fiat ? psid2Info.valute : psid1Info.valute,
+								isPsid1Fiat ? item.to : item.from,
+							),
+						},
+					];
+				})
+				.flat();
+
+			return filterTransactionsByPaginationAndDate({
+				transactions,
+				transactionsPerPage: 20,
+			});
 		},
-		GET_ALL_TRANSACTIONS: async (store, { wallets }) => {
+		GET_TRANSACTIONS: async (store, { wallets }) => {
 			const { commit, dispatch } = store;
 
 			const [
@@ -289,11 +351,13 @@ export default {
 				cryptoFiatTransferTransactions,
 			] = await Promise.all([
 				dispatch('GET_CRYPTO_TRANSFER_TRANSACTIONS', { wallets }),
-				dispatch('GET_CRYPTO_EXCHANGE_TRANSACTIONS'),
-				dispatch('GET_CRYPTO_FIAT_TRANSACTIONS'),
+				dispatch('GET_CRYPTO_EXCHANGE_TRANSACTIONS', {
+					singleWallet: wallets.length === 1 ? wallets[0] : false,
+				}),
+				dispatch('GET_CRYPTO_FIAT_TRANSACTIONS', {
+					singleWallet: wallets.length === 1 ? wallets[0] : false,
+				}),
 			]);
-
-			console.log(cryptoFiatTransferTransactions);
 
 			const transactions = [
 				{
@@ -312,6 +376,14 @@ export default {
 					},
 					transactions: exchangeTransactions,
 				},
+				{
+					name: 'crypto-fiat-transfer',
+					icon: {
+						src: require('@/assets/images/crypto-fiat-transfer.svg'),
+						width: 18,
+					},
+					transactions: cryptoFiatTransferTransactions,
+				},
 			];
 
 			// const transactionsWithPagination = filterTransactionsByPaginationAndDate({
@@ -319,7 +391,10 @@ export default {
 			// 	transactionsPerPage: 20,
 			// });
 
-			commit('SET_ALL_TRANSACTIONS', transactions);
+			if (wallets.length !== 1) {
+				commit('SET_ALL_TRANSACTIONS', transactions);
+			}
+
 			return transactions;
 		},
 	},

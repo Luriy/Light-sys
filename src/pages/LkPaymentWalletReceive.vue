@@ -2,18 +2,7 @@
 	<lk-layout>
 		<div class="wallet-block">
 			<div class="block-title">
-				<img
-					v-if="$route.params.currency.toUpperCase() === 'BTC'"
-					src="@/assets/images/crypto/btc.png"
-					alt
-					title
-				/>
-				<img
-					v-if="$route.params.currency.toUpperCase() === 'ETH'"
-					src="@/assets/images/eth.png"
-					alt
-					title
-				/>
+				<img :src="getCryptoInfo($route.params.currency).image.corner" alt title />
 				<router-link :to="{ name: 'LkPaymentWallet' }" class="close"
 					><img src="@/assets/images/path.svg" alt title
 				/></router-link>
@@ -39,7 +28,11 @@
 						<span><img src="@/assets/images/envelope.svg"/></span>
 						<p>Email This Address</p>
 					</div>
-					<a :href="linkBlockchain" target="_blank" class="icon">
+					<a
+						:href="getWalletBlockchainLink($route.params.currency, $route.params.address)"
+						target="_blank"
+						class="icon"
+					>
 						<span><img src="@/assets/images/link.svg"/></span>
 						<p>View On Blockchain</p>
 					</a>
@@ -52,6 +45,8 @@
 <script>
 import qrcode from 'qrcode';
 import LkLayout from '@/layout/LkLayout';
+import getWalletBlockchainLink from '@/functions/getWalletBlockchainLink';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	components: {
@@ -64,18 +59,6 @@ export default {
 		};
 	},
 	computed: {
-		linkBlockchain() {
-			switch (this.$route.params.currency.toUpperCase()) {
-				case 'BTC':
-					return `https://www.blockchain.com/ru/btc/address/${this.$route.params.address}`;
-				case 'ETH':
-					return `https://etherscan.io/address/${this.$route.params.address}`;
-				case 'LTC':
-					return `https://blockchair.com/litecoin/address/${this.$route.params.address}`;
-				default:
-					throw 'Unknown currency';
-			}
-		},
 		currencyName() {
 			let currencyName;
 
@@ -106,6 +89,8 @@ export default {
 			});
 	},
 	methods: {
+		getWalletBlockchainLink,
+		getCryptoInfo,
 		sendEmail() {
 			window.open(
 				`mailto:?subject=LightNet ${this.currencyName} Address&body=My LightNet ${this.currencyName} address is: ` +

@@ -876,7 +876,7 @@ $break-large: 1124px;
     padding: 30px 60px 0 30px;
     width: calc(100% + 60px) !important;
   }
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 1250px) {
     height: 380px !important;
     padding: 25px 30px 0 20px;
     width: calc(100% + 30px) !important;
@@ -888,7 +888,7 @@ $break-large: 1124px;
     @media screen and (max-width: 1400px) {
       width:calc(50% - 28px);
     }
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 1250px) {
       width:calc(50% - 12px);
     }
     overflow: hidden;
@@ -950,7 +950,7 @@ $break-large: 1124px;
         margin-bottom: 0px;
         position: relative;
 
-        @media screen and (max-width: 1200px) {
+        @media screen and (max-width: 1250px) {
           padding: 0 12px 0 8px;
           border-radius: 13px;
         }
@@ -994,7 +994,7 @@ $break-large: 1124px;
               .btn-remove {
                 left: -21px;
 
-                @media screen and (max-width: 1200px) {
+                @media screen and (max-width: 1250px) {
                   left: -16px;
                 }
               }
@@ -1049,7 +1049,7 @@ $break-large: 1124px;
 						justify-content: space-between;
             width: 100%;
             min-height: 61px;
-            @media screen and (max-width: 1200px) {
+            @media screen and (max-width: 1250px) {
               min-height: 46px;
             }
 
@@ -1075,7 +1075,7 @@ $break-large: 1124px;
 								line-height: 21px;
 								color: #fff;
                 font-weight: 600;
-                @media screen and (max-width: 1200px) {
+                @media screen and (max-width: 1250px) {
                   font-size: 13px;
                 }
               }
@@ -1135,7 +1135,7 @@ $break-large: 1124px;
 							font-weight: 600;
 							color: #fff;
               opacity: .5;
-              @media screen and (max-width: 1200px) {
+              @media screen and (max-width: 1250px) {
                 font-size: 12px;
                 line-height: 12px;
                 margin-top: 4px;
@@ -1252,7 +1252,7 @@ $break-large: 1124px;
 }
 
 .operations-history {
-  @media screen and (max-width: 1400px) {
+  @media screen and (max-width: 1500px) {
     margin-right: -2vw;
     margin-top: 25px;
   }
@@ -1322,7 +1322,7 @@ $break-large: 1124px;
 					font-weight: 600;
 					line-height:21px;
           color: #db5353;
-          @media screen and (max-width: 1200px) {
+          @media screen and (max-width: 1250px) {
             font-size: 14px;
           }
 				}
@@ -1335,7 +1335,7 @@ $break-large: 1124px;
 					font-weight: 600;
 					line-height: 21px;
           color: #ffffff;
-          @media screen and (max-width: 1200px) {
+          @media screen and (max-width: 1250px) {
             font-size: 12px;
           }
 				}
@@ -1430,14 +1430,14 @@ $break-large: 1124px;
 				}
 				.wallet {
         height: 61px;
-        @media screen and (max-width: 1200px) {
+        @media screen and (max-width: 1250px) {
           height: 46px;
         }
 
 				&.fiat-wallet {
           min-height: 61px;
           max-height: 61px;
-          @media screen and (max-width: 1200px) {
+          @media screen and (max-width: 1250px) {
             min-height: 46px;
             max-height: 46px;
           }
@@ -1478,7 +1478,7 @@ $break-large: 1124px;
 						p {
 							font-size: 0.875rem;
               line-height: 18px;
-              @media screen and (max-width: 1200px) {
+              @media screen and (max-width: 1250px) {
                 font-size: 13px;
                 line-height: 13px;
               }
@@ -1522,7 +1522,7 @@ $break-large: 1124px;
 						align-items:center;
 						width: 37px;
             height: 37px;
-            @media screen and (max-width: 1200px) {
+            @media screen and (max-width: 1250px) {
               width: 30px;
               height: 30px;
               line-height: 30px;
@@ -1530,7 +1530,7 @@ $break-large: 1124px;
             }
             img {
               width: 11px;
-              @media screen and (max-width: 1200px) {
+              @media screen and (max-width: 1250px) {
                 width: 9px;
               }
             }
@@ -1538,7 +1538,7 @@ $break-large: 1124px;
 					span {
             color: #fff;
             font-size: 1rem;
-            @media screen and (max-width: 1200px) {
+            @media screen and (max-width: 1250px) {
               font-size: 14px;
             }
 					}
@@ -1720,7 +1720,7 @@ $break-large: 1124px;
   position: fixed;
   padding-top: 20px;
   width: 314px;
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 1250px) {
     width: 266px;
     paddint-top: 20px;
   }
@@ -1847,7 +1847,7 @@ $break-large: 1124px;
 	align-items:center;
   justify-content: space-between;
   
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 1250px) {
     left: 266px;
   }
 
@@ -1857,7 +1857,7 @@ $break-large: 1124px;
 		display: flex;
     justify-content: space-between;
 
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 1250px) {
       padding-left: 0px;
     }
 	}
@@ -2012,7 +2012,7 @@ $break-large: 1124px;
 	border-radius: 50px 0 0 50px;
 	min-height: 100vh;
   padding:115px 60px 40px 60px;
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 1250px) {
     padding:115px 30px 40px 30px;
     width: calc(100% - 266px);
     margin-left: 266px;
@@ -2160,7 +2160,7 @@ $break-large: 1124px;
 
     border-bottom:1px solid #3b2665;
     padding: 15px 0;
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 1250px) {
       padding: 9px 0;
     }
     p {
@@ -2178,20 +2178,20 @@ $break-large: 1124px;
     padding-bottom: 0;
     font-size: 14px;
     padding-top: 2px;
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 1250px) {
       font-size: 13px;
     }
   }
 	.trans-item {
     margin-right: 0;
     padding: 14px 0;
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 1250px) {
       padding: 8px 0;
     }
     border-bottom:1px solid #3b2665;
     &.exchange {
       padding: 9px 0;
-      @media screen and (max-width: 1200px) {
+      @media screen and (max-width: 1250px) {
         padding: 6px 0;
       }
       .code-column {
@@ -2217,7 +2217,7 @@ $break-large: 1124px;
 					padding-bottom:25px;
 					opacity: 1;
           max-height: 500px;
-          @media screen and (max-width: 1200px) {
+          @media screen and (max-width: 1250px) {
             padding-bottom: 10px;
           }
 				}
@@ -2236,7 +2236,7 @@ $break-large: 1124px;
         .fee-wrapper {
           padding-top: 3px;
         }
-        @media screen and (max-width: 1200px) {
+        @media screen and (max-width: 1250px) {
           margin-top: 0px;
         }
 				padding:0px 13px 0 68px;
@@ -2247,6 +2247,7 @@ $break-large: 1124px;
         .table.exchange-receive {
           grid-template-columns: max-content minmax(100px, max-content) max-content;
         }
+        
         .table.without-fee {
           grid-template-columns: max-content minmax(100px, max-content) max-content max-content;
           @media screen and (max-width: 1350px) {
@@ -2281,6 +2282,21 @@ $break-large: 1124px;
             }
           }
         }
+        .table.crypto-fiat-receive, .table.crypto-fiat-send {
+          grid-template-columns: max-content minmax(100px, max-content) max-content max-content;
+          @media screen and (max-width: 1300px) {
+            grid-template-columns: max-content minmax(100px, max-content) max-content;
+            .th:nth-of-type(3) {
+              border-right: none !important;
+            }
+            .th:nth-of-type(4) {
+              grid-column: 1/3;
+            }
+            .th:not(:last-of-type) {
+              border-bottom: 1px solid #3b2665;
+            }
+          }
+        }
 				.table {
           display: grid;
 					width: 100%;
@@ -2301,7 +2317,7 @@ $break-large: 1124px;
 						&:not(:last-of-type) {
 							border-right:1px solid #3b2665;
             }
-            @media screen and (max-width: 1200px) {
+            @media screen and (max-width: 1250px) {
               padding: 3px 10px 7px;
             }
           }
@@ -2315,7 +2331,7 @@ $break-large: 1124px;
 					span {
 						font-size: 14px;
             color: #fff;
-            @media screen and (max-width: 1200px) {
+            @media screen and (max-width: 1250px) {
               font-size: 13px;
             }
 					}
@@ -2333,7 +2349,7 @@ $break-large: 1124px;
         }
 
         .btn {
-          @media screen and (max-width: 1400px) {
+          @media screen and (max-width: 1500px) {
             width: 170px !important;
             min-width: 170px !important;
           }
@@ -2350,29 +2366,36 @@ $break-large: 1124px;
 					color: #ffffff;
           opacity: .5;
           width: 25%;
-          @media screen and (max-width: 1400px) {
+          @media screen and (max-width: 1500px) {
             width: auto !important;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
             margin-right: auto;
+            margin-left: 25px;
           }
-          @media screen and (max-width: 1200px) {
+          @media screen and (max-width: 1250px) {
             font-size: 12px;
           }
+          &.isNotCryptoFiat {
+            @media screen and (max-width: 1100px) {
+              margin-left: -5px !important;
+            }
+            
+          }
+          
 				}
 
 				.code {
 					display: flex;
           align-items:center;
-          width: 15% !important;
-          @media screen and (max-width: 1400px) {
+          @media screen and (max-width: 1500px) {
             width: 130px !important;
             min-width: 130px !important;
           }
-          @media screen and (max-width: 1200px) {
-            width: 115px !important;
-            min-width: 115px !important;
+          @media screen and (max-width: 1250px) {
+            width: 120px !important;
+            min-width: 120px !important;
           }
           @media screen and (max-width: 1400px) and (min-width: 1300px) {
             margin-left: 3%;
@@ -2392,7 +2415,7 @@ $break-large: 1124px;
 						&.eth {
 							color: #7d8ef6
             }
-            @media screen and (max-width: 1200px) {
+            @media screen and (max-width: 1250px) {
               font-size: 13px;
             }
 					}
@@ -2423,7 +2446,7 @@ $break-large: 1124px;
 						}
           }
           @media screen and (max-width: 1100px) {
-            width: 160px;
+            width: 150px;
           }
 					.text {
 						font-size: 16px;
@@ -2450,7 +2473,7 @@ $break-large: 1124px;
 							background:#3b2665;
 							border-radius:17px;
               margin-right: 15px;
-              @media screen and (max-width: 1200px) {
+              @media screen and (max-width: 1250px) {
                 min-width: 34px;
                 line-height: 34px;
                 height: 34px;
@@ -2466,7 +2489,7 @@ $break-large: 1124px;
 							p {
 								font-size: 14px;
                 font-weight: 600;
-                @media screen and (max-width: 1200px) {
+                @media screen and (max-width: 1250px) {
                   font-size: 13px;
                 }
 							}
@@ -2475,7 +2498,7 @@ $break-large: 1124px;
 								opacity: .5;
 								font-size: 14px;
                 font-weight: 600;
-                @media screen and (max-width: 1200px) {
+                @media screen and (max-width: 1250px) {
                   font-size: 13px;
                 }
 							}
@@ -2927,7 +2950,7 @@ $break-large: 1124px;
   z-index: 1000;
   cursor: pointer;
 
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 1250px) {
     width: 22px;
     height: 22px;
     img {
@@ -2965,7 +2988,7 @@ $break-large: 1124px;
     margin-bottom: 13px;
     padding-top: 3px;
 
-    @media screen and (max-width: 1200px) {
+    @media screen and (max-width: 1250px) {
       margin-bottom: 10px;
       padding-top: 0;
       font-size: 14px;
@@ -3356,7 +3379,7 @@ button {
   text-align: right;
   font-size: 14px;
   display: inline-block;
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 1250px) {
     margin-top: 2px;
   }
 }

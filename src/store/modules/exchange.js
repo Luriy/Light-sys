@@ -15,7 +15,7 @@ export default {
 		availableWalletDirections: {},
 		fiatInfo: {},
 		fiatData: {},
-		exchangeStatus: {}
+		exchangeStatus: {},
 	},
 	getters: {
 		FIAT_PSIDS: (state) => state.fiatPsids,
@@ -69,11 +69,11 @@ export default {
 			});
 		},
 		UPDATE_WALLET: (state, { wallet, amount, usdAmmount }) => {
-      state.exchangeData.find((item) => {
+			state.exchangeData.find((item) => {
 				if (item.number === wallet) {
 					console.log('item.address === wallet', item);
 					console.log(item.balance, Number(amount));
-					item.balance = item.balance + (+amount);
+					item.balance = item.balance + +amount;
 					item.balanceUSD = item.balanceUSD + usdAmmount;
 					console.log('after', item);
 				}
@@ -160,7 +160,8 @@ export default {
 				resultKeys.forEach((key) => {
 					resultPsids[key].name = decodeURIComponent(resultPsids[key].name);
 				});
-				commit('SET_FIAT_PSIDS', resultPsids);
+        commit('SET_FIAT_PSIDS', resultPsids);
+        return resultPsids;
 			});
 		},
 		GET_FIAT_EXCHANGE: ({ commit }) => {
@@ -272,8 +273,8 @@ export default {
 			});
 		},
 		POST_WALLETS: ({ commit }, { transferData, usdAmmount, pair: { exchange, receive } }) => {
-      commit('SET_EXCHANGE_SUCCES', { status: 'exchange', show: true, progress: 75 });
-      return Axios({
+			commit('SET_EXCHANGE_SUCCES', { status: 'exchange', show: true, progress: 75 });
+			return Axios({
 				url: API_URL,
 				method: 'POST',
 				params: {
@@ -281,7 +282,7 @@ export default {
 					...transferData,
 				},
 			}).then(({ data }) => {
-        const response = parsePythonArray(data);
+				const response = parsePythonArray(data);
 				const { Errors } = response[0];
 				const responseData = response[1];
 				if (!Object.keys(Errors).length && Object.keys(responseData['return']).length) {
@@ -293,7 +294,7 @@ export default {
 						usdAmmount,
 					});
 				} else if (Object.keys(Errors).length) {
-          commit('SET_EXCHANGE_SUCCES', {});
+					commit('SET_EXCHANGE_SUCCES', {});
 					const errKey = Object.keys(Errors)[0];
 					commit(
 						'alerts/setNotification',
@@ -305,7 +306,7 @@ export default {
 						{ root: true },
 					);
 				} else {
-          commit('SET_EXCHANGE_SUCCES', {});
+					commit('SET_EXCHANGE_SUCCES', {});
 					commit(
 						'alerts/setNotification',
 						{

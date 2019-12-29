@@ -56,7 +56,7 @@ export default {
 		border-radius: 3px;
 		background-color: #3b2665;
 	}
-	@media screen and (max-width: 1200px) {
+	@media screen and (max-width: 1250px) {
 		max-height: calc(100vh - 20px - 52px - 20px);
 		margin-top: 20px;
 	}

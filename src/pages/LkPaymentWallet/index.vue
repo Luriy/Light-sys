@@ -136,9 +136,13 @@ export default {
 			(wallet) => wallet.address === this.$route.params.address,
 		);
 		this.$store
-			.dispatch('transactionsHistory/GET_WALLET_TRANSACTIONS', {
-				currency: this.currentWallet.currency,
-				address: this.currentWallet.address,
+			.dispatch('transactionsHistory/GET_TRANSACTIONS', {
+				wallets: [
+					{
+						currency: this.currentWallet.currency,
+						address: this.currentWallet.address,
+					},
+				],
 			})
 			.then((data) => {
 				this.operationsWithPagination = data;

@@ -103,6 +103,7 @@ export default {
 			}
 		},
 		login: function() {
+			this.error = null;
 			const { user, password, loginType } = this;
 			const params = new URLSearchParams();
 			if (loginType) {
