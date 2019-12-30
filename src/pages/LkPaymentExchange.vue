@@ -38,7 +38,7 @@
                   <div class="toggle"></div>
                 </div>
 
-                <div class="select-body" v-if="exchangeModal" ref="exchangeSelectModal" @blur="closeExchange">
+                <div class="select-body" v-if="exchangeModal" tabindex="1" ref="exchangeSelectModal" @blur="closeExchange">
                   <div class="select-wrapper">
                     <div class="search-input">
                       <input type="text" v-model="search" name="" placeholder="Search">
@@ -217,7 +217,7 @@
                   <div class="toggle"></div>
                 </div>
 
-                <div class="select-body" v-if="receiveModal" ref="receiveSelectModal" @blur="closeReceive">
+                <div class="select-body" v-if="receiveModal" tabindex="1" ref="receiveSelectModal" @blur="closeReceive">
                   <div class="select-wrapper">
                     <div class="search-input">
                       <input type="" name="" v-model="search" placeholder="Search">
@@ -842,11 +842,21 @@
           });
         }
       },
-      closeExchange() {
-        this.exchangeModal = false;
+      closeExchange(event) {
+        if (event && event.relatedTarget && event.relatedTarget.type === 'button') {
+          this.exchangeModal = true;
+          event.srcElement.focus()
+        } else {
+          this.exchangeModal = false;
+        }
       },
       closeReceive() {
-        this.receiveModal = false;
+        if (event && event.relatedTarget && event.relatedTarget.type === 'button') {
+          this.receiveModal = true;
+          event.srcElement.focus()
+        } else {
+          this.receiveModal = false;
+        }
       },
       closeExchangePopup() {
         this.exchangePopup = false;
@@ -1322,6 +1332,7 @@
     padding:20px;
     z-index: 5;
     left: 0;
+    max-height: 76vh;
     .select-item {
       display: flex;
       position: relative;
