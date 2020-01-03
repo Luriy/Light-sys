@@ -87,10 +87,14 @@ b, strong {
   opacity: 1 !important;
 }
 
+.v-input__slot {
+  border-radius: 17px!important;
+}
+
 
 //smart contract
 .v-input__slot {
-  border-radius: 17px !important;
+	border-radius: 17px !important;
 }
 .v-label {
 	font-size: 14px !important;
@@ -130,19 +134,16 @@ b, strong {
 	margin-left: 6px;
 }
 .v-input--selection-controls__ripple {
-    width: 7px;
-    height: 7px;
-    border-radius: 2px;
+	width: 7px;
+	height: 7px;
+	border-radius: 2px;
 	background-color: #a67ff6;
 	left: 0px;
 	top: 0px;
-  }
-  .v-application--is-ltr .v-input--selection-controls__input{
+}
+.v-application--is-ltr .v-input--selection-controls__input{
 	margin-right: 0;
-  }
-// .v-list-item:hover{
-// 	background-color: #4c3677;
-//   }
+}
 
 
 // responsive breakpoints
@@ -1545,9 +1546,9 @@ $break-large: 1124px;
 }
 .operations-history {
 
-	// .title {
+	.title {
 
-	// }
+	}
 	&-list {
 
 

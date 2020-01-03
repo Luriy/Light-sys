@@ -37,7 +37,7 @@
               <span>Manual</span>
             </div>
             <div class="manual-btn__icon">
-              <img src="@/assets/images/smart-info.svg" />
+              <!-- <img src="@/assets/images/smart-info.svg" /> -->
             </div>
           </div>
           <div class="instruction-btn-box" style="margin-left:15px;">
@@ -45,7 +45,7 @@
               <span>Video instruction</span>
             </div>
             <div class="instruction-btn__icon">
-              <img src="@/assets/images/smart-play.svg" />
+              <!-- <img src="@/assets/images/smart-play.svg" /> -->
             </div>
           </div>
       </v-row>
@@ -281,7 +281,7 @@
           <br>I) You will not use it for fraudulent purposes;
           <br>II) You do not duplicate in the name of the token in full or in part the name of existing cryptocurrencies or the names of well-known
         </p>
-        <img src="@/assets/images/confirm-icon.svg" />
+        <!-- <img src="@/assets/images/confirm-icon.svg" /> -->
       </v-row>
       <!-- Deploy button -->
       <v-row class="deploy-btn-layout">
@@ -389,6 +389,13 @@
     -webkit-text-fill-color: #ffffff;
     font-family: "Open Sans Semi Bold";
   }
+
+  // .theme--light.v-label{
+  //   font-size: 14px!important;
+  // }
+  // .v-text-field.v-text-field--solo{
+  //   font-size: 14px!important;
+  // }
   .smart-text p{
     width: 191px;
     height: 21px;
@@ -734,6 +741,9 @@
     line-height: 21px;
     height: 12px;
     width: 116px;
+    // margin-right: 65px;
+    // text-align: left;
+    // align-items: flex-start;
   }
   .confirm-layout{
     width: 933px;
