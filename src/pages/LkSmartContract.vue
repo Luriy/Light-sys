@@ -282,6 +282,7 @@
           <br>II) You do not duplicate in the name of the token in full or in part the name of existing cryptocurrencies or the names of well-known
         </p>
         <!-- <img src="@/assets/images/confirm-icon.svg" /> -->
+        <!-- 2 -->
       </v-row>
       <!-- Deploy button -->
       <v-row class="deploy-btn-layout">
