@@ -59,7 +59,9 @@
 				@click="isDescriptionOpened = !isDescriptionOpened"
 			>
 				<div class="title" :class="{ active: isDescriptionOpened }">Description</div>
-				<button class="description-toggler flex align-items-center justify-content-center">
+				<button
+					class="description-toggler flex align-items-center justify-content-center none-select"
+				>
 					<img
 						src="@/assets/images/icons/arrow-big.svg"
 						alt="Description toggler"
@@ -137,12 +139,10 @@ export default {
 		);
 		this.$store
 			.dispatch('transactionsHistory/GET_TRANSACTIONS', {
-				wallets: [
-					{
-						currency: this.currentWallet.currency,
-						address: this.currentWallet.address,
-					},
-				],
+				singleWallet: {
+					currency: this.currentWallet.currency,
+					address: this.currentWallet.address,
+				},
 			})
 			.then((data) => {
 				this.operationsWithPagination = data;

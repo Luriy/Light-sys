@@ -96,7 +96,7 @@ export default {
 		return {
 			openedOperation: null,
 			activePage: 0,
-			activeTransactionType: 'crypto-transfer',
+			activeTransactionType: this.$route.path === '/wallets' ? 'crypto-transfer' : 'all',
 		};
 	},
 	computed: {

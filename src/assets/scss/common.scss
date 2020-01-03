@@ -32,6 +32,9 @@
 .position-relative {
 	position: relative;
 }
+.none-select {
+	user-select: none;
+}
 input:invalid {
 	box-shadow: none;
 }

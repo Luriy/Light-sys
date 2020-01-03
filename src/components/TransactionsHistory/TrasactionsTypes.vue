@@ -1,5 +1,5 @@
 <template>
-	<div class="transaction-types position-absolute d-flex">
+	<div class="transaction-types position-absolute d-flex" v-if="$route.path === '/wallets'">
 		<button
 			class="transaction-type"
 			:class="{ active: type.name === activeTransactionType }"
