@@ -1,5 +1,4 @@
 export default function getWalletBlockchainLink(currency, address) {
-	console.log(currency);
 	switch (currency) {
 		case 'BTC':
 			return `https://www.blockchain.com/ru/btc/address/${address}`;

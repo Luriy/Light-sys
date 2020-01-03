@@ -184,7 +184,6 @@ export default {
 			}
 
 			if (inputType === 'insertFromPaste') {
-				console.log(this.cardInfo);
 				this.cardInfo.number = formatCardNumber(this.cardInfo.number);
 			}
 		},

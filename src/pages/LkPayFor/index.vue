@@ -44,7 +44,9 @@
 												{{ currentCard.currency }}
 											</span>
 											<span class="currency-divider">&#124;</span>
-											<span class="balance-reserve">{{ `Reserve: ${currentCard.reserve}` }}</span>
+											<span class="balance-reserve">{{
+												`Reserve: ${currentCard.reserve.toFixed(0)} ${currentCard.currency}`
+											}}</span>
 										</div>
 									</div>
 								</div>
@@ -59,7 +61,9 @@
 												{{ currentBank.currency }}
 											</span>
 											<span class="currency-divider">&#124;</span>
-											<span class="balance-reserve">{{ `Reserve: ${currentBank.reserve}` }}</span>
+											<span class="balance-reserve">{{
+												`Reserve: ${currentBank.reserve.toFixed(0)} ${currentCard.currency}`
+											}}</span>
 										</div>
 									</div>
 								</div>
@@ -172,6 +176,8 @@ import PaymentsAndTransfer from '@/layout/LkPaymentsAndTransfer';
 import PaymentTypes from '@/components/PaymentTypes';
 import getCryptoInfo from '@/functions/getCryptoInfo';
 import getBankImage from '@/functions/getBankImage';
+import payment_types from '../../data/pay_for/payment_types';
+import payment_directions from '../../data/pay_for/payment_directions';
 import './styles.scss';
 
 export default {
@@ -251,98 +257,8 @@ export default {
 				psid: null,
 			},
 			windowHandler: null,
-			paymentTypes: [
-				{
-					icon: require('@/assets/images/icons/credit-card.svg'),
-					text: 'From card to card',
-				},
-				{
-					icon: require('@/assets/images/icons/avatar.svg'),
-					text: 'To people',
-				},
-				{
-					icon: require('@/assets/images/icons/contract.svg'),
-					text: 'Payment by details',
-				},
-				{
-					icon: require('@/assets/images/swift.svg'),
-					text: 'SWIFT',
-				},
-				{
-					icon: require('@/assets/images/icons/avatar.svg'),
-					text: 'To myself',
-				},
-				{
-					icon: require('@/assets/images/icons/credit-card2.svg'),
-					text: 'Money request',
-				},
-			],
-			paymentDirections: [
-				{
-					icon: require('@/assets/images/smartphone-call.svg'),
-					text: 'Mobile connection',
-				},
-				{
-					icon: require('@/assets/images/home.svg'),
-					text: 'Communal services',
-				},
-				{
-					icon: require('@/assets/images/internet.svg'),
-					text: 'Internet',
-				},
-				{
-					icon: require('@/assets/images/network.svg'),
-					text: 'Network marketing',
-				},
-				{
-					icon: require('@/assets/images/phone.svg'),
-					text: 'Phone',
-				},
-				{
-					icon: require('@/assets/images/tv.svg'),
-					text: 'TV',
-				},
-				{
-					icon: require('@/assets/images/gos.svg'),
-					text: 'Gos services',
-				},
-				{
-					icon: require('@/assets/images/icons/bus.svg'),
-					text: 'Transport',
-				},
-				{
-					icon: require('@/assets/images/wallet2.svg'),
-					text: 'Repayment of loans',
-				},
-				{
-					icon: require('@/assets/images/wallet.svg'),
-					text: 'E-wallets',
-				},
-				{
-					icon: require('@/assets/images/gamepad.svg'),
-					text: 'Games',
-				},
-				{
-					icon: require('@/assets/images/icons/book.svg'),
-					text: 'Education',
-				},
-				{
-					icon: require('@/assets/images/plane.svg'),
-					text: 'Travel',
-				},
-				{
-					icon: require('@/assets/images/ok.svg'),
-					text: 'Social network',
-				},
-				{
-					icon: require('@/assets/images/shop.svg'),
-					text: 'Internet shops',
-				},
-				{
-					icon: require('@/assets/images/heart.svg'),
-					text: 'Charity',
-				},
-			],
+			paymentTypes: payment_types,
+			paymentDirections: payment_directions,
 		};
 	},
 	methods: {
@@ -358,7 +274,6 @@ export default {
 			this.currentWallet = walletWithMaxBalance;
 		},
 		handleSelectItem(item, cardReserve) {
-			console.log('f');
 			if (item.address) {
 				const { currency, balance, balanceUSD, address, isAvailable } = item;
 				if (isAvailable) {

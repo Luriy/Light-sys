@@ -10,9 +10,10 @@ const filterByDateFunc = (a, b) => {
 };
 
 export default function filterTransactionsByPaginationAndDate({
-	transactions,
+	transactions: _transactions = [],
 	transactionsPerPage,
 }) {
+	const transactions = [..._transactions]; // don't mutate
 	let transactionsWithPagination = new Array(
 		Math.ceil(transactions.length / transactionsPerPage),
 	).fill([]);

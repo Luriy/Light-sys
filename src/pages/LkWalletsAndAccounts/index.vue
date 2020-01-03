@@ -56,7 +56,7 @@
 import { mapGetters } from 'vuex';
 import wallet from '@/store/modules/wallet';
 import LkLayout from '@/layout/LkLayout';
-import TransactionsHistory from '@/components/TransactionsHistory';
+import TransactionsHistory from '@/components/TransactionsHistory/index';
 import WalletsList from './components/WalletsList';
 import CardsList from './components/CardsList';
 import './styles.scss';

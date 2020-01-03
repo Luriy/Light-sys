@@ -95,7 +95,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import LkLayout from '@/layout/LkLayout';
-import TransactionsHistory from '@/components/TransactionsHistory';
+import TransactionsHistory from '@/components/TransactionsHistory/index';
 
 export default {
 	name: 'LkPaymentWallet',

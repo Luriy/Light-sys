@@ -83,7 +83,6 @@ export default {
 	},
 	watch: {
 		isEditing(value) {
-			console.log(value);
 			if (!value) {
 				this.clearData();
 			}

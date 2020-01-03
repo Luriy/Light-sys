@@ -188,7 +188,6 @@ export default {
 		},
 		handleCardNumber({ inputType }) {
 			const { newCardNumber } = this.editPopup;
-			console.log(newCardNumber);
 			if (
 				(newCardNumber.length === 4 || newCardNumber.length === 9 || newCardNumber.length === 14) &&
 				inputType !== 'deleteContentBackward'

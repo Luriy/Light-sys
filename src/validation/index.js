@@ -1,5 +1,4 @@
 export const VALIDATE_AMOUNT_TRANSFER_EXCHANGE = (value, balance, minAmount, currencyName) => {
-	console.log(Number(value).toFixed(5), Number(minAmount).toFixed(5));
 	if (Number(value).toFixed(5) < Number(minAmount).toFixed(5)) {
 		return `Amount must be more than ${minAmount.toFixed(5)} ${currencyName}`;
 	} else if (Number(value).toFixed(5) > Number(balance).toFixed(5)) {

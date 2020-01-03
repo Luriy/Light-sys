@@ -49,8 +49,6 @@ export default {
 					};
 				});
 
-				console.log(decodedReturnData);
-
 				return commit('SET_BANKS', decodedReturnData);
 			});
 		},
