@@ -37,22 +37,22 @@
               <span>Manual</span>
             </div>
             <div class="manual-btn__icon">
-              <!-- <img src="@/assets/images/smart-info.svg" /> -->
+              <img src="@/assets/images/smart-info.svg" />
             </div>
           </div>
-          <div class="instruction-btn-box" style="margin-left:15px;">
+          <div class="instruction-btn-box">
             <div class="instruction-btn">
               <span>Video instruction</span>
             </div>
             <div class="instruction-btn__icon">
-              <!-- <img src="@/assets/images/smart-play.svg" /> -->
+              <img src="@/assets/images/smart-play.svg" />
             </div>
           </div>
       </v-row>
       <!-- Input text-field layout  -->
       <v-row class="input-layout">
         <div class="input-components">
-          <div style="width:895px; heigth:56px;" class="d-flex">
+          <div style="width:980px; heigth:56px;" class="d-flex">
               <v-text-field
                 label="Enter the title"
                 background-color="#4d3779"
@@ -87,116 +87,117 @@
       <!-- Number of tokens layout -->
       <v-row class="tokens-layout">
         <div class="number-tokens">
-              <div class="number-tokens-block">
-                <p>Number of tokens</p>
-                <span>100000 tokens = $ 1000 deposit amount</span>
-                <div style="width:270px;height:60px;margin-top:10px;">
-                  <v-text-field
-                    v-model="slider"
-                    solo
-                    height="56"
-                    full-width
-                    background-color="#4d3779"
-                    class="number-tokens-label"
-                    label="Enter"
-                    type="number"
-                  />
-                  <v-slider
-                    v-model="slider"
-                    min="0"
-                    max="120"
-                    color="#a67ff6"
-                    class="input-slider-text"
-                    track-fill-color="#a67ff6"
-                    track-color="#2b1b4c"
-                  ></v-slider>
-                </div>
-              </div>
-              <div class="slider-block">
-                <p>Number of decimal places</p>
+          <p>Number of tokens</p>
+          <span>100000 tokens = $ 1000 deposit amount</span>
+          <div class="number-tokens-block">
+            <div style="width:270px;height:60px;margin-top:10px;">
+              <v-text-field
+                v-model="slider"
+                solo
+                height="56"
+                full-width
+                background-color="#4d3779"
+                class="number-tokens-label"
+                label="Enter"
+                type="number"
+              />
+              <v-slider
+                v-model="slider"
+                min="0"
+                max="120"
+                color="#a67ff6"
+                class="input-slider-text"
+                track-fill-color="#a67ff6"
+                track-color="#2b1b4c"
+              ></v-slider>
+            </div>
+          </div>
+          <div class="slider-block">
+            <p>Number of decimal places</p>
+            <v-text-field
+              v-model="slider_decimal"
+              class="discount-slider-label"
+              hide-details
+              single-line
+              type="number"
+            ></v-text-field>
+            <v-slider
+              min="0"
+              max="130"
+              color="#a67ff6"
+              class="number-tokens-slider"
+              track-fill-color="#a67ff6"
+              track-color="#2b1b4c"
+              v-model="slider_decimal"
+            ></v-slider>
+          </div>
+          <div class="slider-block">
+            <p>% Discount</p>
+              <v-text-field
+                v-model="slider_discount"
+                class="discount-slider-label"
+                hide-details
+                single-line
+                type="number"
+              ></v-text-field>
+              <v-slider
+                min="0"
+                max="100"
+                color="#a67ff6"
+                class="number-tokens-slider"
+                track-fill-color="#a67ff6"
+                track-color="#2b1b4c"
+                v-model="slider_discount"
+              ></v-slider>
+          </div>
+          <div class="validity-block">
+            <p class="mb-2">Validity</p>
+            <!-- Date picker -->
+            <div class="input-validity d-flex flex-row">
+              <!-- Example -->
+            <v-menu
+              v-model="menu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
                 <v-text-field
-                  v-model="slider_decimal"
-                  class="discount-slider-label"
-                  hide-details
-                  single-line
-                  type="number"
-                ></v-text-field>
-                <v-slider
-                  min="0"
-                  max="130"
-                  color="#a67ff6"
-                  class="number-tokens-slider"
-                  track-fill-color="#a67ff6"
-                  track-color="#2b1b4c"
-                  v-model="slider_decimal"
-                ></v-slider>
-              </div>
-              <div class="slider-block">
-                <p>% Discount</p>
-                  <v-text-field
-                    v-model="slider_discount"
-                    class="discount-slider-label"
-                    hide-details
-                    single-line
-                    type="number"
-                  ></v-text-field>
-                  <v-slider
-                    min="0"
-                    max="100"
-                    color="#a67ff6"
-                    class="number-tokens-slider"
-                    track-fill-color="#a67ff6"
-                    track-color="#2b1b4c"
-                    v-model="slider_discount"
-                  ></v-slider>
-              </div>
-              <div class="validity-block">
-                <p class="mb-2">Validity</p>
-                <!-- Date picker -->
-                <div class="input-validity d-flex flex-row">
-                  <!-- Example -->
-                <v-menu
-                  v-model="menu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      v-model="dateRangeText"
-                      readonly
-                      v-on="on"
-                      solo
-                      background-color="#4d3779"
-                      height="56px"
-                    />
-                  </template>
-                  <v-date-picker v-model="dates" range @input="menu"></v-date-picker>
-                </v-menu>
-                </div>
-              </div>
-              <div class="slider-block">
-                <p class="mt-8">Cashback</p>
-                  <v-text-field
-                    v-model="slider_cashback"
-                    class="discount-slider-label"
-                    hide-details
-                    single-line
-                    type="number"
-                  ></v-text-field>
-                  <v-slider
-                    min="0"
-                    max="100"
-                    color="#a67ff6"
-                    class="number-tokens-slider"
-                    track-fill-color="#a67ff6"
-                    track-color="#2b1b4c"
-                    v-model="slider_cashback"
-                  ></v-slider>
-              </div>
+                  v-model="dateRangeText"
+                  readonly
+                  v-on="on"
+                  solo
+                  background-color="#4d3779"
+                  height="56px"
+                />
+              </template>
+              <v-date-picker v-model="dates" range @input="menu"></v-date-picker>
+            </v-menu>
+            </div>
+          </div>
+          <div class="slider-block">
+            <p class="mt-8">Cashback</p>
+              <v-text-field
+                v-model="slider_cashback"
+                class="discount-slider-label"
+                hide-details
+                single-line
+                type="number"
+              ></v-text-field>
+              <v-slider
+                min="0"
+                max="100"
+                color="#a67ff6"
+                class="number-tokens-slider"
+                track-fill-color="#a67ff6"
+                track-color="#2b1b4c"
+                v-model="slider_cashback"
+              ></v-slider>
+          </div>
         </div>
+          <v-spacer></v-spacer>
         <div class="chose-tokens">
             <div class="select-tokens-inside d-flex flex-row">
               <v-select
@@ -281,7 +282,7 @@
           <br>I) You will not use it for fraudulent purposes;
           <br>II) You do not duplicate in the name of the token in full or in part the name of existing cryptocurrencies or the names of well-known
         </p>
-        <!-- <img src="@/assets/images/confirm-icon.svg" /> -->
+        <img src="@/assets/images/confirm-icon.svg" />
       </v-row>
       <!-- Deploy button -->
       <v-row class="deploy-btn-layout">
@@ -360,15 +361,17 @@
   @import "../assets/scss/common";
 
   .smart-contract{
-    width: 935px;
+    width: 100%;
+    max-width: 2048px;
     height: 1116px;
-    margin: 0 auto;
+    // border-radius: 32px;
+    // background-color: grey;
   }
   .v-card:not(.v-sheet--tile):not(.v-card--shaped){
     border-radius: 17px;
   }
   .smart-text{
-    width: 194px;
+    width: 1024px;
     height: 21px;
     display: inline-block;
     span{
@@ -377,7 +380,15 @@
       font-size: 16px;
       font-weight: 600;
       line-height: 21px;
+      margin-left: 20px;
     }
+    p{
+      width: 191px;
+      height: 21px;
+      font-size: 16px;
+      font-weight: 600px;
+      line-height: 21px;
+  }
   }
   .number-tokens p, .input-small, .confirm-layout p{
     color: #ffffff;
@@ -389,24 +400,13 @@
     -webkit-text-fill-color: #ffffff;
     font-family: "Open Sans Semi Bold";
   }
-
-  // .theme--light.v-label{
-  //   font-size: 14px!important;
-  // }
-  // .v-text-field.v-text-field--solo{
-  //   font-size: 14px!important;
-  // }
-  .smart-text p{
-    width: 191px;
-    height: 21px;
-    font-size: 16px;
-    font-weight: 600px;
-    line-height: 21px;
-  }
+  // -----------------------------------------------
+  // Chose option, network && manual, video instruction buttons
   // -----------------------------------------------
   .chose-option-box{
-    width: 934px;
+    width: 1024px;
     height: 60px;
+    margin: 0 auto;
     margin-top: 30px;
     margin-bottom: 15px;
   }
@@ -414,46 +414,48 @@
     margin-right: 15px;
     font-weight: 600;
     line-height: 21px;
-    width: 290px;
+    width: 310px;
   }
   .v-select-list{
     border-radius: 17px;
     box-shadow: 0 2px 19px rgba(0, 0, 0, 0.29);
   }
   .chose-network{
-    margin-right: 34px;
+    // margin-right: 48px;
     font-weight: 600;
     line-height: 21px;
-    width: 290px;
+    width: 310px;
   }
   .manual-btn-box{
-    width: 116px;
+    width: 115px;
     height: 60px;
     position: relative;
+    margin-left: 42px;
+    margin-right: 30px;
   }
   .manual-btn__icon{
     width: 37px;
     height: 37px;
     border-radius: 14px;
     background-color: #543b88;
-    margin-right: 79px;
+    margin-right: 70px;
     margin-bottom: 23px;
     position: absolute;
-    padding: 10px 11px 11px 10px;
+    padding: 9px 11px 12px 10px;
     img{
       width: 16px;
       height: 16px;
     }
   }
   .manual-btn{
-    width: 105px;
+    width: 115px;
     height: 47px;
     border-radius: 17px;
     background-color: #3b2665;
     position: absolute;
     margin-top: 13px;
-    margin-left: 11px;
-    padding: 12px 24px 14px 30px;
+    margin-left: 17px;
+    padding: 12px 24px 14px 32px;
     span{
       width: 51px;
       height: 21px;
@@ -465,37 +467,35 @@
       display: inline-block;
     }
   }
-  .manual-btn__icon, .manual-btn:hover{
-    cursor: pointer;
-  }
   .instruction-btn-box{
-    width: 174px;
+    width: 180px;
     height: 60px;
     position: relative;
+    margin-left: 4px;
   }
   .instruction-btn__icon{
     width: 37px;
     height: 37px;
     border-radius: 14px;
     background-color: #543b88;
-    margin-right: 137px;
+    margin-right: 147px;
     margin-bottom: 23px;
     position: absolute;
-    padding: 10px 10px 9px 9px;
+    padding: 10px 11px 11px 10px;
     img{
       width: 18px;
       height: 18px;
     }
   }
   .instruction-btn{
-    width: 156px;
+    width: 180px;
     height: 47px;
     border-radius: 17px;
     background-color: #3b2665;
     margin-top: 13px;
-    margin-left: 18px;
+    margin-left: 17px;
     position: absolute;
-    padding: 12px 17px 14px 23px;
+    padding: 12px 17px 14px 33px;
     span{
       width: 118px;
       height: 21px;
@@ -507,22 +507,51 @@
       display: inline-block;
     }
   }
-  .instruction-btn__icon, .instruction-btn:hover{
+  .manual-btn__icon, .manual-btn, .instruction-btn__icon, .instruction-btn:hover{
     cursor: pointer;
   }
+  // @media(min-width: 1024px){
+  //   .chose-option{
+  //     width: 50%;
+  //   }
+  // }
+  // @media(min-width: 1280px){
+  //   .chose-option{
+  //     width: 50%;
+  //   }
+  // }
+  // @media(min-width: 1407px){
+  //   .chose-option{
+  //     width: 70%;
+  //   }
+  // }
+  // @media(min-width: 1630px){
+  //   .chose-option{
+  //     width: 80%;
+  //   }
+  // }
+  // @media(min-width: 1807px){
+  //   .chose-option{
+  //     width: 90%;
+  //   }
+  // }
+
+  // -----------------------------------------------
+  // Inpun layout (title, name, description)
   // -----------------------------------------------
   .input-layout{
-    width: 935px;
+    width: 1024px;
     height: 167px;
     border-radius: 14px;
     background-color: #3b2665;
-    margin-bottom: 15px;
     padding: 20px;
+    margin: 0 auto;
+    margin-bottom: 15px;
   }
   .input-components{
-    width: 895px;
+    width: 980px;
     height: 127px;
-    margin: 0 auto;
+    // margin: 0 auto;
   }
   .input-title, .input-name, .input-description{
     border-radius: 14px;
@@ -532,25 +561,29 @@
     opacity: 0.5;
   }
   .input-title{
-    width: 438px;
+    width: 440px;
   }
   .input-name{
-    width: 442px;
+    width: 440px;
   }
   .input-description{
-    width: 895px;
+    width: 980px;
     margin: 0 auto;
     margin-top: 15px;
   }
   // -----------------------------------------------
+  // Options layout (number of tokens..., checkboxes)
+  // -----------------------------------------------
+  // Number of tokens
   .tokens-layout{
-    width: 935px;
+    width: 1024px;
     height: 536px;
+    margin: 0 auto;
     margin-bottom: 30px;
     position: relative;
   }
   .number-tokens{
-    width: 310px;
+    width: 360px;
     height: 536px;
     border-radius: 14px;
     background-color: #3b2665;;
@@ -576,28 +609,34 @@
   }
   }
   .number-tokens-block{
-    width: 270px;
-    height: 117px;
-    margin-bottom: 20px;
+    width: 320px;
+    height: 70px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    // background-color: #fff;
+    position: relative;
   }
   .number-tokens-label{
+    width: 100%;
     font-weight: 600;
     line-height: 21px;
     opacity: 0.5;
+    position: absolute;
   }
   .input-slider-text{
-    margin-top: -46px;
     margin-left: 12px;
-    width: 237px;
+    width: 294px;
     height: 2px;
+    position: absolute;
+    bottom: 28px;
   }
   .input-slider{
-    width: 266px;
+    width: 320px;
     height: 60px;
     margin: 0 auto;
   }
   .slider-block{
-    width: 267px;
+    width: 320px;
     height: 68px;
     p{
       margin-bottom: 34px;
@@ -615,10 +654,10 @@
     line-height: 21px;
     position: absolute;
     margin-top: 0;
-    margin-left: 220px;
+    margin-left: 270px;
   }
   .number-tokens-slider{
-    width: 266px;
+    width: 320px;
     height: 2px;
     margin-top: 28px;
     margin-right: 2px;
@@ -655,17 +694,20 @@
     margin-left: 140px;
     position: absolute;
   }
+
+  // Second block (chose tokens)
   .chose-tokens{
-    width: 610px;
+    width: 655px;
     height: 536px;
     border-radius: 14px;
     background-color: #3b2665;
     padding: 20px 20px 25px 20px;
-    margin-left: 325px;
+    margin-left: 370px;
+    // margin-left: 414px;
     position: absolute;
   }
   .select-tokens-inside{
-    width: 570px;
+    width: 626px;
     height: 61px;
     position: relative;
     padding-right: 14px;
@@ -676,16 +718,16 @@
     line-height: 21px;
   }
   .select-first-token{
-    width: 277px;
+    width: 297px;
     height: 60px;
     position: absolute;
-    margin-right: 293px;
+    margin-right: 313px;
   }
   .select-last-token{
-    width: 277px;
+    width: 297px;
     height: 60px;
     position: absolute;
-    margin-left: 293px;
+    margin-left: 313px;
   }
   // test
   .checkbox-layout {
@@ -703,18 +745,18 @@
     background-color: #4d3779;
     padding: 11px 10px 61px 20px;
     margin: 0 auto;
-    width: 570px;
+    width: 610px;
     height: 267px;
   }
   .chose-tokens-chechbox{
-    width: 540px;
+    width: 580px;
     height: 181px;
     overflow-y: auto;
     overflow-x: hidden;
   }
   .chose-tokens-chechbox::-webkit-scrollbar {
     margin-top: 15px;
-    width: 2px;
+    width: 3px;
     border-radius: 3px;
   }
   .chose-tokens-chechbox::-webkit-scrollbar-track {
@@ -745,19 +787,23 @@
     // text-align: left;
     // align-items: flex-start;
   }
+  // -----------------------------------------------
+  // Confirm layout, Deploy button & Info layout
+  // -----------------------------------------------
   .confirm-layout{
-    width: 933px;
+    width: 1024px;
     height: 94px;
     border-radius: 8px;
     border: 1px solid #4d3779;
+    margin: 0 auto;
     margin-bottom: 20px; //40px
     position: relative;
     img{
-      width: 29px;
-      height: 29px;
+      width: 30px;
+      height: 30px;
       border-radius: 8px;
       background-color: #3b2665;
-      margin: 32px 32px 33px 872px;
+      margin: 32px 32px 33px 955px;
       position: absolute;
       cursor: pointer;
     }
