@@ -177,8 +177,8 @@
             </v-menu>
             </div>
           </div>
-          <div class="slider-block">
-            <p class="mt-8">Cashback</p>
+          <div class="slider-block mt-5">
+            <p>Cashback</p>
               <v-text-field
                 v-model="slider_cashback"
                 class="discount-slider-label"
@@ -197,7 +197,7 @@
               ></v-slider>
           </div>
         </div>
-          <v-spacer></v-spacer>
+          <!-- <v-spacer></v-spacer> -->
         <div class="chose-tokens">
             <div class="select-tokens-inside d-flex flex-row">
               <v-select
@@ -639,9 +639,9 @@
     width: 320px;
     height: 68px;
     p{
-      margin-bottom: 34px;
+      margin-bottom: 30px;
     }
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     position: relative;
   }
   .discount-slider-label{
