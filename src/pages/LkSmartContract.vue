@@ -37,7 +37,7 @@
               <span>Manual</span>
             </div>
             <div class="manual-btn__icon">
-              <img src="@/assets/images/smart-info.svg" />
+              <!-- <img src="@/assets/images/smart-info.svg" /> -->
             </div>
           </div>
           <div class="instruction-btn-box" style="margin-left:15px;">
@@ -45,7 +45,7 @@
               <span>Video instruction</span>
             </div>
             <div class="instruction-btn__icon">
-              <img src="@/assets/images/smart-play.svg" />
+              <!-- <img src="@/assets/images/smart-play.svg" /> -->
             </div>
           </div>
       </v-row>
@@ -281,7 +281,7 @@
           <br>I) You will not use it for fraudulent purposes;
           <br>II) You do not duplicate in the name of the token in full or in part the name of existing cryptocurrencies or the names of well-known
         </p>
-        <img src="@/assets/images/confirm-icon.svg" />
+        <!-- <img src="@/assets/images/confirm-icon.svg" /> -->
       </v-row>
       <!-- Deploy button -->
       <v-row class="deploy-btn-layout">
