@@ -7,30 +7,27 @@
       <!-- Chose options layout, manual&instruction btn's -->
       <v-row class="chose-option-box d-flex flex-row">
         <div class="d-flex flex-row">
-          <v-select
+          <v-overflow-btn
           :items="['Token','Stablecoin','Smart contract']"
           label="Choose an option"
           color="#4c3677"
           background-color="#3b2665"
-          item-color="#3b2665"
-          item-text
-          solo
+          item-color="grey"
+          solo-inverted
           height="60"
           class="chose-option"
-          >
-          </v-select>
-          <v-select
+          clear-icon
+        ></v-overflow-btn>
+        <v-overflow-btn
           :items="['Testnet', 'Mainnet']"
           label="Choose a network"
-          color="#F44336"
+          color="#4c3677"
           background-color="#3b2665"
-          item-color="red"
-          solo
+          item-color="grey"
+          solo-inverted
           height="60"
           class="chose-network"
-          append-icon="mdi"
-          >
-          </v-select>
+        ></v-overflow-btn>
         </div>
           <div class="manual-btn-box">
             <div class="manual-btn">
@@ -139,6 +136,8 @@
                 hide-details
                 single-line
                 type="number"
+                suffix="%"
+                color="#af89ff"
               ></v-text-field>
               <v-slider
                 min="0"
@@ -185,6 +184,7 @@
                 hide-details
                 single-line
                 type="number"
+                suffix="%"
               ></v-text-field>
               <v-slider
                 min="0"
@@ -315,6 +315,7 @@
           slider_cashback: 0,
           dates: ['2019-09-10', '2019-09-20'],
           menu: false,
+          dropdown_font: ['Arial', 'Calibri', 'Courier', 'Verdana'],
           types: [
             { text: 'The drinks', value: 'drinks', selected: false },
             { text: 'The drinks', value: 'drinks', selected: false },
@@ -366,6 +367,7 @@
     height: 1116px;
     // border-radius: 32px;
     // background-color: grey;
+    // cursor: url('//assets/images/smart-cursor.svg');
   }
   .v-card:not(.v-sheet--tile):not(.v-card--shaped){
     border-radius: 17px;
@@ -416,15 +418,19 @@
     line-height: 21px;
     width: 310px;
   }
-  .v-select-list{
-    border-radius: 17px;
-    box-shadow: 0 2px 19px rgba(0, 0, 0, 0.29);
-  }
   .chose-network{
     // margin-right: 48px;
     font-weight: 600;
     line-height: 21px;
     width: 310px;
+  }
+  .theme--light.v-card {
+    background-color: #3b2665;
+    color: rgba(0,0,0,.87);
+  }
+  .v-select-list[data-v-6472e3c8] {
+    border-radius: 17px;
+    box-shadow: 0 2px 19px rgba(0,0,0,0.29);
   }
   .manual-btn-box{
     width: 115px;
@@ -645,7 +651,7 @@
     position: relative;
   }
   .discount-slider-label{
-    width: 40px;
+    width: 60px;
     height: 21px;
     color: #af89ff;
     font-family: "Open Sans Semi Bold";
@@ -654,7 +660,10 @@
     line-height: 21px;
     position: absolute;
     margin-top: 0;
-    margin-left: 270px;
+    margin-left: 250px;
+    input{
+      text-align: right;
+    }
   }
   .number-tokens-slider{
     width: 320px;

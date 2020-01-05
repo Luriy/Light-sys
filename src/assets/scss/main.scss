@@ -89,6 +89,9 @@ b, strong {
 
 
 //smart contract
+.v-autocomplete:not(.v-input--is-disabled).v-select.v-text-field input{
+	pointer-events: none;
+}
 .v-input__slot {
 	border-radius: 17px !important;
 }
@@ -100,13 +103,16 @@ b, strong {
 	font-size: 14px;
 	padding-left: 15px;
 }
-
+.v-text-field input{
+	margin-left: 5px;
+}
 .v-menu__content{
 	border-radius: 17px;
 	box-shadow: 0 2px 19px rgba(0, 0, 0, 0.29);
 	}
 .v-list{
-	margin-top: 70px;
+	// margin-top: 70px;
+	margin-top: 10px;
 	padding: 10px 0px 10px 0px;
 }
 .v-list-item{
@@ -127,7 +133,7 @@ b, strong {
 	font-family: "Open Sans Semi Bold";
 	font-weight: 600;
 	line-height: 21px;
-	margin-left: 6px;
+	// margin-left: 6px;
 }
 .v-input--selection-controls__ripple {
 	width: 7px;
@@ -140,7 +146,32 @@ b, strong {
 .v-application--is-ltr .v-input--selection-controls__input{
 	margin-right: 0;
 }
-
+	.v-select-list{
+		background-color: #3b2665;
+		.theme--light.v-list {
+			background-color: #3b2665;
+			// color: #ffffff;
+			// box-shadow: 0 2px 19px rgba(0, 0, 0, 0.29);
+			border-radius: 17px;
+			border-color: #3b2665;
+			text-decoration-color: #ffffff;
+		}
+		.theme--light.v-card{
+			background-color: #3b2665;
+		}
+	}
+.v-list-item__title{
+	color: #ffffff;
+}
+.v-list{
+	background-color: #3b2665;
+}
+.v-overflow-btn .v-label {
+    margin-left: 5px;
+}
+.v-overflow-btn .v-select__selection--comma:first-child {
+    margin-left: 5px;
+}
 
 // responsive breakpoints
 $break-small-portrait: 320px;
