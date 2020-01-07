@@ -13,11 +13,14 @@ export default {
 		transactions: JSON.parse(localStorage.getItem('stateWalletsTransactions')) || [],
 		allFilteredTransactions: [],
 		allFilteredSingleTransactions: [],
+		allSingleWalletTransactions:
+			JSON.parse(localStorage.getItem('StateSingleWalletsTransactions')) || [],
 	},
 	getters: {
 		ALL_TRANSACTIONS: (state) => state.transactions,
 		ALL_FILTERED_TRANSACTIONS: (state) => state.allFilteredTransactions,
 		ALL_FILTERED_SINGLE_TRANSACTIONS: (state) => state.allFilteredSingleTransactions,
+		ALL_SINGLE_WALLET_TRANSACTIONS: (state) => state.allSingleWalletTransactions,
 	},
 	mutations: {
 		SET_ALL_TRANSACTIONS: (state, payload) => {
@@ -25,14 +28,14 @@ export default {
 			localStorage.setItem('stateWalletsTransactions', JSON.stringify(payload));
 		},
 		SET_ALL_FILTERED_TRANSACTIONS: (state, payload) => {
-			state.allFilteredTransactions = [...state.allFilteredTransactions, ...payload];
+			state.allFilteredTransactions = payload;
 		},
 		SET_ALL_FILTERED_SINGLE_TRANSACTIONS: (state, payload) => {
-			state.allFilteredSingleTransactions = [...state.allFilteredSingleTransactions, ...payload];
+			state.allFilteredSingleTransactions = payload;
 		},
 	},
 	actions: {
-		GET_CRYPTO_TRANSFER_TRANSACTIONS: async ({ commit }, { wallets, singleWallet }) => {
+		GET_CRYPTO_TRANSFER_TRANSACTIONS: async ({ commit, state }, { wallets, singleWallet }) => {
 			const transactions =
 				(
 					await Promise.all(
@@ -49,7 +52,7 @@ export default {
 							const transactions = Object.values(parsePythonArray(data)[1].return).map((item) => {
 								const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
 
-								return {
+								const transaction = {
 									source: {
 										To: item.address,
 										From: item.address,
@@ -74,7 +77,14 @@ export default {
 										? 'send'
 										: 'receive',
 								};
+
+								return transaction;
 							});
+
+							localStorage.setItem(
+								`StateSingleTransactionsTransfer${wallet.address}`,
+								JSON.stringify(transactions),
+							);
 
 							return transactions;
 						}),
@@ -82,15 +92,21 @@ export default {
 				).flat() || [];
 
 			singleWallet
-				? commit('SET_ALL_FILTERED_SINGLE_TRANSACTIONS', transactions)
-				: commit('SET_ALL_FILTERED_TRANSACTIONS', transactions);
+				? commit('SET_ALL_FILTERED_SINGLE_TRANSACTIONS', [
+						...state.allFilteredSingleTransactions,
+						...transactions,
+				  ])
+				: commit('SET_ALL_FILTERED_TRANSACTIONS', [
+						...state.allFilteredTransactions,
+						...transactions,
+				  ]);
 
 			return filterTransactionsByPaginationAndDate({
 				transactions: transactions,
 				transactionsPerPage: 20,
 			});
 		},
-		GET_CRYPTO_EXCHANGE_TRANSACTIONS: async ({ commit }, { singleWallet }) => {
+		GET_CRYPTO_EXCHANGE_TRANSACTIONS: async ({ commit, state, rootState }, { singleWallet }) => {
 			const { data } = await Axios({
 				url: API_URL,
 				method: 'POST',
@@ -133,16 +149,37 @@ export default {
 				})
 				.filter((item) => !!item.url);
 
+			rootState.wallet.wallets.map((wallet) => {
+				const walletTransactions = transactions.filter(
+					({ source: { To, From } }) =>
+						wallet.address.toLowerCase() === To.toLowerCase() ||
+						wallet.address.toLowerCase() === From.toLowerCase(),
+				);
+				localStorage.setItem(
+					`StateSingleTransactionsExchange${wallet.address}`,
+					JSON.stringify(walletTransactions),
+				);
+			});
+
 			singleWallet
-				? commit('SET_ALL_FILTERED_SINGLE_TRANSACTIONS', transactions)
-				: commit('SET_ALL_FILTERED_TRANSACTIONS', transactions);
+				? commit('SET_ALL_FILTERED_SINGLE_TRANSACTIONS', [
+						...state.allFilteredSingleTransactions,
+						...transactions,
+				  ])
+				: commit('SET_ALL_FILTERED_TRANSACTIONS', [
+						...state.allFilteredTransactions,
+						...transactions,
+				  ]);
 
 			return filterTransactionsByPaginationAndDate({
 				transactions,
 				transactionsPerPage: 20,
 			});
 		},
-		GET_CRYPTO_FIAT_TRANSACTIONS: async ({ dispatch, commit }, { singleWallet }) => {
+		GET_CRYPTO_FIAT_TRANSACTIONS: async (
+			{ dispatch, commit, state, rootState },
+			{ singleWallet },
+		) => {
 			const [{ data }, allPsids] = await Promise.all([
 				Axios({
 					url: API_URL,
@@ -182,6 +219,7 @@ export default {
 						{
 							source: {
 								To: isPsid1Fiat ? item.to : formatCardNumber(item.to) || null,
+								From: null,
 								...item,
 							},
 							currency: psid1Info.valute, // send transfer
@@ -228,9 +266,28 @@ export default {
 				})
 				.flat();
 
+			rootState.wallet.wallets.map((wallet) => {
+				const walletTransactions = transactions.filter(
+					({ source: { to, from }, isCard }) =>
+						(wallet.address.toLowerCase() === (to ? to.toLowerCase() : null) ||
+							wallet.address.toLowerCase() === (from ? from.toLowerCase() : null)) &&
+						!isCard,
+				);
+				localStorage.setItem(
+					`StateSingleTransactionsCryptoFiatTransfer${wallet.address}`,
+					JSON.stringify(walletTransactions),
+				);
+			});
+
 			singleWallet
-				? commit('SET_ALL_FILTERED_SINGLE_TRANSACTIONS', transactions)
-				: commit('SET_ALL_FILTERED_TRANSACTIONS', transactions);
+				? commit('SET_ALL_FILTERED_SINGLE_TRANSACTIONS', [
+						...state.allFilteredSingleTransactions,
+						...transactions,
+				  ])
+				: commit('SET_ALL_FILTERED_TRANSACTIONS', [
+						...state.allFilteredTransactions,
+						...transactions,
+				  ]);
 
 			return filterTransactionsByPaginationAndDate({
 				transactions,
@@ -239,6 +296,8 @@ export default {
 		},
 		GET_TRANSACTIONS: async (store, { wallets, singleWallet }) => {
 			const { commit, dispatch, getters } = store;
+			commit('SET_ALL_FILTERED_SINGLE_TRANSACTIONS', []);
+			commit('SET_ALL_FILTERED_TRANSACTIONS', []);
 
 			const [
 				cryptoTransferTransactions,
@@ -297,6 +356,28 @@ export default {
 			if (!singleWallet) {
 				commit('SET_ALL_TRANSACTIONS', transactions);
 			}
+
+			return transactions;
+		},
+		GET_SINGLE_WALLET_TRANSACTIONS: async (store, { address }) => {
+			const transactions = [
+				{
+					name: 'all',
+					text: 'All',
+					transactions: filterTransactionsByPaginationAndDate({
+						transactions: [
+							...(JSON.parse(localStorage.getItem(`StateSingleTransactionsTransfer${address}`)) ||
+								[]),
+							...(JSON.parse(localStorage.getItem(`StateSingleTransactionsExchange${address}`)) ||
+								[]),
+							...(JSON.parse(
+								localStorage.getItem(`StateSingleTransactionsCryptoFiatTransfer${address}`),
+							) || []),
+						],
+						transactionsPerPage: 20,
+					}),
+				},
+			];
 
 			return transactions;
 		},

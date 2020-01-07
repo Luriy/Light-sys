@@ -6,12 +6,7 @@
 					<div class="top-bar">
 						<div class="balance">
 							<h2 class="balance__title">Total Balance</h2>
-							<span class="balance__amount"
-								>${{
-									Number(wallets.reduce((acc, item) => acc + item.balanceUSD, 0)).toFixed(2) || 0
-								}}
-								USD</span
-							>
+							<span class="balance__amount">${{ allUsdBalance }} USD</span>
 						</div>
 						<div class="select">
 							<div class="select__header" @click="walletSelect.isActive = !walletSelect.isActive">
@@ -71,51 +66,6 @@
 									<img src="@/assets/images/triangle.svg" width="6" height="4" />
 								</div>
 							</div>
-							<!-- <div class="select__body" v-show="walletSelect.isActive">
-									<div
-										class="select__body-item flex justify-content-between align-items-center"
-										:class="{
-											active: currentWallet.address === wallet.address,
-											unavailable: !wallet.isAvailable,
-										}"
-										v-for="wallet in wallets"
-										:key="wallet.address"
-										@click="handleChangeCurrentWallet(wallet)"
-									>
-										<div
-											v-if="!wallet.isAvailable"
-											class="unavailable-block flex justify-content-center align-items-center"
-										>
-											<p class="unavailable-text">Temporarily unavailable</p>
-										</div>
-										<div class="flex align-items-center">
-											<img
-												v-if="wallet.currency === 'BTC'"
-												width="22"
-												src="@/assets/images/btc.png"
-											/>
-											<img
-												v-if="wallet.currency === 'ETH'"
-												width="22"
-												src="@/assets/images/eth.png"
-											/>
-											<img
-												v-if="wallet.currency === 'LTC'"
-												width="22"
-												src="@/assets/images/ltc.svg"
-											/>
-											<h2 class="select__body-currency">
-												{{ getCryptoInfo(wallet.currency).fullName }}
-											</h2>
-										</div>
-										<span class="select__body-balance" v-if="wallet.isAvailable">{{
-											`${wallet.currency} ${formatCurrency(wallet.balance, '', 5)}`
-										}}</span>
-										<span class="select__body-balance-usd" v-if="wallet.isAvailable">{{
-											`$${formatCurrency(wallet.balanceUSD)} USD`
-										}}</span>
-									</div>
-								</div> -->
 							<payment-types
 								:search="search"
 								:isOpened="walletSelect.isActive"
@@ -187,48 +137,6 @@ export default {
 		LkLayout,
 		PaymentTypes,
 	},
-	mounted() {
-		this.$store.dispatch('common/GET_ALL_BALANCE');
-		this.$store.dispatch('common/GET_BANKS');
-		if (!this.wallets.length) {
-			this.$store.dispatch('wallet/GET_WALLETS');
-		}
-
-		this.setInitialCurrentWallet();
-
-		const select = document.querySelector('.pay-for .select');
-		this.windowHandler = ({ target }) => {
-			if (
-				(target ? !target.classList.contains('.pay-for .select') : false) &&
-				!select.contains(target)
-			) {
-				this.walletSelect.isActive = false;
-			}
-		};
-		window.addEventListener('click', this.windowHandler);
-	},
-	beforeDestroy() {
-		window.removeEventListener('click', this.windowHandler);
-	},
-	computed: {
-		...mapGetters({
-			allBalance: 'common/ALL_BALANCE',
-			wallets: 'wallet/WALLETS',
-			cards: 'card/CARDS',
-			banks: 'common/BANKS',
-		}),
-		allUsdBalance() {
-			const { BTCBalanceusd, ETHBalanceusd, LTCBalanceusd } = this.allBalance;
-			return ((BTCBalanceusd || 0) + (ETHBalanceusd || 0) + (LTCBalanceusd || 0)).toFixed(2);
-		},
-		filteredWallets() {
-			return this.wallets.filter(({ fullName }) => {
-				if (fullName) {
-					return fullName.toLowerCase().includes(this.search);
-				}
-			});
-		},
-	},
 	data() {
 		return {
 			search: '',
@@ -259,7 +167,47 @@ export default {
 			windowHandler: null,
 			paymentTypes: payment_types,
 			paymentDirections: payment_directions,
+			updateWalletsTimer: null,
 		};
+	},
+	mounted() {
+		this.$store.dispatch('common/GET_BANKS');
+		this.setInitialCurrentWallet();
+
+		const select = document.querySelector('.pay-for .select');
+		this.windowHandler = ({ target }) => {
+			if (
+				(target ? !target.classList.contains('.pay-for .select') : false) &&
+				!select.contains(target)
+			) {
+				this.walletSelect.isActive = false;
+			}
+		};
+		window.addEventListener('click', this.windowHandler);
+		this.updateWalletsTimer = setInterval(() => {
+			this.$store.dispatch('wallet/UPDATE_WALLETS');
+		}, 5000);
+	},
+	beforeDestroy() {
+    window.removeEventListener('click', this.windowHandler);
+    clearInterval(this.updateWalletsTimer)
+	},
+	computed: {
+		...mapGetters({
+			wallets: 'wallet/WALLETS',
+			cards: 'card/CARDS',
+			banks: 'common/BANKS',
+		}),
+		allUsdBalance() {
+			return Number(this.wallets.reduce((acc, item) => acc + item.balanceUSD, 0)).toFixed(2) || 0;
+		},
+		filteredWallets() {
+			return this.wallets.filter(({ fullName }) => {
+				if (fullName) {
+					return fullName.toLowerCase().includes(this.search);
+				}
+			});
+		},
 	},
 	methods: {
 		getCryptoInfo,

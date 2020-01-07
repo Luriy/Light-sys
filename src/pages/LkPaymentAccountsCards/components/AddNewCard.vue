@@ -5,7 +5,7 @@
 			v-on:click="handleOpen"
 		>
 			<div class="icon">
-				<div class="image"><img src="@/assets/images/wallet2.svg" alt title /></div>
+				<div class="image"><img src="@/assets/images/wallet2.svg" width="14" alt title /></div>
 				<p>Add New Card</p>
 			</div>
 			<transition name="fade">
@@ -182,7 +182,6 @@ export default {
 			) {
 				this.cardInfo.number += ' ';
 			}
-
 			if (inputType === 'insertFromPaste') {
 				this.cardInfo.number = formatCardNumber(this.cardInfo.number);
 			}

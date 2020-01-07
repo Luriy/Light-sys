@@ -2,7 +2,7 @@
 	<div class="accounts-list_wrapper_tab" v-bind:class="{ active: isActive }">
 		<div class="accounts-list_wrapper_tab_header" v-on:click="$emit('onOpenTab')">
 			<div class="icon">
-				<div class="image"><img src="@/assets/images/wallet.svg" alt title /></div>
+				<div class="image"><img src="@/assets/images/wallet.svg" width="14" /></div>
 				<p>Open an account</p>
 			</div>
 			<div class="flex align-items-center">

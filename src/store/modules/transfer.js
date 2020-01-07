@@ -67,6 +67,34 @@ export default {
 					return { success: false };
 				}
 			});
+    },
+    GET_TRANSFER_TOKEN: ({ commit, dispatch }, user) => {
+			return Axios({
+				url: API_URL,
+				method: 'POST',
+				params: {
+					Comand: 'TransferToken',
+					...user,
+				},
+			}).then(({ data }) => {
+				const parsedData = parsePythonArray(data);
+				const errors = Object.values(parsedData['0']['Errors']);
+				if (errors.includes('Wrong password')) {
+					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
+						() => (window.location.href = `/login`),
+					);
+				} else if (errors.length) {
+					commit(
+						'alerts/setNotification',
+						{
+							message: errors[0],
+							status: 'error-status',
+							icon: 'close',
+						},
+						{ root: true },
+					);
+				}
+			});
 		},
 	},
 };

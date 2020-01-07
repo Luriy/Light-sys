@@ -41,7 +41,7 @@ export default {
 			}
 			this.logoutTimer = setTimeout(() => {
 				this.$store.dispatch(AUTH_LOGOUT).then(() => {
-					this.$router.push('/login');
+					window.location.href = '/login';
 				});
 			}, 1000 * 60 * 20); // 20 min
 		},

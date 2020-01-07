@@ -7,9 +7,9 @@
 					transaction.type === 'crypto-fiat-receive' || transaction.type === 'crypto-fiat-send'
 				),
 			}"
-			v-if="transaction.type.includes('send') || transaction.type === 'exchange'"
+			v-if="transaction.type.includes('receive') || transaction.type === 'exchange'"
 		>
-			{{ transaction.source.To }}
+			{{ transaction.source.From }}
 		</div>
 		<div
 			class="address"
@@ -18,9 +18,9 @@
 					transaction.type === 'crypto-fiat-receive' || transaction.type === 'crypto-fiat-send'
 				),
 			}"
-			v-if="transaction.type.includes('receive') || transaction.type === 'exchange'"
+			v-if="transaction.type.includes('send') || transaction.type === 'exchange'"
 		>
-			{{ transaction.source.From }}
+			{{ transaction.source.To }}
 		</div>
 	</div>
 </template>

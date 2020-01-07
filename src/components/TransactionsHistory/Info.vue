@@ -22,9 +22,20 @@
 						: getTransactionId(transaction.url)
 				}}</a>
 			</div>
+			<div class="th" v-if="transaction.type === 'exchange'">
+				<p>
+					Sent
+				</p>
+				<div class="flex">
+					<span :class="transaction.currency.toLowerCase()">{{
+						`${transaction.value.toFixed(5)} ${transaction.currency}`
+					}}</span
+					><span class="divider">|</span><span>${{ transaction.valueUSD.toFixed(2) }} USD</span>
+				</div>
+			</div>
 			<div class="th" v-if="!transaction.type.includes('receive')">
 				<p>Fee</p>
-				<div class="flex fee-wrapper">
+				<div class="inline-flex fee-wrapper">
 					<span :class="transaction.currency.toLowerCase()"
 						>{{ Math.abs(transaction.fee).toFixed(5) + ' ' + transaction.currency }}
 					</span>
@@ -119,14 +130,28 @@ export default {
 </script>
 <style lang="scss" scoped>
 .table.exchange {
-	grid-template-columns: max-content minmax(100px, max-content) repeat(3, max-content);
+	grid-template-columns: max-content minmax(100px, max-content) repeat(2, max-content) minmax(
+			max-content,
+			1fr
+		);
 	.th:not(:nth-of-type(n + 6)) {
 		border-bottom: 1px solid #3b2665;
 	}
+	@media screen and (min-width: 1600px) {
+		.th:last-of-type {
+			grid-column: 3/5;
+		}
+		.th:nth-of-type(6) {
+			grid-column: 1/3;
+		}
+	}
 	@media screen and (max-width: 1600px) {
-		grid-template-columns: max-content minmax(100px, max-content) max-content;
+		grid-template-columns: minmax(100px, max-content) minmax(100px, max-content) max-content;
 		.th:not(:last-of-type) {
 			border-bottom: 1px solid #3b2665;
+		}
+		.th:last-of-type {
+			grid-column: 1/3;
 		}
 	}
 	@media screen and (max-width: 1100px) {

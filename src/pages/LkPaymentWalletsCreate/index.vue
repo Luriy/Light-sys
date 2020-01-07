@@ -53,7 +53,7 @@
     <div class="crypto-wallets">
       <div class="title">
         <p>Create wallet</p>
-        <router-link to="/wallets"><div class="close"><img src="@/assets/images/path.svg" alt title></div></router-link>
+        <back-to-previous-page-button :link="'/wallets'"></back-to-previous-page-button>
       </div>
       <div class="crypto-wallets_table" cellspacing="0" cellpadding="0">
         <div class="thead">
@@ -104,15 +104,17 @@
 <script>
 import { mapGetters } from 'vuex';
 import LkLayout from '@/layout/LkLayout';
-import LkCreateWalletSuccessPopup from '@/components/Popups/CreateWalletSuccess'
+import LkCreateWalletSuccessPopup from '@/components/Popups/CreateWalletSuccess';
 import getCryptoInfo from '@/functions/getCryptoInfo';
-import './styles.scss'
+import BackToPreviousPageButton from '@/elements/BackToPreviousPageButton';
+import './styles.scss';
 
 export default {
   name: 'LkPaymentWalletsCreate',
   components: {
     LkLayout,
     LkCreateWalletSuccessPopup,
+    BackToPreviousPageButton,
   },
   data() {
     return {
@@ -127,7 +129,8 @@ export default {
         isOpened: false,
         currency: null,
         fullCurrency: null,
-      }
+      },
+      updateTypesTimer: null,
     }
   },
   
@@ -143,6 +146,10 @@ export default {
   },
   mounted() {
     this.$store.dispatch('wallet/GET_TYPES');
+    this.updateTypesTimer = setInterval(() => this.$store.dispatch('wallet/GET_TYPES'), 5000);
+  },
+  beforeDestroy() {
+    clearInterval(this.updateTypesTimer);
   },
   methods: {
     ChangeShowOptions(option) {

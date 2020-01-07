@@ -87,31 +87,26 @@ export default {
 	mounted() {
 		if (!this.afterCreateWallet) {
 			if (this.wallets.length) {
-				this.$store.dispatch('wallet/GET_WALLETS', { wallets: this.wallets });
-				this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
-					wallets: this.wallets,
-				});
-				this.updateWalletsTimer = setInterval(() => {
-					this.$store.dispatch('wallet/UPDATE_WALLETS_BALANCE');
-				}, 5000);
+				this.getWallets();
+				this.subscribeUpdateWallets();
+				this.getTransactions();
+				this.subscribeUpdateTransactions();
 			} else {
-				this.$store.dispatch('wallet/GET_WALLETS').then(() => {
-					this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
-						wallets: this.wallets,
-					});
-					this.updateWalletsTimer = setInterval(() => {
-						this.$store.dispatch('wallet/UPDATE_WALLETS_BALANCE');
-					}, 5000);
+				this.getWallets().then(() => {
+					this.getTransactions();
+					this.subscribeUpdateTransactions();
+					this.subscribeUpdateWallets();
 				});
 			}
 		} else {
-			this.$store.dispatch('transactions_history/GET_TRANSACTIONS', {
-				wallets: this.wallets,
-			});
+			this.getTransactions();
+			this.subscribeUpdateTransactions();
+			this.subscribeUpdateWallets();
 		}
 	},
 	beforeDestroy() {
 		clearInterval(this.updateWalletsTimer);
+		clearInterval(this.updateTransactionsTimer);
 	},
 	methods: {
 		handleMovingAndDeleting(type) {
@@ -128,52 +123,25 @@ export default {
 		handleAfterDeleteCard() {
 			this.isCardsMovingAndDeleting = false;
 		},
-		copyToClipboard() {
-			var elem = document.getElementById('wallet');
-			var targetId = '_hiddenCopyText_';
-			var isInput = elem.tagName === 'INPUT' || elem.tagName === 'TEXTAREA';
-			var origSelectionStart, origSelectionEnd;
-
-			if (isInput) {
-				target = elem;
-				origSelectionStart = elem.selectionStart;
-				origSelectionEnd = elem.selectionEnd;
-			} else {
-				target = document.getElementById(targetId);
-
-				if (!target) {
-					var target = document.createElement('textarea');
-					target.style.position = 'absolute';
-					target.style.left = '-9999px';
-					target.style.top = '0';
-					target.id = targetId;
-					document.body.appendChild(target);
-				}
-
-				target.textContent = elem.textContent;
-			}
-
-			var currentFocus = document.activeElement;
-			target.focus();
-			target.setSelectionRange(0, target.value.length);
-
-			var succeed;
-			try {
-				succeed = document.execCommand('copy');
-				this.wallet = 'Copied to clipboard';
-			} catch (e) {
-				succeed = false;
-			}
-			if (currentFocus && typeof currentFocus.focus === 'function') {
-				currentFocus.focus();
-			}
-
-			if (isInput) {
-				elem.setSelectionRange(origSelectionStart, origSelectionEnd);
-			} else {
-				target.textContent = '';
-			}
-			return succeed;
+		getWallets() {
+			return this.$store.dispatch('wallet/GET_WALLETS', { wallets: this.wallets });
+		},
+		subscribeUpdateWallets() {
+			return (this.updateWalletsTimer = setInterval(() => {
+				this.$store.dispatch('wallet/UPDATE_WALLETS');
+			}, 7000));
+		},
+		getTransactions() {
+			return this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
+				wallets: this.wallets,
+			});
+		},
+		subscribeUpdateTransactions() {
+			return (this.updateTransactionsTimer = setInterval(() => {
+				this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
+					wallets: this.wallets,
+				});
+			}, 15000));
 		},
 	},
 };

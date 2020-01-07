@@ -2,7 +2,7 @@
 	<div class="accounts-list_wrapper_tab deposit-page" v-bind:class="{ active: isActive }">
 		<div class="accounts-list_wrapper_tab_header" v-on:click="$emit('open')">
 			<div class="icon">
-				<div class="image"><img src="@/assets/images/wallet2.svg" alt title /></div>
+				<div class="image"><img src="@/assets/images/wallet2.svg" width="15" /></div>
 				<p>Deposits</p>
 			</div>
 			<div class="toggle" :class="{ opened: isActive }"></div>

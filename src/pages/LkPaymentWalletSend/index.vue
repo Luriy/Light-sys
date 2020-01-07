@@ -191,6 +191,8 @@ export default {
 			isTransferSuccess: false,
 			error: null,
 			windowHandler: null,
+			updateWalletsTimer: null,
+			updateTypesTimer: null,
 		};
 	},
 	mounted() {
@@ -207,11 +209,27 @@ export default {
 
 		this.$store.dispatch('wallet/GET_WALLETS');
 		this.$store.dispatch('wallet/GET_TYPES');
+
+		this.updateWalletsTimer = setInterval(() => {
+			this.$store.dispatch('wallet/UPDATE_WALLETS');
+		}, 5000);
+		this.updateTypesTimer = setInterval(() => {
+			this.$store.dispatch('wallet/GET_TYPES');
+		}, 5000);
+
+		this.remainingCurrency = this.currentWallet.balanceUSD.toFixed(2);
+		this.remainingCryptoCurrency = this.currentWallet.balance.toFixed(5);
 	},
 	beforeDestroy() {
 		window.removeEventListener('click', this.windowHandler);
+		clearInterval(this.updateWalletsTimer);
+		clearInterval(this.updateTypesTimer);
 	},
 	computed: {
+		...mapGetters({
+			wallets: 'wallet/WALLETS',
+			types: 'wallet/TYPES',
+		}),
 		currency() {
 			return this.$route.params.currency;
 		},
@@ -221,10 +239,6 @@ export default {
 		course() {
 			return this.types[getCryptoInfo(this.currency).fullName.toLowerCase()].price;
 		},
-		...mapGetters({
-			wallets: 'wallet/WALLETS',
-			types: 'wallet/TYPES',
-		}),
 		currentWallet() {
 			return this.wallets.find((wallet) => wallet.address == this.$route.params.address);
 		},
@@ -251,7 +265,6 @@ export default {
 			return {
 				currency: this.currentWallet.balanceUSD,
 				cryptoCurrency: this.currentWallet.balance,
-				course: this.currentWallet.balanceUSD / this.currentWallet.balance,
 			};
 		},
 	},
@@ -421,7 +434,7 @@ export default {
 					document.querySelector('.transfer-popup .number-input').focus();
 				}, 50);
 
-				this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
+				this.$store.dispatch('transfer/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
 					this.timer = setInterval(() => {
 						this.countdown--;
 					}, 1000);

@@ -5,6 +5,7 @@ import { API_URL } from '@/constants';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
 import getCryptoInfo from '@/functions/getCryptoInfo';
 import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
+import cryptoCurrencies from '@/settings/currensyList';
 
 export default {
 	namespaced: true,
@@ -133,7 +134,7 @@ export default {
 				},
 			});
 		},
-		GET_WALLETS({ commit, dispatch, rootState }) {
+		GET_WALLETS({ commit, dispatch }) {
 			return Promise.all([
 				Axios({
 					url: API_URL,
@@ -228,53 +229,91 @@ export default {
 				}
 			});
 		},
-		UPDATE_WALLETS_BALANCE: ({ commit }) => {
-			const currencies = ['BTC', 'ETH', 'LTC'];
-			currencies.map(async (currency) => {
-				const { data } = await Axios({
-					url: API_URL,
-					method: 'POST',
-					params: {
-						Comand: `AllBalance${currency}`,
-						...getAuthParams(),
-					},
-				});
-				const parsedData = parsePythonArray(data)['1'].return.Result;
-				const parsedArray = Object.keys(parsedData).map((key) => ({
-					address: key,
-					balance: 1,
-				}));
-			});
+		UPDATE_WALLETS: async ({ commit, state, rootState }) => {
+			let results = await Promise.all(
+				Object.keys(cryptoCurrencies).map(async (currency) => {
+					const [
+						{ data: walletsData },
+						{ data: infoCryptsData },
+						{ data: statusNodeData },
+					] = await Promise.all([
+						Axios({
+							url: API_URL,
+							method: 'POST',
+							params: {
+								Comand: `AllBalance${currency}`,
+								...getAuthParams(),
+							},
+						}),
+						Axios({
+							url: API_URL,
+							method: 'GET',
+							params: {
+								Comand: `InfoCrypts`,
+							},
+						}),
+						Axios({
+							url: API_URL,
+							method: 'POST',
+							params: {
+								Comand: 'StatusNode',
+							},
+						}),
+					]);
+					const parsedWalletsData = parsePythonArray(walletsData)['1'].return.Result;
+					const parsedInfoCryptsData = parsePythonArray(infoCryptsData)['1'].return;
+					const parsedStatusNodeData = parsePythonArray(statusNodeData)['1'].return;
+					return Object.keys(parsedWalletsData).map((key) => {
+						const usdToCryptoCourse =
+							parsedInfoCryptsData[`${currency}: `][getCryptoInfo(currency).fullName.toLowerCase()]
+								.usd;
+						return {
+							address: key,
+							balance: parsedWalletsData[key],
+							balanceUSD: parsedWalletsData[key] * usdToCryptoCourse,
+							isAvailable: Number(parsedStatusNodeData[`StatusNode${currency}`]) === 0,
+						};
+					});
+				}),
+			);
+			results = results
+				.flat()
+				.filter(({ address }) =>
+					state.wallets.some((wallet) => wallet.address.toLowerCase() === address.toLowerCase()),
+				);
 
-			// console.log(walletsWithNewBalance);
-		},
-		GET_TRANSFER_TOKEN: ({ commit, dispatch }, user) => {
-			return Axios({
-				url: API_URL,
-				method: 'POST',
-				params: {
-					Comand: 'TransferToken',
-					...user,
-				},
-			}).then(({ data }) => {
-				const parsedData = parsePythonArray(data);
-				const errors = Object.values(parsedData['0']['Errors']);
-				if (errors.includes('Wrong password')) {
-					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
-						() => (window.location.href = `/login`),
+			commit(
+				'group/SET_GROUP_WALLETS',
+				rootState.group.groupWallets.map((group) => ({
+					...group,
+					wallets: group.wallets.map((wallet) => {
+						const currentWallet = results.find(
+							({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
+						);
+						return {
+							...wallet,
+							balance: currentWallet.balance,
+							balanceUSD: currentWallet.balanceUSD,
+							isAvailable: currentWallet.isAvailable,
+						};
+					}),
+				})),
+				{ root: true },
+			);
+			commit(
+				'SET_WALLETS',
+				state.wallets.map((wallet) => {
+					const currentWallet = results.find(
+						({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
 					);
-				} else if (errors.length) {
-					commit(
-						'alerts/setNotification',
-						{
-							message: errors[0],
-							status: 'error-status',
-							icon: 'close',
-						},
-						{ root: true },
-					);
-				}
-			});
+					return {
+						...wallet,
+						balance: currentWallet.balance,
+						balanceUSD: currentWallet.balanceUSD,
+						isAvailable: currentWallet.isAvailable,
+					};
+				}),
+			);
 		},
 		GET_TYPES: async (store) => {
 			const [{ data: nodeData }, { data }] = await Promise.all([
@@ -329,7 +368,7 @@ export default {
 					'1h': responseData['percentage_BTC: '].percentage_1h,
 					'1y': responseData['percentage_BTC: '].percentage_1y,
 					'7d': responseData['percentage_BTC: '].percentage_7d,
-					'24d': responseData['percentage_BTC: '].percentage_24d,
+					'24h': responseData['percentage_BTC: '].percentage_24h,
 					'30d': responseData['percentage_BTC: '].percentage_30d,
 					'200d': responseData['percentage_BTC: '].percentage_200d,
 				},
@@ -337,7 +376,7 @@ export default {
 					'1h': responseData['percentage_ETH: '].percentage_1h,
 					'1y': responseData['percentage_ETH: '].percentage_1y,
 					'7d': responseData['percentage_ETH: '].percentage_7d,
-					'24d': responseData['percentage_ETH: '].percentage_24d,
+					'24h': responseData['percentage_ETH: '].percentage_24h,
 					'30d': responseData['percentage_ETH: '].percentage_30d,
 					'200d': responseData['percentage_ETH: '].percentage_200d,
 				},
@@ -345,7 +384,7 @@ export default {
 					'1h': responseData['percentage_LTC: '].percentage_1h,
 					'1y': responseData['percentage_LTC: '].percentage_1y,
 					'7d': responseData['percentage_LTC: '].percentage_7d,
-					'24d': responseData['percentage_LTC: '].percentage_24d,
+					'24h': responseData['percentage_LTC: '].percentage_24h,
 					'30d': responseData['percentage_LTC: '].percentage_30d,
 					'200d': responseData['percentage_LTC: '].percentage_200d,
 				},

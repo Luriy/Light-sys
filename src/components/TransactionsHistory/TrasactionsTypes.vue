@@ -1,5 +1,8 @@
 <template>
-	<div class="transaction-types position-absolute d-flex" v-if="$route.path === '/wallets'">
+	<div
+		class="transaction-types position-absolute d-flex"
+		v-if="!$route.path.includes('payments-and-transfer')"
+	>
 		<button
 			class="transaction-type"
 			:class="{ active: type.name === activeTransactionType }"
@@ -24,7 +27,7 @@ export default {
 	transform: translateX(-50%);
 	z-index: 15;
 	@media screen and (max-width: 1250px) {
-		top: 4px;
+		top: 7px;
 	}
 }
 .transaction-type {

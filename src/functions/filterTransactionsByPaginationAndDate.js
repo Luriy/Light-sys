@@ -13,75 +13,82 @@ export default function filterTransactionsByPaginationAndDate({
 	transactions: _transactions = [],
 	transactionsPerPage,
 }) {
-	const transactions = [..._transactions]; // don't mutate
-	let transactionsWithPagination = new Array(
-		Math.ceil(transactions.length / transactionsPerPage),
-	).fill([]);
+	let transactions = [..._transactions]; // don't mutate
+	if (transactions.length) {
+		let transactionsWithPagination = new Array(
+			Math.ceil(transactions.length / transactionsPerPage),
+		).fill([]);
 
-	transactions.sort(filterByDateTimeFunc);
-	transactions.reverse();
+		transactions.sort(filterByDateTimeFunc);
+		transactions.reverse();
 
-	transactions.forEach((item, index) => {
-		const currentIndex = Math.floor(index / transactionsPerPage);
-		transactionsWithPagination[currentIndex] = [...transactionsWithPagination[currentIndex], item];
-	});
-
-	transactionsWithPagination = transactionsWithPagination.map((transactions) => {
-		let datesWithTransactions = [];
-		const dates = [];
-		transactions.forEach(({ time }) => {
-			if (
-				dates.every(
-					(date) =>
-						date.getDate() !== time.getDate() ||
-						date.getMonth() !== time.getMonth() ||
-						date.getFullYear() !== time.getFullYear(),
-				)
-			) {
-				dates.push(time);
-			}
+		transactions.forEach((item, index) => {
+			const currentIndex = Math.floor(index / transactionsPerPage);
+			transactionsWithPagination[currentIndex] = [
+				...transactionsWithPagination[currentIndex],
+				item,
+			];
 		});
 
-		transactions.forEach((transaction) => {
-			const date = dates.find((date) => {
-				return (
-					date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
-					date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
-					date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
-				);
+		transactionsWithPagination = transactionsWithPagination.map((transactions) => {
+			let datesWithTransactions = [];
+			const dates = [];
+			transactions.forEach(({ time }) => {
+				if (
+					dates.every(
+						(date) =>
+							date.getDate() !== new Date(Date.parse(time)).getDate() ||
+							date.getMonth() !== new Date(Date.parse(time)).getMonth() ||
+							date.getFullYear() !== new Date(Date.parse(time)).getFullYear(),
+					)
+				) {
+					dates.push(new Date(Date.parse(time)));
+				}
 			});
 
-			const addedTransObject = datesWithTransactions.find(
-				({ date: dateTrans }) =>
-					new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
-					new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
-					new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
-			);
-			if (addedTransObject) {
-				addedTransObject.transactions = [...addedTransObject.transactions, transaction];
-			} else {
-				datesWithTransactions = [
-					...datesWithTransactions,
-					{
-						date,
-						transactions: [
-							...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
-							transaction,
-						],
-					},
-				];
-			}
+			transactions.forEach((transaction) => {
+				const date = dates.find((date) => {
+					return (
+						date.getDate() === new Date(Date.parse(transaction.time)).getDate() &&
+						date.getMonth() === new Date(Date.parse(transaction.time)).getMonth() &&
+						date.getFullYear() === new Date(Date.parse(transaction.time)).getFullYear()
+					);
+				});
+
+				const addedTransObject = datesWithTransactions.find(
+					({ date: dateTrans }) =>
+						new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
+						new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
+						new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
+				);
+				if (addedTransObject) {
+					addedTransObject.transactions = [...addedTransObject.transactions, transaction];
+				} else {
+					datesWithTransactions = [
+						...datesWithTransactions,
+						{
+							date,
+							transactions: [
+								...(datesWithTransactions.find(({ date }) => date === transaction.time) || []),
+								transaction,
+							],
+						},
+					];
+				}
+			});
+
+			datesWithTransactions = datesWithTransactions.map((obj) => {
+				return {
+					...obj,
+					transactions: obj.transactions.slice(),
+				};
+			});
+			datesWithTransactions.sort(filterByDateFunc);
+			return datesWithTransactions.reverse();
 		});
 
-		datesWithTransactions = datesWithTransactions.map((obj) => {
-			return {
-				...obj,
-				transactions: obj.transactions.slice(),
-			};
-		});
-		datesWithTransactions.sort(filterByDateFunc);
-		return datesWithTransactions.reverse();
-	});
-
-	return transactionsWithPagination;
+		return transactionsWithPagination;
+	} else {
+		return [];
+	}
 }

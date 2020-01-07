@@ -58,7 +58,7 @@
 				class="flex justify-content-between align-items-center description-header-block"
 				@click="isDescriptionOpened = !isDescriptionOpened"
 			>
-				<div class="title" :class="{ active: isDescriptionOpened }">Description</div>
+				<div class="title none-select" :class="{ active: isDescriptionOpened }">Description</div>
 				<button
 					class="description-toggler flex align-items-center justify-content-center none-select"
 				>
@@ -107,14 +107,12 @@ export default {
 	},
 	data() {
 		return {
-			currentWallet: {
-				balance: '0.00000',
-				balanceUSD: '0.00',
-			},
 			isSocialLinksOpened: false,
 			isDescriptionOpened: false,
 			windowHandler: null,
 			operationsWithPagination: [],
+			updateWalletsTimer: null,
+			updateSingleWalletTransactions: null,
 		};
 	},
 	mounted() {
@@ -130,23 +128,34 @@ export default {
 		};
 		window.addEventListener('click', this.windowHandler);
 	},
+	async created() {
+		this.$store.dispatch('wallet/UPDATE_WALLETS');
+		this.updateWalletsTimer = setInterval(() => {
+			this.$store.dispatch('wallet/UPDATE_WALLETS');
+		}, 7000);
+
+		this.operationsWithPagination = await this.$store.dispatch(
+			'transactionsHistory/GET_SINGLE_WALLET_TRANSACTIONS',
+			{
+				address: this.currentWallet.address,
+			},
+		);
+		console.log(this.operationsWithPagination);
+
+		// this.updateSingleWalletTransactions = setInterval(async () => {
+		// 	const result = await this.$store.dispatch(
+		// 		'transactionsHistory/GET_ALL_SINGLE_WALLET_TRANSACTIONS',
+		// 		{
+		// 			wallets: [this.currentWallet],
+		// 		},
+		// 	);
+		// 	this.operationsWithPagination = result[0].transactions;
+		// }, 15000);
+	},
 	beforeDestroy() {
 		window.removeEventListener('click', this.windowHandler);
-	},
-	created() {
-		this.currentWallet = this.wallets.find(
-			(wallet) => wallet.address === this.$route.params.address,
-		);
-		this.$store
-			.dispatch('transactionsHistory/GET_TRANSACTIONS', {
-				singleWallet: {
-					currency: this.currentWallet.currency,
-					address: this.currentWallet.address,
-				},
-			})
-			.then((data) => {
-				this.operationsWithPagination = data;
-			});
+		clearInterval(this.updateWalletsTimer);
+		clearInterval(this.updateSingleWalletTransactions);
 	},
 	computed: {
 		...mapGetters({
@@ -219,7 +228,11 @@ export default {
 
 			return links;
 		},
+		currentWallet() {
+			return this.wallets.find((wallet) => wallet.address === this.$route.params.address);
+		},
 	},
+
 	methods: {
 		isShowLogotype(code) {
 			return (this.currentWallet.currency || '').toLowerCase() === code.toLowerCase();

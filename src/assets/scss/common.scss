@@ -2,6 +2,9 @@
 	display: flex;
 	flex: 0 1 auto !important;
 }
+.inline-flex {
+	display: inline-flex;
+}
 .flex-column {
 	flex-direction: column;
 }

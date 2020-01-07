@@ -110,9 +110,11 @@
 								</span>
 								<span class="currency-divider">&#124;</span>
 								<span class="balance-reserve">{{
-									`Reserve: ${banks.find(({ psid }) => psid == card.Psid).reserve.toFixed(0)} ${
-										card.Currency
-									}`
+									`Reserve: ${
+										banks.find(({ psid }) => psid == card.Psid)
+											? banks.find(({ psid }) => psid == card.Psid).reserve.toFixed(0)
+											: 0
+									} ${card.Currency}`
 								}}</span>
 							</div>
 						</div>
@@ -142,7 +144,7 @@
 								</span>
 								<span class="currency-divider">&#124;</span>
 								<span class="balance-reserve">{{
-									`Reserve: ${bank.reserve.toFixed(0)} ${bank.valute}`
+									`Reserve: ${bank ? bank.reserve.toFixed(0) : 0} ${bank.valute}`
 								}}</span>
 							</div>
 						</div>

@@ -20,7 +20,7 @@
 						<transition name="fade">
 							<button
 								:disabled="activePage === 0"
-								class="arrow-block flex align-items-center absolute"
+								class="arrow-block flex align-items-center absolute none-select"
 								:class="{ disabled: activePage === 0 }"
 								@click="throttle(handleClickMoveButton('top'), 1000)"
 							>
@@ -59,7 +59,7 @@
 		<transition name="fade">
 			<button
 				:disabled="activePage === activeTransactions.length - 1"
-				class="arrow-block"
+				class="arrow-block none-select"
 				:class="{ disabled: activePage === activeTransactions.length - 1 }"
 				@click="throttle(handleClickMoveButton('bottom'), 1000)"
 			>
@@ -96,7 +96,9 @@ export default {
 		return {
 			openedOperation: null,
 			activePage: 0,
-			activeTransactionType: this.$route.path === '/wallets' ? 'crypto-transfer' : 'all',
+			activeTransactionType: this.$route.path.includes('payments-and-transfer')
+				? 'all'
+				: 'crypto-transfer',
 		};
 	},
 	computed: {

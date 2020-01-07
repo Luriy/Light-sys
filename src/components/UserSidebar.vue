@@ -8,7 +8,7 @@
 						:to="link.to"
 						:class="{ 'router-link-active': link.to === '/wallets' && $route.path === '/' }"
 					>
-						<img :src="link.image" />
+						<img :src="link.image" :width="link.width || null" />
 						<p>{{ link.text }}</p>
 					</router-link>
 				</li>

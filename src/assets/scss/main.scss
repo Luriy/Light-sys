@@ -2156,6 +2156,9 @@ $break-large: 1124px;
     border-bottom:1px solid #3b2665;
     padding: 15px 0;
     @media screen and (max-width: 1250px) {
+      &:first-of-type {
+        padding: 12px 0;
+      }
       padding: 9px 0;
     }
     p {
@@ -2185,7 +2188,7 @@ $break-large: 1124px;
     }
     border-bottom:1px solid #3b2665;
     &.exchange {
-      padding: 9px 0;
+      padding: 8.5px 0;
       @media screen and (max-width: 1250px) {
         padding: 6px 0;
       }
@@ -2232,9 +2235,6 @@ $break-large: 1124px;
 			border-radius:17px;
 			overflow: hidden;
 			.trans-info {
-        .fee-wrapper {
-          padding-top: 3px;
-        }
         @media screen and (max-width: 1250px) {
           margin-top: 0px;
         }
@@ -3287,6 +3287,12 @@ body .v-application .error {
   height: 100%;
   background-color: rgba(38, 8, 72, 0.75);
   border-radius: 17px;
+  cursor: default;
+}
+.wallet .unavailable-block {
+  @media screen and (max-width: 1250px) {
+    border-radius: 13px;
+  }
 }
 .material-icons {
   font-family: 'Material Icons' !important;

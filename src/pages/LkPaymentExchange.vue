@@ -879,7 +879,7 @@
         if (this.$refs.exchangeForm.validate()) {
           this.showError = false;
           this.exchangePopup = !this.exchangePopup;
-          this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
+          this.$store.dispatch('transfer/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
             this.setTimer()
           });
         } else {
@@ -1014,7 +1014,7 @@
       },
       repeatTransferRequest() {
         this.clearSms();
-        this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
+        this.$store.dispatch('transfer/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
           this.isRepeat = false;
           this.setTimer();
         });
