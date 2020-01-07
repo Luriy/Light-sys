@@ -29,6 +29,7 @@
           class="chose-network"
         ></v-overflow-btn>
         </div>
+        <v-spacer></v-spacer>
           <div class="manual-btn-box">
             <div class="manual-btn">
               <span>Manual</span>
@@ -49,12 +50,12 @@
       <!-- Input text-field layout  -->
       <v-row class="input-layout">
         <div class="input-components">
-          <div style="width:980px; heigth:56px;" class="d-flex">
+          <div class="d-flex">
               <v-text-field
                 label="Enter the title"
                 background-color="#4d3779"
-                height="56"
                 full-width
+                height="56px"
                 solo
                 color="#ffffff"
                 class="input-title"
@@ -63,8 +64,8 @@
               <v-text-field
                 label="Enter a short name"
                 background-color="#4d3779"
-                height="56"
                 full-width
+                height="56px"
                 solo
                 color="#ffffff"
                 class="input-name"
@@ -73,7 +74,6 @@
               <v-text-field
                 label="Description"
                 background-color="#4d3779"
-                height="56"
                 full-width
                 solo
                 color="#ffffff"
@@ -197,7 +197,9 @@
               ></v-slider>
           </div>
         </div>
-          <!-- <v-spacer></v-spacer> -->
+
+          <v-spacer></v-spacer>
+
         <div class="chose-tokens">
             <div class="select-tokens-inside d-flex flex-row">
               <v-select
@@ -209,6 +211,7 @@
                 height="60"
                 class="select-first-token"
               ></v-select>
+                <v-spacer></v-spacer>
               <v-select
                 :items="[1,3,4,5]"
                 label="Additional issue"
@@ -229,6 +232,7 @@
                 height="60"
                 class="select-first-token"
               ></v-select>
+                <v-spacer></v-spacer>
               <v-select
                 :items="[1,3,4,5]"
                 label="Escrow"
@@ -249,6 +253,7 @@
                 height="60"
                 class="select-first-token"
               ></v-select>
+                <v-spacer></v-spacer>
               <v-select
                 :items="[1,3,4,5]"
                 label="Score"
@@ -282,7 +287,7 @@
           <br>I) You will not use it for fraudulent purposes;
           <br>II) You do not duplicate in the name of the token in full or in part the name of existing cryptocurrencies or the names of well-known
         </p>
-        <img src="@/assets/images/confirm-icon.svg" />
+        <!-- <img src="@/assets/images/confirm-icon.svg" /> -->
       </v-row>
       <!-- Deploy button -->
       <v-row class="deploy-btn-layout">
@@ -360,20 +365,20 @@
 
 <style scoped lang="scss">
   @import "../assets/scss/common";
-
   .smart-contract{
     width: 100%;
     max-width: 2048px;
     height: 1116px;
     // border-radius: 32px;
-    // background-color: grey;
-    // cursor: url('//assets/images/smart-cursor.svg');
+  }
+  .container {
+    padding: 0;
   }
   .v-card:not(.v-sheet--tile):not(.v-card--shaped){
     border-radius: 17px;
   }
   .smart-text{
-    width: 1024px;
+    width: 100%;
     height: 21px;
     display: inline-block;
     span{
@@ -406,7 +411,7 @@
   // Chose option, network && manual, video instruction buttons
   // -----------------------------------------------
   .chose-option-box{
-    width: 1024px;
+    width: 100%;
     height: 60px;
     margin: 0 auto;
     margin-top: 30px;
@@ -419,7 +424,6 @@
     width: 310px;
   }
   .chose-network{
-    // margin-right: 48px;
     font-weight: 600;
     line-height: 21px;
     width: 310px;
@@ -433,11 +437,9 @@
     box-shadow: 0 2px 19px rgba(0,0,0,0.29);
   }
   .manual-btn-box{
-    width: 115px;
+    width: 132px;
     height: 60px;
     position: relative;
-    margin-left: 42px;
-    margin-right: 30px;
   }
   .manual-btn__icon{
     width: 37px;
@@ -474,10 +476,10 @@
     }
   }
   .instruction-btn-box{
-    width: 180px;
+    width: 196px;
     height: 60px;
     position: relative;
-    margin-left: 4px;
+    margin-left: 15px;
   }
   .instruction-btn__icon{
     width: 37px;
@@ -516,37 +518,11 @@
   .manual-btn__icon, .manual-btn, .instruction-btn__icon, .instruction-btn:hover{
     cursor: pointer;
   }
-  // @media(min-width: 1024px){
-  //   .chose-option{
-  //     width: 50%;
-  //   }
-  // }
-  // @media(min-width: 1280px){
-  //   .chose-option{
-  //     width: 50%;
-  //   }
-  // }
-  // @media(min-width: 1407px){
-  //   .chose-option{
-  //     width: 70%;
-  //   }
-  // }
-  // @media(min-width: 1630px){
-  //   .chose-option{
-  //     width: 80%;
-  //   }
-  // }
-  // @media(min-width: 1807px){
-  //   .chose-option{
-  //     width: 90%;
-  //   }
-  // }
-
   // -----------------------------------------------
-  // Inpun layout (title, name, description)
+  // Input layout (title, name, description)
   // -----------------------------------------------
   .input-layout{
-    width: 1024px;
+    width: 100%;
     height: 167px;
     border-radius: 14px;
     background-color: #3b2665;
@@ -555,25 +531,18 @@
     margin-bottom: 15px;
   }
   .input-components{
-    width: 980px;
+    width: 100%;
     height: 127px;
-    // margin: 0 auto;
   }
   .input-title, .input-name, .input-description{
+    width: 100%;
     border-radius: 14px;
     height: 56px;
     font-weight: 600;
     line-height: 21px;
     opacity: 0.5;
   }
-  .input-title{
-    width: 440px;
-  }
-  .input-name{
-    width: 440px;
-  }
   .input-description{
-    width: 980px;
     margin: 0 auto;
     margin-top: 15px;
   }
@@ -582,20 +551,21 @@
   // -----------------------------------------------
   // Number of tokens
   .tokens-layout{
-    width: 1024px;
+    width: 100%;
     height: 536px;
     margin: 0 auto;
     margin-bottom: 30px;
-    position: relative;
+    // position: relative;
+    // background: grey;
   }
   .number-tokens{
-    width: 360px;
+    width: 339px;
     height: 536px;
     border-radius: 14px;
     background-color: #3b2665;;
-    margin-right: 625px;
+    // margin-right: 625px;
     padding: 20px;
-    position: absolute;
+    // position: absolute;
     p{
       height: 21px;
       color: #ffffff;
@@ -604,18 +574,21 @@
       font-size: 14px;
       font-family: "Open Sans Semi Bold";
     }
-    span{
-    width: 225px;
-    height: 21px;
-    opacity: 0.5;
-    color: #ffffff;
-    font-family: "Open Sans";
-    font-size: 12px;
-    line-height: 21px;
-  }
+      span{
+      width: 225px;
+      height: 21px;
+      opacity: 0.5;
+      color: #ffffff;
+      font-family: "Open Sans";
+      font-size: 12px;
+      line-height: 21px;
+    }
+    @media screen and (min-width: 1948px) {
+      width: (364px + 300px);
+    }
   }
   .number-tokens-block{
-    width: 320px;
+    width: 295px;
     height: 70px;
     margin-bottom: 10px;
     margin-top: 20px;
@@ -631,18 +604,18 @@
   }
   .input-slider-text{
     margin-left: 12px;
-    width: 294px;
+    width: 270px;
     height: 2px;
     position: absolute;
     bottom: 28px;
   }
   .input-slider{
-    width: 320px;
+    width: 295px;
     height: 60px;
     margin: 0 auto;
   }
   .slider-block{
-    width: 320px;
+    width: 295px;
     height: 68px;
     p{
       margin-bottom: 30px;
@@ -660,13 +633,13 @@
     line-height: 21px;
     position: absolute;
     margin-top: 0;
-    margin-left: 250px;
+    margin-left: 225px;
     input{
       text-align: right;
     }
   }
   .number-tokens-slider{
-    width: 320px;
+    width: 295px;
     height: 2px;
     margin-top: 28px;
     margin-right: 2px;
@@ -674,71 +647,72 @@
     position: absolute;
   }
   .validity-block{
-    width: 270px;
+    width: 295px;
     height: 82px;
   }
   .input-validity{
-    width: 270px;
+    width: 295px;
     height: 56px;
     position: relative;
     p{
       margin-bottom: 10px;
     }
   }
-  .validity-first{
-    width: 130px;
-    border-radius: 14px;
-    opacity: 0.5;
-    font-weight: 600;
-    line-height: 21px;
-    margin-right: 140px;
-    position: absolute;
-  }
-  .validity-last{
-    width: 130px;
-    border-radius: 14px;
-    opacity: 0.5;
-    font-weight: 600;
-    line-height: 21px;
-    margin-left: 140px;
-    position: absolute;
-  }
+  // .validity-first{
+  //   width: 130px;
+  //   border-radius: 14px;
+  //   opacity: 0.5;
+  //   font-weight: 600;
+  //   line-height: 21px;
+  //   margin-right: 140px;
+  //   position: absolute;
+  // }
+  // .validity-last{
+  //   width: 130px;
+  //   border-radius: 14px;
+  //   opacity: 0.5;
+  //   font-weight: 600;
+  //   line-height: 21px;
+  //   margin-left: 140px;
+  //   position: absolute;
+  // }
 
   // Second block (chose tokens)
   .chose-tokens{
-    width: 655px;
+    width: 702px;
     height: 536px;
     border-radius: 14px;
     background-color: #3b2665;
     padding: 20px 20px 25px 20px;
-    margin-left: 370px;
-    // margin-left: 414px;
-    position: absolute;
+    // @media screen and (min-width: 1548px) {
+    //   width: (677px + 100px);
+    // }
+    // @media screen and (max-width: 2048px){
+    //   width: (60% + 18%);
+    // }
   }
   .select-tokens-inside{
-    width: 626px;
+    width: 660px;
     height: 61px;
-    position: relative;
     padding-right: 14px;
     padding-left: 14px;
     padding: 0;
     margin-bottom: 15px;
     font-weight: 600;
     line-height: 21px;
+    // background-color: #fff;
   }
   .select-first-token{
-    width: 297px;
+    width: 312px;
     height: 60px;
-    position: absolute;
-    margin-right: 313px;
   }
   .select-last-token{
-    width: 297px;
+    width: 312px;
     height: 60px;
-    position: absolute;
-    margin-left: 313px;
   }
-  // test
+
+  // Checkbox Layout
+
   .checkbox-layout {
     width: 116px;
     height: 12px;
@@ -747,18 +721,18 @@
     font-size: 14px;
     font-weight: 600;
     line-height: 21px;
-    margin: 5px 70px 20px 5px;
+    margin: 5px 100px 20px 5px;
   }
   .chose-tokens-scroll{
     border-radius: 17px;
     background-color: #4d3779;
     padding: 11px 10px 61px 20px;
     margin: 0 auto;
-    width: 610px;
+    width: 660px;
     height: 267px;
   }
   .chose-tokens-chechbox{
-    width: 580px;
+    width: 630px;
     height: 181px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -800,22 +774,22 @@
   // Confirm layout, Deploy button & Info layout
   // -----------------------------------------------
   .confirm-layout{
-    width: 1024px;
+    width: 100%;
     height: 94px;
     border-radius: 8px;
     border: 1px solid #4d3779;
     margin: 0 auto;
     margin-bottom: 20px; //40px
     position: relative;
-    img{
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      background-color: #3b2665;
-      margin: 32px 32px 33px 955px;
-      position: absolute;
-      cursor: pointer;
-    }
+    // img{
+    //   width: 30px;
+    //   height: 30px;
+    //   border-radius: 8px;
+    //   background-color: #3b2665;
+    //   margin: 32px 32px 33px 955px;
+    //   position: absolute;
+    //   cursor: pointer;
+    // }
     p{
       width: 774px;
       height: 65px;
