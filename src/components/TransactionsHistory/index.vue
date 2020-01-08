@@ -30,8 +30,8 @@
 					</div>
 					<div
 						class="trans-item operations-history-list-item"
-						v-for="transaction in datesWithTransaction.transactions"
-						:key="transaction.url + transaction.type + transaction.value"
+						v-for="(transaction, index) in datesWithTransaction.transactions"
+						:key="transaction.url + index"
 						:class="{
 							exchange: transaction.type === 'exchange',
 							active: openedOperation === transaction.url + transaction.type,
@@ -96,9 +96,7 @@ export default {
 		return {
 			openedOperation: null,
 			activePage: 0,
-			activeTransactionType: this.$route.path.includes('payments-and-transfer')
-				? 'all'
-				: 'crypto-transfer',
+			activeTransactionType: 'all',
 		};
 	},
 	computed: {

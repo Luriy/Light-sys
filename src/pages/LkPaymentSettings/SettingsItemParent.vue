@@ -1,6 +1,6 @@
 <template>
 	<lk-layout>
-		<div class="flex flex-column">
+		<div class="flex flex-column full-height">
 			<div class="top-bar flex justify-content-between align-items-center">
 				<div class="flex align-items-center">
 					<span class="setting-name">{{ name }}</span>
@@ -34,7 +34,7 @@ export default {
 </script>
 <style>
 .top-bar {
-	margin-bottom: 30px;
+	margin-bottom: 20px;
 }
 .setting-name {
 	color: #fff;
@@ -48,5 +48,10 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+.step-number {
+	font-size: 24px;
+	font-weight: 600;
+	color: #fff;
 }
 </style>

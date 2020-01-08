@@ -191,7 +191,6 @@ export default {
 			isTransferSuccess: false,
 			error: null,
 			windowHandler: null,
-			updateWalletsTimer: null,
 			updateTypesTimer: null,
 		};
 	},
@@ -206,13 +205,7 @@ export default {
 			}
 		};
 		window.addEventListener('click', this.windowHandler);
-
-		this.$store.dispatch('wallet/GET_WALLETS');
 		this.$store.dispatch('wallet/GET_TYPES');
-
-		this.updateWalletsTimer = setInterval(() => {
-			this.$store.dispatch('wallet/UPDATE_WALLETS');
-		}, 5000);
 		this.updateTypesTimer = setInterval(() => {
 			this.$store.dispatch('wallet/GET_TYPES');
 		}, 5000);
@@ -222,7 +215,6 @@ export default {
 	},
 	beforeDestroy() {
 		window.removeEventListener('click', this.windowHandler);
-		clearInterval(this.updateWalletsTimer);
 		clearInterval(this.updateTypesTimer);
 	},
 	computed: {

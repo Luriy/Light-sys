@@ -1,7 +1,5 @@
 import store from '../store';
 
-console.log(store.getters);
-
 export const ifNotAuthenticated = (to, from, next) => {
 	if (!store.getters.isAuthenticated) {
 		next();

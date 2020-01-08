@@ -111,7 +111,6 @@ export default {
 			isDescriptionOpened: false,
 			windowHandler: null,
 			operationsWithPagination: [],
-			updateWalletsTimer: null,
 			updateSingleWalletTransactions: null,
 		};
 	},
@@ -129,32 +128,15 @@ export default {
 		window.addEventListener('click', this.windowHandler);
 	},
 	async created() {
-		this.$store.dispatch('wallet/UPDATE_WALLETS');
-		this.updateWalletsTimer = setInterval(() => {
-			this.$store.dispatch('wallet/UPDATE_WALLETS');
-		}, 7000);
-
 		this.operationsWithPagination = await this.$store.dispatch(
 			'transactionsHistory/GET_SINGLE_WALLET_TRANSACTIONS',
 			{
 				address: this.currentWallet.address,
 			},
 		);
-		console.log(this.operationsWithPagination);
-
-		// this.updateSingleWalletTransactions = setInterval(async () => {
-		// 	const result = await this.$store.dispatch(
-		// 		'transactionsHistory/GET_ALL_SINGLE_WALLET_TRANSACTIONS',
-		// 		{
-		// 			wallets: [this.currentWallet],
-		// 		},
-		// 	);
-		// 	this.operationsWithPagination = result[0].transactions;
-		// }, 15000);
 	},
 	beforeDestroy() {
 		window.removeEventListener('click', this.windowHandler);
-		clearInterval(this.updateWalletsTimer);
 		clearInterval(this.updateSingleWalletTransactions);
 	},
 	computed: {

@@ -1,15 +1,34 @@
 import Vue from 'vue';
-import { parsePythonDataObject } from '@/functions/helpers';
 import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from '../actions/user';
 import { AUTH_LOGOUT } from '../actions/auth';
 import { API_URL } from '@/constants';
+import { getAuthParams } from '@/functions/auth';
+import { parsePythonArray, parsePythonDataObject } from '@/functions/helpers';
 import Axios from 'axios';
 
-const state = { status: '', profile: {} };
+const state = { status: '', profile: {}, allUsdBalance: 0 };
 
 const getters = {
 	getProfile: (state) => state.profile,
 	isProfileLoaded: (state) => !!state.profile.name,
+	ALL_USD_BALANCE: (state) => state.allUsdBalance,
+};
+
+const mutations = {
+	[USER_REQUEST]: (state) => {
+		state.status = 'loading';
+	},
+	[USER_SUCCESS]: (state, resp) => {
+		state.status = 'success';
+		Vue.set(state, 'profile', resp);
+	},
+	[USER_ERROR]: (state) => {
+		state.status = 'error';
+	},
+	[AUTH_LOGOUT]: (state) => {
+		state.profile = {};
+	},
+	SET_ALL_USD_BALANCE: (state, payload) => (state.allUsdBalance = payload),
 };
 
 const actions = {
@@ -40,22 +59,6 @@ const actions = {
 
 			return data;
 		});
-	},
-};
-
-const mutations = {
-	[USER_REQUEST]: (state) => {
-		state.status = 'loading';
-	},
-	[USER_SUCCESS]: (state, resp) => {
-		state.status = 'success';
-		Vue.set(state, 'profile', resp);
-	},
-	[USER_ERROR]: (state) => {
-		state.status = 'error';
-	},
-	[AUTH_LOGOUT]: (state) => {
-		state.profile = {};
 	},
 };
 

@@ -318,6 +318,16 @@ export default {
 
 			const transactions = [
 				{
+					name: 'all',
+					text: 'All',
+					transactions: filterTransactionsByPaginationAndDate({
+						transactions: singleWallet
+							? getters.ALL_FILTERED_SINGLE_TRANSACTIONS
+							: getters.ALL_FILTERED_TRANSACTIONS,
+						transactionsPerPage: 20,
+					}),
+				},
+				{
 					name: 'crypto-transfer',
 					icon: {
 						src: require('@/assets/images/transaction-sent.svg'),
@@ -340,16 +350,6 @@ export default {
 						width: 18,
 					},
 					transactions: cryptoFiatTransferTransactions,
-				},
-				{
-					name: 'all',
-					text: 'All',
-					transactions: filterTransactionsByPaginationAndDate({
-						transactions: singleWallet
-							? getters.ALL_FILTERED_SINGLE_TRANSACTIONS
-							: getters.ALL_FILTERED_TRANSACTIONS,
-						transactionsPerPage: 20,
-					}),
 				},
 			];
 

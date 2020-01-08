@@ -15,9 +15,9 @@ export default [
 		link: 'notifications',
 	},
 	{
-		name: 'Decor',
+		name: 'Theme',
 		icon: require('@/assets/images/icons/Decor.png'),
-		link: 'decor',
+		link: 'theme',
 	},
 	{
 		name: 'Support Center',
@@ -40,7 +40,7 @@ export default [
 		link: 'languages',
 	},
 	{
-		name: 'O Lightnet ecosystem',
+		name: 'Lightnet ecosystem',
 		icon: require('@/assets/images/icons/Heart.png'),
 		link: 'lightnet-ecosystem',
 	},

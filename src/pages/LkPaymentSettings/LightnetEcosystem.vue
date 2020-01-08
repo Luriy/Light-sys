@@ -1,5 +1,5 @@
 <template>
-	<settings-item-parent :name="'O Lightnet ecosystem'"></settings-item-parent>
+	<settings-item-parent :name="'Lightnet ecosystem'"></settings-item-parent>
 </template>
 <script>
 import SettingsItemParent from './SettingsItemParent';

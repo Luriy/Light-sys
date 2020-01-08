@@ -57,7 +57,7 @@
 											</span>
 											<span class="currency-divider">&#124;</span>
 											<span class="balance-reserve">{{
-												`Reserve: ${currentBank.reserve.toFixed(0)} ${currentCard.currency}`
+												`Reserve: ${currentBank.reserve.toFixed(0)} ${currentBank.currency}`
 											}}</span>
 										</div>
 									</div>
@@ -167,7 +167,6 @@ export default {
 			windowHandler: null,
 			paymentTypes: payment_types,
 			paymentDirections: payment_directions,
-			updateWalletsTimer: null,
 		};
 	},
 	mounted() {
@@ -184,23 +183,17 @@ export default {
 			}
 		};
 		window.addEventListener('click', this.windowHandler);
-		this.updateWalletsTimer = setInterval(() => {
-			this.$store.dispatch('wallet/UPDATE_WALLETS');
-		}, 5000);
 	},
 	beforeDestroy() {
-    window.removeEventListener('click', this.windowHandler);
-    clearInterval(this.updateWalletsTimer)
+		window.removeEventListener('click', this.windowHandler);
 	},
 	computed: {
 		...mapGetters({
 			wallets: 'wallet/WALLETS',
 			cards: 'card/CARDS',
 			banks: 'common/BANKS',
+			allUsdBalance: 'user/ALL_USD_BALANCE',
 		}),
-		allUsdBalance() {
-			return Number(this.wallets.reduce((acc, item) => acc + item.balanceUSD, 0)).toFixed(2) || 0;
-		},
 		filteredWallets() {
 			return this.wallets.filter(({ fullName }) => {
 				if (fullName) {

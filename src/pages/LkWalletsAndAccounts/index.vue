@@ -73,7 +73,6 @@ export default {
 		return {
 			isWalletsMovingAndDeleting: false,
 			isCardsMovingAndDeleting: false,
-			updateWalletsTimer: null,
 		};
 	},
 	computed: {
@@ -88,24 +87,20 @@ export default {
 		if (!this.afterCreateWallet) {
 			if (this.wallets.length) {
 				this.getWallets();
-				this.subscribeUpdateWallets();
 				this.getTransactions();
 				this.subscribeUpdateTransactions();
 			} else {
 				this.getWallets().then(() => {
 					this.getTransactions();
 					this.subscribeUpdateTransactions();
-					this.subscribeUpdateWallets();
 				});
 			}
 		} else {
 			this.getTransactions();
 			this.subscribeUpdateTransactions();
-			this.subscribeUpdateWallets();
 		}
 	},
 	beforeDestroy() {
-		clearInterval(this.updateWalletsTimer);
 		clearInterval(this.updateTransactionsTimer);
 	},
 	methods: {
@@ -125,11 +120,6 @@ export default {
 		},
 		getWallets() {
 			return this.$store.dispatch('wallet/GET_WALLETS', { wallets: this.wallets });
-		},
-		subscribeUpdateWallets() {
-			return (this.updateWalletsTimer = setInterval(() => {
-				this.$store.dispatch('wallet/UPDATE_WALLETS');
-			}, 7000));
 		},
 		getTransactions() {
 			return this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {

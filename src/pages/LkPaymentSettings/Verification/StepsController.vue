@@ -25,6 +25,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.wrapper {
+	margin-top: 50px;
+}
 .btn-back {
 	min-width: 120px;
 	height: 50px;
@@ -74,6 +77,9 @@ export default {
 			justify-content: center;
 			align-items: center;
 			position: relative;
+			&:last-of-type {
+				margin-right: -24px;
+			}
 		}
 		z-index: 5;
 		width: 15px;

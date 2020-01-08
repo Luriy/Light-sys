@@ -11,6 +11,7 @@ import currency from './modules/currency';
 import group from './modules/group';
 import transfer from './modules/transfer';
 import transactionsHistory from './modules/transactions_history';
+import theme from './modules/theme';
 import { BASE_URL } from '@/settings/config';
 Vue.use(Vuex);
 
@@ -29,6 +30,7 @@ export default new Vuex.Store({
 		group,
 		transfer,
 		transactionsHistory,
+		theme,
 	},
 	state: {
 		urls: {

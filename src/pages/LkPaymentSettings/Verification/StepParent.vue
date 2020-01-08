@@ -1,6 +1,5 @@
 <template>
-	<div class="flex flex-column">
-		<span class="step-number">Step {{ step }}</span>
+	<div class="flex flex-column step-wrapper">
 		<slot></slot>
 		<steps-controller
 			:currentStep="currentStep"
@@ -19,10 +18,10 @@ export default {
 	},
 };
 </script>
-<style lang="scss">
-.step-number {
-	font-size: 24px;
-	font-weight: 600;
-	color: #fff;
+<style lang="scss" scoped>
+.step {
+	&-wrapper {
+		position: relative;
+	}
 }
 </style>

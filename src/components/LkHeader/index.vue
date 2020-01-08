@@ -9,7 +9,7 @@
 				<div class="rating">
 					<p><img src="@/assets/images/star-2.svg" alt title /> 4,56 <span> of 10</span></p>
 				</div>
-				<div class="balance">10 205.99 <span>USD</span></div>
+				<div class="balance">{{ allUsdBalance }} <span>USD</span></div>
 				<div class="notification">
 					<img src="@/assets/images/icons/bell.svg" alt title />
 					<span></span>
@@ -28,6 +28,7 @@
 </template>
 <script>
 import Dropdown from './Dropdown';
+import { mapGetters } from 'vuex';
 
 export default {
 	name: 'LkHeader',
@@ -37,7 +38,21 @@ export default {
 	data() {
 		return {
 			isDropDownOpened: false,
+			updateWalletsTimer: null,
 		};
+	},
+	created() {
+		this.updateWalletsTimer = setInterval(() => {
+			this.$store.dispatch('wallet/UPDATE_WALLETS');
+		}, 5000);
+	},
+	beforeDestroy() {
+		clearInterval(this.updateWalletsTimer);
+	},
+	computed: {
+		...mapGetters({
+			allUsdBalance: 'user/ALL_USD_BALANCE',
+		}),
 	},
 };
 </script>

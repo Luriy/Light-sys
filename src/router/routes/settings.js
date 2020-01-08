@@ -2,7 +2,7 @@ import Settings from '@/pages/LkPaymentSettings/index';
 import SettingsSecurity from '@/pages/LkPaymentSettings/Security';
 import SettingsAccount from '@/pages/LkPaymentSettings/Account';
 import SettingsNotifications from '@/pages/LkPaymentSettings/Notifications';
-import SettingsDecor from '@/pages/LkPaymentSettings/Decor';
+import SettingsTheme from '@/pages/LkPaymentSettings/Theme';
 import SettingsSupportCenter from '@/pages/LkPaymentSettings/SupportCenter';
 import SettingsVerification from '@/pages/LkPaymentSettings/Verification/index';
 import SettingsReferralSystem from '@/pages/LkPaymentSettings/ReferralSystem';
@@ -36,9 +36,9 @@ export default [
 		beforeEnter: ifAuthenticated,
 	},
 	{
-		path: '/settings/decor',
-		name: 'SettingsDecor',
-		component: SettingsDecor,
+		path: '/settings/theme',
+		name: 'SettingsTheme',
+		component: SettingsTheme,
 		beforeEnter: ifAuthenticated,
 	},
 	{

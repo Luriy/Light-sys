@@ -47,7 +47,7 @@ export default {
 	},
 	data() {
 		return {
-			currentStep: 2,
+			currentStep: 1,
 			steps: ['Basic info', 'Google form', 'Facial Information', 'Adoption'],
 		};
 	},

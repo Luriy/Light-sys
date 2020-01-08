@@ -230,6 +230,7 @@ export default {
 			});
 		},
 		UPDATE_WALLETS: async ({ commit, state, rootState }) => {
+			let allUsdBalance = 0;
 			let results = await Promise.all(
 				Object.keys(cryptoCurrencies).map(async (currency) => {
 					const [
@@ -260,13 +261,17 @@ export default {
 							},
 						}),
 					]);
+					// Number(this.wallets.reduce((acc, item) => acc + item.balanceUSD, 0)).toFixed(2) || 0;
 					const parsedWalletsData = parsePythonArray(walletsData)['1'].return.Result;
 					const parsedInfoCryptsData = parsePythonArray(infoCryptsData)['1'].return;
 					const parsedStatusNodeData = parsePythonArray(statusNodeData)['1'].return;
-					return Object.keys(parsedWalletsData).map((key) => {
+
+					const result = Object.keys(parsedWalletsData).map((key) => {
 						const usdToCryptoCourse =
 							parsedInfoCryptsData[`${currency}: `][getCryptoInfo(currency).fullName.toLowerCase()]
 								.usd;
+						allUsdBalance += parsedWalletsData[key] * usdToCryptoCourse;
+
 						return {
 							address: key,
 							balance: parsedWalletsData[key],
@@ -274,8 +279,11 @@ export default {
 							isAvailable: Number(parsedStatusNodeData[`StatusNode${currency}`]) === 0,
 						};
 					});
+
+					return result;
 				}),
 			);
+			commit('user/SET_ALL_USD_BALANCE', allUsdBalance.toFixed(2), { root: true });
 			results = results
 				.flat()
 				.filter(({ address }) =>
