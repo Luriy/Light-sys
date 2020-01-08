@@ -198,11 +198,11 @@
           </div>
         </div>
 
-          <v-spacer></v-spacer>
+          <!-- <v-spacer></v-spacer> -->
 
         <div class="chose-tokens">
             <div class="select-tokens-inside d-flex flex-row">
-              <v-select
+              <!-- <v-select
                 :items="[1,3,4,5]"
                 label="Burning"
                 color="#F44336"
@@ -210,7 +210,18 @@
                 solo
                 height="60"
                 class="select-first-token"
-              ></v-select>
+              ></v-select> -->
+              <v-overflow-btn
+                :items="[1,3,4,5]"
+                label="Burning"
+                color="#F44336"
+                background-color="#4d3779"
+                item-color="grey"
+                solo
+                height="60"
+                class="chose-option"
+                clear-icon
+              ></v-overflow-btn>
                 <v-spacer></v-spacer>
               <v-select
                 :items="[1,3,4,5]"
@@ -287,7 +298,7 @@
           <br>I) You will not use it for fraudulent purposes;
           <br>II) You do not duplicate in the name of the token in full or in part the name of existing cryptocurrencies or the names of well-known
         </p>
-        <!-- <img src="@/assets/images/confirm-icon.svg" /> -->
+        <img src="@/assets/images/confirm-icon.svg" />
       </v-row>
       <!-- Deploy button -->
       <v-row class="deploy-btn-layout">
@@ -551,19 +562,19 @@
   // -----------------------------------------------
   // Number of tokens
   .tokens-layout{
-    width: 100%;
+    width: 1057px;
     height: 536px;
     margin: 0 auto;
     margin-bottom: 30px;
+    // background-color: grey;
     // position: relative;
-    // background: grey;
   }
   .number-tokens{
     width: 339px;
     height: 536px;
     border-radius: 14px;
     background-color: #3b2665;;
-    // margin-right: 625px;
+    margin-right: 16px;
     padding: 20px;
     // position: absolute;
     p{
@@ -583,9 +594,10 @@
       font-size: 12px;
       line-height: 21px;
     }
-    @media screen and (min-width: 1948px) {
-      width: (364px + 300px);
-    }
+    // @media screen and (min-width: 1948px) {
+    //   width: (339px + 339px);
+    //   height: (536px - 200px);
+    // }
   }
   .number-tokens-block{
     width: 295px;
@@ -781,15 +793,16 @@
     margin: 0 auto;
     margin-bottom: 20px; //40px
     position: relative;
-    // img{
-    //   width: 30px;
-    //   height: 30px;
-    //   border-radius: 8px;
-    //   background-color: #3b2665;
-    //   margin: 32px 32px 33px 955px;
-    //   position: absolute;
-    //   cursor: pointer;
-    // }
+    img{
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background-color: #3b2665;
+      // margin: 32px 32px 33px 955px;
+      position: absolute;
+      cursor: pointer;
+      margin: 32px 32px 33px 95%;
+    }
     p{
       width: 774px;
       height: 65px;

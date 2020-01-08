@@ -172,6 +172,9 @@ b, strong {
 .v-overflow-btn .v-select__selection--comma:first-child {
     margin-left: 5px;
 }
+.v-overflow-btn .v-input__control:before {
+	display: none;
+}
 
 // responsive breakpoints
 $break-small-portrait: 320px;
