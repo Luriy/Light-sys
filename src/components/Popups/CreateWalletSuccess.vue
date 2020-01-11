@@ -10,9 +10,7 @@
 			class="_title flex flex-column align-items-center card-list-delete-popup__wrapper"
 		>
 			<div class="image-plate">
-				<img v-if="successPopup.currency === 'BTC'" src="@/assets/images/btc.png" />
-				<img v-if="successPopup.currency === 'ETH'" src="@/assets/images/eth.png" />
-				<img v-if="successPopup.currency === 'LTC'" src="@/assets/images/ltc.svg" height="65" />
+				<img :src="getCryptoInfo(successPopup.currency).image.corner" height="65" />
 			</div>
 			<p class="card-list-delete-popup__title">Success</p>
 			<div class="flex">
@@ -29,11 +27,15 @@
 <script>
 import LkPopup from '@/layout/LkPopUp';
 import './styles.scss';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	props: ['successPopup'],
 	components: {
 		LkPopup,
+	},
+	methods: {
+		getCryptoInfo,
 	},
 };
 </script>

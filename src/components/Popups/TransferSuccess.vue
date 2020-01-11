@@ -17,7 +17,7 @@
 				</p>
 				<p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
 			</div>
-			<img :src="sendArrow" class="send-arrow" :class="{ rotated: currency === 'BTC' || currency === 'LTC' }" />
+			<img :src="getCryptoInfo(currency).image.arrow" class="send-arrow" />
 			<p class="address">{{ paymentAddress }}</p>
 			<div class="exchange-block_fee">
 				<div class="network-fee flex justify-content-between">
@@ -85,9 +85,7 @@ export default {
 }
 .send-arrow {
 	margin: 15px 0 20px;
-	&.rotated {
-		transform: rotate(90deg);
-	}
+	transform: rotate(90deg);
 }
 
 .payment-usd {

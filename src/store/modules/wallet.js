@@ -4,7 +4,7 @@ import { getAuthParams } from '@/functions/auth';
 import { BASE_URL } from '@/settings/config';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
 import getCryptoInfo from '@/functions/getCryptoInfo';
-import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
+import currensyList from '@/settings/currensyList';
 import cryptoCurrencies from '@/settings/currensyList';
 
 const getPercentage = (responseData) => {
@@ -232,11 +232,7 @@ export default {
 				} else {
 					const wallets = Object.keys(returnData)
 						.reduce((acc, walletCurrency) => {
-							if (
-								walletCurrency === 'BTC' ||
-								walletCurrency === 'ETH' ||
-								walletCurrency === 'LTC'
-							) {
+							if (Object.keys(currensyList).some((currency) => currency === walletCurrency)) {
 								acc.push(
 									...Object.values(returnData[walletCurrency]).map((item) => ({
 										address: item.Walet,
@@ -275,12 +271,6 @@ export default {
 						{ group: returnData.Group, wallets },
 						{ root: true },
 					);
-
-					// if (!rootState.group.groupWallets.length) {
-					// 	commit('group/SET_GROUP_WALLETS', groups, { root: true });
-					// } else {
-					// 	commit('group/UPDATE_GROUP_WALLETS', { wallets: result }, { root: true });
-					// }
 
 					return { wallets };
 				}
@@ -331,7 +321,6 @@ export default {
 										getCryptoInfo(currency).fullName.toLowerCase()
 									].usd;
 								allUsdBalance += parsedWalletsData[key] * usdToCryptoCourse;
-								console.log(parsedWalletsData[key]);
 
 								return {
 									address: key,

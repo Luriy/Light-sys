@@ -22,14 +22,7 @@
 				</div>
 				<div class="code">
 					<div :class="['image', wallet.currency.toLowerCase()]">
-						<img
-							v-if="wallet.currency === 'BTC'"
-							src="@/assets/images/icons/btc-ico.svg"
-							alt
-							title
-						/>
-						<img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title />
-						<img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc-ico.svg" width="12" />
+						<img :src="getCryptoInfo(wallet.currency).image.square" width="12" />
 					</div>
 					<div class="flex flex-column">
 						<span :class="wallet.currency.toLowerCase()">{{

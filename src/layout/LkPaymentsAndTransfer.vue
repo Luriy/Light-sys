@@ -28,7 +28,6 @@ export default {
 		transferWallet() {
 			if (this.wallets && this.wallets.length) {
 				const walletsBalancesArray = this.wallets.map((wallet) => wallet.balanceUSD);
-				console.log(walletsBalancesArray);
 				const maxBalanceIndex = walletsBalancesArray.indexOf(
 					Math.max.apply(null, walletsBalancesArray),
 				);

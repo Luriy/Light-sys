@@ -3,9 +3,12 @@
 		<div>
 			<div class="wallet-send-block">
 				<div class="wallet-send-currency">
-					<img v-if="isShowLogotype('btc')" src="@/assets/images/btc.png" alt title />
-					<img v-if="isShowLogotype('eth')" src="@/assets/images/eth.png" alt title />
-					<img v-if="isShowLogotype('ltc')" src="@/assets/images/ltc.svg" alt title />
+					<img
+						v-if="isShowLogotype($route.params.currency.toLowerCase())"
+						:src="getCryptoInfo($route.params.currency).image.corner"
+						alt
+						title
+					/>
 				</div>
 				<div class="wallet-send-amount">
 					<p
@@ -44,14 +47,14 @@
 				<transition name="fade">
 					<div class="social-links__modal" v-show="isSocialLinksOpened">
 						<a
-							v-for="link in socialLinks"
-							:key="link.href"
+							v-for="website in getCryptoInfo($route.params.currency).websites"
+							:key="website.link"
 							class="social-links__modal-link"
-							:href="link.href"
+							:href="website.link"
 							target="_blank"
 						>
-							<img :src="link.image" alt="" class="social-links__modal-img" />
-							{{ link.text }}
+							<img :src="getWebsiteImage(website.name)" alt="" class="social-links__modal-img" />
+							{{ website.name }}
 						</a>
 					</div>
 				</transition>
@@ -79,7 +82,7 @@
 						class="flex justify-content-between align-items-start wallet-description-text-wrapper"
 					>
 						<div class="text">
-							{{ descriptionText }}
+							{{ getCryptoInfo($route.params.currency).description }}
 						</div>
 						<div class="social-links">
 							<button
@@ -104,6 +107,7 @@
 import { mapGetters } from 'vuex';
 import LkLayout from '@/layout/LkLayout';
 import TransactionsHistory from '@/components/TransactionsHistory/index';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	name: 'LkPaymentWallet',
@@ -149,81 +153,27 @@ export default {
 		...mapGetters({
 			wallets: 'wallet/WALLETS',
 		}),
-		descriptionText() {
-			switch (this.$route.params.currency) {
-				case 'BTC':
-					return `The cryptocurrency that started it all, Bitcoin is the first digital currency to solve the "double spending" or counterfeiting problem without the aid of a central authority, such as a bank or a government, making Bitcoin truly peer-to-peer.`;
-				case 'ETH': {
-					return `Ethereum is a decentralized computing platform that runs smart contracts, which are
-						contracts thah execute without human intervention. ETH popularized the idea programmable
-						transactions instead of only for money transfers. The platform is used for crowdfunding
-            (ICOs), the creation of new digital assets, and more.`;
-				}
-				case 'LTC': {
-					return "Litecoin is a cryptocurrency similar to Bitcoin. The goal of Litecoin is to provide fast transaction confirmations. Created by ex-Google employee Charlie Lee, Litecoin is often considered the silver to Bitcoin's gold.";
-				}
-			}
-		},
-		socialLinks() {
-			let links = [
-				{
-					text: 'Website',
-					image: require('@/assets/images/wallet-link.svg'),
-				},
-				{
-					text: 'Reddit',
-					image: require('@/assets/images/wallet-reddit.svg'),
-				},
-				{
-					text: 'Twitter',
-					image: require('@/assets/images/wallet-twitter.svg'),
-				},
-			];
-
-			links.forEach((link, index) => {
-				switch (this.$route.params.currency) {
-					case 'BTC':
-						links = links.filter((link) => link.text !== 'Twitter');
-						link.href =
-							index === 0
-								? 'https://bitcoin.org'
-								: index === 1
-								? 'https://www.reddit.com/r/Bitcoin/'
-								: null;
-						break;
-					case 'ETH':
-						link.href =
-							index === 0
-								? 'https://ethereum.org/'
-								: index === 1
-								? 'https://www.reddit.com/r/ethereum/'
-								: index === 2
-								? 'https://twitter.com/ethereum'
-								: null;
-						break;
-					case 'LTC':
-						link.href =
-							index === 0
-								? 'https://litecoin.com/'
-								: index === 1
-								? 'https://www.reddit.com/r/litecoin/'
-								: index === 2
-								? 'https://twitter.com/LitecoinProject'
-								: null;
-						break;
-				}
-			});
-
-			return links;
-		},
 		currentWallet() {
 			return this.wallets.find((wallet) => wallet.address === this.$route.params.address);
 		},
 	},
 
 	methods: {
+		getCryptoInfo,
 		isShowLogotype(code) {
 			return (this.currentWallet.currency || '').toLowerCase() === code.toLowerCase();
+		},
+		getWebsiteImage(name) {
+			switch (name) {
+				case 'Website':
+					return require('@/assets/images/wallet-link.svg');
+				case 'Reddit':
+					return require('@/assets/images/wallet-reddit.svg');
+				case 'Twitter':
+					return require('@/assets/images/wallet-twitter.svg');
+				default:
+					return null;
+			}
 		},
 	},
 };
@@ -232,7 +182,6 @@ export default {
 .wallet-description {
 	transition: 0.5s;
 	padding-bottom: 40px;
-
 	position: relative;
 }
 .wallet-description.active {

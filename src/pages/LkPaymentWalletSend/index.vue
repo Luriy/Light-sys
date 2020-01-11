@@ -5,7 +5,7 @@
 				<div class="block-title">
 					<div class="select">
 						<span class="select__title" @click="isSelectWalletOpened = !isSelectWalletOpened">
-							Send {{ currencyName(currency) }}
+							Send {{ getCryptoInfo(currency).fullName }}
 						</span>
 						<transition name="fade">
 							<div class="select__modal" v-show="isSelectWalletOpened">
@@ -25,10 +25,10 @@
 									>
 										<p class="unavailable-text">Temporarily unavailable</p>
 									</div>
-									<img v-if="wallet.currency === 'BTC'" width="17" src="@/assets/images/btc.png" />
-									<img v-if="wallet.currency === 'ETH'" width="17" src="@/assets/images/eth.png" />
-									<img v-if="wallet.currency === 'LTC'" width="17" src="@/assets/images/ltc.svg" />
-									<h2 class="select__modal-currency">{{ currencyName(wallet.currency) }}</h2>
+									<img width="17" :src="getCryptoInfo(wallet.currency).image.corner" />
+									<h2 class="select__modal-currency">
+										{{ getCryptoInfo(wallet.currency).fullName }}
+									</h2>
 									<span class="select__modal-balance" v-if="wallet.isAvailable">{{
 										`${wallet.currency} ${formatCurrency(wallet.balance, '', 5)}`
 									}}</span>
@@ -39,9 +39,7 @@
 							</div>
 						</transition>
 					</div>
-					<img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title />
-					<img v-if="currency === 'ETH'" src="@/assets/images/eth.png" alt title />
-					<img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" height="65" alt title />
+					<img :src="getCryptoInfo(currency).image.corner" height="65" alt title />
 					<router-link :to="{ name: 'LkPaymentWallet' }" class="close"
 						><img src="@/assets/images/path.svg" alt title
 					/></router-link>
@@ -52,7 +50,7 @@
 							type="text"
 							v-model="paymentAddress"
 							spellcheck="false"
-							:placeholder="`Send to ${currencyName(currency)} address..`"
+							:placeholder="`Send to ${getCryptoInfo(currency).fullName} address..`"
 						/>
 						<div class="qr"><img src="@/assets/images/bitmap-i.png" alt title /></div>
 					</div>
@@ -108,7 +106,7 @@
 
 					<div class="send-form-totals">
 						<div class="send-form-totals-total">
-							<div class="text">{{ currencyName(currency) }} Network Fee</div>
+							<div class="text">{{ getCryptoInfo(currency).fullName }} Network Fee</div>
 							<div class="value">
 								<span>0.00021 {{ currency }}</span>
 								<span>$0.04</span>
@@ -185,7 +183,7 @@ export default {
 			paymentAddress: null,
 			activeButton: null,
 			isSelectWalletOpened: false,
-			successPopup: false,
+			successPopup: true,
 			sendPopup: false,
 			timer: null,
 			countdown: 59,
@@ -276,20 +274,6 @@ export default {
 			clearInterval(this.timer);
 			this.timer = null;
 			this.countdown = 59;
-		},
-		currencyName(currency) {
-			let currencyName;
-
-			switch (currency) {
-				case 'BTC':
-					return 'Bitcoin';
-				case 'ETH':
-					return 'Ethereum';
-				case 'LTC':
-					return 'Litecoin';
-				default:
-					throw 'Unknown currency';
-			}
 		},
 		cryptoToCurrency(crypto) {
 			return (Number(crypto) * this.course).toFixed(2);
@@ -430,7 +414,7 @@ export default {
 			);
 			const validateErrorAddress = VALIDATE_ADDRESS(
 				this.paymentAddress,
-				this.currencyName(this.currency),
+				this.getCryptoInfo(this.currency).fullName,
 				this.currentWallet.address,
 			);
 

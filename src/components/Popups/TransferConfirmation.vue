@@ -44,7 +44,7 @@
 					</p>
 					<p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
 				</div>
-				<img :src="sendArrow" class="send-arrow" :class="{ rotated: currency === 'ETH' }" />
+				<img :src="getCryptoInfo(currency).image.arrow" class="send-arrow" />
 				<p class="payment-address">{{ paymentAddress }}</p>
 			</div>
 			<div class="exchange-block_fee">
@@ -139,11 +139,6 @@ export default {
 		handleCloseModal() {
 			this.$emit('onClose');
 			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
-		},
-	},
-	computed: {
-		sendArrow() {
-			return require(`@/assets/images/send-arrow-${this.currency.toLowerCase()}.svg`);
 		},
 	},
 };
