@@ -49,6 +49,8 @@
 	.banks {
 		margin-left: 19px;
 		display: flex;
+		max-width: 125px;
+		overflow-x: auto;
 		flex-wrap: wrap;
 
 		.image-plate {
@@ -127,7 +129,7 @@
 			font-weight: 600;
 			color: #fff;
 
-			@media screen and (max-width: 1080px) {
+			@media screen and (max-width: 1180px) {
 				margin-top: 12px;
 			}
 		}
@@ -163,7 +165,7 @@
 			scrollbar-color: #947dc1 transparent;
 
 			&::-webkit-scrollbar {
-				width: 4px;
+				width: 5px;
 			}
 			&::-webkit-scrollbar-track {
 				background: transparent;
@@ -173,7 +175,7 @@
 				cursor: pointer;
 				border-radius: 1px;
 				background-color: #947dc1;
-				width: 4px;
+				width: 5px;
 			}
 		}
 
@@ -332,6 +334,9 @@
 	}
 }
 .card-list-edit-popup {
+	.button-wrapper {
+		margin: 25px 0 35px;
+	}
 	.image-plate {
 		width: 53px;
 		height: 53px;
@@ -426,4 +431,7 @@ body .v-application .mb-10 {
 		font-size: 14px;
 		color: #fff;
 	}
+}
+.toggle.opened {
+	transform: rotate(180deg);
 }

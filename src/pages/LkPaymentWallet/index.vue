@@ -1,101 +1,113 @@
 <template>
 	<lk-layout>
-		<div class="wallet-send-block">
-			<div class="wallet-send-currency">
-				<img v-if="isShowLogotype('btc')" src="@/assets/images/btc.png" alt title />
-				<img v-if="isShowLogotype('eth')" src="@/assets/images/eth.png" alt title />
-				<img v-if="isShowLogotype('ltc')" src="@/assets/images/ltc.svg" alt title />
-			</div>
-			<div class="wallet-send-amount">
-				<p
-					:class="{
-						'wallet-send-amount--crypto': true,
-						[currentWallet.currency.toLowerCase()]: true,
-					}"
-				>
-					{{ formatCurrency(currentWallet.balance, '', 5) }}
-					<span>{{ currentWallet.currency || '' }}</span>
-				</p>
-				<p class="wallet-send-amount--fiat">
-					{{ formatCurrency(currentWallet.balanceUSD, '$') }} <span>USD</span>
-				</p>
-			</div>
-			<div class="buttons">
-				<div class="btn-border-wrapper">
-					<router-link :to="{ name: 'LkPaymentWalletSend' }"
-						><button class="btn">Send</button></router-link
-					>
-				</div>
-				<div class="btn-border-wrapper">
-					<router-link :to="{ name: 'LkPaymentWalletReceive' }"
-						><button class="btn">Receive</button></router-link
-					>
-				</div>
-				<div class="btn-border-wrapper btn-exchange">
-					<router-link to="/exchange"
-						><button class="btn"><img src="@/assets/images/exchange.svg" alt title /></button
-					></router-link>
-				</div>
-			</div>
-		</div>
-
-		<div class="wallet-description" :class="{ active: isDescriptionOpened }">
-			<transition name="fade">
-				<div class="social-links__modal" v-show="isSocialLinksOpened">
-					<a
-						v-for="link in socialLinks"
-						:key="link.href"
-						class="social-links__modal-link"
-						:href="link.href"
-						target="_blank"
-					>
-						<img :src="link.image" alt="" class="social-links__modal-img" />
-						{{ link.text }}
-					</a>
-				</div>
-			</transition>
-			<div
-				class="flex justify-content-between align-items-center description-header-block"
-				@click="isDescriptionOpened = !isDescriptionOpened"
-			>
-				<div class="title" :class="{ active: isDescriptionOpened }">Description</div>
-				<button class="description-toggler flex align-items-center justify-content-center">
+		<div>
+			<div class="wallet-send-block">
+				<div class="wallet-send-currency">
 					<img
-						src="@/assets/images/icons/arrow-big.svg"
-						alt="Description toggler"
-						class="description-toggler-image"
-						:class="{ active: isDescriptionOpened }"
+						v-if="isShowLogotype($route.params.currency.toLowerCase())"
+						:src="getCryptoInfo($route.params.currency).image.corner"
+						alt
+						title
 					/>
-				</button>
-			</div>
-
-			<div class="wallet-description-outer" :class="{ active: isDescriptionOpened }">
-				<div class="flex justify-content-between align-items-start wallet-description-text-wrapper">
-					<div class="text">
-						{{ descriptionText }}
-					</div>
-					<div class="social-links">
-						<button
-							class="social-links__button"
-							@click="isSocialLinksOpened = !isSocialLinksOpened"
+				</div>
+				<div class="wallet-send-amount">
+					<p
+						:class="{
+							'wallet-send-amount--crypto': true,
+							[currentWallet.currency.toLowerCase()]: true,
+						}"
+					>
+						{{ formatCurrency(currentWallet.balance, '', 5) }}
+						<span>{{ currentWallet.currency || '' }}</span>
+					</p>
+					<p class="wallet-send-amount--fiat">
+						{{ formatCurrency(currentWallet.balanceUSD, '$') }} <span>USD</span>
+					</p>
+				</div>
+				<div class="buttons">
+					<div class="btn-border-wrapper">
+						<router-link :to="{ name: 'LkPaymentWalletSend' }"
+							><button class="btn">Send</button></router-link
 						>
-							<img src="@/assets/images/3-dots.svg" alt="Social links" />
-						</button>
+					</div>
+					<div class="btn-border-wrapper">
+						<router-link :to="{ name: 'LkPaymentWalletReceive' }"
+							><button class="btn">Receive</button></router-link
+						>
+					</div>
+					<div class="btn-border-wrapper btn-exchange">
+						<router-link to="/exchange"
+							><button class="btn"><img src="@/assets/images/exchange.svg" alt title /></button
+						></router-link>
 					</div>
 				</div>
 			</div>
+
+			<div class="wallet-description" :class="{ active: isDescriptionOpened }">
+				<transition name="fade">
+					<div class="social-links__modal" v-show="isSocialLinksOpened">
+						<a
+							v-for="website in getCryptoInfo($route.params.currency).websites"
+							:key="website.link"
+							class="social-links__modal-link"
+							:href="website.link"
+							target="_blank"
+						>
+							<img :src="getWebsiteImage(website.name)" alt="" class="social-links__modal-img" />
+							{{ website.name }}
+						</a>
+					</div>
+				</transition>
+				<div
+					class="flex justify-content-between align-items-center description-header-block"
+					@click="isDescriptionOpened = !isDescriptionOpened"
+				>
+					<div class="title none-select" :class="{ active: isDescriptionOpened }">
+						Description
+					</div>
+					<button
+						class="description-toggler flex align-items-center justify-content-center none-select"
+					>
+						<img
+							src="@/assets/images/icons/arrow-big.svg"
+							alt="Description toggler"
+							class="description-toggler-image"
+							:class="{ active: isDescriptionOpened }"
+						/>
+					</button>
+				</div>
+
+				<div class="wallet-description-outer" :class="{ active: isDescriptionOpened }">
+					<div
+						class="flex justify-content-between align-items-start wallet-description-text-wrapper"
+					>
+						<div class="text">
+							{{ getCryptoInfo($route.params.currency).description }}
+						</div>
+						<div class="social-links">
+							<button
+								class="social-links__button"
+								@click="isSocialLinksOpened = !isSocialLinksOpened"
+							>
+								<img src="@/assets/images/3-dots.svg" alt="Social links" />
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<transactions-history
+				:currentWallet="currentWallet"
+				:operationsWithPagination="operationsWithPagination"
+			></transactions-history>
 		</div>
-		<transactions-history
-			:currentWallet="currentWallet"
-			:operationsWithPagination="operationsWithPagination"
-		></transactions-history>
 	</lk-layout>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import LkLayout from '@/layout/LkLayout';
-import TransactionsHistory from '@/components/TransactionsHistory';
+import TransactionsHistory from '@/components/TransactionsHistory/index';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	name: 'LkPaymentWallet',
@@ -105,14 +117,11 @@ export default {
 	},
 	data() {
 		return {
-			currentWallet: {
-				balance: '0.00000',
-				balanceUSD: '0.00',
-			},
 			isSocialLinksOpened: false,
 			isDescriptionOpened: false,
 			windowHandler: null,
 			operationsWithPagination: [],
+			updateSingleWalletTransactions: null,
 		};
 	},
 	mounted() {
@@ -128,82 +137,43 @@ export default {
 		};
 		window.addEventListener('click', this.windowHandler);
 	},
+	async created() {
+		this.operationsWithPagination = await this.$store.dispatch(
+			'transactionsHistory/GET_SINGLE_WALLET_TRANSACTIONS',
+			{
+				address: this.currentWallet.address,
+			},
+		);
+	},
 	beforeDestroy() {
 		window.removeEventListener('click', this.windowHandler);
-	},
-	created() {
-		this.currentWallet = this.wallets.find(
-			(wallet) => wallet.address === this.$route.params.address,
-		);
-		this.$store
-			.dispatch('wallet/GET_WALLET_OPERATIONS', {
-				currency: this.currentWallet.currency,
-				address: this.currentWallet.address,
-			})
-			.then((data) => {
-				this.operationsWithPagination = data;
-			});
+		clearInterval(this.updateSingleWalletTransactions);
 	},
 	computed: {
 		...mapGetters({
 			wallets: 'wallet/WALLETS',
 		}),
-		descriptionText() {
-			switch (this.$route.params.currency) {
-				case 'BTC':
-					return `The cryptocurrency that started it all, Bitcoin is the first digital currency to solve the "double spending" or counterfeiting problem without the aid of a central authority, such as a bank or a government, making Bitcoin truly peer-to-peer.`;
-				case 'ETH': {
-					return `Ethereum is a decentralized computing platform that runs smart contracts, which are
-						contracts thah execute withou human intervention. ETH popularized the idea programmable
-						transactions instead of only for money transfers. The platform is user for crowdfuundin
-						(ICOs) , the cretion of new digital assets, and more.`;
-				}
-			}
-		},
-		socialLinks() {
-			let links = [
-				{
-					text: 'Website',
-					image: require('@/assets/images/wallet-link.svg'),
-				},
-				{
-					text: 'Reddit',
-					image: require('@/assets/images/wallet-reddit.svg'),
-				},
-				{
-					text: 'Twitter',
-					image: require('@/assets/images/wallet-twitter.svg'),
-				},
-			];
-
-			links.forEach((link, index) => {
-				switch (this.$route.params.currency) {
-					case 'BTC':
-						links = links.filter((link) => link.text !== 'Twitter');
-						link.href =
-							index === 0
-								? 'https://bitcoin.org'
-								: index === 1
-								? 'https://www.reddit.com/r/Bitcoin/'
-								: null;
-					case 'ETH':
-						link.href =
-							index === 0
-								? 'https://ethereum.org/'
-								: index === 1
-								? 'https://www.reddit.com/r/ethereum/'
-								: index === 2
-								? 'https://twitter.com/ethereum'
-								: null;
-				}
-			});
-
-			return links;
+		currentWallet() {
+			return this.wallets.find((wallet) => wallet.address === this.$route.params.address);
 		},
 	},
+
 	methods: {
+		getCryptoInfo,
 		isShowLogotype(code) {
 			return (this.currentWallet.currency || '').toLowerCase() === code.toLowerCase();
+		},
+		getWebsiteImage(name) {
+			switch (name) {
+				case 'Website':
+					return require('@/assets/images/wallet-link.svg');
+				case 'Reddit':
+					return require('@/assets/images/wallet-reddit.svg');
+				case 'Twitter':
+					return require('@/assets/images/wallet-twitter.svg');
+				default:
+					return null;
+			}
 		},
 	},
 };
@@ -211,8 +181,7 @@ export default {
 <style scoped>
 .wallet-description {
 	transition: 0.5s;
-	padding-bottom: 25px;
-
+	padding-bottom: 40px;
 	position: relative;
 }
 .wallet-description.active {
@@ -234,6 +203,7 @@ export default {
 	top: 98px;
 	border-radius: 8px;
 	background-color: #654d95;
+	z-index: 15;
 }
 .social-links__modal-link {
 	font-size: 14px;
@@ -288,7 +258,7 @@ export default {
 	overflow: hidden;
 }
 .wallet-description-outer.active {
-	padding-bottom: 25px;
+	padding-bottom: 40px;
 	max-height: 300px;
 	margin-top: 20px;
 }

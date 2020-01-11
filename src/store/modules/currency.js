@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
 
 export default {
@@ -34,7 +34,7 @@ export default {
 	actions: {
 		GET_ALL_CURRENCIES: ({ commit }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'GET',
 				params: {
 					Comand: 'FiatPsid',
@@ -52,7 +52,7 @@ export default {
 		},
 		GET_USER_CURRENCIES: ({ commit, dispatch, rootState }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'InfoUserValute',
@@ -120,7 +120,7 @@ export default {
 		},
 		ADD_USER_CURRENCY: ({ commit, dispatch }, { ValuteName }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'AddUserValute',
@@ -167,7 +167,7 @@ export default {
 		},
 		DELETE_USER_CURRENCY: ({ commit, dispatch }, { ValuteName }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'DeleteUserValute',

@@ -9,6 +9,10 @@ import card from './modules/card';
 import exchange from './modules/exchange';
 import currency from './modules/currency';
 import group from './modules/group';
+import transfer from './modules/transfer';
+import transactionsHistory from './modules/transactions_history';
+import theme from './modules/theme';
+import dapp from './modules/dapp';
 import { BASE_URL } from '@/settings/config';
 Vue.use(Vuex);
 
@@ -25,6 +29,10 @@ export default new Vuex.Store({
 		card,
 		currency,
 		group,
+		transfer,
+		transactionsHistory,
+		theme,
+		dapp,
 	},
 	state: {
 		urls: {

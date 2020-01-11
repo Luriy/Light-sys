@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 
 export default {
 	namespaced: true,
@@ -14,6 +14,40 @@ export default {
 		GROUP_CURRENCIES: (state) => state.groupCurrencies,
 	},
 	mutations: {
+		SET_AND_TRANSFORM_WALLETS_TO_GROUPS: (state, { group, wallets }) => {
+			const groups = [
+				...Object.keys(group).map((key) => {
+					return {
+						groupName: decodeURI(key),
+						wallets: Object.values(group[key])
+							.map((address) =>
+								wallets.find((res) => res.address.toLowerCase() === address.toLowerCase()),
+							)
+							.filter((item) => !!item),
+					};
+				}),
+			].filter(({ wallets }) => wallets.length !== 0);
+
+			if (!groups.some((group) => group.groupName === 'Other wallets')) {
+				groups.push({
+					groupName: 'Other wallets',
+					wallets: wallets.filter((wallet) => wallet.group === ''),
+				});
+			} else {
+				const otherWalletsGroup = groups.find(({ groupName }) => groupName === 'Other wallets');
+				wallets.map((item) => {
+					const isGroupsContainsCurrentWallet = groups.some(({ wallets }) =>
+						wallets.some(({ address }) => address === item.address),
+					);
+					if (!isGroupsContainsCurrentWallet) {
+						otherWalletsGroup.wallets.push(item);
+					}
+				});
+			}
+
+			state.groupWallets = groups;
+			localStorage.setItem('stateGroupWallets', JSON.stringify(groups));
+		},
 		SET_GROUP_WALLETS: (state, payload) => {
 			state.groupWallets = payload;
 			localStorage.setItem('stateGroupWallets', JSON.stringify(payload));
@@ -32,9 +66,12 @@ export default {
 			state.groupWallets = state.groupWallets.map((group) => ({
 				...group,
 				wallets: group.wallets.map((groupWallet) => {
-					const newWallet = wallets.find((wallet) => wallet.address === groupWallet.address);
+					const newWallet = wallets.find(
+						(wallet) => wallet.address.toLowerCase() === groupWallet.address.toLowerCase(),
+					);
 					return {
 						...groupWallet,
+						address: newWallet.address,
 						balance: newWallet.balance,
 						balanceUSD: newWallet.balanceUSD,
 						isAvailable: newWallet.isAvailable,
@@ -61,7 +98,7 @@ export default {
 	actions: {
 		CREATE_WALLET_GROUP: (store, { GroupName, wallets }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'AddWalletsGroup',
@@ -114,7 +151,7 @@ export default {
 		},
 		CREATE_CURRENCY_GROUP: (store, { GroupName, currencies }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'AddValuteGroup',

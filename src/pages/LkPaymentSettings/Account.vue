@@ -1,15 +1,13 @@
 <template>
-  <lk-layout>
-    <h1>Account</h1>
-  </lk-layout>
+	<settings-item-parent :name="'Account'"></settings-item-parent>
 </template>
-
 <script>
-    export default {
-        name: 'Account'
-    }
+import SettingsItemParent from './SettingsItemParent';
+
+export default {
+	components: {
+		SettingsItemParent,
+	},
+};
 </script>
-
-<style scoped>
-
-</style>
+<style></style>

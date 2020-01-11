@@ -3,9 +3,7 @@
 		<div class="accounts-list">
 			<div class="title">
 				<p>Accounts and Cards</p>
-				<router-link to="/wallets"
-					><div class="close"><img src="@/assets/images/path.svg" alt title /></div
-				></router-link>
+				<back-to-previous-page-button :link="'/wallets'"></back-to-previous-page-button>
 			</div>
 			<div class="accounts-list_wrapper">
 				<div class="accounts-list_wrapper_title">
@@ -24,7 +22,7 @@
 						<div class="accounts-list_wrapper_tab_header" v-on:click="handleOpenTab(tabs[1], tabs)">
 							<div class="icon">
 								<div class="image">
-									<img src="@/assets/images/icons/credit-card2.svg" alt title />
+									<img src="@/assets/images/icons/credit-card2.svg" width="17" alt title />
 								</div>
 								<p>Open a card</p>
 							</div>
@@ -63,7 +61,7 @@
 									</div>
 								</transition>
 
-								<div class="toggle active"></div>
+								<div class="toggle active" :class="{ opened: tabs[1].isActive }"></div>
 							</div>
 						</div>
 
@@ -122,10 +120,14 @@
 														:isEditing="isEditing"
 													></add-native-card>
 												</transition>
-
 												<div
 													class="toggle"
-													:class="{ active: getCardsByCurrency(item.currency, cards).length }"
+													:class="{
+														active: getCardsByCurrency(item.currency, cards).length,
+														opened: tabs[1].activeCurrencies.length
+															? tabs[1].activeCurrencies[index].isActive
+															: false,
+													}"
 												></div>
 											</div>
 										</div>
@@ -156,17 +158,22 @@
 
 <script>
 import LkLayout from '@/layout/LkLayout';
-import './styles.scss';
-import AddNewCard from './components/AddNewCard';
-import Deposit from './components/Deposit';
-import CardsList from './components/CardsList';
-import AddNativeCard from './components/AddNativeCard';
-import OpenAccount from './components/OpenAccount.vue';
+
 import { mapGetters } from 'vuex';
+
+import {
+	AddNewCard,
+	Deposit,
+	CardsList,
+	AddNativeCard,
+	OpenAccount,
+	BackToPreviousPageButton,
+} from './components/index.js';
 import getCurrencyInfo from '@/functions/getCurrencyInfo';
 import getBankImage from '@/functions/getBankImage';
 import getCardsByCurrency from '@/functions/getCardsByCurrency';
 import uniqueizeArray from '@/functions/uniqueizeArray';
+import './styles.scss';
 
 export default {
 	name: 'LkPaymentWalletsWalletsList',
@@ -177,6 +184,7 @@ export default {
 		CardsList,
 		AddNativeCard,
 		OpenAccount,
+		BackToPreviousPageButton,
 	},
 	mounted() {
 		this.$store.dispatch('card/GET_CARDS');

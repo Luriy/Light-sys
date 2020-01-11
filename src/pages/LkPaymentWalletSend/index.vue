@@ -5,7 +5,7 @@
 				<div class="block-title">
 					<div class="select">
 						<span class="select__title" @click="isSelectWalletOpened = !isSelectWalletOpened">
-							Send {{ currencyName(currency) }}
+							Send {{ getCryptoInfo(currency).fullName }}
 						</span>
 						<transition name="fade">
 							<div class="select__modal" v-show="isSelectWalletOpened">
@@ -25,10 +25,10 @@
 									>
 										<p class="unavailable-text">Temporarily unavailable</p>
 									</div>
-									<img v-if="wallet.currency === 'BTC'" width="17" src="@/assets/images/btc.png" />
-									<img v-if="wallet.currency === 'ETH'" width="17" src="@/assets/images/eth.png" />
-									<img v-if="wallet.currency === 'LTC'" width="17" src="@/assets/images/ltc.svg" />
-									<h2 class="select__modal-currency">{{ currencyName(wallet.currency) }}</h2>
+									<img width="17" :src="getCryptoInfo(wallet.currency).image.corner" />
+									<h2 class="select__modal-currency">
+										{{ getCryptoInfo(wallet.currency).fullName }}
+									</h2>
 									<span class="select__modal-balance" v-if="wallet.isAvailable">{{
 										`${wallet.currency} ${formatCurrency(wallet.balance, '', 5)}`
 									}}</span>
@@ -39,9 +39,7 @@
 							</div>
 						</transition>
 					</div>
-					<img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title />
-					<img v-if="currency === 'ETH'" src="@/assets/images/eth.png" alt title />
-					<img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" height="65" alt title />
+					<img :src="getCryptoInfo(currency).image.corner" height="65" alt title />
 					<router-link :to="{ name: 'LkPaymentWallet' }" class="close"
 						><img src="@/assets/images/path.svg" alt title
 					/></router-link>
@@ -52,7 +50,7 @@
 							type="text"
 							v-model="paymentAddress"
 							spellcheck="false"
-							:placeholder="`Send to ${currencyName(currency)} address..`"
+							:placeholder="`Send to ${getCryptoInfo(currency).fullName} address..`"
 						/>
 						<div class="qr"><img src="@/assets/images/bitmap-i.png" alt title /></div>
 					</div>
@@ -108,7 +106,7 @@
 
 					<div class="send-form-totals">
 						<div class="send-form-totals-total">
-							<div class="text">{{ currencyName(currency) }} Network Fee</div>
+							<div class="text">{{ getCryptoInfo(currency).fullName }} Network Fee</div>
 							<div class="value">
 								<span>0.00021 {{ currency }}</span>
 								<span>$0.04</span>
@@ -131,14 +129,13 @@
 				:remainingCurrency="remainingCurrency"
 				:currency="currency"
 				:fullCurrencyName="getCryptoInfo(currency).fullName"
-				@onSend="onSend"
-				@onSendSms="onSendSms"
 				:user="user"
-				:smsCodes="smsCodes"
 				:paymentAddress="paymentAddress"
 				:currencyAmount="currencyAmount"
 				:cryptoCurrencyAmount="cryptoCurrencyAmount"
 				:countdown="countdown"
+				@onRepeatSms="onRepeatSms"
+				@onSuccess="handleSuccessTransfer"
 			></lk-transfer-confirmation-popup>
 			<lk-transfer-success-popup
 				:successPopup="successPopup"
@@ -166,6 +163,7 @@ import Error from '@/components/Error';
 import LkTransferConfirmationPopup from '@/components/Popups/TransferConfirmation';
 import LkTransferSuccessPopup from '@/components/Popups/TransferSuccess';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
+import EnterCode from '@/components/EnterCode';
 
 export default {
 	components: {
@@ -174,6 +172,7 @@ export default {
 		Error,
 		LkTransferConfirmationPopup,
 		LkTransferSuccessPopup,
+		EnterCode,
 	},
 	data() {
 		return {
@@ -184,14 +183,14 @@ export default {
 			paymentAddress: null,
 			activeButton: null,
 			isSelectWalletOpened: false,
-			successPopup: false,
+			successPopup: true,
 			sendPopup: false,
-			smsCodes: [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }],
 			timer: null,
 			countdown: 59,
 			isTransferSuccess: false,
 			error: null,
 			windowHandler: null,
+			updateTypesTimer: null,
 		};
 	},
 	mounted() {
@@ -205,14 +204,23 @@ export default {
 			}
 		};
 		window.addEventListener('click', this.windowHandler);
-
-		this.$store.dispatch('wallet/GET_WALLETS');
 		this.$store.dispatch('wallet/GET_TYPES');
+		this.updateTypesTimer = setInterval(() => {
+			this.$store.dispatch('wallet/GET_TYPES');
+		}, 5000);
+
+		this.remainingCurrency = this.currentWallet.balanceUSD.toFixed(2);
+		this.remainingCryptoCurrency = this.currentWallet.balance.toFixed(5);
 	},
 	beforeDestroy() {
 		window.removeEventListener('click', this.windowHandler);
+		clearInterval(this.updateTypesTimer);
 	},
 	computed: {
+		...mapGetters({
+			wallets: 'wallet/WALLETS',
+			types: 'wallet/TYPES',
+		}),
 		currency() {
 			return this.$route.params.currency;
 		},
@@ -222,12 +230,6 @@ export default {
 		course() {
 			return this.types[getCryptoInfo(this.currency).fullName.toLowerCase()].price;
 		},
-		...mapGetters({
-			wallets: 'wallet/WALLETS',
-			types: 'wallet/TYPES',
-			operations: 'wallet/OPERATIONS',
-			unconfirmedOperations: 'wallet/UNCONFIRMED_OPERATIONS',
-		}),
 		currentWallet() {
 			return this.wallets.find((wallet) => wallet.address == this.$route.params.address);
 		},
@@ -254,7 +256,6 @@ export default {
 			return {
 				currency: this.currentWallet.balanceUSD,
 				cryptoCurrency: this.currentWallet.balance,
-				course: this.currentWallet.balanceUSD / this.currentWallet.balance,
 			};
 		},
 	},
@@ -270,31 +271,9 @@ export default {
 			this.isSelectWalletOpened = false;
 			this.error = null;
 			this.sendPopup = false;
-			(this.smsCodes = [
-				{ 0: '' },
-				{ 1: '' },
-				{ 2: '' },
-				{ 3: '' }, // <- делай это в цикле
-				{ 4: '' },
-				{ 5: '' },
-			]),
-				clearInterval(this.timer);
+			clearInterval(this.timer);
 			this.timer = null;
 			this.countdown = 59;
-		},
-		currencyName(currency) {
-			let currencyName;
-
-			switch (currency) {
-				case 'BTC':
-					return 'Bitcoin';
-				case 'ETH':
-					return 'Ethereum';
-				case 'LTC':
-					return 'Litecoin';
-				default:
-					throw 'Unknown currency';
-			}
 		},
 		cryptoToCurrency(crypto) {
 			return (Number(crypto) * this.course).toFixed(2);
@@ -390,13 +369,40 @@ export default {
 			if (isAvailable) {
 				this.clearData();
 				this.$router.push(`/payments-and-transfer/send/${currency}/${address}`);
+				this.remainingCurrency = this.currentWallet.balanceUSD.toFixed(2);
+				this.remainingCryptoCurrency = this.currentWallet.balance.toFixed(5);
 			} else return false;
+		},
+		handleSuccessTransfer() {
+			this.sendPopup = false;
+			this.successPopup = true;
+
+			setTimeout(() => {
+				this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
+					wallets: this.wallets,
+				});
+			}, 5000);
+
+			setTimeout(() => {
+				this.successPopup = false;
+				this.clearData();
+			}, 7000);
 		},
 		closeModal() {
 			this.sendPopup = false;
 			this.timeout = 59;
 			clearInterval(this.timer);
 			this.clearData();
+		},
+		onRepeatSms() {
+			this.countdown = 59;
+			this.timer = setInterval(() => {
+				this.countdown--;
+			}, 1000);
+
+			setTimeout(() => {
+				document.querySelector('.transfer-popup .number-input').focus();
+			}, 50);
 		},
 		onSendSms() {
 			this.error = null;
@@ -408,7 +414,7 @@ export default {
 			);
 			const validateErrorAddress = VALIDATE_ADDRESS(
 				this.paymentAddress,
-				this.currencyName(this.currency),
+				this.getCryptoInfo(this.currency).fullName,
 				this.currentWallet.address,
 			);
 
@@ -421,7 +427,7 @@ export default {
 					document.querySelector('.transfer-popup .number-input').focus();
 				}, 50);
 
-				this.$store.dispatch('wallet/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
+				this.$store.dispatch('transfer/GET_TRANSFER_TOKEN', getAuthParams()).then(() => {
 					this.timer = setInterval(() => {
 						this.countdown--;
 					}, 1000);
@@ -429,33 +435,6 @@ export default {
 			} else {
 				this.error = validateErrorAmount || validateErrorAddress;
 			}
-		},
-		onSend() {
-			const token = this.smsCodes.map((smsCode, index) => smsCode[index]).join('');
-			this.$store
-				.dispatch('wallet/POST_TRANSFER_CRYPTO', {
-					currency: capitalizeFirstLetter(this.$route.params.currency.toLowerCase()),
-					from: this.$route.params.address,
-					to: this.paymentAddress,
-					amount: Number(this.cryptoCurrencyAmount).toFixed(5),
-					token,
-				})
-				.then((data) => {
-					if (data.success) {
-						this.sendPopup = false;
-						this.successPopup = true;
-
-						setTimeout(() => {
-							this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
-							this.$store.dispatch('wallet/GET_WALLETS');
-						}, 5000);
-
-						setTimeout(() => {
-							this.successPopup = false;
-							this.clearData();
-						}, 7000);
-					}
-				});
 		},
 	},
 	watch: {

@@ -1,141 +1,160 @@
 <template>
-	<div class="select-body" v-if="isOpened">
-		<div class="select-wrapper">
-			<div class="search-input">
-				<input type="text" v-model="search" name="" placeholder="Search" />
-				<span></span>
-			</div>
-			<div class="filter-buttons">
-				<v-btn
-					class="filter-btn"
-					:class="{ 'active-list': currentList === 'all' }"
-					text
-					small
-					@click="currentList = 'all'"
-					>All</v-btn
-				>
-				<v-btn
-					class="filter-btn"
-					:class="{ 'active-list': currentList === 'wallets' }"
-					text
-					small
-					@click="currentList = 'wallets'"
-					>My wallets
-				</v-btn>
-				<v-btn
-					class="filter-btn"
-					:class="{ 'active-list': currentList === 'cards' }"
-					text
-					small
-					@click="currentList = 'cards'"
-					>My cards</v-btn
-				>
-				<v-btn
-					class="filter-btn"
-					:class="{ 'active-list': currentList === 'banks' }"
-					text
-					small
-					@click="currentList = 'banks'"
-					>Banks</v-btn
-				>
-			</div>
-
-			<div class="select-item-wallet" v-if="currentList === 'wallets' || currentList === 'all'">
-				<div class="title-wrapper">
-					<span class="select-header">my wallets</span>
-					<span class="select-line"></span>
+	<transition name="fade">
+		<div class="select-body" v-show="isOpened">
+			<div class="select-wrapper">
+				<div class="search-input">
+					<input type="text" v-model="search" name="" placeholder="Search" />
 				</div>
-				<div
-					class="select-item"
-					v-for="(wallet, index) of wallets"
-					:key="`wallet-${index}`"
-					@click="wallet.isAvailable ? $emit('onSelectWallet', wallet) : ''"
-				>
-					<div
-						v-if="!wallet.isAvailable"
-						class="unavailable-block flex justify-content-center align-items-center"
-						:class="{ unavailable: !wallet.isAvailable }"
+				<div class="filter-buttons">
+					<v-btn
+						class="filter-btn"
+						:class="{ 'active-list': currentList === 'all' }"
+						text
+						small
+						@click="currentList = 'all'"
+						>All</v-btn
 					>
-						<p class="unavailable-text">Temporarily unavailable</p>
+					<v-btn
+						class="filter-btn"
+						:class="{ 'active-list': currentList === 'wallets' }"
+						text
+						small
+						@click="currentList = 'wallets'"
+						>My wallets
+					</v-btn>
+					<v-btn
+						class="filter-btn"
+						:class="{ 'active-list': currentList === 'cards' }"
+						text
+						small
+						@click="currentList = 'cards'"
+						>My cards</v-btn
+					>
+					<v-btn
+						class="filter-btn"
+						:class="{ 'active-list': currentList === 'banks' }"
+						text
+						small
+						@click="currentList = 'banks'"
+						>Banks</v-btn
+					>
+				</div>
+
+				<div class="select-item-wallet" v-if="currentList === 'wallets' || currentList === 'all'">
+					<div class="title-wrapper">
+						<span class="select-header">{{
+							currentList === 'wallets' ? 'my wallets' : 'all'
+						}}</span>
+						<span class="select-line"></span>
 					</div>
-					<img
-						:src="getCryptoInfo(wallet.currency).image.corner"
-						width="34"
-						alt
-						title
-						class="icon"
-					/>
-					<div class="amount">
-						<div class="code" :class="wallet.currency.toLowerCase()">
-							{{ wallet.currency }}
-							{{ getCryptoInfo(wallet.currency).fullName }}
+					<div
+						class="select-item"
+						v-for="(wallet, index) of wallets"
+						:key="`wallet-${index}`"
+						@click="wallet.isAvailable ? $emit('onSelectItem', wallet) : ''"
+					>
+						<div
+							v-if="!wallet.isAvailable"
+							class="unavailable-block flex justify-content-center align-items-center"
+							:class="{ unavailable: !wallet.isAvailable }"
+						>
+							<p class="unavailable-text">Temporarily unavailable</p>
 						</div>
-						<div class="value">
-							<span>
-								{{ wallet.balance.toFixed(5) }}
+						<img
+							:src="getCryptoInfo(wallet.currency).image.corner"
+							width="34"
+							alt
+							title
+							class="icon"
+						/>
+						<div class="amount">
+							<div class="code" :class="wallet.currency.toLowerCase()">
 								{{ wallet.currency }}
-							</span>
-							<span class="currency-divider">&#124;</span>
-							<span class="balance-reserve">${{ wallet.balanceUSD.toFixed(2) }} USD</span>
+								{{ getCryptoInfo(wallet.currency).fullName }}
+							</div>
+							<div class="value">
+								<span>
+									{{ wallet.balance.toFixed(5) }}
+									{{ wallet.currency }}
+								</span>
+								<span class="currency-divider">&#124;</span>
+								<span class="balance-reserve">${{ wallet.balanceUSD.toFixed(2) }} USD</span>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="select-item-fiat" v-if="currentList === 'cards' || currentList === 'all'">
-				<div class="title-wrapper">
-					<span class="select-header">my cards</span>
-					<span class="select-line"></span>
-				</div>
 				<div
-					class="select-item"
-					v-for="(card, index) of cards"
-					:key="`fiat-${index}`"
-					@click="$emit('onSelectItem', card)"
+					class="select-item-fiat"
+					v-if="(currentList === 'cards' || currentList === 'all') && cards.length"
 				>
-					<div class="image-plate">
-						<img :src="getBankImage(card.Psid, 'small')" />
+					<div class="title-wrapper">
+						<span class="select-header">my cards</span>
+						<span class="select-line"></span>
 					</div>
-					<div class="amount flex flex-column">
-						<span class="code">{{ banks.find(({ psid }) => psid == card.Psid).name }}</span>
-						<div class="value">
-							<span>
-								{{ `****${card.Number.slice(card.Number.length - 4)}` }}
-								{{ banks.find(({ psid }) => psid == card.Psid).valute }}
-							</span>
-							<span class="currency-divider">&#124;</span>
-							<span class="balance-reserve">{{
-								`Reserve: ${banks.find(({ psid }) => psid == card.Psid).reserve}`
-							}}</span>
+					<div
+						class="select-item"
+						v-for="(card, index) of cards"
+						:key="`fiat-${index}`"
+						@click="
+							$emit('onSelectItem', card, banks.find(({ psid }) => psid == card.Psid).reserve)
+						"
+					>
+						<div class="image-plate">
+							<img :src="getBankImage(card.Psid, 'small')" />
+						</div>
+						<div class="amount flex flex-column">
+							<span class="code">{{ card.Name }}</span>
+							<div class="value">
+								<span>
+									{{ `****${card.Number.slice(card.Number.length - 4)}` }}
+									{{ card.Currency }}
+								</span>
+								<span class="currency-divider">&#124;</span>
+								<span class="balance-reserve">{{
+									`Reserve: ${
+										banks.find(({ psid }) => psid == card.Psid)
+											? banks.find(({ psid }) => psid == card.Psid).reserve.toFixed(0)
+											: 0
+									} ${card.Currency}`
+								}}</span>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="select-item-fiat" v-if="currentList === 'banks' || currentList === 'all'">
-				<div class="title-wrapper">
-					<span class="select-header">banks</span>
-					<span class="select-line"></span>
-				</div>
-				<div class="select-item" v-for="(bank, index) of banks" :key="`fiat-${index}`">
-					<div class="image-plate">
-						<img :src="getBankImage(bank.psid, 'small')" alt />
+				<div class="select-item-fiat" v-if="currentList === 'banks' || currentList === 'all'">
+					<div class="title-wrapper">
+						<span class="select-header">banks</span>
+						<span class="select-line"></span>
 					</div>
+					<div
+						class="select-item"
+						v-for="(bank, index) of banks"
+						:key="`fiat-${index}`"
+						@click="$emit('onSelectItem', bank)"
+					>
+						<div class="image-plate">
+							<img :src="getBankImage(bank.psid, 'small')" alt />
+						</div>
 
-					<div class="amount">
-						<div class="code">{{ bank.name }}</div>
-						<div class="value">
-							<span>
-								{{ bank.valute }}
-							</span>
-							<span class="currency-divider">&#124;</span>
-							<span class="balance-reserve">{{ `Reserve: ${bank.reserve}` }}</span>
+						<div class="amount">
+							<div class="code">{{ bank.name }}</div>
+							<div class="value">
+								<span>
+									{{ bank.valute }}
+								</span>
+								<span class="currency-divider">&#124;</span>
+								<span class="balance-reserve">{{
+									`Reserve: ${bank ? bank.reserve.toFixed(0) : 0} ${bank.valute}`
+								}}</span>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</transition>
 </template>
 <script>
 import { mapGetters } from 'vuex';
@@ -252,20 +271,24 @@ export default {
 }
 .select .select-wrapper {
 	overflow-y: auto;
-	max-height: 454px;
+	max-height: 340px;
+	@media screen and (max-width: 1250px) {
+		max-height: 300px;
+	}
 	scrollbar-width: thin;
 	scrollbar-color: #2e0e52 transparent;
 	padding-right: 20px;
 }
+
 .select .select-wrapper::-webkit-scrollbar-thumb,
 .select .select-wrapper::-webkit-scrollbar-thumb:hover {
-	width: 4px;
+	width: 5px;
 	margin: 15px 0;
 	border-radius: 2.5px;
 	background-color: #2e0e52;
 }
 .select .select-wrapper::-webkit-scrollbar {
-	width: 4px;
+	width: 5px;
 }
 .image-plate {
 	width: 37px;
@@ -279,5 +302,8 @@ export default {
 }
 .amount .code {
 	margin-bottom: -3px;
+}
+.select-item {
+	cursor: pointer;
 }
 </style>

@@ -1,12 +1,14 @@
 <template>
-	<div class="popup-body" tabindex="0" ref="popup" @click="closeDialog" @keyup.esc="closeDialog">
-		<div class="popup-wrapper" :style="popupSize" tabindex="1" @click.stop>
-			<slot name="title" />
-			<slot name="smsNumber"></slot>
-			<slot name="body" />
-			<slot name="buttons" />
+	<transition name="fade">
+		<div class="popup-body" tabindex="0" ref="popup" @click="closeDialog" @keyup.esc="closeDialog">
+			<div class="popup-wrapper" :style="popupSize" tabindex="1" @click.stop>
+				<slot name="title" />
+				<slot name="smsNumber"></slot>
+				<slot name="body" />
+				<slot name="buttons" />
+			</div>
 		</div>
-	</div>
+	</transition>
 </template>
 
 <script>
@@ -29,6 +31,12 @@ export default {
 			this.$emit('repeatTransferRequest');
 		},
 	},
+	mounted() {
+		const smsInput = document.getElementsByClassName('number-input');
+		if (smsInput && smsInput.length) {
+			smsInput[0].focus();
+		}
+	},
 };
 </script>
 
@@ -43,6 +51,7 @@ export default {
 		font-size: 36px;
 		font-weight: 600;
 		line-height: 21px;
+		text-transform: capitalize;
 	}
 
 	.exchange-ammount {
@@ -65,33 +74,39 @@ export default {
 }
 
 .success-popup_body {
+	width: 80%;
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: flex-end;
 
-	.from {
-		margin-top: 15px;
-		color: #fda50c;
-	}
-
+	.from,
 	.to {
-		margin-top: 15px;
-		color: #7d8ef6;
+		margin-top: 16px;
+		font-weight: 600;
+		line-height: 27.2px;
 	}
 
 	.transaction-info {
 		margin-top: 15px;
 		margin-bottom: 15px;
+		width: 100%;
 	}
 
 	.images {
 		display: flex;
 		margin: 15px 0;
+
+		img {
+			align-self: center;
+			max-width: 34px;
+			max-height: 39px;
+		}
 	}
 
 	.success_arrows {
-		margin: 0 5px;
+		margin: 0 26px;
 	}
 }
 
@@ -243,6 +258,7 @@ export default {
 	}
 
 	.number-input {
+		margin: 0 15px;
 		width: 50px;
 		height: 50px;
 		border-radius: 8px;
@@ -263,8 +279,6 @@ export default {
 .network-fee,
 .balance {
 	display: flex;
-	justify-content: space-between;
-	padding: 0 15px;
 	opacity: 0.5;
 	color: #ffffff;
 	font-size: 12px;
@@ -272,14 +286,20 @@ export default {
 
 	.network-fee__title {
 		margin: 0;
+		/*flex-grow: 1;*/
 
 		span {
 			text-transform: capitalize;
 		}
 	}
 
+	.usd-fee {
+		text-align: right;
+	}
+
 	.btc-value {
-		margin-right: 30px;
+		width: 52%;
+		text-align: right;
 	}
 }
 

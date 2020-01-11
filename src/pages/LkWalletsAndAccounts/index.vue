@@ -1,6 +1,6 @@
 <template>
 	<lk-layout>
-		<div class="wallets-and-acccouts-page">
+		<div class="wallets-and-acccouts-page" v-show="true">
 			<div class="wallets-list">
 				<div class="wallets-block wallets-list_item left">
 					<div class="toggler">
@@ -38,7 +38,10 @@
 					></cards-list>
 				</div>
 			</div>
-			<div class="operations-history">
+			<div
+				class="operations-history"
+				v-if="operations.some(({ transactions }) => transactions.length)"
+			>
 				<div class="title">
 					<p>Operations history</p>
 				</div>
@@ -53,7 +56,7 @@
 import { mapGetters } from 'vuex';
 import wallet from '@/store/modules/wallet';
 import LkLayout from '@/layout/LkLayout';
-import TransactionsHistory from '@/components/TransactionsHistory';
+import TransactionsHistory from '@/components/TransactionsHistory/index';
 import WalletsList from './components/WalletsList';
 import CardsList from './components/CardsList';
 import './styles.scss';
@@ -74,7 +77,7 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			operations: 'wallet/OPERATIONS',
+			operations: 'transactionsHistory/ALL_TRANSACTIONS',
 			wallets: 'wallet/WALLETS',
 			groupWallets: 'group/GROUP_WALLETS',
 			afterCreateWallet: 'wallet/AFTER_CREATE_WALLET',
@@ -83,16 +86,24 @@ export default {
 	mounted() {
 		if (!this.afterCreateWallet) {
 			if (this.wallets.length) {
-				this.$store.dispatch('wallet/GET_WALLETS', { wallets: this.wallets });
-				this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+				this.getWallets();
+				this.getTransactions();
+				this.subscribeUpdateTransactions();
 			} else {
-				this.$store.dispatch('wallet/GET_WALLETS').then(() => {
-					this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+				this.getFiatData();
+				this.getWallets().then(() => {
+					this.getTransactions();
+					this.subscribeUpdateTransactions();
+					this.updateWalletsAndTypes();
 				});
 			}
 		} else {
-			this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
+			this.getTransactions();
+			this.subscribeUpdateTransactions();
 		}
+	},
+	beforeDestroy() {
+		clearInterval(this.updateTransactionsTimer);
 	},
 	methods: {
 		handleMovingAndDeleting(type) {
@@ -109,52 +120,29 @@ export default {
 		handleAfterDeleteCard() {
 			this.isCardsMovingAndDeleting = false;
 		},
-		copyToClipboard() {
-			var elem = document.getElementById('wallet');
-			var targetId = '_hiddenCopyText_';
-			var isInput = elem.tagName === 'INPUT' || elem.tagName === 'TEXTAREA';
-			var origSelectionStart, origSelectionEnd;
-
-			if (isInput) {
-				target = elem;
-				origSelectionStart = elem.selectionStart;
-				origSelectionEnd = elem.selectionEnd;
-			} else {
-				target = document.getElementById(targetId);
-
-				if (!target) {
-					var target = document.createElement('textarea');
-					target.style.position = 'absolute';
-					target.style.left = '-9999px';
-					target.style.top = '0';
-					target.id = targetId;
-					document.body.appendChild(target);
-				}
-
-				target.textContent = elem.textContent;
-			}
-
-			var currentFocus = document.activeElement;
-			target.focus();
-			target.setSelectionRange(0, target.value.length);
-
-			var succeed;
-			try {
-				succeed = document.execCommand('copy');
-				this.wallet = 'Copied to clipboard';
-			} catch (e) {
-				succeed = false;
-			}
-			if (currentFocus && typeof currentFocus.focus === 'function') {
-				currentFocus.focus();
-			}
-
-			if (isInput) {
-				elem.setSelectionRange(origSelectionStart, origSelectionEnd);
-			} else {
-				target.textContent = '';
-			}
-			return succeed;
+		getWallets() {
+			return this.$store.dispatch('wallet/GET_WALLETS', { wallets: this.wallets });
+		},
+		getTransactions() {
+			return this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
+				wallets: this.wallets,
+			});
+		},
+		subscribeUpdateTransactions() {
+			return (this.updateTransactionsTimer = setInterval(() => {
+				this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
+					wallets: this.wallets,
+				});
+			}, 15000));
+		},
+		getFiatData() {
+			this.$store.dispatch('card/GET_CARDS');
+			this.$store.dispatch('currency/GET_ALL_CURRENCIES');
+			this.$store.dispatch('currency/GET_USER_CURRENCIES');
+			this.$store.dispatch('common/GET_BANKS');
+		},
+		updateWalletsAndTypes() {
+			this.$store.dispatch('wallet/UPDATE_WALLETS_AND_TYPES');
 		},
 	},
 };

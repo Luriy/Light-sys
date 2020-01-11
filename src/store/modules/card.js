@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { parsePythonArray, parsePythonDataObject } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 
 export default {
 	namespaced: true,
@@ -20,11 +20,12 @@ export default {
 	actions: {
 		GET_CARDS: (store) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'CardInfo',
 					Currency: true,
+					BankName: true,
 					...getAuthParams(),
 				},
 			}).then(({ data }) => {
@@ -42,7 +43,7 @@ export default {
 		CREATE_CARD: (store, payload) => {
 			const { Holder, Number, Psid, Currency } = payload;
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'CreateCard',
@@ -59,7 +60,7 @@ export default {
 		DELETE_CARD: (store, payload) => {
 			const { NumberCard } = payload;
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'FrozenCard',
@@ -73,7 +74,7 @@ export default {
 		UPDATE_CARD: (store, payload) => {
 			const { NumberCard, NewNumber, NewHolder, NewPsid } = payload;
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'CardEdit',

@@ -10,7 +10,14 @@
       		<div class="login-form" v-if="step === 1 && isLoaded">
       			<form @submit.prevent="register">
       				<div class="login-form-input">
-      					<input type="text" v-on:input="loginType = checkLoginType($event.target, loginType, user)" v-on:focus="loginType = checkLoginType($event.target, loginType, user)" id="login" v-model='user' placeholder="Email / phone">
+      					<input 
+                  type="text" 
+                  @input="loginType = checkLoginType($event.target, loginType, user)" 
+                  @focus="loginType = checkLoginType($event.target, loginType, user)" 
+                  id="login" 
+                  v-model='user' 
+                  placeholder="Email / phone"
+                >
       				</div>
       				<div class="login-form-button">
       					<button type="submit" class="btn">Register</button>
@@ -41,31 +48,13 @@
                   </div>
                 </div>
                 <div slot='smsNumber' class="exchange-popup_sms-number">
-                  <div class="flex justify-content-between">
-                    <input
-                      v-bind:key="index"
-                      class="number-input"
-                      v-for="(input, index) in smsCodes"
-                      v-model="input[index]"
-                      @keyup="index !== (smsCodes.length - 1) ? $event.target.nextElementSibling.focus() : registerApprove()"
-                      placeholder="_"
-                      type="text"
-                      maxLength="1"
-                      size="1"
-                      min="0"
-                      max="9" pattern="[0-9]{1}"
-                    />
-                  </div>
+                  <enter-code :smsCodes="smsCodes" @onSmsKeyUp="handleSmsKeyUp"></enter-code>
                   <div class="timer-body">
                     <div class="title">Resend code:</div>
                     <div class="timer" v-if="countdown > 0">00:{{`${countdown < 10 ? '0' : ''}${countdown}`}} Sec</div>
                     <p class="repeat-btn" v-if="countdown === 0" @click="resendPin">Repeat</p>
                   </div>
-                  <transition name="fade">
-                    <div class="error-block" v-if="commonError">
-                      <p class="error">{{commonError}}</p>
-                    </div>
-                  </transition>
+                  <error :error="commonError"></error>
                 </div>
               </div>
       			</form>
@@ -121,11 +110,7 @@
               <div class="login-form-button">
       					<button type="submit" class="btn">Register</button>
       				</div>
-              <transition name="fade">
-                <div class="error-block" v-if="commonError">
-                  <p class="error">{{commonError}}</p>
-                </div>
-              </transition>
+              <error :error="commonError"></error>
       			</form>
           </div>
         </transition>
@@ -139,17 +124,18 @@
 <script>
 import LoginLayout from '@/layout/LoginLayout';
 import Axios from 'axios';
-import { API_URL } from "@/constants"
-import { parsePythonDataObject } from '@/functions/helpers'
+import { BASE_URL } from '@/settings/config';
 import sha512 from 'js-sha512';
 import { AUTH_REQUEST, AUTH_LOGOUT } from '@/store/actions/auth'
 import checkLoginType from '@/functions/checkLoginType'
 import Error from '@/components/Error';
+import EnterCode from '@/components/EnterCode';
 
 export default {
   components: {
     LoginLayout,
-    Error
+    Error,
+    EnterCode,
   },
   data() {
   	return {
@@ -178,133 +164,117 @@ export default {
   },
   methods: {
     checkLoginType,
-  	registerApprove: function(){
-	    const { smsCodes, user, loginType } = this;
-
-	    Axios({
-        method: 'POST',
-        url: API_URL,
-        params: {
-          Comand: 'AccountActivationPhone',
-          Email: loginType === 'Email' ? user : '',
-          Phone: loginType === 'Phone' ? user : '',
-          Pin: smsCodes.map((smsCode, index) =>smsCode[index]).join('')
+    handleSmsKeyUp(e, index) {
+      const inputs = document.querySelectorAll('input.number-input');
+			if (e.key === 'Backspace') {
+				if (index !== 0) {
+					inputs[index - 1].focus();
         }
-      }).then(resp => {
-        resp = parsePythonDataObject(resp);
-        const errors = Object.values(resp[0]['Errors'])
+        this.smsCodes[index][index] = '';
+			} else if (e.key === 'Tab') {
+				return false;
+			} else {
+				index !== this.smsCodes.length - 1 ? inputs[index + 1].focus() : this.registerApprove();
+			}
+		},
+  	async registerApprove(){
+	    const { user, loginType, smsCodes } = this;
 
-        if(errors.length) {
-        	this.commonError = errors[0];
-        } else {
-          this.step = 3;
-          this.commonError = null;
-          clearInterval(this.timer);
-        }
-      })
+      const resp = await this.$store.dispatch('user/REGISTER_APPROVE', { user, loginType, smsCodes });
+      const errors = Object.values(resp[0]['Errors']);
+
+      if(errors.length) {
+      	this.commonError = errors[0];
+      } else {
+        this.step = 3;
+        this.commonError = null;
+        clearInterval(this.timer);
+      }
   	},
-    setPassword() {
+    async setPassword() {
       const { isPasswordLongEnough, isPasswordContainNumber, isPasswordsMatch, loginType, password, user } = this;
 
       if (isPasswordLongEnough && isPasswordContainNumber && isPasswordsMatch) {
-        Axios({
-          method: 'POST',
-          url: API_URL,
-          params: {
-            Comand: 'PasswordInstall',
-            Email: loginType === 'Email' ? user : '',
-            Phone: loginType === 'Phone' ? user : '',
-            Password: password,
-          }
-        }).then(resp => {
-          const { loginType, user, password } = this;
-          resp = parsePythonDataObject(resp);
+        const resp = await this.$store.dispatch('user/SET_PASSWORD', { loginType, user, password })
 
-          const errors = Object.values(resp[0]['Errors']);
-
-          if (errors.length) {
-            this.commonError = errors[0];
-          } else {
-            const params = new URLSearchParams();
-            params.append('Phone', loginType === 'Phone' ? user : '');
-            params.append('Email', loginType === 'Email' ? user : '');
-            params.append('Password', sha512(password));
-        		params.append('Comand', 'CheckLoginPassword');
-
-            this.$store.dispatch(AUTH_REQUEST, params)
-              .then(() => {
-      		    	this.commonError = null;
-                this.$router.push('/wallets');
-                setTimeout(() => {
-                    this.$store.commit('alerts/setNotification', {
-                    message: 'You have successfully registered!',
-                    status: 'success-status',
-                    icon: 'done'
-                  })
-                }, 1500)
-
-      		    })
-              .catch(err => {
-      			    this.commonError = err;
-              })
-          }
-        })
-      } else return false;
-    },
-	register: function () {
-    const { user, loginType } = this;
-    const params = new URLSearchParams();
-
-    if(loginType === 'Phone') {
-    	const phone = user.replace(/[^0-9]/gim,'');
-   		params.append('Phone', phone);
-   		params.append('Email', '');
-   	} else if (loginType === 'Email') {
-   		params.append('Email', user);
-      params.append('Phone', '');
-   	} else return null;
-   	params.append('Comand', 'Newaccount2');
-   	params.append('BIO', '');
-   	params.append('Passport', '');
-
-    this.commonError = null;
-
-    Axios.post(API_URL, params)
-      .then(resp => {
-        resp =parsePythonDataObject(resp);
         const errors = Object.values(resp[0]['Errors']);
 
         if (errors.length) {
           this.commonError = errors[0];
         } else {
-          this.step = 2;
-          this.commonError = null;
-          setTimeout(() => {
-						document.querySelector('.login-form .number-input').focus();
-					}, 50);
-          this.countdown = 59;
-          this.timer = setInterval(() => {
-            this.countdown--
-          }, 1000)
+          const params = new URLSearchParams();
+          params.append('Phone', loginType === 'Phone' ? user : '');
+          params.append('Email', loginType === 'Email' ? user.replace(/[^0-9]/gim, '') : '');
+          params.append('Password', sha512(password));
+      		params.append('Comand', 'CheckLoginPassword');
+
+          this.$store.dispatch(AUTH_REQUEST, params)
+            .then(() => {
+              const currenciesAddedByDefault = ['RUR', 'USD'];
+              currenciesAddedByDefault.forEach(currency => {
+                this.$store.dispatch('currency/ADD_USER_CURRENCY', { ValuteName: currency })
+              }).then(() => {
+                this.$store.dispatch('currency/GET_USER_CURRENCIES');
+              })
+              
+    		    	this.commonError = null;
+              this.$router.push('/wallets');
+              setTimeout(() => {
+                  this.$store.commit('alerts/setNotification', {
+                  message: 'You have successfully registered!',
+                  status: 'success-status',
+                  icon: 'done'
+                })
+              }, 1500)
+
+    		    })
+            .catch(err => {
+    			    this.commonError = err;
+            })
         }
-      })
+      } else return false;
+    },
+	  async register() {
+      const { user, loginType } = this;
+
+      this.commonError = null;
+      this.$store.dispatch('user/REGISTER', { loginType, user })
+        .then(resp => {
+          const errors = Object.values(resp[0]['Errors']);
+
+          if (errors.length) {
+            this.commonError = errors[0];
+          } else {
+            this.step = 2;
+            this.commonError = null;
+            setTimeout(() => {
+  						document.querySelector('.login-form .number-input').focus();
+  					}, 50);
+            this.countdown = 59;
+            this.timer = setInterval(() => {
+              this.countdown--
+            }, 1000)
+          }
+        })
     },
     resendPin() {
       const { loginType, user } = this;
-      this.$store.dispatch('user/USER_RESEND_PASSWORD', {
+      this.smsCodes = [
+        {0: ''},
+        {1: ''},
+        {2: ''},
+        {3: ''},
+        {4: ''},
+        {5: ''},
+      ];
+      this.commonError = null;
+      this.countdown = 59;
+      this.timer = setInterval(() => {
+        this.countdown--
+      }, 1000)
+      this.$store.dispatch('user/RESEND_PASSWORD', {
         Email: loginType === 'Email' ? user : '',
         Phone: loginType === 'Phone' ? user : '',
-      }).then((data) => {
-        if (data.success) {
-          this.commonError = null;
-          this.countdown = 59;
-          this.timer = setInterval(() => {
-            this.countdown--
-          }, 1000)
-        } else {
-          this.commonError = data.errors[0];
-        }
-
       })
     }
   },

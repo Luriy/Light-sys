@@ -6,9 +6,7 @@
 		:popupSize="{ width: 'auto', height: '350px' }"
 	>
 		<div slot="title" class="exchange-popup_title">
-			<img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title />
-			<img v-if="currency === 'ETH'" src="@/assets/images/eth.png" alt title />
-			<img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" alt title />
+			<img :src="getCryptoInfo(currency).image.corner" class="main-image" />
 			<p class="transaction">
 				Success!
 			</p>
@@ -19,12 +17,7 @@
 				</p>
 				<p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
 			</div>
-			<img
-				v-if="currency === 'BTC'"
-				src="@/assets/images/send-arrow-btc.svg"
-				class="send-arrow_btc send-arrow"
-			/>
-			<img v-else src="@/assets/images/send-arrow-eth.svg" class="send-arrow" />
+			<img :src="getCryptoInfo(currency).image.arrow" class="send-arrow" />
 			<p class="address">{{ paymentAddress }}</p>
 			<div class="exchange-block_fee">
 				<div class="network-fee flex justify-content-between">
@@ -44,7 +37,7 @@
 					</div>
 				</div>
 			</div>
-			<img class="popup__success-image" src="@/assets/images/success-popup.png" />
+			<!-- <img class="popup__success-image" src="@/assets/images/success-popup.png" /> -->
 		</div>
 		<div slot="body">
 			<div class="progress-bar"></div>
@@ -53,6 +46,7 @@
 </template>
 <script>
 import LkPopUp from '@/layout/LkPopUp';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	components: {
@@ -68,24 +62,47 @@ export default {
 		'paymentAddress',
 		'fullCurrencyName',
 	],
+	methods: {
+		getCryptoInfo,
+	},
+	computed: {
+		sendArrow() {
+			return require(`@/assets/images/send-arrow-${this.currency.toLowerCase()}.svg`);
+		},
+	},
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
+.main-image {
+	transform: translateY(-50%);
+}
+.balance {
+	margin: 7px 0 30px;
+}
 .transaction {
-	padding: 63px 0 20px !important;
+	padding: 0 0 20px !important;
 	font-size: 36px !important;
 }
 .send-arrow {
 	margin: 15px 0 20px;
-}
-.send-arrow_btc {
 	transform: rotate(90deg);
 }
+
 .payment-usd {
 	font-size: 16px;
 }
 .from {
 	font-size: 16px;
+}
+.network-fee,
+.balance {
+	display: flex;
+	justify-content: space-between;
+	p {
+		opacity: 0.5 !important;
+		color: #ffffff;
+		font-size: 12px !important;
+	}
 }
 .address {
 	margin-bottom: 45px !important;

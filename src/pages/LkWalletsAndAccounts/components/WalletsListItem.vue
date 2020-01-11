@@ -22,9 +22,7 @@
 				</div>
 				<div class="code">
 					<div :class="['image', wallet.currency.toLowerCase()]">
-						<img v-if="wallet.currency === 'BTC'" src="@/assets/images/icons/btc-ico.svg" alt title />
-						<img v-if="wallet.currency === 'ETH'" src="@/assets/images/eth-ico.png" alt title />
-						<img v-if="wallet.currency === 'LTC'" src="@/assets/images/ltc-ico.svg" width="12" />
+						<img :src="getCryptoInfo(wallet.currency).image.square" width="12" />
 					</div>
 					<div class="flex flex-column">
 						<span :class="wallet.currency.toLowerCase()">{{
@@ -81,13 +79,15 @@ export default {
 	filters: {
 		percentage: (value) =>
 			value
-				? `${
-						value['1h'].toFixed(2) < 0.01 && value['1h'].toFixed(2) > -0.01
-							? '0.00'
-							: value['1h'].toFixed(2) >= 0.01
-							? '+' + value['1h'].toFixed(2)
-							: value['1h'].toFixed(2)
-				  }%`
+				? value['1h']
+					? `${
+							value['1h'].toFixed(2) < 0.01 && value['1h'].toFixed(2) > -0.01
+								? '0.00'
+								: value['1h'].toFixed(2) >= 0.01
+								? '+' + value['1h'].toFixed(2)
+								: value['1h'].toFixed(2)
+					  }%`
+					: ''
 				: '',
 	},
 	methods: {
@@ -104,17 +104,24 @@ export default {
 		},
 		handleSaveGroup() {
 			this.isInputEditingActive = false;
-			const clonedGroupWallets = [...this.groupWallets];
-			clonedGroupWallets.unshift({
-				groupName: this.groupName,
-				wallets: [],
-			});
-			this.$store.commit('group/SET_GROUP_WALLETS', clonedGroupWallets);
+			const isNewGroupNameAlreadyExist = this.groupWallets.some(
+				({ groupName }) => groupName === this.groupName,
+			);
 
-			this.$store.dispatch('group/CREATE_WALLET_GROUP', {
-				GroupName: this.groupName,
-				wallets: [],
-			});
+			if (!isNewGroupNameAlreadyExist) {
+				const clonedGroupWallets = [...this.groupWallets];
+				clonedGroupWallets.unshift({
+					groupName: this.groupName,
+					wallets: [],
+				});
+				this.$store.commit('group/SET_GROUP_WALLETS', clonedGroupWallets);
+
+				this.$store.dispatch('group/CREATE_WALLET_GROUP', {
+					GroupName: this.groupName,
+					wallets: [],
+				});
+			}
+			this.groupName = 'Group name';
 		},
 	},
 };

@@ -24,6 +24,7 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	cursor: pointer;
 }
 .radio-inner {
 	width: 8px;

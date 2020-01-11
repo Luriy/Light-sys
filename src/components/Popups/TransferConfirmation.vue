@@ -2,16 +2,14 @@
 	<lk-pop-up
 		v-if="sendPopup"
 		class="transfer-popup"
-		@closeModal="$emit('onClose')"
+		@closeModal="handleCloseModal"
 		:popupSize="{ width: '680px', height: '500px' }"
 	>
 		<div slot="title" class="exchange-popup_title">
-			<img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title />
-			<img v-if="currency === 'ETH'" src="@/assets/images/eth.png" alt title />
-			<img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" alt title />
+			<img :src="getCryptoInfo(currency).image.corner" class="main-image" />
 			<p class="transaction">
 				Confirmation <br />
-				send {{ currencyAmount }} USD
+				send ${{ currencyAmount }} USD
 			</p>
 			<div class="phone-question" v-if="user.Phone">
 				<p class="question">We sent an SMS confirmation to the number</p>
@@ -29,29 +27,13 @@
 			</div>
 		</div>
 		<div slot="smsNumber" class="exchange-popup_sms-number">
-			<input
-				class="number-input"
-				v-for="(input, index) in smsCodes"
-				:key="input + index"
-				v-model="input[index]"
-				@keyup="
-					index !== smsCodes.length - 1 ? $event.target.nextElementSibling.focus() : $emit('onSend')
-				"
-				placeholder="_"
-				type="text"
-				maxLength="1"
-				size="1"
-				min="0"
-				max="9"
-				pattern="[0-9]{1}"
-			/>
-
+			<enter-code :smsCodes="smsCodes" @onSmsKeyUp="handleSmsKeyUp"></enter-code>
 			<div class="timer-body">
 				<div class="title">Resend code:</div>
 				<div class="timer" v-show="countdown > 0">
 					00:{{ `${countdown < 10 ? '0' : ''}${countdown}` }} Sec
 				</div>
-				<p class="repeat-btn" v-show="countdown === 0" @click="$emit('onSendSms')">Repeat</p>
+				<p class="repeat-btn" v-show="countdown === 0" @click="onRepeatSms">Repeat</p>
 			</div>
 		</div>
 		<div slot="body" class="exchange-popup_body">
@@ -62,8 +44,7 @@
 					</p>
 					<p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
 				</div>
-				<img v-if="currency === 'BTC'" src="@/assets/images/send-arrow-btc.svg" alt title />
-				<img v-else src="@/assets/images/send-arrow-eth.svg" alt title class="send-arrow-eth" />
+				<img :src="getCryptoInfo(currency).image.arrow" class="send-arrow" />
 				<p class="payment-address">{{ paymentAddress }}</p>
 			</div>
 			<div class="exchange-block_fee">
@@ -86,17 +67,21 @@
 			</div>
 		</div>
 		<div slot="buttons" class="exchange-popup_buttons">
-			<button class="back" @click="$emit('onClose')">Back</button>
+			<button class="back" @click="handleCloseModal">Back</button>
 		</div>
 	</lk-pop-up>
 </template>
 <script>
 import LkPopUp from '@/layout/LkPopUp';
 import formatPhoneNumber from '@/functions/formatPhoneNumber';
+import EnterCode from '@/components/EnterCode';
+import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	components: {
 		LkPopUp,
+		EnterCode,
 	},
 	props: [
 		'sendPopup',
@@ -105,22 +90,95 @@ export default {
 		'currencyAmount',
 		'cryptoCurrencyAmount',
 		'currency',
-		'smsCodes',
 		'user',
 		'paymentAddress',
 		'countdown',
 		'fullCurrencyName',
 	],
+	data() {
+		return {
+			smsCodes: [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }],
+		};
+	},
 	methods: {
 		formatPhoneNumber,
+		getCryptoInfo,
+		onSend() {
+			const token = this.smsCodes.map((smsCode, index) => smsCode[index]).join('');
+			this.$store
+				.dispatch('transfer/TRANSFER_CRYPTO', {
+					currency: capitalizeFirstLetter(this.$route.params.currency.toLowerCase()),
+					from: this.$route.params.address,
+					to: this.paymentAddress,
+					amount: Number(this.cryptoCurrencyAmount).toFixed(5),
+					token,
+				})
+				.then((data) => {
+					if (data.success) {
+						this.$emit('onSuccess');
+					}
+				});
+		},
+		handleSmsKeyUp(e, index) {
+			const inputs = document.querySelectorAll('input.number-input');
+			if (e.key === 'Backspace') {
+				if (index !== 0) {
+					inputs[index - 1].focus();
+				}
+				this.smsCodes[index][index] = '';
+			} else if (e.key === 'Tab') {
+				return false;
+			} else {
+				index !== this.smsCodes.length - 1 ? inputs[index + 1].focus() : this.onSend();
+			}
+		},
+		onRepeatSms() {
+			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
+			this.$emit('onRepeatSms');
+		},
+		handleCloseModal() {
+			this.$emit('onClose');
+			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
+		},
 	},
 };
 </script>
-<style scoped>
-.send-arrow-eth {
-	transform: rotate(-90deg);
+<style lang="scss" scoped>
+.transaction {
+	margin-top: -15px;
+}
+.main-image {
+	transform: translateY(-50%);
+}
+.send-arrow {
+	&.rotated {
+		transform: rotate(-90deg);
+	}
 }
 .exchange-popup_body {
-	width: 620px !important;
+	max-width: 620px !important;
+	width: 100%;
+}
+.network-fee {
+	margin-bottom: 4px;
+}
+.network-fee,
+.balance {
+	display: flex;
+	justify-content: space-between;
+	p {
+		opacity: 0.5 !important;
+		color: #ffffff;
+		font-size: 12px !important;
+	}
+}
+.exchange-block_fee {
+	padding: 0 15px;
+}
+.exchange-popup_sms-number {
+	width: 65%;
+}
+.link {
+	text-decoration: none;
 }
 </style>

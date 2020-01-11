@@ -10,9 +10,7 @@
 			class="_title flex flex-column align-items-center card-list-delete-popup__wrapper"
 		>
 			<div class="image-plate transparent">
-				<img v-if="deletePopup.currency === 'BTC'" src="@/assets/images/btc.png" />
-				<img v-if="deletePopup.currency === 'ETH'" src="@/assets/images/eth.png" />
-				<img v-if="deletePopup.currency === 'LTC'" src="@/assets/images/ltc.svg" height="65" />
+				<img :src="getCryptoInfo(deletePopup.currency).image.corner" height="65" />
 			</div>
 			<p class="card-list-delete-popup__title">Warning</p>
 			<p class="card-list-delete-popup__paragraph text-align-center">
@@ -39,12 +37,16 @@
 </template>
 <script>
 import LkPopup from '@/layout/LkPopUp';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 import './styles.scss';
 
 export default {
 	props: ['deletePopup'],
 	components: {
 		LkPopup,
+	},
+	methods: {
+		getCryptoInfo,
 	},
 };
 </script>
