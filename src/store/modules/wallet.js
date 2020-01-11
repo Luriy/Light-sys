@@ -319,19 +319,31 @@ export default {
 					});
 					const parsedWalletsData = parsePythonArray(walletsData)['1'].return.Result;
 
-					const result = Object.keys(parsedWalletsData).map((key) => {
-						const usdToCryptoCourse =
-							parsedInfoCryptsData[`${currency}: `][getCryptoInfo(currency).fullName.toLowerCase()]
-								.usd;
-						allUsdBalance += parsedWalletsData[key] * usdToCryptoCourse;
+					const result = Object.keys(parsedWalletsData)
+						.map((key) => {
+							if (
+								rootState.wallet.wallets.some(
+									({ address }) => address.toLowerCase() === key.toLowerCase(),
+								)
+							) {
+								const usdToCryptoCourse =
+									parsedInfoCryptsData[`${currency}: `][
+										getCryptoInfo(currency).fullName.toLowerCase()
+									].usd;
+								allUsdBalance += parsedWalletsData[key] * usdToCryptoCourse;
+								console.log(parsedWalletsData[key]);
 
-						return {
-							address: key,
-							balance: parsedWalletsData[key],
-							balanceUSD: parsedWalletsData[key] * usdToCryptoCourse,
-							isAvailable: Number(parsedStatusNodeData[`StatusNode${currency}`]) === 0,
-						};
-					});
+								return {
+									address: key,
+									balance: parsedWalletsData[key],
+									balanceUSD: parsedWalletsData[key] * usdToCryptoCourse,
+									isAvailable: Number(parsedStatusNodeData[`StatusNode${currency}`]) === 0,
+								};
+							} else {
+								return null;
+							}
+						})
+						.filter((item) => !!item);
 
 					return result;
 				}),

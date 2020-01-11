@@ -137,6 +137,7 @@
 				:cryptoCurrencyAmount="cryptoCurrencyAmount"
 				:countdown="countdown"
 				@onRepeatSms="onRepeatSms"
+				@onSuccess="handleSuccessTransfer"
 			></lk-transfer-confirmation-popup>
 			<lk-transfer-success-popup
 				:successPopup="successPopup"
@@ -272,7 +273,6 @@ export default {
 			this.isSelectWalletOpened = false;
 			this.error = null;
 			this.sendPopup = false;
-			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
 			clearInterval(this.timer);
 			this.timer = null;
 			this.countdown = 59;
@@ -388,6 +388,21 @@ export default {
 				this.remainingCurrency = this.currentWallet.balanceUSD.toFixed(2);
 				this.remainingCryptoCurrency = this.currentWallet.balance.toFixed(5);
 			} else return false;
+		},
+		handleSuccessTransfer() {
+			this.sendPopup = false;
+			this.successPopup = true;
+
+			setTimeout(() => {
+				this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
+					wallets: this.wallets,
+				});
+			}, 5000);
+
+			setTimeout(() => {
+				this.successPopup = false;
+				this.clearData();
+			}, 7000);
 		},
 		closeModal() {
 			this.sendPopup = false;

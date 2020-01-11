@@ -2,13 +2,11 @@
 	<lk-pop-up
 		v-if="sendPopup"
 		class="transfer-popup"
-		@closeModal="$emit('onClose')"
+		@closeModal="handleCloseModal"
 		:popupSize="{ width: '680px', height: '500px' }"
 	>
 		<div slot="title" class="exchange-popup_title">
-			<img v-if="currency === 'BTC'" src="@/assets/images/btc.png" alt title />
-			<img v-if="currency === 'ETH'" src="@/assets/images/eth.png" alt title />
-			<img v-if="currency === 'LTC'" src="@/assets/images/ltc.svg" alt title />
+			<img :src="getCryptoInfo(currency).image.corner" class="main-image" />
 			<p class="transaction">
 				Confirmation <br />
 				send ${{ currencyAmount }} USD
@@ -46,8 +44,7 @@
 					</p>
 					<p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
 				</div>
-				<img v-if="currency === 'BTC'" src="@/assets/images/send-arrow-btc.svg" alt title />
-				<img v-else src="@/assets/images/send-arrow-eth.svg" alt title class="send-arrow-eth" />
+				<img :src="sendArrow" class="send-arrow" :class="{ rotated: currency === 'ETH' }" />
 				<p class="payment-address">{{ paymentAddress }}</p>
 			</div>
 			<div class="exchange-block_fee">
@@ -70,7 +67,7 @@
 			</div>
 		</div>
 		<div slot="buttons" class="exchange-popup_buttons">
-			<button class="back" @click="$emit('onClose')">Back</button>
+			<button class="back" @click="handleCloseModal">Back</button>
 		</div>
 	</lk-pop-up>
 </template>
@@ -78,6 +75,8 @@
 import LkPopUp from '@/layout/LkPopUp';
 import formatPhoneNumber from '@/functions/formatPhoneNumber';
 import EnterCode from '@/components/EnterCode';
+import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	components: {
@@ -103,6 +102,7 @@ export default {
 	},
 	methods: {
 		formatPhoneNumber,
+		getCryptoInfo,
 		onSend() {
 			const token = this.smsCodes.map((smsCode, index) => smsCode[index]).join('');
 			this.$store
@@ -115,18 +115,7 @@ export default {
 				})
 				.then((data) => {
 					if (data.success) {
-						this.sendPopup = false;
-						this.successPopup = true;
-
-						setTimeout(() => {
-							this.$store.dispatch('wallet/GET_OPERATIONS', { wallets: this.wallets });
-							this.$store.dispatch('wallet/GET_WALLETS');
-						}, 5000);
-
-						setTimeout(() => {
-							this.successPopup = false;
-							this.clearData();
-						}, 7000);
+						this.$emit('onSuccess');
 					}
 				});
 		},
@@ -147,24 +136,54 @@ export default {
 			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
 			this.$emit('onRepeatSms');
 		},
+		handleCloseModal() {
+			this.$emit('onClose');
+			this.smsCodes = [{ 0: '' }, { 1: '' }, { 2: '' }, { 3: '' }, { 4: '' }, { 5: '' }];
+		},
+	},
+	computed: {
+		sendArrow() {
+			return require(`@/assets/images/send-arrow-${this.currency.toLowerCase()}.svg`);
+		},
 	},
 };
 </script>
-<style scoped>
-.send-arrow-eth {
-	transform: rotate(-90deg);
+<style lang="scss" scoped>
+.transaction {
+	margin-top: -15px;
+}
+.main-image {
+	transform: translateY(-50%);
+}
+.send-arrow {
+	&.rotated {
+		transform: rotate(-90deg);
+	}
 }
 .exchange-popup_body {
-	width: 620px !important;
+	max-width: 620px !important;
+	width: 100%;
+}
+.network-fee {
+	margin-bottom: 4px;
 }
 .network-fee,
 .balance {
+	display: flex;
 	justify-content: space-between;
+	p {
+		opacity: 0.5 !important;
+		color: #ffffff;
+		font-size: 12px !important;
+	}
 }
 .exchange-block_fee {
 	padding: 0 15px;
 }
 .exchange-popup_sms-number {
 	width: 65%;
+}
+.link {
+	text-decoration: none;
 }
 </style>

@@ -90,9 +90,11 @@ export default {
 				this.getTransactions();
 				this.subscribeUpdateTransactions();
 			} else {
+				this.getFiatData();
 				this.getWallets().then(() => {
 					this.getTransactions();
 					this.subscribeUpdateTransactions();
+					this.updateWalletsAndTypes();
 				});
 			}
 		} else {
@@ -132,6 +134,15 @@ export default {
 					wallets: this.wallets,
 				});
 			}, 15000));
+		},
+		getFiatData() {
+			this.$store.dispatch('card/GET_CARDS');
+			this.$store.dispatch('currency/GET_ALL_CURRENCIES');
+			this.$store.dispatch('currency/GET_USER_CURRENCIES');
+			this.$store.dispatch('common/GET_BANKS');
+		},
+		updateWalletsAndTypes() {
+			this.$store.dispatch('wallet/UPDATE_WALLETS_AND_TYPES');
 		},
 	},
 };

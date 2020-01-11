@@ -37,13 +37,15 @@ export default {
 	},
 	methods: {
 		handleClickBackButton() {
-			if (this.currentStep !== 1) {
+			if (this.currentStep !== 1 && this.currentStep !== this.steps.length) {
 				this.currentStep--;
 			}
 		},
 		handleClickNextButton() {
 			if (this.currentStep !== this.steps.length) {
 				this.currentStep++;
+			} else {
+				this.$router.push('/settings');
 			}
 		},
 	},

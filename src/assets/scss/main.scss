@@ -2096,6 +2096,7 @@ $break-large: 1124px;
 	border-radius: 50px 0 0 50px;
 	min-height: 100vh;
   padding:115px 60px 40px 60px;
+  overflow-y: hidden;
   @media screen and (max-width: 1250px) {
     padding:115px 30px 40px 30px;
     width: calc(100% - 266px);
@@ -2745,7 +2746,10 @@ $break-large: 1124px;
 
 		.send-form-totals {
 			.send-form-totals-total {
-				margin-bottom: 11px;
+        margin-bottom: 11px;
+        &:last-of-type {
+          margin-bottom: 0;
+        }
 				display: flex;
 				justify-content: space-between;
 				font-size: 12px;
@@ -3106,7 +3110,7 @@ $break-large: 1124px;
 
 .popup-body {
   position: fixed;
-  z-index: 99;
+  z-index: 2000;
   top: 0;
   left: 0;
   width: 100%;

@@ -42,7 +42,9 @@
 
 				<div class="select-item-wallet" v-if="currentList === 'wallets' || currentList === 'all'">
 					<div class="title-wrapper">
-						<span class="select-header">my wallets</span>
+						<span class="select-header">{{
+							currentList === 'wallets' ? 'my wallets' : 'all'
+						}}</span>
 						<span class="select-line"></span>
 					</div>
 					<div

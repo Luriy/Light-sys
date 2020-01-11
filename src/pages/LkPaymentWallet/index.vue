@@ -231,7 +231,7 @@ export default {
 <style scoped>
 .wallet-description {
 	transition: 0.5s;
-	padding-bottom: 25px;
+	padding-bottom: 40px;
 
 	position: relative;
 }
@@ -309,7 +309,7 @@ export default {
 	overflow: hidden;
 }
 .wallet-description-outer.active {
-	padding-bottom: 25px;
+	padding-bottom: 40px;
 	max-height: 300px;
 	margin-top: 20px;
 }

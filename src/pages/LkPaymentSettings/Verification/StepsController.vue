@@ -15,7 +15,7 @@
 			</div>
 		</div>
 		<div class="btn-next-wrapper" @click="$emit('onClickNextButton')">
-			<button class="btn-next">Next</button>
+			<button class="btn-next">{{ currentStep === steps.length ? 'Finish' : 'Next' }}</button>
 		</div>
 	</div>
 </template>
