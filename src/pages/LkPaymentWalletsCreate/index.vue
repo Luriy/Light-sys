@@ -1,102 +1,104 @@
 <template>
   <lk-layout>
-    <button class="add-token" id="show-modal" @click="showModal = true">
+    <div>
+      <button class="add-token" id="show-modal" @click="showModal = true">
       Add token
-    </button>
-    <div v-if="showModal" @close="showModal = false">
-      <transition name="modal">
-       <div class="modal-mask">
-  			<div class="modal-wrapper">
-  				<div class="modal-close">
-  					<button class="modal-default-button" @click="showModal = false">
-  						<div class="close"><img src="@/assets/images/path.svg" alt title /></div>
-  					</button>
-  				</div>
-  				<div class="modal-container">
-  					<p>Add Ethereum token</p>
-  					<div class="add-token__width">
-  						<span
-  							>To add ane ERC-20 token to your wallet paste tokent contract address in a form
-  							below</span
-  						>
-  					</div>
-  					<div class="TokenType__inputs">
-  						<div class="TokenType">
-  							<div class="TokenType__row" @click="showOptions = !showOptions">
-  								<span>{{ TokenType }}</span>
-  								<button
-  									class="buttonTokenType"
-  									
-  									:class="{ buttonTokenType__active: showOptions }"
-  								>
-  									<img src="@/assets/images/Triangle@3x.png" alt title />
-  								</button>
-  							</div>
-  							<div v-show="showOptions" class="TokenType__options">
-  								<div @click="ChangeShowOptions((name = 'ERC E20'))">ERC E20</div>
-  								<div @click="ChangeShowOptions((name = 'ERC 223'))">ERC 223</div>
-  							</div>
-  						</div>
-  						<input v-model="ContractAddress" placeholder="Contract address" />
-  						<input v-model="FullName" placeholder="Full name" />
-  						<input v-model="Ticket" placeholder="Ticket" />
-  						<input v-model="Decimals" placeholder="Decimals" />
-  					</div>
-  					<button class="buttonAddToken">
-  						Add token
-  					</button>
-  				</div>
-  			</div>
-  		</div>
-    </transition>
-  </div>
-    <div class="crypto-wallets">
-      <div class="title">
-        <p>Create wallet</p>
-        <back-to-previous-page-button :link="'/wallets'"></back-to-previous-page-button>
+      </button>
+      <div v-if="showModal" @close="showModal = false">
+        <transition name="modal">
+         <div class="modal-mask">
+    			<div class="modal-wrapper">
+    				<div class="modal-close">
+    					<button class="modal-default-button" @click="showModal = false">
+    						<div class="close"><img src="@/assets/images/path.svg" alt title /></div>
+    					</button>
+    				</div>
+    				<div class="modal-container">
+    					<p>Add Ethereum token</p>
+    					<div class="add-token__width">
+    						<span
+    							>To add ane ERC-20 token to your wallet paste tokent contract address in a form
+    							below</span
+    						>
+    					</div>
+    					<div class="TokenType__inputs">
+    						<div class="TokenType">
+    							<div class="TokenType__row" @click="showOptions = !showOptions">
+    								<span>{{ TokenType }}</span>
+    								<button
+    									class="buttonTokenType"
+    									
+    									:class="{ buttonTokenType__active: showOptions }"
+    								>
+    									<img src="@/assets/images/Triangle@3x.png" alt title />
+    								</button>
+    							</div>
+    							<div v-show="showOptions" class="TokenType__options">
+    								<div @click="ChangeShowOptions((name = 'ERC E20'))">ERC E20</div>
+    								<div @click="ChangeShowOptions((name = 'ERC 223'))">ERC 223</div>
+    							</div>
+    						</div>
+    						<input v-model="ContractAddress" placeholder="Contract address" />
+    						<input v-model="FullName" placeholder="Full name" />
+    						<input v-model="Ticket" placeholder="Ticket" />
+    						<input v-model="Decimals" placeholder="Decimals" />
+    					</div>
+    					<button class="buttonAddToken">
+    						Add token
+    					</button>
+    				</div>
+    			</div>
+    		  </div>
+        </transition>
       </div>
-      <div class="crypto-wallets_table" cellspacing="0" cellpadding="0">
-        <div class="thead">
-          <div class="th">Asset name</div>
-          <div class="th">Price</div>
-          <div class="th">24H Change</div>
-          <div class="th">30 Day Trend</div>
+      <div class="crypto-wallets">
+        <div class="title">
+          <p>Create wallet</p>
+          <back-to-previous-page-button :link="'/wallets'"></back-to-previous-page-button>
         </div>
-        <div class="tbody">
-          <div class="row" v-for="type in types" :key="type.code" @click="addWallet(type.code, type.isAvailable)">
-            <div v-if="!type.isAvailable" class="unavailable-block flex justify-content-center align-items-center">
-              <p class="unavailable-text">Temporarily unavailable</p>
-            </div>
-            <div class="row__item">
-              <div class="currency">
-                <div class="icon flex align-items-center">
-                  <img v-if="type.codeMarkup === 'btc'" src="@/assets/images/btc.png" alt title>
-                  <img v-if="type.codeMarkup === 'eth'" src="@/assets/images/eth.png" alt title>
-                  <img v-if="type.codeMarkup === 'ltc'" src="@/assets/images/ltc.svg" alt title>
-                </div>
-                <div :class="['text', type.codeMarkup]">
-                  <p>{{ type.name }}</p>
-                  <span>{{ type.code }}</span>
+        <div class="crypto-wallets_table" cellspacing="0" cellpadding="0">
+          <div class="thead">
+            <div class="th">Asset name</div>
+            <div class="th">Price</div>
+            <div class="th">24H Change</div>
+            <div class="th">30 Day Trend</div>
+          </div>
+          <div class="tbody">
+            <div class="row" v-for="type in types" :key="type.code" @click="addWallet(type.code, type.isAvailable)">
+              <div v-if="!type.isAvailable" class="unavailable-block flex justify-content-center align-items-center">
+                <p class="unavailable-text">Temporarily unavailable</p>
+              </div>
+              <div class="row__item">
+                <div class="currency">
+                  <div class="icon flex align-items-center">
+                    <img v-if="type.codeMarkup === 'btc'" src="@/assets/images/btc.png" alt title>
+                    <img v-if="type.codeMarkup === 'eth'" src="@/assets/images/eth.png" alt title>
+                    <img v-if="type.codeMarkup === 'ltc'" src="@/assets/images/ltc.svg" alt title>
+                  </div>
+                  <div :class="['text', type.codeMarkup]">
+                    <p>{{ type.name }}</p>
+                    <span>{{ type.code }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <td class="row__item">{{ formatCurrency(type.price, '$') }}</td>
-            <td class="row__item">{{ type.change24h | changePercent }}</td>
-            <td class="row__item">
-              <div class="flex align-items-flex-end">
-                <div class="progress">
-                  <img src="@/assets/images/graph-yellow.svg" width="100%" height="100%" alt title>
+              <td class="row__item">{{ formatCurrency(type.price, '$') }}</td>
+              <td class="row__item">{{ type.change24h | changePercent }}</td>
+              <td class="row__item">
+                <div class="flex align-items-flex-end">
+                  <div class="progress">
+                    <img src="@/assets/images/graph-yellow.svg" width="100%" height="100%" alt title>
+                  </div>
+                  <div class="progress-bar"></div>
                 </div>
-                <div class="progress-bar"></div>
-              </div>
-            </td>
+              </td>
+            </div>
           </div>
         </div>
+        <lk-create-wallet-success-popup
+          :successPopup="successPopup"
+          @onClose="handleCloseSuccessPopup"
+        ></lk-create-wallet-success-popup>
       </div>
-      <lk-create-wallet-success-popup
-        :successPopup="successPopup"
-        @onClose="handleCloseSuccessPopup"
-      ></lk-create-wallet-success-popup>
     </div>
   </lk-layout>
 </template>
@@ -130,7 +132,6 @@ export default {
         currency: null,
         fullCurrency: null,
       },
-      updateTypesTimer: null,
     }
   },
   
@@ -144,12 +145,8 @@ export default {
   filters: {
     changePercent: value => `${(value > 0 ? '+' : '') + value.toFixed(2).toString()}%`,
   },
-  mounted() {
+  created() {
     this.$store.dispatch('wallet/GET_TYPES');
-    this.updateTypesTimer = setInterval(() => this.$store.dispatch('wallet/GET_TYPES'), 5000);
-  },
-  beforeDestroy() {
-    clearInterval(this.updateTypesTimer);
   },
   methods: {
     ChangeShowOptions(option) {

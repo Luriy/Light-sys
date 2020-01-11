@@ -1,5 +1,5 @@
 import { getAuthParams } from '@/functions/auth';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 import Axios from 'axios';
 import { parsePythonArray } from '@/functions/helpers';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
@@ -10,7 +10,7 @@ export default {
 		TRANSFER_CRYPTO: (state, { amount, from, to, token, currency }) => {
 			const { commit, dispatch } = state;
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: `${currency}Transfer`,
@@ -70,7 +70,7 @@ export default {
     },
     GET_TRANSFER_TOKEN: ({ commit, dispatch }, user) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'TransferToken',

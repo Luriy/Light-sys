@@ -1,6 +1,6 @@
 <template>
 	<lk-layout>
-		<div class="wallets-and-acccouts-page">
+		<div class="wallets-and-acccouts-page" v-show="true">
 			<div class="wallets-list">
 				<div class="wallets-block wallets-list_item left">
 					<div class="toggler">

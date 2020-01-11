@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
 import filterTransactionsByPaginationAndDate from '@/functions/filterTransactionsByPaginationAndDate';
 import formatCardNumber from '@/functions/formatCardNumber';
@@ -41,7 +41,7 @@ export default {
 					await Promise.all(
 						wallets.map(async (wallet) => {
 							const { data } = await Axios({
-								url: API_URL,
+								url: BASE_URL,
 								method: 'POST',
 								params: {
 									Comand: `AllTransactions${capitalizeFirstLetter(wallet.currency.toLowerCase())}`,
@@ -108,7 +108,7 @@ export default {
 		},
 		GET_CRYPTO_EXCHANGE_TRANSACTIONS: async ({ commit, state, rootState }, { singleWallet }) => {
 			const { data } = await Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'EthBtcEthHistory',
@@ -182,7 +182,7 @@ export default {
 		) => {
 			const [{ data }, allPsids] = await Promise.all([
 				Axios({
-					url: API_URL,
+					url: BASE_URL,
 					method: 'POST',
 					params: {
 						Comand: 'TranzactionCryptoFiat',

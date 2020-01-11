@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 import fiatList from '../../settings/fiatList';
 import currensyList from '../../settings/currensyList';
 import errorsList from '../../settings/errorsList';
@@ -84,7 +84,7 @@ export default {
 	actions: {
 		GET_TRANSFER_INFO: ({ commit }, { exchange, receive }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'GET',
 				params: {
 					Comand: `TransferInfo${exchange}${receive}`,
@@ -118,7 +118,7 @@ export default {
 		GET_FIAT_INFO: ({ commit }, { exchange, receive }) => {
 			commit('alerts/setLoading', '#673AB7', { root: true });
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'GET',
 				params: {
 					Comand: 'InfoPsid',
@@ -149,7 +149,7 @@ export default {
 		},
 		GET_FIAT_PSIDS: ({ commit }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'FiatPsid',
@@ -167,7 +167,7 @@ export default {
 		GET_FIAT_EXCHANGE: ({ commit }) => {
 			commit('alerts/setLoading', '#673AB7', { root: true });
 			const baseRequest = {
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 			};
 			const fiatPsids = Axios({
@@ -275,7 +275,7 @@ export default {
 		POST_WALLETS: ({ commit }, { transferData, usdAmmount, pair: { exchange, receive } }) => {
 			commit('SET_EXCHANGE_SUCCES', { status: 'exchange', show: true, progress: 75 });
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: `${exchange}${receive}Transfer`,
@@ -321,7 +321,7 @@ export default {
 		},
 		POST_FIAT: ({ commit }, data) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'CriptoFiatTransfer',

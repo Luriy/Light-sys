@@ -34,7 +34,7 @@ export default {
 </script>
 <style>
 .top-bar {
-	margin-bottom: 20px;
+	margin-bottom: 25px;
 }
 .setting-name {
 	color: #fff;

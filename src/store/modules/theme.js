@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 
 export default {
 	namespaced: true,
@@ -17,7 +17,7 @@ export default {
 	actions: {
 		GET_ALL_THEMES: async ({ commit }) => {
 			const { data } = await Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'Styles',

@@ -1,46 +1,48 @@
 <template>
 	<lk-layout>
-		<div class="profile-header d-flex justify-content-between">
-			<div class="header-info d-flex flex-row align-items-center">
-				<img src="../../assets/images/Rectangle.png" alt="" class="image" />
-				<div class="general-info">
-					<p class="name">Julia Dzubina</p>
-					<div class="id-number">
-						<span class="id-head">ID</span>
-						<span>573 983</span>
+		<div>
+			<div class="profile-header d-flex justify-content-between">
+				<div class="header-info d-flex flex-row align-items-center">
+					<img src="../../assets/images/Rectangle.png" alt="" class="image" />
+					<div class="general-info">
+						<p class="name">Julia Dzubina</p>
+						<div class="id-number">
+							<span class="id-head">ID</span>
+							<span>573 983</span>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="security d-flex flex-column justify-content-between">
-				<div class="level d-flex align-items-center">
-					<span class="level-title">Security</span>
-					<span class="level-status" style="color: #ff3b3b">Low</span>
-					<img src="@/assets/images/smiles/cry.png" class="level-image align-self-center" />
+				<div class="security d-flex flex-column justify-content-between">
+					<div class="level d-flex align-items-center">
+						<span class="level-title">Security</span>
+						<span class="level-status" style="color: #ff3b3b">Low</span>
+						<img src="@/assets/images/smiles/cry.png" class="level-image align-self-center" />
+					</div>
+					<div class="bar">
+						<v-progress-linear
+							value="15"
+							height="2"
+							color="#ff3b3b"
+							background-color="#452865"
+						></v-progress-linear>
+					</div>
+					<p class="hint">Take measures to protect your wallet from losses and grabs</p>
 				</div>
-				<div class="bar">
-					<v-progress-linear
-						value="15"
-						height="2"
-						color="#ff3b3b"
-						background-color="#452865"
-					></v-progress-linear>
-				</div>
-				<p class="hint">Take measures to protect your wallet from losses and grabs</p>
 			</div>
-		</div>
 
-		<div class="settings-list">
-			<router-link
-				class="setting d-flex flex-row align-items-center"
-				v-for="setting of settingsList"
-				:key="setting.link"
-				:to="`settings/${setting.link}`"
-			>
-				<div class="setting-icon-wrapper d-flex justify-content-center">
-					<img class="align-self-center" :src="setting.icon" alt="" />
-				</div>
-				<span class="setting-name">{{ setting.name }}</span>
-			</router-link>
+			<div class="settings-list">
+				<router-link
+					class="setting d-flex flex-row align-items-center"
+					v-for="setting of settingsList"
+					:key="setting.link"
+					:to="`settings/${setting.link}`"
+				>
+					<div class="setting-icon-wrapper d-flex justify-content-center">
+						<img class="align-self-center" :src="setting.icon" alt="" />
+					</div>
+					<span class="setting-name">{{ setting.name }}</span>
+				</router-link>
+			</div>
 		</div>
 	</lk-layout>
 </template>

@@ -10,9 +10,8 @@
 					:key="theme"
 					:style="
 						`
-            background-color: ${themesInfo.find(({ name }) => name === theme).color};
-            
-          `
+              background-color: ${themesInfo.find(({ name }) => name === theme).color};
+            `
 					"
 				>
 					<div class="theme__choose-item-text">{{ theme }}</div>

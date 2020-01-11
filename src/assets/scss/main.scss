@@ -1879,11 +1879,16 @@ $break-large: 1124px;
         width: 327px;
       }
 		}
-		input, input::placeholder {
+		input::placeholder {
 			font-size: 12px;
 			font-weight: 600;
 			color: rgba(255,255,255,.7);
-		}
+    }
+    input {
+      font-size: 12px;
+			font-weight: 600;
+			color: rgba(255,255,255,1);
+    }
 	}
 
 	.account-info {

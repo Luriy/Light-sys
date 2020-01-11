@@ -76,7 +76,6 @@ export default {
 			},
 			editingGroup: null,
 			newGroupName: '',
-			updateTypesTimer: null,
 		};
 	},
 	computed: {
@@ -88,12 +87,6 @@ export default {
 	},
 	created() {
 		this.$store.dispatch('wallet/GET_TYPES');
-		this.updateTypesTimer = setInterval(() => {
-			this.$store.dispatch('wallet/GET_TYPES');
-		}, 5000);
-	},
-	beforeDestroy() {
-		clearInterval(this.updateTypesTimer);
 	},
 	methods: {
 		handleWalletRouter(currency, address, isAvailable) {

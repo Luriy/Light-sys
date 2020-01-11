@@ -42,9 +42,10 @@ export default {
 		};
 	},
 	created() {
+		this.$store.dispatch('wallet/UPDATE_WALLETS_AND_TYPES');
 		this.updateWalletsTimer = setInterval(() => {
-			this.$store.dispatch('wallet/UPDATE_WALLETS');
-		}, 5000);
+			this.$store.dispatch('wallet/UPDATE_WALLETS_AND_TYPES');
+		}, 10000);
 	},
 	beforeDestroy() {
 		clearInterval(this.updateWalletsTimer);

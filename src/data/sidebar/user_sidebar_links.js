@@ -7,8 +7,8 @@ export default [
 	{
 		to: '/wallets',
 		text: 'Wallets and accounts',
-    image: require('@/assets/images/wallet.svg'),
-    width: 19,
+		image: require('@/assets/images/wallet.svg'),
+		width: 19,
 	},
 	{
 		to: '/payments-and-transfer',

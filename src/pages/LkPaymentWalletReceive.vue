@@ -7,6 +7,7 @@
 					><img src="@/assets/images/path.svg" alt title
 				/></router-link>
 			</div>
+
 			<div class="wallet-address">
 				<div class="wallet-title">Your {{ currencyName }} Address</div>
 				<div class="wallet-address-value" @click="copyToClipboard">

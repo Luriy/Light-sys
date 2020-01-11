@@ -11,6 +11,7 @@ import {
 	paymentsAndTransfer,
 	smartContract,
 	passwordRecovery,
+	dapp,
 } from './routes/index';
 
 Vue.use(Router);
@@ -27,5 +28,6 @@ export default new Router({
 		...settings,
 		...wallets,
 		...paymentsAndTransfer,
+		...dapp,
 	],
 });

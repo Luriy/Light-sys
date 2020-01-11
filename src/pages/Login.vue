@@ -15,7 +15,8 @@
 									id="login"
 									name="login"
 									v-model="user"
-									v-on:input="checkLoginType"
+									@input="loginType = checkLoginType($event.target, loginType, user)"
+									@focus="loginType = checkLoginType($event.target, loginType, user)"
 									placeholder="Email/phone number"
 									required=""
 								/>
@@ -65,6 +66,7 @@ import { AUTH_REQUEST, AUTH_LOGOUT } from '@/store/actions/auth';
 import sha512 from 'js-sha512';
 import Error from '@/components/Error';
 import Checkbox from '@/elements/Checkbox';
+import checkLoginType from '@/functions/checkLoginType';
 
 export default {
 	name: 'Login',
@@ -90,27 +92,17 @@ export default {
 		this.isLoaded = true;
 	},
 	methods: {
-		checkLoginType() {
-			var pattern = /^[\d\(\)\ \- \+ \_]{0,100}$/;
-			this.loginType = pattern.test(this.user);
-			var im = new Inputmask('+9 (999) 999 99-99');
-			if (this.loginType && this.user && this.user != '+') {
-				im.mask(document.getElementById('login'));
-			} else {
-				if (document.getElementById('login').inputmask) {
-					document.getElementById('login').inputmask.remove();
-				}
-			}
-		},
+		checkLoginType,
 		login: function() {
 			this.error = null;
 			const { user, password, loginType } = this;
 			const params = new URLSearchParams();
-			if (loginType) {
+			console.log(loginType);
+			if (loginType === 'Phone') {
 				const phone = user.replace(/[^0-9]/gim, '');
 				params.append('Phone', phone);
 				params.append('Email', '');
-			} else {
+			} else if (loginType === 'Email') {
 				params.append('Email', user);
 				params.append('Phone', '');
 			}

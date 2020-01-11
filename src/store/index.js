@@ -12,6 +12,7 @@ import group from './modules/group';
 import transfer from './modules/transfer';
 import transactionsHistory from './modules/transactions_history';
 import theme from './modules/theme';
+import dapp from './modules/dapp';
 import { BASE_URL } from '@/settings/config';
 Vue.use(Vuex);
 
@@ -31,6 +32,7 @@ export default new Vuex.Store({
 		transfer,
 		transactionsHistory,
 		theme,
+		dapp,
 	},
 	state: {
 		urls: {

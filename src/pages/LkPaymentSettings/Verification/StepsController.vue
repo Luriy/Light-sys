@@ -3,10 +3,10 @@
 		<button class="btn-back" @click="$emit('onClickBackButton')">Back</button>
 		<div class="timeline flex justify-content-between align-items-center">
 			<div class="timeline__item-wrapper" v-for="(step, index) in steps" :key="step">
-				<transition name="fade">
+				<transition name="fade-fast">
 					<div class="timeline__item" v-show="index >= currentStep"></div>
 				</transition>
-				<transition name="fade">
+				<transition name="fade-fast">
 					<div class="timeline__item active" v-show="index < currentStep">
 						<span>{{ index + 1 }}</span>
 						<span class="step-description">{{ steps[index] }}</span>
@@ -26,7 +26,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .wrapper {
-	margin-top: 50px;
+	margin: 50px 0 10px;
 }
 .btn-back {
 	min-width: 120px;

@@ -72,7 +72,7 @@
 <script>
 import LoginLayout from '@/layout/LoginLayout';
 import Axios from 'axios';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 import { parsePythonDataObject, parsePythonArray } from '@/functions/helpers';
 import sha512 from 'js-sha512';
 import { AUTH_REQUEST } from '@/store/actions/auth';
@@ -121,7 +121,7 @@ export default {
 			this.commonError = null;
 			const { user, loginType } = this;
 			Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'PasswordRecoveryPhone', // если e-mail, запрос тоже идет на эту команду,
@@ -166,7 +166,7 @@ export default {
 			this.commonError = null;
 
 			Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'PasswordRecoveryPin',

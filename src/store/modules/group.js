@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 
 export default {
 	namespaced: true,
@@ -98,7 +98,7 @@ export default {
 	actions: {
 		CREATE_WALLET_GROUP: (store, { GroupName, wallets }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'AddWalletsGroup',
@@ -151,7 +151,7 @@ export default {
 		},
 		CREATE_CURRENCY_GROUP: (store, { GroupName, currencies }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'AddValuteGroup',

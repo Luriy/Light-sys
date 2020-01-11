@@ -1,11 +1,68 @@
 import Axios from 'axios';
 import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
-import { API_URL } from '@/constants';
+import { BASE_URL } from '@/settings/config';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
 import getCryptoInfo from '@/functions/getCryptoInfo';
 import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
 import cryptoCurrencies from '@/settings/currensyList';
+
+const getPercentage = (responseData) => {
+	return {
+		BTC: {
+			'1h': responseData['percentage_BTC: '].percentage_1h,
+			'1y': responseData['percentage_BTC: '].percentage_1y,
+			'7d': responseData['percentage_BTC: '].percentage_7d,
+			'24h': responseData['percentage_BTC: '].percentage_24h,
+			'30d': responseData['percentage_BTC: '].percentage_30d,
+			'200d': responseData['percentage_BTC: '].percentage_200d,
+		},
+		ETH: {
+			'1h': responseData['percentage_ETH: '].percentage_1h,
+			'1y': responseData['percentage_ETH: '].percentage_1y,
+			'7d': responseData['percentage_ETH: '].percentage_7d,
+			'24h': responseData['percentage_ETH: '].percentage_24h,
+			'30d': responseData['percentage_ETH: '].percentage_30d,
+			'200d': responseData['percentage_ETH: '].percentage_200d,
+		},
+		LTC: {
+			'1h': responseData['percentage_LTC: '].percentage_1h,
+			'1y': responseData['percentage_LTC: '].percentage_1y,
+			'7d': responseData['percentage_LTC: '].percentage_7d,
+			'24h': responseData['percentage_LTC: '].percentage_24h,
+			'30d': responseData['percentage_LTC: '].percentage_30d,
+			'200d': responseData['percentage_LTC: '].percentage_200d,
+		},
+	};
+};
+const getTypes = (responseData, nodeStatusData) => {
+	return {
+		bitcoin: {
+			name: 'Bitcoin',
+			code: 'BTC',
+			codeMarkup: 'btc',
+			price: responseData['BTC: '].bitcoin.usd,
+			change24h: responseData['BTC: '].bitcoin.usd_24h_change,
+			isAvailable: nodeStatusData.StatusNodeBTC === 0,
+		},
+		ethereum: {
+			name: 'Ethereum',
+			code: 'ETH',
+			codeMarkup: 'eth',
+			price: responseData['ETH: '].ethereum.usd,
+			change24h: responseData['ETH: '].ethereum.usd_24h_change,
+			isAvailable: nodeStatusData.StatusNodeETH === 0,
+		},
+		litecoin: {
+			name: 'Litecoin',
+			code: 'LTC',
+			codeMarkup: 'ltc',
+			price: responseData['LTC: '].litecoin.usd,
+			change24h: responseData['LTC: '].litecoin.usd_24h_change,
+			isAvailable: nodeStatusData.StatusNodeLTC === 0,
+		},
+	};
+};
 
 export default {
 	namespaced: true,
@@ -46,7 +103,7 @@ export default {
 	actions: {
 		GET_PAGE_DETAIL: ({ dispatch, commit }, { currency, address }) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: `Balance${currency}`,
@@ -69,7 +126,7 @@ export default {
 		},
 		CREATE_WALLET({ commit, getters }, type) {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: `Add${type}wallet`,
@@ -125,7 +182,7 @@ export default {
 		},
 		DELETE_WALLET: (state, payload) => {
 			return Axios({
-				url: API_URL,
+				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: `FrozenWalet${payload.currency}`,
@@ -137,14 +194,14 @@ export default {
 		GET_WALLETS({ commit, dispatch }) {
 			return Promise.all([
 				Axios({
-					url: API_URL,
+					url: BASE_URL,
 					method: 'POST',
 					params: {
 						Comand: 'StatusNode',
 					},
 				}),
 				Axios({
-					url: API_URL,
+					url: BASE_URL,
 					method: 'POST',
 					params: {
 						Comand: 'AllWalets',
@@ -201,7 +258,7 @@ export default {
 
 					// result.forEach(item => {
 					//   return Axios({
-					//     url: API_URL,
+					//     url: BASE_URL,
 					//     method: 'POST',
 					//     params: {
 					//       Comand: `UnFrozenWalet${item.currency}`,
@@ -229,42 +286,38 @@ export default {
 				}
 			});
 		},
-		UPDATE_WALLETS: async ({ commit, state, rootState }) => {
+		UPDATE_WALLETS_AND_TYPES: async ({ commit, state, rootState }) => {
 			let allUsdBalance = 0;
+			const [{ data: infoCryptsData }, { data: statusNodeData }] = await Promise.all([
+				Axios({
+					url: BASE_URL,
+					method: 'GET',
+					params: {
+						Comand: `InfoCrypts`,
+					},
+				}),
+				Axios({
+					url: BASE_URL,
+					method: 'POST',
+					params: {
+						Comand: 'StatusNode',
+					},
+				}),
+			]);
+			const parsedInfoCryptsData = parsePythonArray(infoCryptsData)['1'].return;
+			const parsedStatusNodeData = parsePythonArray(statusNodeData)['1'].return;
+
 			let results = await Promise.all(
 				Object.keys(cryptoCurrencies).map(async (currency) => {
-					const [
-						{ data: walletsData },
-						{ data: infoCryptsData },
-						{ data: statusNodeData },
-					] = await Promise.all([
-						Axios({
-							url: API_URL,
-							method: 'POST',
-							params: {
-								Comand: `AllBalance${currency}`,
-								...getAuthParams(),
-							},
-						}),
-						Axios({
-							url: API_URL,
-							method: 'GET',
-							params: {
-								Comand: `InfoCrypts`,
-							},
-						}),
-						Axios({
-							url: API_URL,
-							method: 'POST',
-							params: {
-								Comand: 'StatusNode',
-							},
-						}),
-					]);
-					// Number(this.wallets.reduce((acc, item) => acc + item.balanceUSD, 0)).toFixed(2) || 0;
+					const { data: walletsData } = await Axios({
+						url: BASE_URL,
+						method: 'POST',
+						params: {
+							Comand: `AllBalance${currency}`,
+							...getAuthParams(),
+						},
+					});
 					const parsedWalletsData = parsePythonArray(walletsData)['1'].return.Result;
-					const parsedInfoCryptsData = parsePythonArray(infoCryptsData)['1'].return;
-					const parsedStatusNodeData = parsePythonArray(statusNodeData)['1'].return;
 
 					const result = Object.keys(parsedWalletsData).map((key) => {
 						const usdToCryptoCourse =
@@ -322,18 +375,20 @@ export default {
 					};
 				}),
 			);
+			commit('SET_PERCENTAGE', getPercentage(parsedInfoCryptsData));
+			commit('SET_TYPES', getTypes(parsedInfoCryptsData, parsedStatusNodeData));
 		},
 		GET_TYPES: async (store) => {
 			const [{ data: nodeData }, { data }] = await Promise.all([
 				Axios({
-					url: API_URL,
+					url: BASE_URL,
 					method: 'POST',
 					params: {
 						Comand: 'StatusNode',
 					},
 				}),
 				Axios({
-					url: API_URL,
+					url: BASE_URL,
 					method: 'GET',
 					params: {
 						Comand: 'InfoCrypts',
@@ -344,59 +399,9 @@ export default {
 			const responseData = parsePythonArray(data)['1'].return;
 			const responseNodesStatusData = parsePythonArray(nodeData)['1'].return;
 
-			const types = {
-				bitcoin: {
-					name: 'Bitcoin',
-					code: 'BTC',
-					codeMarkup: 'btc',
-					price: responseData['BTC: '].bitcoin.usd,
-					change24h: responseData['BTC: '].bitcoin.usd_24h_change,
-					isAvailable: responseNodesStatusData.StatusNodeBTC === 0,
-				},
-				ethereum: {
-					name: 'Ethereum',
-					code: 'ETH',
-					codeMarkup: 'eth',
-					price: responseData['ETH: '].ethereum.usd,
-					change24h: responseData['ETH: '].ethereum.usd_24h_change,
-					isAvailable: responseNodesStatusData.StatusNodeETH === 0,
-				},
-				litecoin: {
-					name: 'Litecoin',
-					code: 'LTC',
-					codeMarkup: 'ltc',
-					price: responseData['LTC: '].litecoin.usd,
-					change24h: responseData['LTC: '].litecoin.usd_24h_change,
-					isAvailable: responseNodesStatusData.StatusNodeLTC === 0,
-				},
-			};
+			const types = getTypes(responseData, responseNodesStatusData);
 
-			const percentage = {
-				BTC: {
-					'1h': responseData['percentage_BTC: '].percentage_1h,
-					'1y': responseData['percentage_BTC: '].percentage_1y,
-					'7d': responseData['percentage_BTC: '].percentage_7d,
-					'24h': responseData['percentage_BTC: '].percentage_24h,
-					'30d': responseData['percentage_BTC: '].percentage_30d,
-					'200d': responseData['percentage_BTC: '].percentage_200d,
-				},
-				ETH: {
-					'1h': responseData['percentage_ETH: '].percentage_1h,
-					'1y': responseData['percentage_ETH: '].percentage_1y,
-					'7d': responseData['percentage_ETH: '].percentage_7d,
-					'24h': responseData['percentage_ETH: '].percentage_24h,
-					'30d': responseData['percentage_ETH: '].percentage_30d,
-					'200d': responseData['percentage_ETH: '].percentage_200d,
-				},
-				LTC: {
-					'1h': responseData['percentage_LTC: '].percentage_1h,
-					'1y': responseData['percentage_LTC: '].percentage_1y,
-					'7d': responseData['percentage_LTC: '].percentage_7d,
-					'24h': responseData['percentage_LTC: '].percentage_24h,
-					'30d': responseData['percentage_LTC: '].percentage_30d,
-					'200d': responseData['percentage_LTC: '].percentage_200d,
-				},
-			};
+			const percentage = getPercentage(responseData);
 
 			store.commit('SET_TYPES', types);
 

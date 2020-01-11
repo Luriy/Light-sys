@@ -3,7 +3,11 @@
 		<lk-header></lk-header>
 		<div id="container">
 			<user-sidebar></user-sidebar>
-			<div class="content"><slot></slot></div>
+			<div class="content">
+				<transition name="fade" appear>
+					<slot></slot>
+				</transition>
+			</div>
 		</div>
 	</div>
 </template>
@@ -12,7 +16,7 @@
 import UserSidebar from '@/components/UserSidebar';
 import LkHeader from '@/components/LkHeader/index';
 export default {
-	name: 'LkLaouyt',
+	name: 'LkLayout',
 	components: {
 		UserSidebar,
 		LkHeader,

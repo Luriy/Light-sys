@@ -7,6 +7,7 @@ import wallets from './wallets';
 import paymentsAndTransfer from './payments-and-transfer';
 import smartContract from './smart-contract';
 import passwordRecovery from './password-recovery';
+import dapp from './dapp';
 
 export {
 	root,
@@ -18,4 +19,5 @@ export {
 	paymentsAndTransfer,
 	smartContract,
 	passwordRecovery,
+	dapp,
 };

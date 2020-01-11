@@ -385,6 +385,8 @@ export default {
 			if (isAvailable) {
 				this.clearData();
 				this.$router.push(`/payments-and-transfer/send/${currency}/${address}`);
+				this.remainingCurrency = this.currentWallet.balanceUSD.toFixed(2);
+				this.remainingCryptoCurrency = this.currentWallet.balance.toFixed(5);
 			} else return false;
 		},
 		closeModal() {

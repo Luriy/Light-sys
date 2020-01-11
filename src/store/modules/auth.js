@@ -1,7 +1,9 @@
 import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth';
 import axios from 'axios';
+import { BASE_URL } from '@/settings/config';
 import qs from 'querystring';
 import sha512 from 'js-sha512';
+import { parsePythonArray } from '@/functions/helpers';
 
 const state = {
 	token: localStorage.getItem('Data') || '',
@@ -17,8 +19,8 @@ const actions = {
 	[AUTH_REQUEST]: ({ commit, dispatch }, user) => {
 		return new Promise((resolve, reject) => {
 			commit(AUTH_REQUEST);
-			axios({ url: 'https://apidomenpyth.ru', data: user, method: 'POST' }).then((resp) => {
-				resp = eval('(' + resp['data'] + ')');
+			axios({ url: BASE_URL, data: user, method: 'POST' }).then(({ data }) => {
+				const resp = parsePythonArray(data);
 				if (!resp[0]['Errors']['1007'] && !resp[0]['Errors']['1008']) {
 					if (resp[1]['return']['Login: '] == 'True') {
 						localStorage.setItem('Data', user);
@@ -36,7 +38,7 @@ const actions = {
 						commit(AUTH_SUCCESS, user);
 						resolve(resp);
 					} else {
-						let err = 'Неизвестная ошибка';
+						let err = 'Service is unavailable now. Please try again later.';
 						commit(AUTH_ERROR, err);
 						localStorage.removeItem('Data');
 						localStorage.removeItem('Auth');

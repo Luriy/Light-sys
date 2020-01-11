@@ -1,11 +1,5 @@
 <template>
-	<step-parent
-		:step="1"
-		:currentStep="currentStep"
-		:steps="steps"
-		@onClickBackButton="$emit('onClickBackButton')"
-		@onClickNextButton="$emit('onClickNextButton')"
-	>
+	<transition name="fade-medium">
 		<div class="flex flex-column">
 			<div class="flex align-items-center">
 				<span class="step-number">Step 1</span>
@@ -30,21 +24,32 @@
 					<form-input :title="'Applicant’s Name'" :placeholder="'Julia'"></form-input>
 				</div>
 				<div class="form__input-wrapper">
-					<form-input :title="'Company Name'" :placeholder="'573 983'"></form-input>
+					<form-input :title="'Company Name'" :placeholder="'Microsoft'"></form-input>
+				</div>
+				<div class="form__input-wrapper">
+					<div class="form__select">
+						<div class="flex align-items-center">
+							<img src="@/assets/images/russia.png" />
+							<span class="form__select-title">Russia</span>
+						</div>
+						<select-toggler></select-toggler>
+					</div>
+				</div>
+				<div class="form__input-wrapper">
+					<form-input :title="'Contact Number'" :placeholder="'573 983'"></form-input>
 				</div>
 			</div>
 		</div>
-	</step-parent>
+	</transition>
 </template>
 <script>
-import StepParent from './StepParent';
 import FormInput from '@/elements/FormInput';
+import SelectToggler from '@/elements/SelectToggler';
 
 export default {
-	props: ['currentStep', 'steps'],
 	components: {
-		StepParent,
 		FormInput,
+		SelectToggler,
 	},
 };
 </script>
@@ -71,12 +76,26 @@ export default {
 	}
 	&__text {
 		font-size: 14px;
-		font-weight: 300;
 		color: #fff;
 	}
 }
 .form {
 	margin-top: 13px;
+	&__select {
+		padding: 0 18px;
+		height: 56px;
+		border-radius: 14px;
+		background-color: #4d3779;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		cursor: pointer;
+		&-title {
+			font-weight: 600;
+			color: #fff;
+			margin-left: 8px;
+		}
+	}
 	&__input-wrapper {
 		margin-bottom: 30px;
 		&:last-of-type {

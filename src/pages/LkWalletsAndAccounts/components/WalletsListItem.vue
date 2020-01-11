@@ -86,13 +86,15 @@ export default {
 	filters: {
 		percentage: (value) =>
 			value
-				? `${
-						value['1h'].toFixed(2) < 0.01 && value['1h'].toFixed(2) > -0.01
-							? '0.00'
-							: value['1h'].toFixed(2) >= 0.01
-							? '+' + value['1h'].toFixed(2)
-							: value['1h'].toFixed(2)
-				  }%`
+				? value['1h']
+					? `${
+							value['1h'].toFixed(2) < 0.01 && value['1h'].toFixed(2) > -0.01
+								? '0.00'
+								: value['1h'].toFixed(2) >= 0.01
+								? '+' + value['1h'].toFixed(2)
+								: value['1h'].toFixed(2)
+					  }%`
+					: ''
 				: '',
 	},
 	methods: {

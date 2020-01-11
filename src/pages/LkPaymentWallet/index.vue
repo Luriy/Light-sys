@@ -1,96 +1,102 @@
 <template>
 	<lk-layout>
-		<div class="wallet-send-block">
-			<div class="wallet-send-currency">
-				<img v-if="isShowLogotype('btc')" src="@/assets/images/btc.png" alt title />
-				<img v-if="isShowLogotype('eth')" src="@/assets/images/eth.png" alt title />
-				<img v-if="isShowLogotype('ltc')" src="@/assets/images/ltc.svg" alt title />
-			</div>
-			<div class="wallet-send-amount">
-				<p
-					:class="{
-						'wallet-send-amount--crypto': true,
-						[currentWallet.currency.toLowerCase()]: true,
-					}"
-				>
-					{{ formatCurrency(currentWallet.balance, '', 5) }}
-					<span>{{ currentWallet.currency || '' }}</span>
-				</p>
-				<p class="wallet-send-amount--fiat">
-					{{ formatCurrency(currentWallet.balanceUSD, '$') }} <span>USD</span>
-				</p>
-			</div>
-			<div class="buttons">
-				<div class="btn-border-wrapper">
-					<router-link :to="{ name: 'LkPaymentWalletSend' }"
-						><button class="btn">Send</button></router-link
+		<div>
+			<div class="wallet-send-block">
+				<div class="wallet-send-currency">
+					<img v-if="isShowLogotype('btc')" src="@/assets/images/btc.png" alt title />
+					<img v-if="isShowLogotype('eth')" src="@/assets/images/eth.png" alt title />
+					<img v-if="isShowLogotype('ltc')" src="@/assets/images/ltc.svg" alt title />
+				</div>
+				<div class="wallet-send-amount">
+					<p
+						:class="{
+							'wallet-send-amount--crypto': true,
+							[currentWallet.currency.toLowerCase()]: true,
+						}"
 					>
+						{{ formatCurrency(currentWallet.balance, '', 5) }}
+						<span>{{ currentWallet.currency || '' }}</span>
+					</p>
+					<p class="wallet-send-amount--fiat">
+						{{ formatCurrency(currentWallet.balanceUSD, '$') }} <span>USD</span>
+					</p>
 				</div>
-				<div class="btn-border-wrapper">
-					<router-link :to="{ name: 'LkPaymentWalletReceive' }"
-						><button class="btn">Receive</button></router-link
-					>
-				</div>
-				<div class="btn-border-wrapper btn-exchange">
-					<router-link to="/exchange"
-						><button class="btn"><img src="@/assets/images/exchange.svg" alt title /></button
-					></router-link>
-				</div>
-			</div>
-		</div>
-
-		<div class="wallet-description" :class="{ active: isDescriptionOpened }">
-			<transition name="fade">
-				<div class="social-links__modal" v-show="isSocialLinksOpened">
-					<a
-						v-for="link in socialLinks"
-						:key="link.href"
-						class="social-links__modal-link"
-						:href="link.href"
-						target="_blank"
-					>
-						<img :src="link.image" alt="" class="social-links__modal-img" />
-						{{ link.text }}
-					</a>
-				</div>
-			</transition>
-			<div
-				class="flex justify-content-between align-items-center description-header-block"
-				@click="isDescriptionOpened = !isDescriptionOpened"
-			>
-				<div class="title none-select" :class="{ active: isDescriptionOpened }">Description</div>
-				<button
-					class="description-toggler flex align-items-center justify-content-center none-select"
-				>
-					<img
-						src="@/assets/images/icons/arrow-big.svg"
-						alt="Description toggler"
-						class="description-toggler-image"
-						:class="{ active: isDescriptionOpened }"
-					/>
-				</button>
-			</div>
-
-			<div class="wallet-description-outer" :class="{ active: isDescriptionOpened }">
-				<div class="flex justify-content-between align-items-start wallet-description-text-wrapper">
-					<div class="text">
-						{{ descriptionText }}
-					</div>
-					<div class="social-links">
-						<button
-							class="social-links__button"
-							@click="isSocialLinksOpened = !isSocialLinksOpened"
+				<div class="buttons">
+					<div class="btn-border-wrapper">
+						<router-link :to="{ name: 'LkPaymentWalletSend' }"
+							><button class="btn">Send</button></router-link
 						>
-							<img src="@/assets/images/3-dots.svg" alt="Social links" />
-						</button>
+					</div>
+					<div class="btn-border-wrapper">
+						<router-link :to="{ name: 'LkPaymentWalletReceive' }"
+							><button class="btn">Receive</button></router-link
+						>
+					</div>
+					<div class="btn-border-wrapper btn-exchange">
+						<router-link to="/exchange"
+							><button class="btn"><img src="@/assets/images/exchange.svg" alt title /></button
+						></router-link>
 					</div>
 				</div>
 			</div>
+
+			<div class="wallet-description" :class="{ active: isDescriptionOpened }">
+				<transition name="fade">
+					<div class="social-links__modal" v-show="isSocialLinksOpened">
+						<a
+							v-for="link in socialLinks"
+							:key="link.href"
+							class="social-links__modal-link"
+							:href="link.href"
+							target="_blank"
+						>
+							<img :src="link.image" alt="" class="social-links__modal-img" />
+							{{ link.text }}
+						</a>
+					</div>
+				</transition>
+				<div
+					class="flex justify-content-between align-items-center description-header-block"
+					@click="isDescriptionOpened = !isDescriptionOpened"
+				>
+					<div class="title none-select" :class="{ active: isDescriptionOpened }">
+						Description
+					</div>
+					<button
+						class="description-toggler flex align-items-center justify-content-center none-select"
+					>
+						<img
+							src="@/assets/images/icons/arrow-big.svg"
+							alt="Description toggler"
+							class="description-toggler-image"
+							:class="{ active: isDescriptionOpened }"
+						/>
+					</button>
+				</div>
+
+				<div class="wallet-description-outer" :class="{ active: isDescriptionOpened }">
+					<div
+						class="flex justify-content-between align-items-start wallet-description-text-wrapper"
+					>
+						<div class="text">
+							{{ descriptionText }}
+						</div>
+						<div class="social-links">
+							<button
+								class="social-links__button"
+								@click="isSocialLinksOpened = !isSocialLinksOpened"
+							>
+								<img src="@/assets/images/3-dots.svg" alt="Social links" />
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<transactions-history
+				:currentWallet="currentWallet"
+				:operationsWithPagination="operationsWithPagination"
+			></transactions-history>
 		</div>
-		<transactions-history
-			:currentWallet="currentWallet"
-			:operationsWithPagination="operationsWithPagination"
-		></transactions-history>
 	</lk-layout>
 </template>
 

@@ -15,12 +15,13 @@ export default {
 	color: #fff;
 	opacity: 1;
 	font-size: 16px;
+	line-height: 21px;
 	&-border {
 		background-color: #533f7b;
 		width: 100%;
 		height: 2px;
 		border-radius: 14px;
-		margin-top: 10px;
+		margin-top: 12px;
 	}
 	&::placeholder {
 		opacity: 0.6 !important;
@@ -32,7 +33,8 @@ export default {
 		opacity: 0.5;
 		color: #ffffff;
 		font-size: 12px;
-		margin-bottom: 7px;
+		margin-bottom: 5px;
+		line-height: 21px;
 	}
 }
 </style>
