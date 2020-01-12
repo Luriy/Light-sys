@@ -197,7 +197,7 @@ $break-large: 1124px;
   }
   @if $media == medium-phones {
     @media only screen and (min-width: $break-medium-portrait) and (max-width: $break-small-landscape) {
-      @content;
+      @content; 
     }
   }
   @if $media == phones {

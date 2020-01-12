@@ -35,7 +35,7 @@
               <span>Manual</span>
             </div>
             <div class="manual-btn__icon">
-              <!-- <img src="@/assets/images/smart-info.svg" /> -->
+              <img src="@/assets/images/smart-info.svg" />
             </div>
           </div>
           <div class="instruction-btn-box">
@@ -43,7 +43,7 @@
               <span>Video instruction</span>
             </div>
             <div class="instruction-btn__icon">
-              <!-- <img src="@/assets/images/smart-play.svg" /> -->
+              <img src="@/assets/images/smart-play.svg" />
             </div>
           </div>
       </v-row>
@@ -298,7 +298,7 @@
           <br>I) You will not use it for fraudulent purposes;
           <br>II) You do not duplicate in the name of the token in full or in part the name of existing cryptocurrencies or the names of well-known
         </p>
-        <!-- <img src="@/assets/images/confirm-icon.svg" /> -->
+        <img src="@/assets/images/confirm-icon.svg" />
       </v-row>
       <!-- Deploy button -->
       <v-row class="deploy-btn-layout">
@@ -376,6 +376,7 @@
 
 <style scoped lang="scss">
   @import "../assets/scss/common";
+
   .smart-contract{
     width: 100%;
     max-width: 2048px;
@@ -422,17 +423,19 @@
   // Chose option, network && manual, video instruction buttons
   // -----------------------------------------------
   .chose-option-box{
-    width: 100%;
+    // @include respond-to(wide-screens);
+    width: 1058px;
     height: 60px;
     margin: 0 auto;
     margin-top: 30px;
     margin-bottom: 15px;
   }
   .chose-option{
+    // @include respond-to(wide-screens)
     margin-right: 15px;
     font-weight: 600;
     line-height: 21px;
-    width: 310px;
+    width: 320px;
   }
   .chose-network{
     font-weight: 600;
@@ -533,7 +536,7 @@
   // Input layout (title, name, description)
   // -----------------------------------------------
   .input-layout{
-    width: 100%;
+    width: 1058px;
     height: 167px;
     border-radius: 14px;
     background-color: #3b2665;
@@ -787,7 +790,7 @@
   // Confirm layout, Deploy button & Info layout
   // -----------------------------------------------
   .confirm-layout{
-    width: 100%;
+    width: 1058px;
     height: 94px;
     border-radius: 8px;
     border: 1px solid #4d3779;
