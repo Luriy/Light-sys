@@ -14,7 +14,7 @@
           background-color="#3b2665"
           item-color="grey"
           solo-inverted
-          height="60"
+          height="64"
           class="chose-option"
           clear-icon
         ></v-overflow-btn>
@@ -25,7 +25,7 @@
           background-color="#3b2665"
           item-color="grey"
           solo-inverted
-          height="60"
+          height="64"
           class="chose-network"
         ></v-overflow-btn>
         </div>
@@ -55,7 +55,7 @@
                 label="Enter the title"
                 background-color="#4d3779"
                 full-width
-                height="56px"
+                height="60px"
                 solo
                 color="#ffffff"
                 class="input-title"
@@ -65,7 +65,7 @@
                 label="Enter a short name"
                 background-color="#4d3779"
                 full-width
-                height="56px"
+                height="60px"
                 solo
                 color="#ffffff"
                 class="input-name"
@@ -75,6 +75,7 @@
                 label="Description"
                 background-color="#4d3779"
                 full-width
+                height="60px"
                 solo
                 color="#ffffff"
                 class="input-description"
@@ -87,12 +88,11 @@
           <p>Number of tokens</p>
           <span>100000 tokens = $ 1000 deposit amount</span>
           <div class="number-tokens-block">
-            <div style="width:270px;height:60px;margin-top:10px;">
+            <div>
               <v-text-field
                 v-model="slider"
                 solo
-                height="56"
-                full-width
+                height="60px"
                 background-color="#4d3779"
                 class="number-tokens-label"
                 label="Enter"
@@ -198,20 +198,20 @@
           </div>
         </div>
 
-          <!-- <v-spacer></v-spacer> -->
+          <v-spacer></v-spacer>
 
         <div class="chose-tokens">
             <div class="select-tokens-inside d-flex flex-row">
-              <!-- <v-select
+              <v-select
                 :items="[1,3,4,5]"
                 label="Burning"
                 color="#F44336"
                 background-color="#4d3779"
                 solo
-                height="60"
+                height="65"
                 class="select-first-token"
-              ></v-select> -->
-              <v-overflow-btn
+              ></v-select>
+              <!-- <v-overflow-btn
                 :items="[1,3,4,5]"
                 label="Burning"
                 color="#F44336"
@@ -221,7 +221,7 @@
                 height="60"
                 class="chose-option"
                 clear-icon
-              ></v-overflow-btn>
+              ></v-overflow-btn> -->
                 <v-spacer></v-spacer>
               <v-select
                 :items="[1,3,4,5]"
@@ -229,7 +229,7 @@
                 color="#F44336"
                 background-color="#4d3779"
                 solo
-                height="60"
+                height="65"
                 class="select-last-token"
               ></v-select>
             </div>
@@ -240,7 +240,7 @@
                 color="#F44336"
                 background-color="#4d3779"
                 solo
-                height="60"
+                height="65"
                 class="select-first-token"
               ></v-select>
                 <v-spacer></v-spacer>
@@ -250,7 +250,7 @@
                 color="#F44336"
                 background-color="#4d3779"
                 solo
-                height="60"
+                height="65"
                 class="select-last-token"
               ></v-select>
             </div>
@@ -261,7 +261,7 @@
                 color="#F44336"
                 background-color="#4d3779"
                 solo
-                height="60"
+                height="65"
                 class="select-first-token"
               ></v-select>
                 <v-spacer></v-spacer>
@@ -271,7 +271,7 @@
                 color="#F44336"
                 background-color="#4d3779"
                 solo
-                height="60"
+                height="65"
                 class="select-last-token"
               ></v-select>
             </div>
@@ -424,8 +424,9 @@
   // -----------------------------------------------
   .chose-option-box{
     // @include respond-to(wide-screens);
-    width: 1058px;
-    height: 60px;
+    width: 100%;
+    position: relative;
+    height: 64px;
     margin: 0 auto;
     margin-top: 30px;
     margin-bottom: 15px;
@@ -435,12 +436,12 @@
     margin-right: 15px;
     font-weight: 600;
     line-height: 21px;
-    width: 320px;
+    width: 314px;
   }
   .chose-network{
     font-weight: 600;
     line-height: 21px;
-    width: 310px;
+    width: 314px;
   }
   .theme--light.v-card {
     background-color: #3b2665;
@@ -452,26 +453,26 @@
   }
   .manual-btn-box{
     width: 132px;
-    height: 60px;
+    height: 64px;
     position: relative;
   }
   .manual-btn__icon{
-    width: 37px;
-    height: 37px;
+    width: 39px;
+    height: 39px;
     border-radius: 14px;
     background-color: #543b88;
     margin-right: 70px;
     margin-bottom: 23px;
     position: absolute;
-    padding: 9px 11px 12px 10px;
+    padding: 10px 11px 12px 10px;
     img{
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
     }
   }
   .manual-btn{
     width: 115px;
-    height: 47px;
+    height: 51px;
     border-radius: 17px;
     background-color: #3b2665;
     position: absolute;
@@ -491,27 +492,27 @@
   }
   .instruction-btn-box{
     width: 196px;
-    height: 60px;
+    height: 64px;
     position: relative;
     margin-left: 15px;
   }
   .instruction-btn__icon{
-    width: 37px;
-    height: 37px;
+    width: 39px;
+    height: 39px;
     border-radius: 14px;
     background-color: #543b88;
     margin-right: 147px;
     margin-bottom: 23px;
     position: absolute;
-    padding: 10px 11px 11px 10px;
+    padding: 11px 11px 11px 10px;
     img{
-      width: 18px;
-      height: 18px;
+      width: 19px;
+      height: 19px;
     }
   }
   .instruction-btn{
     width: 180px;
-    height: 47px;
+    height: 51px;
     border-radius: 17px;
     background-color: #3b2665;
     margin-top: 13px;
@@ -536,8 +537,8 @@
   // Input layout (title, name, description)
   // -----------------------------------------------
   .input-layout{
-    width: 1058px;
-    height: 167px;
+    width: 100%;
+    height: 177px;
     border-radius: 14px;
     background-color: #3b2665;
     padding: 20px;
@@ -551,7 +552,7 @@
   .input-title, .input-name, .input-description{
     width: 100%;
     border-radius: 14px;
-    height: 56px;
+    height: 60px;
     font-weight: 600;
     line-height: 21px;
     opacity: 0.5;
@@ -565,21 +566,26 @@
   // -----------------------------------------------
   // Number of tokens
   .tokens-layout{
-    width: 1057px;
-    height: 536px;
+    width: 100%;
+    height: 54%;
+    display: grid;
+    grid-template-columns: 30% 70%;
     margin: 0 auto;
     margin-bottom: 30px;
     // background-color: grey;
-    // position: relative;
+    position: relative;
+    // @media screen and (min-width:1200px) {
+    //   height: (58% + 2%);
+    // }
   }
   .number-tokens{
-    width: 339px;
-    height: 536px;
+    width: 29%;
+    height: 100%;
     border-radius: 14px;
     background-color: #3b2665;;
-    margin-right: 16px;
+    // margin-right: 16px;
     padding: 20px;
-    // position: absolute;
+    position: absolute;
     p{
       height: 21px;
       color: #ffffff;
@@ -597,21 +603,18 @@
       font-size: 12px;
       line-height: 21px;
     }
-    // @media screen and (min-width: 1948px) {
-    //   width: (339px + 339px);
-    //   height: (536px - 200px);
-    // }
   }
   .number-tokens-block{
-    width: 295px;
+    width: 100%;
     height: 70px;
-    margin-bottom: 10px;
-    margin-top: 20px;
+    margin: 0 auto;
+    margin-bottom: 8%;
+    margin-top: 4%;
     // background-color: #fff;
     position: relative;
   }
   .number-tokens-label{
-    width: 100%;
+    width: 98%;
     font-weight: 600;
     line-height: 21px;
     opacity: 0.5;
@@ -619,28 +622,28 @@
   }
   .input-slider-text{
     margin-left: 12px;
-    width: 270px;
+    width: 90%;
     height: 2px;
     position: absolute;
-    bottom: 28px;
+    bottom: 25px;
   }
   .input-slider{
-    width: 295px;
+    width: 100%;
     height: 60px;
     margin: 0 auto;
   }
   .slider-block{
-    width: 295px;
+    width: 100%;
     height: 68px;
     p{
-      margin-bottom: 30px;
+      // margin-bottom: 8%;
     }
-    margin-bottom: 15px;
+    margin-bottom: 35px;
     position: relative;
   }
   .discount-slider-label{
     width: 60px;
-    height: 21px;
+    // height: 21px;
     color: #af89ff;
     font-family: "Open Sans Semi Bold";
     font-size: 14px;
@@ -648,13 +651,14 @@
     line-height: 21px;
     position: absolute;
     margin-top: 0;
-    margin-left: 225px;
+    right: 0;
+    margin-right: 5%;
     input{
       text-align: right;
     }
   }
   .number-tokens-slider{
-    width: 295px;
+    width: 98%;
     height: 2px;
     margin-top: 28px;
     margin-right: 2px;
@@ -662,15 +666,15 @@
     position: absolute;
   }
   .validity-block{
-    width: 295px;
+    width: 100%;
     height: 82px;
   }
   .input-validity{
-    width: 295px;
+    width: 98%;
     height: 56px;
     position: relative;
     p{
-      margin-bottom: 10px;
+      margin-bottom: 10px ;
     }
   }
   // .validity-first{
@@ -695,11 +699,14 @@
   // Second block (chose tokens)
 
   .chose-tokens{
-    width: 702px;
-    height: 536px;
+    width: 70%;
+    height: 100%;
     border-radius: 14px;
     background-color: #3b2665;
     padding: 20px 20px 25px 20px;
+    position: absolute;
+    right: 0;
+    margin-bottom: 2%;
     // @media screen and (min-width: 1548px) {
     //   width: (677px + 100px);
     // }
@@ -708,23 +715,23 @@
     // }
   }
   .select-tokens-inside{
-    width: 660px;
+    width: 100%;
     height: 61px;
     padding-right: 14px;
     padding-left: 14px;
     padding: 0;
-    margin-bottom: 15px;
+    margin-bottom: 2%;
     font-weight: 600;
     line-height: 21px;
     // background-color: #fff;
   }
   .select-first-token{
-    width: 312px;
-    height: 60px;
+    width: 45%;
+    height: 65px;
   }
   .select-last-token{
-    width: 312px;
-    height: 60px;
+    width: 45%;
+    height: 65px;
   }
 
   // Checkbox Layout
@@ -737,25 +744,27 @@
     font-size: 14px;
     font-weight: 600;
     line-height: 21px;
-    margin: 5px 100px 20px 5px;
+    margin: 5px 100px 20px 15px;
   }
   .chose-tokens-scroll{
     border-radius: 17px;
     background-color: #4d3779;
     padding: 11px 10px 61px 20px;
     margin: 0 auto;
-    width: 660px;
-    height: 267px;
+    margin-top: 25px;
+    width: 100%;
+    height: 307px;
   }
   .chose-tokens-chechbox{
-    width: 630px;
-    height: 181px;
+    margin-top: 1%;
+    width: 100%;
+    height: 191px;
     overflow-y: auto;
     overflow-x: hidden;
   }
   .chose-tokens-chechbox::-webkit-scrollbar {
     margin-top: 15px;
-    width: 3px;
+    width: 2px;
     border-radius: 3px;
   }
   .chose-tokens-chechbox::-webkit-scrollbar-track {
@@ -790,7 +799,7 @@
   // Confirm layout, Deploy button & Info layout
   // -----------------------------------------------
   .confirm-layout{
-    width: 1058px;
+    width: 100%;
     height: 94px;
     border-radius: 8px;
     border: 1px solid #4d3779;
