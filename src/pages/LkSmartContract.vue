@@ -211,17 +211,17 @@
                 height="65"
                 class="select-first-token"
               ></v-select>
-              <!-- <v-overflow-btn
-                :items="[1,3,4,5]"
-                label="Burning"
-                color="#F44336"
-                background-color="#4d3779"
-                item-color="grey"
-                solo
-                height="60"
-                class="chose-option"
-                clear-icon
-              ></v-overflow-btn> -->
+                <!-- <v-overflow-btn
+                  :items="[1,3,4,5]"
+                  label="Burning"
+                  color="#F44336"
+                  background-color="#4d3779"
+                  item-color="grey"
+                  solo
+                  height="60"
+                  class="chose-option"
+                  clear-icon
+                ></v-overflow-btn> -->
                 <v-spacer></v-spacer>
               <v-select
                 :items="[1,3,4,5]"
@@ -306,9 +306,30 @@
           class="deploy-btn"
           width="420"
           height="50"
+          @click="overlay = !overlay"
         >
           <p>Deploy</p>
         </v-btn>
+        <v-overlay
+          :absolute="absolute"
+          :opacity="opacity"
+          :value="overlay"
+          :z-index="zIndex"
+        >
+          <div 
+            class="deploy-btn-layout__succes"
+            @click="overlay = false"
+          >
+            <div class="deploy-btn-layout__succes__label">
+              <v-row><p>Succes!</p></v-row>
+              <v-row><span>Successful token deployment</span></v-row>
+              <v-row><a href="#">0xfdjikfsdk4327423905ksdfd</a></v-row>
+            </div>
+            <div class="deploy-btn-layout__succes__icon">
+              <img src="@/assets/images/tick-bigger.svg" />
+            </div>
+          </div>
+        </v-overlay>
       </v-row>
       <!-- Info layout -->
       <v-row class="info-layout">
@@ -325,6 +346,10 @@
         name: 'SmartContract',
         components: { LkLayout },
         data: () => ({
+          absolute: false,
+          opacity: 0.46,
+          overlay: false,
+          zIndex: 5,
           slider: 0,
           slider_discount: 0,
           slider_decimal: 0,
@@ -381,7 +406,6 @@
     width: 100%;
     max-width: 2048px;
     height: 1116px;
-    // border-radius: 32px;
   }
   .container {
     padding: 0;
@@ -423,7 +447,6 @@
   // Chose option, network && manual, video instruction buttons
   // -----------------------------------------------
   .chose-option-box{
-    // @include respond-to(wide-screens);
     width: 100%;
     position: relative;
     height: 64px;
@@ -432,7 +455,6 @@
     margin-bottom: 15px;
   }
   .chose-option{
-    // @include respond-to(wide-screens)
     margin-right: 15px;
     font-weight: 600;
     line-height: 21px;
@@ -490,6 +512,7 @@
       display: inline-block;
     }
   }
+
   .instruction-btn-box{
     width: 196px;
     height: 64px;
@@ -556,11 +579,13 @@
     font-weight: 600;
     line-height: 21px;
     opacity: 0.5;
+    color: #ffffff;
   }
   .input-description{
     margin: 0 auto;
     margin-top: 15px;
   }
+
   // -----------------------------------------------
   // Options layout (number of tokens..., checkboxes)
   // -----------------------------------------------
@@ -572,18 +597,13 @@
     grid-template-columns: 30% 70%;
     margin: 0 auto;
     margin-bottom: 30px;
-    // background-color: grey;
     position: relative;
-    // @media screen and (min-width:1200px) {
-    //   height: (58% + 2%);
-    // }
   }
   .number-tokens{
     width: 29%;
     height: 100%;
     border-radius: 14px;
     background-color: #3b2665;;
-    // margin-right: 16px;
     padding: 20px;
     position: absolute;
     p{
@@ -610,7 +630,6 @@
     margin: 0 auto;
     margin-bottom: 8%;
     margin-top: 4%;
-    // background-color: #fff;
     position: relative;
   }
   .number-tokens-label{
@@ -635,15 +654,14 @@
   .slider-block{
     width: 100%;
     height: 68px;
-    p{
-      // margin-bottom: 8%;
-    }
+    // p{
+    //   margin-bottom: 8%;
+    // }
     margin-bottom: 35px;
     position: relative;
   }
   .discount-slider-label{
     width: 60px;
-    // height: 21px;
     color: #af89ff;
     font-family: "Open Sans Semi Bold";
     font-size: 14px;
@@ -677,24 +695,6 @@
       margin-bottom: 10px ;
     }
   }
-  // .validity-first{
-  //   width: 130px;
-  //   border-radius: 14px;
-  //   opacity: 0.5;
-  //   font-weight: 600;
-  //   line-height: 21px;
-  //   margin-right: 140px;
-  //   position: absolute;
-  // }
-  // .validity-last{
-  //   width: 130px;
-  //   border-radius: 14px;
-  //   opacity: 0.5;
-  //   font-weight: 600;
-  //   line-height: 21px;
-  //   margin-left: 140px;
-  //   position: absolute;
-  // }
 
   // Second block (chose tokens)
 
@@ -707,12 +707,6 @@
     position: absolute;
     right: 0;
     margin-bottom: 2%;
-    // @media screen and (min-width: 1548px) {
-    //   width: (677px + 100px);
-    // }
-    // @media screen and (max-width: 2048px){
-    //   width: (60% + 18%);
-    // }
   }
   .select-tokens-inside{
     width: 100%;
@@ -723,7 +717,6 @@
     margin-bottom: 2%;
     font-weight: 600;
     line-height: 21px;
-    // background-color: #fff;
   }
   .select-first-token{
     width: 45%;
@@ -791,9 +784,6 @@
     line-height: 21px;
     height: 12px;
     width: 116px;
-    // margin-right: 65px;
-    // text-align: left;
-    // align-items: flex-start;
   }
   // -----------------------------------------------
   // Confirm layout, Deploy button & Info layout
@@ -804,14 +794,13 @@
     border-radius: 8px;
     border: 1px solid #4d3779;
     margin: 0 auto;
-    margin-bottom: 20px; //40px
+    margin-bottom: 20px;
     position: relative;
     img{
       width: 30px;
       height: 30px;
       border-radius: 8px;
       background-color: #3b2665;
-      // margin: 32px 32px 33px 955px;
       position: absolute;
       cursor: pointer;
       margin: 32px 32px 33px 95%;
@@ -831,6 +820,63 @@
     height: 50px;
     margin: 0 auto;
     margin-bottom: 13px;
+    &__succes{
+      width: 346px;
+      height: 207px;
+      margin-left: 50%;
+      position: relative;
+      &__icon{
+        width: 57px;
+        height: 57px;
+        border-radius: 22px;
+        background-color: #4d3779;
+        position: absolute;
+        margin: 0px 144px 150px 145px;
+        img{
+          margin: 21px 17px 19px 18px;
+          width: 22px;
+          height: 17px;
+        }
+      }
+      &__label{
+        width: 346px;
+        height: 179px;
+        background-color: #3b2665;
+        border-radius: 35px;
+        position: absolute;
+        margin-top: 28px;
+        font-weight: 600;
+        line-height: 21px;
+        font-family: "Open Sans Semi Bold";
+        color: #ffffff;
+        p{
+          width: 127px;
+          height: 39px;
+          font-size: 36px;
+          // margin: 54px 109px 86px 110px;
+          margin-top: 54px;
+          margin-left: 123px;
+        }
+        span{
+          width: 346px;
+          height: 21px;
+          font-size: 16px;
+          // margin: 0 auto;
+          // margin-top: 93px;
+          // margin-left: 60px;
+          margin-left: 73px;
+        }
+        a{
+          width: 219px;
+          height: 21px;
+          color: #8898f7;
+          font-size: 16px;
+          text-decoration: none;
+          margin-top: 9px;
+          margin-left: 76px;
+        }
+      }
+    }
   }
   .deploy-btn{
     border-radius: 28px;
