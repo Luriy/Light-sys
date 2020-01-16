@@ -176,7 +176,6 @@ b, strong {
 .v-overflow-btn .v-input__control:before {
 	display: none;
 }
-
 // responsive breakpoints
 $break-small-portrait: 320px;
 $break-medium-portrait: 480px;
@@ -197,7 +196,7 @@ $break-large: 1124px;
   }
   @if $media == medium-phones {
     @media only screen and (min-width: $break-medium-portrait) and (max-width: $break-small-landscape) {
-      @content;
+      @content; 
     }
   }
   @if $media == phones {

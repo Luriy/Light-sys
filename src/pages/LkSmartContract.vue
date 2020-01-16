@@ -316,7 +316,11 @@
           :value="overlay"
           :z-index="zIndex"
         >
+<<<<<<< HEAD
           <div
+=======
+          <div 
+>>>>>>> d640623bf882938747d55d851a916485185da2e5
             class="deploy-btn-layout__succes"
             @click="overlay = false"
           >

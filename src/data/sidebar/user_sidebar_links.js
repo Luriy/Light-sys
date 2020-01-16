@@ -31,7 +31,7 @@ export default [
 		image: require('@/assets/images/icons/checklist.svg'),
 	},
 	{
-		to: '/smartcontract',
+		to: '/smart-contract',
 		text: 'Smart Contract Designer',
 		image: require('@/assets/images/icons/contract-sidebar.svg'),
 	},

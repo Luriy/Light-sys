@@ -327,7 +327,7 @@ export default {
 					Comand: 'CriptoFiatTransfer',
 					...data,
 					// todo Убрать хардкод в будущем
-					...(!data.Email && { MailSender: 'Nikola@mail.ru' }),
+					...(!data.Email && { MailSender: 'Andrewp.pro@gmail.com' }),
 				},
 			}).then(({ data }) => {
 				const response = parsePythonArray(data);
