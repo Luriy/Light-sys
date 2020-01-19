@@ -183,7 +183,7 @@ export default {
 			paymentAddress: null,
 			activeButton: null,
 			isSelectWalletOpened: false,
-			successPopup: true,
+			successPopup: false,
 			sendPopup: false,
 			timer: null,
 			countdown: 59,
