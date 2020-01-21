@@ -17,4 +17,10 @@ export default {
 		fullName: 'LTC Litecoin',
 		color: '#d3d3d3',
 	},
+	LTN: {
+		name: 'lightnet',
+		icon: require('@/assets/images/ltn.svg'),
+		fullName: 'LTN Lightnet',
+		color: '#ffffff',
+	},
 };

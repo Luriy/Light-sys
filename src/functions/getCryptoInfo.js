@@ -2,6 +2,7 @@ export default function getCryptoInfo(currency) {
 	switch (currency) {
 		case 'BTC':
 			return {
+				shortName: 'ETH',
 				fullName: 'Bitcoin',
 				image: {
 					corner: require('@/assets/images/btc.png'),
@@ -22,6 +23,7 @@ export default function getCryptoInfo(currency) {
 			};
 		case 'ETH':
 			return {
+				shortName: 'ETH',
 				fullName: 'Ethereum',
 				image: {
 					corner: require('@/assets/images/eth.png'),
@@ -49,6 +51,7 @@ export default function getCryptoInfo(currency) {
 			};
 		case 'LTC':
 			return {
+				shortName: 'LTC',
 				fullName: 'Litecoin',
 				image: {
 					corner: require('@/assets/images/ltc.svg'),
@@ -59,7 +62,6 @@ export default function getCryptoInfo(currency) {
 					{
 						name: 'Website',
 						link: 'https://litecoin.com/',
-						image: require('@/assets/images/wallet-link.svg'),
 					},
 					{
 						name: 'Reddit',
@@ -71,6 +73,31 @@ export default function getCryptoInfo(currency) {
 					},
 				],
 				description: `Litecoin is a cryptocurrency similar to Bitcoin. The goal of Litecoin is to provide fast transaction confirmations. Created by ex-Google employee Charlie Lee, Litecoin is often considered the silver to Bitcoin's gold.`,
+			};
+		case 'LTN':
+			return {
+				shortName: 'LTN',
+				fullName: 'Lightnet',
+				image: {
+					corner: require('@/assets/images/ltn.svg'),
+					square: require('@/assets/images/ltn-ico.svg'),
+					arrow: require('@/assets/images/send-arrow-ltn.svg'),
+				},
+				websites: [
+					{
+						name: 'Website',
+						link: 'https://eos.io/',
+					},
+					{
+						name: 'Reddit',
+						link: 'https://www.reddit.com/r/eos/',
+					},
+					{
+						name: 'Twitter',
+						link: 'https://twitter.com/block_one_',
+					},
+				],
+				description: `EOS is an architecture to enable large-scale applications. EOS provides developers with accounts, authentication, databases, asynchronous communication and scheduling of applications across the protocol.`,
 			};
 		default:
 			return {

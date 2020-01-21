@@ -8,53 +8,53 @@
 			:types="operationsWithPagination.filter(({ transactions }) => transactions.length)"
 			:activeTransactionType="activeTransactionType"
 		></transactions-types>
-		<transition name="fade">
-			<div class="trans-list__wrapper">
+
+		<div class="trans-list__wrapper">
+			<div
+				class="trans-list"
+				v-for="(datesWithTransaction, index) in activeTransactions[activePage]"
+				:key="datesWithTransaction.date.toString()"
+			>
+				<div class="trans-date">
+					<p>{{ formatDate(datesWithTransaction.date) }}</p>
+					<transition name="fade">
+						<button
+							v-if="index === 0"
+							:disabled="activePage === 0"
+							class="arrow-block flex align-items-center absolute none-select"
+							:class="{ disabled: activePage === 0 }"
+							@click="throttle(handleClickMoveButton('top'), 1000)"
+						>
+							<img src="@/assets/images/arrow-up.svg" height="16" width="16" />
+						</button>
+					</transition>
+				</div>
 				<div
-					class="trans-list"
-					v-for="datesWithTransaction in activeTransactions[activePage]"
-					:key="datesWithTransaction.date.toString()"
+					class="trans-item operations-history-list-item"
+					v-for="(transaction, index) in datesWithTransaction.transactions"
+					:key="transaction.url + index"
+					:class="{
+						exchange: transaction.type === 'exchange',
+						active: openedOperation === transaction.url + transaction.type,
+						'plus-trans': transaction.type.includes('receive'),
+					}"
 				>
-					<div class="trans-date">
-						<p>{{ formatDate(datesWithTransaction.date) }}</p>
-						<transition name="fade">
-							<button
-								:disabled="activePage === 0"
-								class="arrow-block flex align-items-center absolute none-select"
-								:class="{ disabled: activePage === 0 }"
-								@click="throttle(handleClickMoveButton('top'), 1000)"
-							>
-								<img src="@/assets/images/arrow-up.svg" height="16" width="16" />
-							</button>
-						</transition>
-					</div>
-					<div
-						class="trans-item operations-history-list-item"
-						v-for="(transaction, index) in datesWithTransaction.transactions"
-						:key="transaction.url + index"
-						:class="{
-							exchange: transaction.type === 'exchange',
-							active: openedOperation === transaction.url + transaction.type,
-							'plus-trans': transaction.type.includes('receive'),
-						}"
-					>
-						<div class="trans-card">
-							<div
-								class="trans-top"
-								@click="handleOpenOperation(transaction)"
-								:class="{ exchange: transaction.type === 'exchange' }"
-							>
-								<status :transaction="transaction"></status>
-								<currency :transaction="transaction"></currency>
-								<paymentAddress :transaction="transaction"></paymentAddress>
-								<amount :transaction="transaction"></amount>
-							</div>
-							<info :transaction="transaction"></info>
+					<div class="trans-card">
+						<div
+							class="trans-top"
+							@click="handleOpenOperation(transaction)"
+							:class="{ exchange: transaction.type === 'exchange' }"
+						>
+							<status :transaction="transaction"></status>
+							<currency :transaction="transaction"></currency>
+							<paymentAddress :transaction="transaction"></paymentAddress>
+							<amount :transaction="transaction"></amount>
 						</div>
+						<info :transaction="transaction"></info>
 					</div>
 				</div>
 			</div>
-		</transition>
+		</div>
 
 		<transition name="fade">
 			<button

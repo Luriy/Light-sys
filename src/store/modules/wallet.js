@@ -61,6 +61,14 @@ const getTypes = (responseData, nodeStatusData) => {
 			change24h: responseData['LTC: '].litecoin.usd_24h_change,
 			isAvailable: nodeStatusData.StatusNodeLTC === 0,
 		},
+		lightnet: {
+			name: 'Lightnet',
+			code: 'LTN',
+			codeMarkup: 'ltn',
+			price: 57.05,
+			change24h: 1.0119882646969165,
+			isAvailable: true,
+		},
 	};
 };
 
@@ -197,7 +205,8 @@ export default {
 					url: BASE_URL,
 					method: 'POST',
 					params: {
-						Comand: 'StatusNode',
+						Comand: 'AllWaletsLTN',
+						...getAuthParams(),
 					},
 				}),
 				Axios({
@@ -208,10 +217,12 @@ export default {
 						...getAuthParams(),
 					},
 				}),
-			]).then(([{ data: nodeData }, { data }]) => {
+			]).then(([{ data: LTNWalletsData }, { data }]) => {
 				const errors = Object.values(parsePythonArray(data)['0'].Errors);
-				const responseNodesStatusData = parsePythonArray(nodeData)['1'].return;
-				const returnData = parsePythonArray(data)['1'].return;
+				const returnData = {
+					...parsePythonArray(data)['1'].return,
+					LTN: parsePythonArray(LTNWalletsData)['1'].return['0'],
+				};
 
 				if (errors.includes('Wrong password')) {
 					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
@@ -238,10 +249,12 @@ export default {
 										address: item.Walet,
 										status: item.Status,
 										currency: walletCurrency,
-										balance: item.Balance,
-										balanceUSD: item.BalanceUsd,
-										isAvailable: responseNodesStatusData[`StatusNode${walletCurrency}`] === 0,
-										group: decodeURI(item.Group),
+										balance: item.Balance || 0,
+										balanceUSD: item.BalanceUsd || 0,
+										isAvailable:
+											returnData[`StatusNode${walletCurrency}`] === 0 ||
+											returnData[`StatusNode${walletCurrency}`] === undefined,
+										group: decodeURI(item.Group) || '',
 									})),
 								);
 							}
@@ -307,7 +320,7 @@ export default {
 							...getAuthParams(),
 						},
 					});
-					const parsedWalletsData = parsePythonArray(walletsData)['1'].return.Result;
+					const parsedWalletsData = parsePythonArray(walletsData)['1'].return.Result || [];
 
 					const result = Object.keys(parsedWalletsData)
 						.map((key) => {
