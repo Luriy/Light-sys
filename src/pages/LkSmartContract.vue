@@ -7,7 +7,7 @@
       <!-- Chose options layout, manual&instruction btn's -->
       <v-row class="chose-option-box d-flex flex-row">
         <div class="d-flex flex-row">
-          <v-overflow-btn
+          <!-- <v-overflow-btn
           :items="['Token','Stablecoin','Smart contract']"
           label="Choose an option"
           color="#4c3677"
@@ -17,8 +17,19 @@
           height="64"
           class="chose-option"
           clear-icon
-        ></v-overflow-btn>
-        <v-overflow-btn
+        ></v-overflow-btn> -->
+        <v-select
+          :items="['Token','Stablecoin','Smart contract']"
+          label="Choose an option"
+          color="#4c3677"
+          background-color="#3b2665"
+          item-color="#4c3677"
+          solo-inverted
+          height="64"
+          class="chose-option"
+          autofocus
+        ></v-select>
+        <!-- <v-overflow-btn
           :items="['Testnet', 'Mainnet']"
           label="Choose a network"
           color="#4c3677"
@@ -27,7 +38,17 @@
           solo-inverted
           height="64"
           class="chose-network"
-        ></v-overflow-btn>
+        ></v-overflow-btn> -->
+        <v-select
+          :items="['Testnet', 'Mainnet']"
+          label="Choose an option"
+          color="#4c3677"
+          background-color="#3b2665"
+          item-color="#4c3677"
+          solo-inverted
+          height="64"
+          class="chose-option"
+        ></v-select>
         </div>
         <v-spacer></v-spacer>
           <div class="manual-btn-box">
@@ -60,6 +81,7 @@
                 color="#ffffff"
                 class="input-title"
                 style="margin-right:15px;"
+                autofocus
               />
               <v-text-field
                 label="Enter a short name"
@@ -203,7 +225,7 @@
         <div class="chose-tokens">
             <div class="select-tokens-inside d-flex flex-row">
               <v-select
-                :items="[1,3,4,5]"
+                :items="['Yes','No']"
                 label="Burning"
                 color="#F44336"
                 background-color="#4d3779"
@@ -224,7 +246,7 @@
                 ></v-overflow-btn> -->
                 <v-spacer></v-spacer>
               <v-select
-                :items="[1,3,4,5]"
+                :items="['Yes','No']"
                 label="Additional issue"
                 color="#F44336"
                 background-color="#4d3779"
@@ -235,7 +257,7 @@
             </div>
             <div class="select-tokens-inside d-flex flex-row">
               <v-select
-                :items="[1,3,4,5]"
+                :items="['Yes','No']"
                 label="Loyalty"
                 color="#F44336"
                 background-color="#4d3779"
@@ -245,7 +267,7 @@
               ></v-select>
                 <v-spacer></v-spacer>
               <v-select
-                :items="[1,3,4,5]"
+                :items="['Yes','No']"
                 label="Escrow"
                 color="#F44336"
                 background-color="#4d3779"
@@ -256,7 +278,7 @@
             </div>
             <div class="select-tokens-inside d-flex flex-row">
               <v-select
-                :items="[1,3,4,5]"
+                :items="['IT', 'Retail', 'Finance']"
                 label="Finance"
                 color="#F44336"
                 background-color="#4d3779"
@@ -266,7 +288,7 @@
               ></v-select>
                 <v-spacer></v-spacer>
               <v-select
-                :items="[1,3,4,5]"
+                :items="['Restauraunt, cafe', 'Pharmacies', 'Salon of communication', 'Score']"
                 label="Score"
                 color="#F44336"
                 background-color="#4d3779"
@@ -316,11 +338,7 @@
           :value="overlay"
           :z-index="zIndex"
         >
-<<<<<<< HEAD
           <div
-=======
-          <div 
->>>>>>> d640623bf882938747d55d851a916485185da2e5
             class="deploy-btn-layout__succes"
             @click="overlay = false"
           >
@@ -584,6 +602,7 @@
     line-height: 21px;
     opacity: 0.5;
     color: #ffffff;
+    // padding-bottom: 19px;
   }
   .input-description{
     margin: 0 auto;
