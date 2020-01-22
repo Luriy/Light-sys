@@ -7,44 +7,21 @@
       <!-- Chose options layout, manual&instruction btn's -->
       <v-row class="chose-option-box d-flex flex-row">
         <div class="d-flex flex-row">
-          <!-- <v-overflow-btn
-          :items="['Token','Stablecoin','Smart contract']"
-          label="Choose an option"
-          color="#4c3677"
-          background-color="#3b2665"
-          item-color="grey"
-          solo-inverted
-          height="64"
-          class="chose-option"
-          clear-icon
-        ></v-overflow-btn> -->
         <v-select
           :items="['Token','Stablecoin','Smart contract']"
           label="Choose an option"
-          color="#4c3677"
           background-color="#3b2665"
-          item-color="#4c3677"
-          solo-inverted
+          item-color="white"
+          solo
           height="64"
           class="chose-option"
           autofocus
         ></v-select>
-        <!-- <v-overflow-btn
-          :items="['Testnet', 'Mainnet']"
-          label="Choose a network"
-          color="#4c3677"
-          background-color="#3b2665"
-          item-color="grey"
-          solo-inverted
-          height="64"
-          class="chose-network"
-        ></v-overflow-btn> -->
         <v-select
           :items="['Testnet', 'Mainnet']"
           label="Choose an option"
-          color="#4c3677"
           background-color="#3b2665"
-          item-color="#4c3677"
+          item-color="white"
           solo-inverted
           height="64"
           class="chose-option"
@@ -227,28 +204,17 @@
               <v-select
                 :items="['Yes','No']"
                 label="Burning"
-                color="#F44336"
                 background-color="#4d3779"
+                item-color="white"
                 solo
                 height="65"
                 class="select-first-token"
               ></v-select>
-                <!-- <v-overflow-btn
-                  :items="[1,3,4,5]"
-                  label="Burning"
-                  color="#F44336"
-                  background-color="#4d3779"
-                  item-color="grey"
-                  solo
-                  height="60"
-                  class="chose-option"
-                  clear-icon
-                ></v-overflow-btn> -->
                 <v-spacer></v-spacer>
               <v-select
                 :items="['Yes','No']"
                 label="Additional issue"
-                color="#F44336"
+                item-color="white"
                 background-color="#4d3779"
                 solo
                 height="65"
@@ -259,7 +225,7 @@
               <v-select
                 :items="['Yes','No']"
                 label="Loyalty"
-                color="#F44336"
+                item-color="white"
                 background-color="#4d3779"
                 solo
                 height="65"
@@ -269,7 +235,7 @@
               <v-select
                 :items="['Yes','No']"
                 label="Escrow"
-                color="#F44336"
+                item-color="white"
                 background-color="#4d3779"
                 solo
                 height="65"
@@ -280,7 +246,7 @@
               <v-select
                 :items="['IT', 'Retail', 'Finance']"
                 label="Finance"
-                color="#F44336"
+                item-color="white"
                 background-color="#4d3779"
                 solo
                 height="65"
@@ -290,7 +256,7 @@
               <v-select
                 :items="['Restauraunt, cafe', 'Pharmacies', 'Salon of communication', 'Score']"
                 label="Score"
-                color="#F44336"
+                item-color="white"
                 background-color="#4d3779"
                 solo
                 height="65"
@@ -493,7 +459,10 @@
   }
   .v-select-list[data-v-6472e3c8] {
     border-radius: 17px;
-    box-shadow: 0 2px 19px rgba(0,0,0,0.29);
+    // box-shadow: 0 2px 19px rgba(0,0,0,0.29);
+  }
+  .v-input__icon{
+    background-image: src('@/assets/images/select-icon.svg');
   }
   .manual-btn-box{
     width: 132px;
@@ -921,4 +890,12 @@
     line-height: 21px;
     margin: 0 auto;
   }
+  // #hideMe {
+  //   -moz-animation: cssAnimation 0s ease-in 5s forwards;
+  //   -webkit-animation: cssAnimation 0s ease-in 5s forwards;
+  //   -o-animation: cssAnimation 0s ease-in 5s forwards;
+  //   animation: cssAnimation 0s ease-in 5s forwards;
+  //   -webkit-animation-fill-mode: forwards;
+  //   animation-fill-mode: forwards;
+  // }
 </style>
