@@ -160,8 +160,8 @@ export default {
 				resultKeys.forEach((key) => {
 					resultPsids[key].name = decodeURIComponent(resultPsids[key].name);
 				});
-        commit('SET_FIAT_PSIDS', resultPsids);
-        return resultPsids;
+				commit('SET_FIAT_PSIDS', resultPsids);
+				return resultPsids;
 			});
 		},
 		GET_FIAT_EXCHANGE: ({ commit }) => {
@@ -210,7 +210,7 @@ export default {
 					.reduce(
 						(acc, currencyKey) => [
 							...acc,
-							Object.values(walletsResult[currencyKey]).map((item) => ({
+							Object.values(walletsResult[currencyKey] || []).map((item) => ({
 								...currensyList[currencyKey],
 								number: item.Walet,
 								status: item.Status,

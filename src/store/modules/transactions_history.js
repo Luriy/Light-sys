@@ -193,7 +193,9 @@ export default {
 			]);
 
 			const parsedData = Object.values(parsePythonArray(data)['1'].return.Info) || [];
-			let transactions = parsedData.filter((item) => Object.values(item).length);
+			let transactions = parsedData.filter(
+				(item) => Object.values(item).length && item.psid1 && item.psid2,
+			);
 
 			if (singleWallet) {
 				transactions = transactions.filter(

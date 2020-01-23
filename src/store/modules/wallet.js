@@ -5,7 +5,6 @@ import { BASE_URL } from '@/settings/config';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
 import getCryptoInfo from '@/functions/getCryptoInfo';
 import currensyList from '@/settings/currensyList';
-import cryptoCurrencies from '@/settings/currensyList';
 
 const getPercentage = (responseData) => {
 	return {
@@ -65,8 +64,8 @@ const getTypes = (responseData, nodeStatusData) => {
 			name: 'Lightnet',
 			code: 'LTN',
 			codeMarkup: 'ltn',
-			price: 57.05,
-			change24h: 1.0119882646969165,
+			price: 0,
+			change24h: 0,
 			isAvailable: true,
 		},
 	};
@@ -311,7 +310,7 @@ export default {
 			const parsedStatusNodeData = parsePythonArray(statusNodeData)['1'].return;
 
 			let results = await Promise.all(
-				Object.keys(cryptoCurrencies).map(async (currency) => {
+				Object.keys(currensyList).map(async (currency) => {
 					const { data: walletsData } = await Axios({
 						url: BASE_URL,
 						method: 'POST',

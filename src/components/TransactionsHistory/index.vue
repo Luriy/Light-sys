@@ -99,6 +99,9 @@ export default {
 			activeTransactionType: 'all',
 		};
 	},
+	mounted() {
+		console.log(this.operationsWithPagination);
+	},
 	computed: {
 		activeTransactions() {
 			const currentTransactionsType = this.operationsWithPagination.find(
