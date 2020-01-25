@@ -21,7 +21,7 @@
           :items="['Testnet', 'Mainnet']"
           label="Choose an option"
           background-color="#3b2665"
-          item-color="white"
+           item-color="white"
           solo-inverted
           height="64"
           class="chose-option"
@@ -175,6 +175,7 @@
             </v-menu>
             </div>
           </div>
+          <!-- Cashback -->
           <div class="slider-block mt-5">
             <p>Cashback</p>
               <v-text-field
@@ -296,28 +297,30 @@
           height="50"
           @click="overlay = !overlay"
         >
-          <p>Deploy</p>
+          Deploy
         </v-btn>
-        <v-overlay
-          :absolute="absolute"
-          :opacity="opacity"
-          :value="overlay"
-          :z-index="zIndex"
-        >
-          <div
-            class="deploy-btn-layout__succes"
+        <div @click="overlay = false" v-on="timeOut">
+          <v-overlay
+            :absolute="absolute"
+            :opacity="opacity"
+            :value="overlay"
+            :z-index="zIndex"
             @click="overlay = false"
           >
-            <div class="deploy-btn-layout__succes__label">
-              <v-row><p>Succes!</p></v-row>
-              <v-row><span>Successful token deployment</span></v-row>
-              <v-row><a href="#">0xfdjikfsdk4327423905ksdfd</a></v-row>
+            <div
+              class="deploy-btn-layout__succes"
+            >
+              <div class="deploy-btn-layout__succes__label">
+                <v-row><p>Succes!</p></v-row>
+                <v-row><span>Successful token deployment</span></v-row>
+                <v-row><a href="#">0xfdjikfsdk4327423905ksdfd</a></v-row>
+              </div>
+              <div class="deploy-btn-layout__succes__icon">
+                <img src="@/assets/images/tick-bigger.svg" />
+              </div>
             </div>
-            <div class="deploy-btn-layout__succes__icon">
-              <img src="@/assets/images/tick-bigger.svg" />
-            </div>
-          </div>
-        </v-overlay>
+          </v-overlay>
+        </div>
       </v-row>
       <!-- Info layout -->
       <v-row class="info-layout">
@@ -342,6 +345,7 @@
           slider_discount: 0,
           slider_decimal: 0,
           slider_cashback: 0,
+          dialog: false,
           dates: ['2019-09-10', '2019-09-20'],
           menu: false,
           dropdown_font: ['Arial', 'Calibri', 'Courier', 'Verdana'],
@@ -569,9 +573,10 @@
     height: 60px;
     font-weight: 600;
     line-height: 21px;
-    opacity: 0.5;
+    // opacity: 0.5;
     color: #ffffff;
     // padding-bottom: 19px;
+    box-shadow: none;
   }
   .input-description{
     margin: 0 auto;
