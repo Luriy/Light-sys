@@ -5,7 +5,7 @@ import { BASE_URL } from '@/settings/config';
 import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
 import filterTransactionsByPaginationAndDate from '@/functions/filterTransactionsByPaginationAndDate';
 import formatCardNumber from '@/functions/formatCardNumber';
-import getWalletBlockchainLink from '@/functions/getWalletBlockchainLink';
+import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	namespaced: true,
@@ -51,7 +51,6 @@ export default {
 
 							const transactions = Object.values(parsePythonArray(data)[1].return).map((item) => {
 								const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-
 								const transaction = {
 									source: {
 										To: item.address,
@@ -62,7 +61,7 @@ export default {
 									address: item.address, // FIXME: Адрес не работает корректно
 									time: itemDate,
 									url: item.Url,
-									value: item.value,
+									value: item.value ? (isNaN(item.value) ? parseInt(item.value) : item.value) : 0,
 									valueUSD: item.valueUSD,
 									currentWallet: {
 										address: wallet.address,
@@ -138,8 +137,16 @@ export default {
 						secondCurrency: item.outgoingType,
 						time: itemDate,
 						url: item.transactionURL,
-						value: Number(item.incomingCoin),
-						secondValue: Number(item.outgoingCoin),
+						value: item.incomingCoin
+							? isNaN(item.incomingCoin)
+								? parseInt(item.incomingCoin)
+								: item.incomingCoin
+							: 0,
+						secondValue: item.outgoingCoin
+							? isNaN(item.outgoingCoin)
+								? parseInt(item.outgoingCoin)
+								: item.outgoingCoin
+							: 0,
 						valueUSD: Number(item.incomingUSD),
 						secondValueUSD: Number(item.outcomingUSD),
 						fee: item.incomingCoin - item.outcomingUSD * (item.incomingCoin / item.incomingUSD),
@@ -232,15 +239,15 @@ export default {
 							isCard: isPsid1Fiat,
 							psid: psid1Info.psid,
 							time: itemDate,
-							value: item.in || 0,
+							value: item.out ? parseInt(item.out) : 0,
 							valueUSD: item.inUSD || 0,
 							fee: item.in && item.out ? item.in - item.outUSD * (item.in / item.inUSD) : 0,
 							feeUSD: item.inUSD && item.outUSD ? item.inUSD - item.outUSD : 0,
 							type: 'crypto-fiat-send',
-							url: getWalletBlockchainLink(
+							url: getCryptoInfo(
 								isPsid1Fiat ? psid2Info.valute : psid1Info.valute,
 								isPsid1Fiat ? item.to : item.from,
-							),
+							).blockchainLink,
 						},
 						{
 							source: {
@@ -256,13 +263,13 @@ export default {
 							isCard: !isPsid1Fiat,
 							psid: psid2Info.psid,
 							time: itemDate,
-							value: item.out || 0,
+							value: item.out ? parseInt(item.out) : 0,
 							valueUSD: item.outUSD || 0,
 							type: 'crypto-fiat-receive',
-							url: getWalletBlockchainLink(
+							url: getCryptoInfo(
 								isPsid1Fiat ? psid2Info.valute : psid1Info.valute,
 								isPsid1Fiat ? item.to : item.from,
-							),
+							).blockchainLink,
 						},
 					];
 				})

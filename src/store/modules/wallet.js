@@ -198,31 +198,17 @@ export default {
 				},
 			});
 		},
-		GET_WALLETS({ commit, dispatch }) {
-			return Promise.all([
-				Axios({
-					url: BASE_URL,
-					method: 'POST',
-					params: {
-						Comand: 'AllWaletsLTN',
-						...getAuthParams(),
-					},
-				}),
-				Axios({
-					url: BASE_URL,
-					method: 'POST',
-					params: {
-						Comand: 'AllWalets',
-						...getAuthParams(),
-					},
-				}),
-			]).then(([{ data: LTNWalletsData }, { data }]) => {
+		GET_WALLETS: async ({ commit, dispatch }) => {
+			Axios({
+				url: BASE_URL,
+				method: 'POST',
+				params: {
+					Comand: 'AllWalets',
+					...getAuthParams(),
+				},
+			}).then(({ data }) => {
 				const errors = Object.values(parsePythonArray(data)['0'].Errors);
-				const returnData = {
-					...parsePythonArray(data)['1'].return,
-					LTN: parsePythonArray(LTNWalletsData)['1'].return['0'],
-				};
-
+				const returnData = parsePythonArray(data)['1'].return;
 				if (errors.includes('Wrong password')) {
 					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
 						() => (window.location.href = `/login`),
@@ -242,7 +228,11 @@ export default {
 				} else {
 					const wallets = Object.keys(returnData)
 						.reduce((acc, walletCurrency) => {
-							if (Object.keys(currensyList).some((currency) => currency === walletCurrency)) {
+							if (
+								Object.keys(currensyList).some(
+									(currency) => currency === walletCurrency || walletCurrency === 'EOS',
+								)
+							) {
 								acc.push(
 									...Object.values(returnData[walletCurrency]).map((item) => ({
 										address: item.Walet,
@@ -250,9 +240,7 @@ export default {
 										currency: walletCurrency,
 										balance: item.Balance || 0,
 										balanceUSD: item.BalanceUsd || 0,
-										isAvailable:
-											returnData[`StatusNode${walletCurrency}`] === 0 ||
-											returnData[`StatusNode${walletCurrency}`] === undefined,
+										isAvailable: returnData[`StatusNode${walletCurrency}`] === 0,
 										group: decodeURI(item.Group) || '',
 									})),
 								);
@@ -328,10 +316,11 @@ export default {
 									({ address }) => address.toLowerCase() === key.toLowerCase(),
 								)
 							) {
-								const usdToCryptoCourse =
-									parsedInfoCryptsData[`${currency}: `][
-										getCryptoInfo(currency).fullName.toLowerCase()
-									].usd;
+								const usdToCryptoCourse = parsedInfoCryptsData[`${currency}: `]
+									? parsedInfoCryptsData[`${currency}: `][
+											getCryptoInfo(currency).fullName.toLowerCase()
+									  ].usd
+									: 0;
 								allUsdBalance += parsedWalletsData[key] * usdToCryptoCourse;
 
 								return {

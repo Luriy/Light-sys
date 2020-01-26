@@ -1,4 +1,4 @@
-export default function getCryptoInfo(currency) {
+export default function getCryptoInfo(currency, address = null) {
 	switch (currency) {
 		case 'BTC':
 			return {
@@ -9,6 +9,7 @@ export default function getCryptoInfo(currency) {
 					square: require('@/assets/images/icons/btc-ico.svg'),
 					arrow: require('@/assets/images/send-arrow-btc.svg'),
 				},
+				blockhainLink: `https://www.blockchain.com/ru/btc/address/${address}`,
 				websites: [
 					{
 						name: 'Website',
@@ -30,6 +31,7 @@ export default function getCryptoInfo(currency) {
 					square: require('@/assets/images/eth-ico.png'),
 					arrow: require('@/assets/images/send-arrow-eth.svg'),
 				},
+				blockhainLink: `https://etherscan.io/address/${address}`,
 				websites: [
 					{
 						name: 'Website',
@@ -58,6 +60,7 @@ export default function getCryptoInfo(currency) {
 					square: require('@/assets/images/ltc-ico.svg'),
 					arrow: require('@/assets/images/send-arrow-ltc.svg'),
 				},
+				blockhainLink: `https://blockchair.com/litecoin/address/${address}`,
 				websites: [
 					{
 						name: 'Website',
@@ -79,25 +82,18 @@ export default function getCryptoInfo(currency) {
 				shortName: 'LTN',
 				fullName: 'Lightnet',
 				image: {
-					corner: require('@/assets/images/ltn.svg'),
-					square: require('@/assets/images/ltn-ico.svg'),
+					square: require('@/assets/images/ltn.svg'),
+					corner: require('@/assets/images/ltn-ico.svg'),
 					arrow: require('@/assets/images/send-arrow-ltn.svg'),
 				},
+				blockhainLink: `https://bex.lightnet.systems/address/${address}`,
 				websites: [
 					{
 						name: 'Website',
-						link: 'https://eos.io/',
-					},
-					{
-						name: 'Reddit',
-						link: 'https://www.reddit.com/r/eos/',
-					},
-					{
-						name: 'Twitter',
-						link: 'https://twitter.com/block_one_',
+						link: 'https://lightnet.systems/',
 					},
 				],
-				description: `EOS is an architecture to enable large-scale applications. EOS provides developers with accounts, authentication, databases, asynchronous communication and scheduling of applications across the protocol.`,
+				description: `LTN is an architecture to enable large-scale applications. LTN provides developers with accounts, authentication, databases, asynchronous communication and scheduling of applications across the protocol.`,
 			};
 		default:
 			return {

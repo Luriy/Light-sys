@@ -181,16 +181,21 @@ export default {
 	cursor: pointer;
 }
 .trans-top {
-	display: grid;
-	@media screen and (min-width: 1550px) {
-		grid-template-columns: repeat(4, 25%) !important;
+	@media screen and (min-width: 1400px) {
+		display: grid !important;
+		grid-template-columns: 15% 20% 50% 15% !important;
 	}
-	display: flex;
+	display: grid !important;
+	grid-template-columns: 20% 15% 45% 20% !important;
+	@media screen and (max-width: 1100px) {
+		display: grid !important;
+		grid-template-columns: 20% 15% 40% 25% !important;
+	}
 	& > * {
 		width: 100% !important;
 	}
 	&.exchange {
-		display: grid;
+		display: grid !important;
 		grid-template-columns: repeat(4, max-content);
 	}
 }

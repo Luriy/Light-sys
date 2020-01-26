@@ -88,6 +88,10 @@ b, strong {
   color: #d3d3d3 !important;
   opacity: 1 !important;
 }
+.ltn {
+  color: #7c44c0 !important;
+  opacity: 1 !important;
+}
 
 //smart contract
 .v-autocomplete:not(.v-input--is-disabled).v-select.v-text-field input{
@@ -1251,18 +1255,20 @@ $break-large: 1124px;
 					display: flex;
           align-items:center;
 					.image {
-						width: 2.9vw;
-						height: 3.9vh;
 						border-radius: 11px;
 						margin-right: 0.7vw;
-						background-color: #fda50c;
-					    text-align: center;
-					    line-height: 5.2vh;
+            text-align: center;
+            &.btc {
+              background:#fda50c;
+            }
 						&.eth {
 							background:#7b83c4;
             }
             &.ltc {
               background-image: linear-gradient(151deg, #a2a2a4 0%, #d1d1d3 100%);
+            }
+            &.ltn {
+              background-color: #7c44c0;
             }
 						&.fiat {
 							background:#543b88;
@@ -1614,10 +1620,20 @@ $break-large: 1124px;
               border-radius: 11px;
             }
             img {
-              width: 11px;
+              height: 20px;
               @media screen and (max-width: 1250px) {
-                width: 9px;
+                height: 16px;
               }
+              &.ltc {
+                height: 16px;
+                @media screen and (max-width: 1250px) {
+                  height: 12px;
+                }
+              }
+              // width: 11px;
+              // @media screen and (max-width: 1250px) {
+              //   width: 9px;
+              // }
             }
 					}
 					span {
@@ -2386,10 +2402,10 @@ $break-large: 1124px;
 					line-height: 21px;
 					color: #ffffff;
           opacity: .5;
-          // width: 25%;
           @media screen and (max-width: 1500px) {
             width: auto !important;
             text-overflow: ellipsis;
+            max-width: 100%;
             overflow: hidden;
             white-space: nowrap;
             margin-right: auto;
@@ -2397,12 +2413,7 @@ $break-large: 1124px;
           }
           @media screen and (max-width: 1250px) {
             font-size: 12px;
-          }
-          &.isNotCryptoFiat {
-            @media screen and (max-width: 1100px) {
-              margin-left: -5px !important;
-            }
-
+            margin-left: 12px;
           }
 
 				}
@@ -2433,12 +2444,6 @@ $break-large: 1124px;
 						line-height: 21px;
 						color: #fff;
 						font-weight: 600;
-						&.btc {
-							color: #fda50c;
-						}
-						&.eth {
-							color: #7d8ef6
-            }
             @media screen and (max-width: 1250px) {
               font-size: 13px;
             }
@@ -2721,6 +2726,19 @@ $break-large: 1124px;
 
 		.send-form .send-form-input--amount input, .send-form .send-form-input--amount input::placeholder {
 			color: #d3d3d3;
+		}
+  }
+
+  &.ltn {
+    .send-form .send-form-input--amount input {
+			border-bottom:1px solid #7c44c0;
+		}
+    .send-form .send-form-input--amount .btns span {
+			color: #7c44c0;
+		}
+
+		.send-form .send-form-input--amount input, .send-form .send-form-input--amount input::placeholder {
+			color: #7c44c0;
 		}
   }
 

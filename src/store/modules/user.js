@@ -6,7 +6,11 @@ import { getAuthParams } from '@/functions/auth';
 import { parsePythonArray, parsePythonDataObject } from '@/functions/helpers';
 import Axios from 'axios';
 
-const state = { status: '', profile: {}, allUsdBalance: 0 };
+const state = {
+	status: '',
+	profile: {},
+	allUsdBalance: JSON.parse(localStorage.getItem('StateAllUsdBalance')) || 0,
+};
 
 const getters = {
 	getProfile: (state) => state.profile,
@@ -28,7 +32,10 @@ const mutations = {
 	[AUTH_LOGOUT]: (state) => {
 		state.profile = {};
 	},
-	SET_ALL_USD_BALANCE: (state, payload) => (state.allUsdBalance = payload),
+	SET_ALL_USD_BALANCE: (state, payload) => {
+		localStorage.setItem('StateAllUsdBalance', payload);
+		state.allUsdBalance = payload;
+	},
 };
 
 const actions = {

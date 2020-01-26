@@ -13,7 +13,9 @@ export default function filterTransactionsByPaginationAndDate({
 	transactions: _transactions = [],
 	transactionsPerPage,
 }) {
-	let transactions = [..._transactions].filter(({ time }) => time.getTime() === time.getTime());
+	let transactions = [..._transactions].filter(
+		({ time }) => new Date(Date.parse(time)).getTime() === new Date(Date.parse(time)).getTime(),
+	);
 	// fixed mutating and filter 'Invalid date'
 	if (transactions.length) {
 		let transactionsWithPagination = new Array(

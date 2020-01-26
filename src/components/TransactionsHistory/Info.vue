@@ -66,7 +66,7 @@
 					Received
 				</p>
 				<span :class="transaction.secondCurrency.toLowerCase()">{{
-					`${transaction.secondValue.toFixed(5)} ${transaction.secondCurrency}`
+					`${Number(transaction.secondValue).toFixed(5)} ${transaction.secondCurrency}`
 				}}</span
 				><span class="divider">|</span><span>${{ transaction.secondValueUSD.toFixed(2) }} USD</span>
 			</div>
@@ -107,7 +107,7 @@ export default {
 			const month = Number(parsedDate.getMonth()) + 1;
 			const formattedMonth = month < 10 ? '0' + month : month;
 			const year = parsedDate.getFullYear();
-			return `${formattedDay}/${month}/${year} ${this.getTime(date)}`;
+			return `${formattedDay}/${formattedMonth}/${year} ${this.getTime(date)}`;
 		},
 		getTime(date) {
 			const parsedDate = new Date(Date.parse(date)).toString();
@@ -168,7 +168,11 @@ export default {
 .table.without-fee {
 	grid-template-columns: max-content minmax(100px, max-content) max-content max-content;
 	@media screen and (max-width: 1350px) {
-		grid-template-columns: 150px minmax(100px, max-content) max-content;
+		grid-template-columns: minmax(150px, 1fr) minmax(100px, max-content) max-content;
+		.th:nth-of-type(3) {
+			border-right: none !important;
+		}
+
 		.th:not(:last-of-type) {
 			border-bottom: 1px solid #3b2665;
 		}
@@ -184,7 +188,7 @@ export default {
 	grid-template-columns: max-content minmax(100px, max-content) max-content max-content max-content;
 
 	@media screen and (max-width: 1500px) {
-		grid-template-columns: 150px minmax(100px, max-content) max-content;
+		grid-template-columns: minmax(150px, 1fr) minmax(100px, max-content) max-content;
 		.th:not(:last-of-type) {
 			border-bottom: 1px solid #3b2665;
 		}
@@ -193,6 +197,7 @@ export default {
 		}
 		.th:nth-of-type(4) {
 			grid-column: 1/2;
+			border-bottom: none !important;
 		}
 		.th:last-of-type {
 			grid-column: 2/3;
