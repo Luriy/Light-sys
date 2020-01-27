@@ -3,7 +3,7 @@
 		v-if="sendPopup"
 		class="transfer-popup"
 		@closeModal="handleCloseModal"
-		:popupSize="{ width: '680px', height: '500px' }"
+		:popupSize="{ width: '700px', height: '500px' }"
 	>
 		<div slot="title" class="exchange-popup_title">
 			<img :src="getCryptoInfo(currency).image.corner" class="main-image" />
@@ -156,7 +156,7 @@ export default {
 	}
 }
 .exchange-popup_body {
-	max-width: 620px !important;
+	max-width: 660px !important;
 	width: 100%;
 }
 .network-fee {

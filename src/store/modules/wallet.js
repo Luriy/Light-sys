@@ -64,9 +64,9 @@ const getTypes = (responseData, nodeStatusData) => {
 			name: 'Lightnet',
 			code: 'LTN',
 			codeMarkup: 'ltn',
-			price: 0,
+			price: responseData['LTN: '].lightnet.usd,
 			change24h: 0,
-			isAvailable: true,
+			isAvailable: nodeStatusData.StatusNodeLTN === 0,
 		},
 	};
 };
@@ -349,17 +349,22 @@ export default {
 				'group/SET_GROUP_WALLETS',
 				rootState.group.groupWallets.map((group) => ({
 					...group,
-					wallets: group.wallets.map((wallet) => {
-						const currentWallet = results.find(
-							({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
-						);
-						return {
-							...wallet,
-							balance: currentWallet.balance,
-							balanceUSD: currentWallet.balanceUSD,
-							isAvailable: currentWallet.isAvailable,
-						};
-					}),
+					wallets: group.wallets
+						.map((wallet) => {
+							console.log(group.wallets, results.length);
+							const currentWallet = results.find(
+								({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
+							);
+							return currentWallet
+								? {
+										...wallet,
+										balance: currentWallet.balance,
+										balanceUSD: currentWallet.balanceUSD,
+										isAvailable: currentWallet.isAvailable,
+								  }
+								: null;
+						})
+						.filter((item) => item),
 				})),
 				{ root: true },
 			);

@@ -21,6 +21,7 @@ export default function getCryptoInfo(currency, address = null) {
 					},
 				],
 				description: `The cryptocurrency that started it all, Bitcoin is the first digital currency to solve the "double spending" or counterfeiting problem without the aid of a central authority, such as a bank or a government, making Bitcoin truly peer-to-peer.`,
+				minAmountToTransfer: 0.0005,
 			};
 		case 'ETH':
 			return {
@@ -50,6 +51,7 @@ export default function getCryptoInfo(currency, address = null) {
         contracts thah execute without human intervention. ETH popularized the idea programmable
         transactions instead of only for money transfers. The platform is used for crowdfunding
         (ICOs), the creation of new digital assets, and more.`,
+				minAmountToTransfer: 0.0005,
 			};
 		case 'LTC':
 			return {
@@ -76,6 +78,7 @@ export default function getCryptoInfo(currency, address = null) {
 					},
 				],
 				description: `Litecoin is a cryptocurrency similar to Bitcoin. The goal of Litecoin is to provide fast transaction confirmations. Created by ex-Google employee Charlie Lee, Litecoin is often considered the silver to Bitcoin's gold.`,
+				minAmountToTransfer: 0.004,
 			};
 		case 'LTN':
 			return {
@@ -94,6 +97,7 @@ export default function getCryptoInfo(currency, address = null) {
 					},
 				],
 				description: `LTN is an architecture to enable large-scale applications. LTN provides developers with accounts, authentication, databases, asynchronous communication and scheduling of applications across the protocol.`,
+				minAmountToTransfer: 0.00001,
 			};
 		default:
 			return {
