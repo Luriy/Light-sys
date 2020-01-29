@@ -71,9 +71,7 @@
               <div class="row__item">
                 <div class="currency">
                   <div class="icon flex align-items-center">
-                    <img v-if="type.codeMarkup === 'btc'" src="@/assets/images/btc.png" alt title>
-                    <img v-if="type.codeMarkup === 'eth'" src="@/assets/images/eth.png" alt title>
-                    <img v-if="type.codeMarkup === 'ltc'" src="@/assets/images/ltc.svg" alt title>
+                    <img  :src="getCryptoInfo(type.codeMarkup.toUpperCase()).image.corner" alt title>
                   </div>
                   <div :class="['text', type.codeMarkup]">
                     <p>{{ type.name }}</p>
@@ -137,7 +135,7 @@ export default {
   
   computed: {
     ...mapGetters({
-      types: 'wallet/TYPES',
+      types: ['wallet/TYPES'],
       wallets: 'wallet/WALLETS',
       groupWallets: 'group/GROUP_WALLETS',
     })
@@ -145,10 +143,12 @@ export default {
   filters: {
     changePercent: value => `${(value > 0 ? '+' : '') + value.toFixed(2).toString()}%`,
   },
-  created() {
-    this.$store.dispatch('wallet/GET_TYPES');
+  async created() {
+    await this.$store.dispatch('wallet/GET_TYPES');
+    console.log(this.types);
   },
   methods: {
+    getCryptoInfo,
     ChangeShowOptions(option) {
       this.TokenType = option;
       this.showOptions = false;

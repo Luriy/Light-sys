@@ -115,11 +115,12 @@
               class="discount-slider-label"
               hide-details
               single-line
-              type="number"
+              type="text"
             ></v-text-field>
             <v-slider
-              min="0"
-              max="130"
+              min="0.0000"
+              step="0.0001"
+              max="100.0000"
               color="#a67ff6"
               class="number-tokens-slider"
               track-fill-color="#a67ff6"
@@ -151,19 +152,18 @@
           <div class="validity-block">
             <p class="mb-2">Validity</p>
             <!-- Date picker -->
-            <div class="input-validity d-flex flex-row">
+            <div class="input-validity d-flex flex-row justify-content-between">
               <!-- Example -->
             <v-menu
-              v-model="menu"
+              v-model="menu1"
               :close-on-content-click="false"
               :nudge-right="40"
               transition="scale-transition"
               offset-y
-              min-width="290px"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
-                  v-model="dateRangeText"
+                  v-model="dates[0]"
                   readonly
                   v-on="on"
                   solo
@@ -171,7 +171,26 @@
                   height="56px"
                 />
               </template>
-              <v-date-picker v-model="dates" range @input="menu"></v-date-picker>
+              <v-date-picker v-model="dates[0]" @input="menu1"></v-date-picker>
+            </v-menu>
+            <v-menu
+              v-model="menu2"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="dates[1]"
+                  readonly
+                  v-on="on"
+                  solo
+                  background-color="#4d3779"
+                  height="56px"
+                />
+              </template>
+              <v-date-picker v-model="dates[1]" @input="menu2"></v-date-picker>
             </v-menu>
             </div>
           </div>
@@ -199,71 +218,10 @@
         </div>
 
           <v-spacer></v-spacer>
-
+        
         <div class="chose-tokens">
-            <div class="select-tokens-inside d-flex flex-row">
-              <v-select
-                :items="['Yes','No']"
-                label="Burning"
-                background-color="#4d3779"
-                item-color="white"
-                solo
-                height="65"
-                class="select-first-token"
-              ></v-select>
-                <v-spacer></v-spacer>
-              <v-select
-                :items="['Yes','No']"
-                label="Additional issue"
-                item-color="white"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-last-token"
-              ></v-select>
-            </div>
-            <div class="select-tokens-inside d-flex flex-row">
-              <v-select
-                :items="['Yes','No']"
-                label="Loyalty"
-                item-color="white"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-first-token"
-              ></v-select>
-                <v-spacer></v-spacer>
-              <v-select
-                :items="['Yes','No']"
-                label="Escrow"
-                item-color="white"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-last-token"
-              ></v-select>
-            </div>
-            <div class="select-tokens-inside d-flex flex-row">
-              <v-select
-                :items="['IT', 'Retail', 'Finance']"
-                label="Finance"
-                item-color="white"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-first-token"
-              ></v-select>
-                <v-spacer></v-spacer>
-              <v-select
-                :items="['Restauraunt, cafe', 'Pharmacies', 'Salon of communication', 'Score']"
-                label="Score"
-                item-color="white"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-last-token"
-              ></v-select>
-            </div>
+
+        <filter-selects></filter-selects>
             <!-- Checkbox layout ++ -->
         <div class="chose-tokens-scroll">
             <div class="chose-tokens-chechbox">
@@ -332,10 +290,12 @@
 
 <script>
   import LkLayout from '@/layout/LkLayout'
+  import FilterSelects from './FilterSelects';
+
 
     export default {
         name: 'SmartContract',
-        components: { LkLayout },
+        components: { LkLayout, FilterSelects },
         data: () => ({
           absolute: false,
           opacity: 0.46,
@@ -343,11 +303,12 @@
           zIndex: 5,
           slider: 0,
           slider_discount: 0,
-          slider_decimal: 0,
+          slider_decimal: '0.0000',
           slider_cashback: 0,
           dialog: false,
-          dates: ['2019-09-10', '2019-09-20'],
-          menu: false,
+          dates: ['2019.09.10', '2019.09.20'],
+          menu1: false,
+          menu2: false,
           dropdown_font: ['Arial', 'Calibri', 'Courier', 'Verdana'],
           types: [
             { text: 'The drinks', value: 'drinks', selected: false },
@@ -374,6 +335,7 @@
             { text: 'Alcohol', value: 'life', selected: false },
             { text: 'Alcohol', value: 'life', selected: false },
           ],
+          
         }),
         methods: {
           checkLength(index) {
@@ -382,17 +344,12 @@
               return index;
             }
           },
-        },
-        computed: {
-          dateRangeText () {
-            return this.dates.join(' ~ ')
-          },
+          
         },
     }
 </script>
 
 <style scoped lang="scss">
-  @import "../assets/scss/common";
 
   .smart-contract{
     width: 100%;
@@ -656,7 +613,11 @@
     // }
     margin-bottom: 35px;
     position: relative;
+    
   }
+  .slider-block input {
+      margin-left: 0 !important;
+    }
   .discount-slider-label{
     width: 60px;
     color: #af89ff;
@@ -685,9 +646,12 @@
     height: 82px;
   }
   .input-validity{
-    width: 98%;
+    width: 100%;
     height: 56px;
     position: relative;
+    .v-input {
+      max-width: 48% !important;
+    }
     p{
       margin-bottom: 10px ;
     }
@@ -705,24 +669,7 @@
     right: 0;
     margin-bottom: 2%;
   }
-  .select-tokens-inside{
-    width: 100%;
-    height: 61px;
-    padding-right: 14px;
-    padding-left: 14px;
-    padding: 0;
-    margin-bottom: 2%;
-    font-weight: 600;
-    line-height: 21px;
-  }
-  .select-first-token{
-    width: 45%;
-    height: 65px;
-  }
-  .select-last-token{
-    width: 45%;
-    height: 65px;
-  }
+  
 
   // Checkbox Layout
 

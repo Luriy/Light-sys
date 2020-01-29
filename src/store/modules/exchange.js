@@ -3,7 +3,7 @@ import { parsePythonArray } from '@/functions/helpers';
 import { getAuthParams } from '@/functions/auth';
 import { BASE_URL } from '@/settings/config';
 import fiatList from '../../settings/fiatList';
-import currensyList from '../../settings/currensyList';
+import currencyList from '../../settings/currencyList';
 import errorsList from '../../settings/errorsList';
 
 export default {
@@ -160,8 +160,8 @@ export default {
 				resultKeys.forEach((key) => {
 					resultPsids[key].name = decodeURIComponent(resultPsids[key].name);
 				});
-        commit('SET_FIAT_PSIDS', resultPsids);
-        return resultPsids;
+				commit('SET_FIAT_PSIDS', resultPsids);
+				return resultPsids;
 			});
 		},
 		GET_FIAT_EXCHANGE: ({ commit }) => {
@@ -200,7 +200,7 @@ export default {
 				const { Result: fiat } = fiatResult;
 				const { Cards: cards } = cardsResult;
 				const fiatKeys = Object.keys(fiat);
-				const currencyKeys = Object.keys(currensyList);
+				const currencyKeys = Object.keys(currencyList);
 
 				fiatKeys.forEach((key) => {
 					fiat[key].name = decodeURIComponent(fiat[key].name);
@@ -210,8 +210,8 @@ export default {
 					.reduce(
 						(acc, currencyKey) => [
 							...acc,
-							Object.values(walletsResult[currencyKey]).map((item) => ({
-								...currensyList[currencyKey],
+							Object.values(walletsResult[currencyKey] || []).map((item) => ({
+								...currencyList[currencyKey],
 								number: item.Walet,
 								status: item.Status,
 								statusNode: walletsResult[`StatusNode${currencyKey}`],
@@ -259,8 +259,8 @@ export default {
 						icon:
 							fiatList[fiat[item].psid] && fiatList[fiat[item].psid].icon.big
 								? fiatList[fiat[item].psid].icon.big
-								: Object.keys(currensyList).some((currency) => currency === fiat[item].valute)
-								? currensyList[fiat[item].valute].icon
+								: Object.keys(currencyList).some((currency) => currency === fiat[item].valute)
+								? currencyList[fiat[item].valute].icon
 								: fiatList['111'].icon.big,
 						currency: fiat[item].valute,
 						reserve: fiat[item].reserve.toFixed(2),

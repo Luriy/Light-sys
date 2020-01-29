@@ -37,7 +37,6 @@
 	opacity: 0;
 	position: absolute;
 }
-
 .fade-medium-enter-active,
 .fade-medium-leave-active {
 	transition: opacity 0.5s;
@@ -80,4 +79,12 @@
 	transition: 0s;
 	opacity: 0;
 	position: absolute;
+}
+.component-fade-enter-active,
+.component-fade-leave-active {
+	transition: opacity 0.5s ease;
+}
+.component-fade-enter,
+.component-fade-leave-to {
+	opacity: 0;
 }

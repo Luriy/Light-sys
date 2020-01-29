@@ -1,10 +1,12 @@
 <template>
-	<button class="toggler">
+	<button class="toggler" :class="{ active: active }">
 		<div class="toggler-arrow"></div>
 	</button>
 </template>
 <script>
-export default {};
+export default {
+	props: ['active'],
+};
 </script>
 <style lang="scss" scoped>
 .toggler {
@@ -15,10 +17,14 @@ export default {};
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	&.active {
+		transform: rotate(180deg);
+	}
 	.toggler-arrow {
 		border: 3px solid transparent;
 		border-top: 3px solid #9b84ca;
 		margin-top: 3px;
+		transition: 0.2s;
 	}
 }
 </style>
