@@ -110,7 +110,7 @@ export default {
 					currency: capitalizeFirstLetter(this.$route.params.currency.toLowerCase()),
 					from: this.$route.params.address,
 					to: this.paymentAddress,
-					amount: Number(this.cryptoCurrencyAmount).toFixed(5),
+					amount: this.cryptoCurrencyAmount,
 					token,
 				})
 				.then((data) => {

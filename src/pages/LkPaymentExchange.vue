@@ -629,7 +629,7 @@
   import LkLayout from '@/layout/LkLayout'
   import LkPopUp from '@/layout/LkPopUp';
   import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
-  import currencyList from '@/settings/currensyList'
+  import currencyList from '@/settings/currencyList'
   import { getAuthParams } from '@/functions/auth';
   let exchangePrice = null;
   let receivePrice = null;

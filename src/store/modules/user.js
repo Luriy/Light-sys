@@ -15,7 +15,7 @@ const state = {
 const getters = {
 	getProfile: (state) => state.profile,
 	isProfileLoaded: (state) => !!state.profile.name,
-	ALL_USD_BALANCE: (state) => state.allUsdBalance,
+	ALL_USD_BALANCE: (state) => Number(state.allUsdBalance).toFixed(2),
 };
 
 const mutations = {
