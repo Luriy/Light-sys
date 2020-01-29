@@ -379,6 +379,7 @@ export default {
 			this.clearData();
 		},
 		onRepeatSms() {
+			this.$store.dispatch('transfer/GET_TRANSFER_TOKEN', getAuthParams());
 			this.countdown = 59;
 			this.timer = setInterval(() => {
 				this.countdown--;

@@ -4,7 +4,7 @@ import { getAuthParams } from '@/functions/auth';
 import { BASE_URL } from '@/settings/config';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
 import getCryptoInfo from '@/functions/getCryptoInfo';
-import currensyList from '@/settings/currensyList';
+import currencyList from '@/settings/currencyList';
 
 const getPercentage = (responseData) => {
 	return {
@@ -229,7 +229,7 @@ export default {
 					const wallets = Object.keys(returnData)
 						.reduce((acc, walletCurrency) => {
 							if (
-								Object.keys(currensyList).some(
+								Object.keys(currencyList).some(
 									(currency) => currency === walletCurrency || walletCurrency === 'EOS',
 								)
 							) {
@@ -298,7 +298,7 @@ export default {
 			const parsedStatusNodeData = parsePythonArray(statusNodeData)['1'].return;
 
 			let results = await Promise.all(
-				Object.keys(currensyList).map(async (currency) => {
+				Object.keys(currencyList).map(async (currency) => {
 					const { data: walletsData } = await Axios({
 						url: BASE_URL,
 						method: 'POST',
@@ -351,7 +351,6 @@ export default {
 					...group,
 					wallets: group.wallets
 						.map((wallet) => {
-							console.log(group.wallets, results.length);
 							const currentWallet = results.find(
 								({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
 							);
@@ -370,17 +369,21 @@ export default {
 			);
 			commit(
 				'SET_WALLETS',
-				state.wallets.map((wallet) => {
-					const currentWallet = results.find(
-						({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
-					);
-					return {
-						...wallet,
-						balance: currentWallet.balance,
-						balanceUSD: currentWallet.balanceUSD,
-						isAvailable: currentWallet.isAvailable,
-					};
-				}),
+				state.wallets
+					.map((wallet) => {
+						const currentWallet = results.find(
+							({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
+						);
+						return currentWallet
+							? {
+									...wallet,
+									balance: currentWallet.balance,
+									balanceUSD: currentWallet.balanceUSD,
+									isAvailable: currentWallet.isAvailable,
+							  }
+							: null;
+					})
+					.filter((item) => item),
 			);
 			commit('SET_PERCENTAGE', getPercentage(parsedInfoCryptsData));
 			commit('SET_TYPES', getTypes(parsedInfoCryptsData, parsedStatusNodeData));

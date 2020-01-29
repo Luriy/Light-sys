@@ -305,6 +305,7 @@ export default {
 		},
 		GET_TRANSACTIONS: async (store, { wallets, singleWallet }) => {
 			const { commit, dispatch, getters } = store;
+
 			commit('SET_ALL_FILTERED_SINGLE_TRANSACTIONS', []);
 			commit('SET_ALL_FILTERED_TRANSACTIONS', []);
 
