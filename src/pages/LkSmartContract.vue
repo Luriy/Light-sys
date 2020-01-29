@@ -8,6 +8,7 @@
       <v-row class="chose-option-box d-flex flex-row">
         <div class="d-flex flex-row">
         <v-select
+          append-icon="@/assets/images/select-icon.svg"
           :items="['Token','Stablecoin','Smart contract']"
           label="Choose an option"
           background-color="#3b2665"
@@ -15,16 +16,15 @@
           solo
           height="64"
           class="chose-option"
-          autofocus
         ></v-select>
         <v-select
           :items="['Testnet', 'Mainnet']"
-          label="Choose an option"
+          label="Choose a network"
           background-color="#3b2665"
            item-color="white"
-          solo-inverted
+          solo
           height="64"
-          class="chose-option"
+          class="chose-network"
         ></v-select>
         </div>
         <v-spacer></v-spacer>
@@ -752,30 +752,30 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
-  .chose-tokens-chechbox::-webkit-scrollbar {
-    margin-top: 15px;
-    width: 2px;
-    border-radius: 3px;
-  }
-  .chose-tokens-chechbox::-webkit-scrollbar-track {
-    background-color: #4d3779;
-    margin-top: 10px;
-  }
-  .chose-tokens-chechbox::-webkit-scrollbar-thumb {
-    width: 2px;
-    height: 47px;
-    border-radius: 3px;
-    background-color: #2e0e52;
-  }
-  .scrollbar, .scrollbar-viewport, .scrollbar-systemscrolls, .scrollbar-contentwrap, .scrollbar-content {
-      bottom: 0px;
-      height: 47px;
-      left: 0px;
-      position: absolute;
-      right: 0px;
-      top: 0px;
-      width: auto;
-  }
+  // .chose-tokens-chechbox::-webkit-scrollbar {
+  //   margin-top: 15px;
+  //   width: 2px;
+  //   border-radius: 3px;
+  // }
+  // .chose-tokens-chechbox::-webkit-scrollbar-track {
+  //   background-color: #4d3779;
+  //   margin-top: 10px;
+  // }
+  // .chose-tokens-chechbox::-webkit-scrollbar-thumb {
+  //   width: 2px;
+  //   height: 47px;
+  //   border-radius: 3px;
+  //   background-color: #2e0e52;
+  // }
+  // .scrollbar, .scrollbar-viewport, .scrollbar-systemscrolls, .scrollbar-contentwrap, .scrollbar-content {
+  //     bottom: 0px;
+  //     height: 47px;
+  //     left: 0px;
+  //     position: absolute;
+  //     right: 0px;
+  //     top: 0px;
+  //     width: auto;
+  // }
   .checkbox-item{
     font-weight: 600;
     line-height: 21px;

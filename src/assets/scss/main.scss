@@ -133,7 +133,6 @@ b, strong {
 	font-family: "Open Sans Semi Bold";
 	font-weight: 600;
 	line-height: 21px;
-	// box-shadow: 0 2px 19px rgba(0.29, 0, 0, 0.29);
 }
 .v-input--selection-controls__ripple {
 	width: 7px;
@@ -164,6 +163,9 @@ b, strong {
 #list-28, #list-35 {
 	background-color: #3b2665;
 }
+.v-text-field.v-text-field--solo .v-input__append-inner, .v-text-field.v-text-field--solo .v-input__prepend-inner{
+	visibility: visible;
+}
 .v-menu__content{
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.29) !important;
 }
@@ -172,6 +174,30 @@ b, strong {
 }
 .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)>.v-input__control>.v-input__slot{
 	box-shadow: none;
+}
+.chose-tokens-chechbox::-webkit-scrollbar {
+    margin-top: 15px;
+    width: 2px;
+    border-radius: 3px;
+}
+.chose-tokens-chechbox::-webkit-scrollbar-track {
+    background-color: #4d3779;
+    margin-top: 10px;
+}
+.chose-tokens-chechbox::-webkit-scrollbar-thumb {
+    width: 2px;
+    height: 27px;
+    border-radius: 3px;
+    background-color: #2e0e52;
+}
+.scrollbar, .scrollbar-viewport, .scrollbar-systemscrolls, .scrollbar-contentwrap, .scrollbar-content {
+	bottom: 0px;
+	height: 47px;
+	left: 0px;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: auto;
 }
 
 // responsive breakpoints
