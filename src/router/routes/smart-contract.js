@@ -1,4 +1,4 @@
-import LkSmartContract from '@/pages/LkSmartContract';
+import LkSmartContract from '@/pages/LkSmartContract/index';
 import { ifAuthenticated } from '../checkAuth';
 
 export default {
