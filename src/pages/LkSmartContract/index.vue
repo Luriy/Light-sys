@@ -7,25 +7,7 @@
       <!-- Chose options layout, manual&instruction btn's -->
       <v-row class="chose-option-box d-flex flex-row">
         <div class="d-flex flex-row">
-        <v-select
-          append-icon="@/assets/images/select-icon.svg"
-          :items="['Token','Stablecoin','Smart contract']"
-          label="Choose an option"
-          background-color="#3b2665"
-          item-color="white"
-          solo
-          height="64"
-          class="chose-option"
-        ></v-select>
-        <v-select
-          :items="['Testnet', 'Mainnet']"
-          label="Choose a network"
-          background-color="#3b2665"
-           item-color="white"
-          solo
-          height="64"
-          class="chose-network"
-        ></v-select>
+          <main-selects></main-selects>
         </div>
         <v-spacer></v-spacer>
           <div class="manual-btn-box">
@@ -116,6 +98,7 @@
               hide-details
               single-line
               type="text"
+              readonly
             ></v-text-field>
             <v-slider
               min="0.0000"
@@ -133,6 +116,7 @@
               <v-text-field
                 v-model="slider_discount"
                 class="discount-slider-label"
+                readonly
                 hide-details
                 single-line
                 type="number"
@@ -204,6 +188,7 @@
                 single-line
                 type="number"
                 suffix="%"
+                readonly
               ></v-text-field>
               <v-slider
                 min="0"
@@ -218,7 +203,7 @@
         </div>
 
           <v-spacer></v-spacer>
-        
+
         <div class="chose-tokens">
 
         <filter-selects></filter-selects>
@@ -291,11 +276,11 @@
 <script>
   import LkLayout from '@/layout/LkLayout'
   import FilterSelects from './FilterSelects';
-
+  import MainSelects from './MainSelects';
 
     export default {
         name: 'SmartContract',
-        components: { LkLayout, FilterSelects },
+        components: { LkLayout, FilterSelects, MainSelects },
         data: () => ({
           absolute: false,
           opacity: 0.46,
@@ -335,7 +320,7 @@
             { text: 'Alcohol', value: 'life', selected: false },
             { text: 'Alcohol', value: 'life', selected: false },
           ],
-          
+
         }),
         methods: {
           checkLength(index) {
@@ -344,7 +329,7 @@
               return index;
             }
           },
-          
+
         },
     }
 </script>
@@ -402,17 +387,6 @@
     margin: 0 auto;
     margin-top: 30px;
     margin-bottom: 15px;
-  }
-  .chose-option{
-    margin-right: 15px;
-    font-weight: 600;
-    line-height: 21px;
-    width: 314px;
-  }
-  .chose-network{
-    font-weight: 600;
-    line-height: 21px;
-    width: 314px;
   }
   .theme--light.v-card {
     background-color: #3b2665;
@@ -608,12 +582,9 @@
   .slider-block{
     width: 100%;
     height: 68px;
-    // p{
-    //   margin-bottom: 8%;
-    // }
     margin-bottom: 35px;
     position: relative;
-    
+
   }
   .slider-block input {
       margin-left: 0 !important;
@@ -629,9 +600,6 @@
     margin-top: 0;
     right: 0;
     margin-right: 5%;
-    input{
-      text-align: right;
-    }
   }
   .number-tokens-slider{
     width: 98%;
@@ -669,7 +637,6 @@
     right: 0;
     margin-bottom: 2%;
   }
-  
 
   // Checkbox Layout
 

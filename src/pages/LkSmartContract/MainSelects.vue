@@ -8,11 +8,11 @@
 			@change="handleToggleSelect(select.label)"
 			:items="select.options"
 			:label="select.label"
-			background-color="#4d3779"
+			background-color="#3b2665"
 			item-color="white"
 			solo
 			height="65"
-			class="select-token"
+			class="select-main"
 		>
 			<template v-slot:append>
 				<div class="select-toggler-wrapper position-absolute">
@@ -33,33 +33,13 @@ export default {
 		return {
 			selects: [
 				{
-					label: 'Burning',
-					options: ['Yes', 'No'],
+					label: 'Chose an option',
+					options: ['Token', 'Stablecoin', 'Smart contract'],
 					isSelected: false,
 				},
 				{
-					label: 'Additional issue',
-					options: ['Yes', 'No'],
-					isSelected: false,
-				},
-				{
-					label: 'Loyalty',
-					options: ['Yes', 'No'],
-					isSelected: false,
-				},
-				{
-					label: 'Escrow',
-					options: ['Yes', 'No'],
-					isSelected: false,
-				},
-				{
-					label: 'Finance',
-					options: ['IT', 'Retail', 'Finance'],
-					isSelected: false,
-				},
-				{
-					label: 'Score',
-					options: ['Restauraunt, cafe', 'Pharmacies', 'Salon of communication', 'Score'],
+					label: 'Chose a network',
+					options: ['Testnet', 'Mainnet'],
 					isSelected: false,
 				},
 			],
@@ -106,9 +86,10 @@ export default {
 	top: 50%;
 	transform: translateY(-50%);
 }
-.select-token {
+.select-main {
 	height: 65px;
-	position: relative;
+    position: relative;
+    width: 314px;
 }
 .v-input,
 .v-label {
