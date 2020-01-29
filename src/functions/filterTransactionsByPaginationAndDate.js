@@ -13,7 +13,10 @@ export default function filterTransactionsByPaginationAndDate({
 	transactions: _transactions = [],
 	transactionsPerPage,
 }) {
-	let transactions = [..._transactions]; // don't mutate
+	let transactions = [..._transactions].filter(
+		({ time }) => new Date(Date.parse(time)).getTime() === new Date(Date.parse(time)).getTime(),
+	);
+	// fixed mutating and filter 'Invalid date'
 	if (transactions.length) {
 		let transactionsWithPagination = new Array(
 			Math.ceil(transactions.length / transactionsPerPage),
@@ -33,7 +36,8 @@ export default function filterTransactionsByPaginationAndDate({
 		transactionsWithPagination = transactionsWithPagination.map((transactions) => {
 			let datesWithTransactions = [];
 			const dates = [];
-			transactions.forEach(({ time }) => {
+			transactions.forEach((transaction) => {
+				const { time } = transaction;
 				if (
 					dates.every(
 						(date) =>
@@ -55,12 +59,13 @@ export default function filterTransactionsByPaginationAndDate({
 					);
 				});
 
-				const addedTransObject = datesWithTransactions.find(
-					({ date: dateTrans }) =>
+				const addedTransObject = datesWithTransactions.find(({ date: dateTrans }) => {
+					return (
 						new Date(Date.parse(dateTrans)).getDate() === date.getDate() &&
 						new Date(Date.parse(dateTrans)).getMonth() === date.getMonth() &&
-						new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear(),
-				);
+						new Date(Date.parse(dateTrans)).getFullYear() === date.getFullYear()
+					);
+				});
 				if (addedTransObject) {
 					addedTransObject.transactions = [...addedTransObject.transactions, transaction];
 				} else {

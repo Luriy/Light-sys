@@ -9,7 +9,9 @@
 			</div>
 
 			<div class="wallet-address">
-				<div class="wallet-title">Your {{ currencyName }} Address</div>
+				<div class="wallet-title">
+					Your {{ getCryptoInfo($route.params.currency).fullName }} Address
+				</div>
 				<div class="wallet-address-value" @click="copyToClipboard">
 					<transition name="fade">
 						<p v-if="isCopyClipboardNotify">Copied to clipboard</p>
@@ -30,7 +32,7 @@
 						<p>Email This Address</p>
 					</div>
 					<a
-						:href="getWalletBlockchainLink($route.params.currency, $route.params.address)"
+						:href="getCryptoInfo($route.params.currency, $route.params.address).blockhainLink"
 						target="_blank"
 						class="icon"
 					>
@@ -46,7 +48,6 @@
 <script>
 import qrcode from 'qrcode';
 import LkLayout from '@/layout/LkLayout';
-import getWalletBlockchainLink from '@/functions/getWalletBlockchainLink';
 import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
@@ -58,22 +59,6 @@ export default {
 			qrCodeUrl: '@/assets/images/bitmap.png',
 			isCopyClipboardNotify: false,
 		};
-	},
-	computed: {
-		currencyName() {
-			let currencyName;
-
-			switch (this.$route.params.currency.toUpperCase()) {
-				case 'BTC':
-					return 'Bitcoin';
-				case 'ETH':
-					return 'Ethereum';
-				case 'LTC':
-					return 'Litecoin';
-				default:
-					throw 'Unknown currency';
-			}
-		},
 	},
 	mounted() {
 		qrcode
@@ -90,12 +75,14 @@ export default {
 			});
 	},
 	methods: {
-		getWalletBlockchainLink,
 		getCryptoInfo,
 		sendEmail() {
 			window.open(
-				`mailto:?subject=LightNet ${this.currencyName} Address&body=My LightNet ${this.currencyName} address is: ` +
-					this.$route.params.address,
+				`mailto:?subject=LightNet ${
+					this.getCryptoInfo(this.$route.params.currency).fullName
+				} Address&body=My LightNet ${
+					this.getCryptoInfo(this.$route.params.currency).fullName
+				} address is: ` + this.$route.params.address,
 			);
 		},
 		printWallet() {

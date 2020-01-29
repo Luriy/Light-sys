@@ -8,53 +8,53 @@
 			:types="operationsWithPagination.filter(({ transactions }) => transactions.length)"
 			:activeTransactionType="activeTransactionType"
 		></transactions-types>
-		<transition name="fade">
-			<div class="trans-list__wrapper">
+
+		<div class="trans-list__wrapper">
+			<div
+				class="trans-list"
+				v-for="(datesWithTransaction, index) in activeTransactions[activePage]"
+				:key="datesWithTransaction.date.toString()"
+			>
+				<div class="trans-date">
+					<p>{{ formatDate(datesWithTransaction.date) }}</p>
+					<transition name="fade">
+						<button
+							v-if="index === 0"
+							:disabled="activePage === 0"
+							class="arrow-block flex align-items-center absolute none-select"
+							:class="{ disabled: activePage === 0 }"
+							@click="throttle(handleClickMoveButton('top'), 1000)"
+						>
+							<img src="@/assets/images/arrow-up.svg" height="16" width="16" />
+						</button>
+					</transition>
+				</div>
 				<div
-					class="trans-list"
-					v-for="datesWithTransaction in activeTransactions[activePage]"
-					:key="datesWithTransaction.date.toString()"
+					class="trans-item operations-history-list-item"
+					v-for="(transaction, index) in datesWithTransaction.transactions"
+					:key="transaction.url + index"
+					:class="{
+						exchange: transaction.type === 'exchange',
+						active: openedOperation === transaction.url + transaction.type,
+						'plus-trans': transaction.type.includes('receive'),
+					}"
 				>
-					<div class="trans-date">
-						<p>{{ formatDate(datesWithTransaction.date) }}</p>
-						<transition name="fade">
-							<button
-								:disabled="activePage === 0"
-								class="arrow-block flex align-items-center absolute none-select"
-								:class="{ disabled: activePage === 0 }"
-								@click="throttle(handleClickMoveButton('top'), 1000)"
-							>
-								<img src="@/assets/images/arrow-up.svg" height="16" width="16" />
-							</button>
-						</transition>
-					</div>
-					<div
-						class="trans-item operations-history-list-item"
-						v-for="(transaction, index) in datesWithTransaction.transactions"
-						:key="transaction.url + index"
-						:class="{
-							exchange: transaction.type === 'exchange',
-							active: openedOperation === transaction.url + transaction.type,
-							'plus-trans': transaction.type.includes('receive'),
-						}"
-					>
-						<div class="trans-card">
-							<div
-								class="trans-top"
-								@click="handleOpenOperation(transaction)"
-								:class="{ exchange: transaction.type === 'exchange' }"
-							>
-								<status :transaction="transaction"></status>
-								<currency :transaction="transaction"></currency>
-								<paymentAddress :transaction="transaction"></paymentAddress>
-								<amount :transaction="transaction"></amount>
-							</div>
-							<info :transaction="transaction"></info>
+					<div class="trans-card">
+						<div
+							class="trans-top"
+							@click="handleOpenOperation(transaction)"
+							:class="{ exchange: transaction.type === 'exchange' }"
+						>
+							<status :transaction="transaction"></status>
+							<currency :transaction="transaction"></currency>
+							<paymentAddress :transaction="transaction"></paymentAddress>
+							<amount :transaction="transaction"></amount>
 						</div>
+						<info :transaction="transaction"></info>
 					</div>
 				</div>
 			</div>
-		</transition>
+		</div>
 
 		<transition name="fade">
 			<button
@@ -98,6 +98,9 @@ export default {
 			activePage: 0,
 			activeTransactionType: 'all',
 		};
+	},
+	mounted() {
+		console.log(this.operationsWithPagination);
 	},
 	computed: {
 		activeTransactions() {
@@ -178,16 +181,21 @@ export default {
 	cursor: pointer;
 }
 .trans-top {
-	display: grid;
-	@media screen and (min-width: 1550px) {
-		grid-template-columns: repeat(4, 25%) !important;
+	@media screen and (min-width: 1400px) {
+		display: grid !important;
+		grid-template-columns: 15% 20% 50% 15% !important;
 	}
-	display: flex;
+	display: grid !important;
+	grid-template-columns: 20% 15% 45% 20% !important;
+	@media screen and (max-width: 1100px) {
+		display: grid !important;
+		grid-template-columns: 20% 15% 40% 25% !important;
+	}
 	& > * {
 		width: 100% !important;
 	}
 	&.exchange {
-		display: grid;
+		display: grid !important;
 		grid-template-columns: repeat(4, max-content);
 	}
 }

@@ -58,7 +58,7 @@ export default {
 					commit(
 						'alerts/setNotification',
 						{
-							message: 'Unknown error',
+							message: 'Transfer is unavailable now',
 							status: 'error-status',
 							icon: 'close',
 						},
@@ -67,8 +67,8 @@ export default {
 					return { success: false };
 				}
 			});
-    },
-    GET_TRANSFER_TOKEN: ({ commit, dispatch }, user) => {
+		},
+		GET_TRANSFER_TOKEN: ({ commit, dispatch }, user) => {
 			return Axios({
 				url: BASE_URL,
 				method: 'POST',

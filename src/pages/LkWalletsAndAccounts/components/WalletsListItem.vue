@@ -22,7 +22,10 @@
 				</div>
 				<div class="code">
 					<div :class="['image', wallet.currency.toLowerCase()]">
-						<img :src="getCryptoInfo(wallet.currency).image.square" width="12" />
+						<img
+							:src="getCryptoInfo(wallet.currency).image.square"
+							:class="[wallet.currency.toLowerCase()]"
+						/>
 					</div>
 					<div class="flex flex-column">
 						<span :class="wallet.currency.toLowerCase()">{{
@@ -38,8 +41,11 @@
 					<div
 						class="progress"
 						:class="{
-							green: percentage[wallet.currency]['1h'].toFixed(2) >= 0.01,
-							red: percentage[wallet.currency]['1h'].toFixed(2) <= -0.01,
+							green:
+								percentage[wallet.currency] && percentage[wallet.currency]['1h'].toFixed(2) >= 0.01,
+							red:
+								percentage[wallet.currency] &&
+								percentage[wallet.currency]['1h'].toFixed(2) <= -0.01,
 						}"
 					>
 						<p>{{ percentage[wallet.currency] | percentage }}</p>
@@ -78,17 +84,15 @@ export default {
 	},
 	filters: {
 		percentage: (value) =>
-			value
-				? value['1h']
-					? `${
-							value['1h'].toFixed(2) < 0.01 && value['1h'].toFixed(2) > -0.01
-								? '0.00'
-								: value['1h'].toFixed(2) >= 0.01
-								? '+' + value['1h'].toFixed(2)
-								: value['1h'].toFixed(2)
-					  }%`
-					: ''
-				: '',
+			value && value['1h']
+				? `${
+						value['1h'].toFixed(2) < 0.01 && value['1h'].toFixed(2) > -0.01
+							? '0.00'
+							: value['1h'].toFixed(2) >= 0.01
+							? '+' + value['1h'].toFixed(2)
+							: value['1h'].toFixed(2)
+				  }%`
+				: '0.00%',
 	},
 	methods: {
 		getCryptoInfo,
@@ -126,4 +130,8 @@ export default {
 	},
 };
 </script>
-<style scoped></style>
+<style scoped lang="scss">
+.balance {
+	white-space: nowrap;
+}
+</style>

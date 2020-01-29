@@ -4,8 +4,7 @@ import { getAuthParams } from '@/functions/auth';
 import { BASE_URL } from '@/settings/config';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
 import getCryptoInfo from '@/functions/getCryptoInfo';
-import currensyList from '@/settings/currensyList';
-import cryptoCurrencies from '@/settings/currensyList';
+import currencyList from '@/settings/currencyList';
 
 const getPercentage = (responseData) => {
 	return {
@@ -60,6 +59,14 @@ const getTypes = (responseData, nodeStatusData) => {
 			price: responseData['LTC: '].litecoin.usd,
 			change24h: responseData['LTC: '].litecoin.usd_24h_change,
 			isAvailable: nodeStatusData.StatusNodeLTC === 0,
+		},
+		lightnet: {
+			name: 'Lightnet',
+			code: 'LTN',
+			codeMarkup: 'ltn',
+			price: responseData['LTN: '].lightnet.usd,
+			change24h: 0,
+			isAvailable: nodeStatusData.StatusNodeLTN === 0,
 		},
 	};
 };
@@ -191,28 +198,17 @@ export default {
 				},
 			});
 		},
-		GET_WALLETS({ commit, dispatch }) {
-			return Promise.all([
-				Axios({
-					url: BASE_URL,
-					method: 'POST',
-					params: {
-						Comand: 'StatusNode',
-					},
-				}),
-				Axios({
-					url: BASE_URL,
-					method: 'POST',
-					params: {
-						Comand: 'AllWalets',
-						...getAuthParams(),
-					},
-				}),
-			]).then(([{ data: nodeData }, { data }]) => {
+		GET_WALLETS: async ({ commit, dispatch }) => {
+			Axios({
+				url: BASE_URL,
+				method: 'POST',
+				params: {
+					Comand: 'AllWalets',
+					...getAuthParams(),
+				},
+			}).then(({ data }) => {
 				const errors = Object.values(parsePythonArray(data)['0'].Errors);
-				const responseNodesStatusData = parsePythonArray(nodeData)['1'].return;
 				const returnData = parsePythonArray(data)['1'].return;
-
 				if (errors.includes('Wrong password')) {
 					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
 						() => (window.location.href = `/login`),
@@ -232,16 +228,20 @@ export default {
 				} else {
 					const wallets = Object.keys(returnData)
 						.reduce((acc, walletCurrency) => {
-							if (Object.keys(currensyList).some((currency) => currency === walletCurrency)) {
+							if (
+								Object.keys(currencyList).some(
+									(currency) => currency === walletCurrency || walletCurrency === 'EOS',
+								)
+							) {
 								acc.push(
 									...Object.values(returnData[walletCurrency]).map((item) => ({
 										address: item.Walet,
 										status: item.Status,
 										currency: walletCurrency,
-										balance: item.Balance,
-										balanceUSD: item.BalanceUsd,
-										isAvailable: responseNodesStatusData[`StatusNode${walletCurrency}`] === 0,
-										group: decodeURI(item.Group),
+										balance: item.Balance || 0,
+										balanceUSD: item.BalanceUsd || 0,
+										isAvailable: returnData[`StatusNode${walletCurrency}`] === 0,
+										group: decodeURI(item.Group) || '',
 									})),
 								);
 							}
@@ -298,7 +298,7 @@ export default {
 			const parsedStatusNodeData = parsePythonArray(statusNodeData)['1'].return;
 
 			let results = await Promise.all(
-				Object.keys(cryptoCurrencies).map(async (currency) => {
+				Object.keys(currencyList).map(async (currency) => {
 					const { data: walletsData } = await Axios({
 						url: BASE_URL,
 						method: 'POST',
@@ -307,7 +307,7 @@ export default {
 							...getAuthParams(),
 						},
 					});
-					const parsedWalletsData = parsePythonArray(walletsData)['1'].return.Result;
+					const parsedWalletsData = parsePythonArray(walletsData)['1'].return.Result || [];
 
 					const result = Object.keys(parsedWalletsData)
 						.map((key) => {
@@ -316,10 +316,11 @@ export default {
 									({ address }) => address.toLowerCase() === key.toLowerCase(),
 								)
 							) {
-								const usdToCryptoCourse =
-									parsedInfoCryptsData[`${currency}: `][
-										getCryptoInfo(currency).fullName.toLowerCase()
-									].usd;
+								const usdToCryptoCourse = parsedInfoCryptsData[`${currency}: `]
+									? parsedInfoCryptsData[`${currency}: `][
+											getCryptoInfo(currency).fullName.toLowerCase()
+									  ].usd
+									: 0;
 								allUsdBalance += parsedWalletsData[key] * usdToCryptoCourse;
 
 								return {
@@ -348,33 +349,41 @@ export default {
 				'group/SET_GROUP_WALLETS',
 				rootState.group.groupWallets.map((group) => ({
 					...group,
-					wallets: group.wallets.map((wallet) => {
-						const currentWallet = results.find(
-							({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
-						);
-						return {
-							...wallet,
-							balance: currentWallet.balance,
-							balanceUSD: currentWallet.balanceUSD,
-							isAvailable: currentWallet.isAvailable,
-						};
-					}),
+					wallets: group.wallets
+						.map((wallet) => {
+							const currentWallet = results.find(
+								({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
+							);
+							return currentWallet
+								? {
+										...wallet,
+										balance: currentWallet.balance,
+										balanceUSD: currentWallet.balanceUSD,
+										isAvailable: currentWallet.isAvailable,
+								  }
+								: null;
+						})
+						.filter((item) => item),
 				})),
 				{ root: true },
 			);
 			commit(
 				'SET_WALLETS',
-				state.wallets.map((wallet) => {
-					const currentWallet = results.find(
-						({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
-					);
-					return {
-						...wallet,
-						balance: currentWallet.balance,
-						balanceUSD: currentWallet.balanceUSD,
-						isAvailable: currentWallet.isAvailable,
-					};
-				}),
+				state.wallets
+					.map((wallet) => {
+						const currentWallet = results.find(
+							({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
+						);
+						return currentWallet
+							? {
+									...wallet,
+									balance: currentWallet.balance,
+									balanceUSD: currentWallet.balanceUSD,
+									isAvailable: currentWallet.isAvailable,
+							  }
+							: null;
+					})
+					.filter((item) => item),
 			);
 			commit('SET_PERCENTAGE', getPercentage(parsedInfoCryptsData));
 			commit('SET_TYPES', getTypes(parsedInfoCryptsData, parsedStatusNodeData));

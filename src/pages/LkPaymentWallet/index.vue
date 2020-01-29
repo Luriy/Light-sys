@@ -6,8 +6,6 @@
 					<img
 						v-if="isShowLogotype($route.params.currency.toLowerCase())"
 						:src="getCryptoInfo($route.params.currency).image.corner"
-						alt
-						title
 					/>
 				</div>
 				<div class="wallet-send-amount">
@@ -121,17 +119,12 @@ export default {
 			isDescriptionOpened: false,
 			windowHandler: null,
 			operationsWithPagination: [],
-			updateSingleWalletTransactions: null,
 		};
 	},
 	mounted() {
 		const dropdown = document.querySelector('.social-links__modal');
 		this.windowHandler = ({ target }) => {
-			if (
-				!target.classList.contains('social-links__modal') &&
-				!dropdown.contains(target) &&
-				!target.classList.contains('social-links__button')
-			) {
+			if (!target.classList.contains('social-links__button')) {
 				this.isSocialLinksOpened = false;
 			}
 		};
@@ -147,7 +140,6 @@ export default {
 	},
 	beforeDestroy() {
 		window.removeEventListener('click', this.windowHandler);
-		clearInterval(this.updateSingleWalletTransactions);
 	},
 	computed: {
 		...mapGetters({
