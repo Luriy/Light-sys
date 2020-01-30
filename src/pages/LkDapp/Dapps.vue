@@ -7,18 +7,17 @@
 			</div>
 			<div class="game-categories-wrapper">
 				<game-categories
-					:activeCategory="activeCategory"
-					@onChangeCategory="handleClickCategory"
+					:activeCategory="activeGameCategory"
+					@onChangeCategory="handleChangeGameCategory"
 				></game-categories>
 			</div>
 
 			<div class="selects-block">
 				<button class="select">
 					<div class="flex align-items-center">
-						<span class="select__text">Categosries</span>
+						<span class="select__text">Categories</span>
 						<span class="select__informer">1200</span>
 					</div>
-
 					<select-toggler></select-toggler>
 				</button>
 				<button class="select">
@@ -50,7 +49,9 @@
 						</div>
 					</div>
 				</div>
-				<button class="games-more-btn">View more</button>
+				<div class="games-more-button">
+					<view-more-button @onClick="handleClickMoreButton"></view-more-button>
+				</div>
 			</div>
 		</div>
 	</transition>
@@ -60,27 +61,29 @@ import SelectToggler from '@/elements/SelectToggler';
 import games from '@/data/dapp/games';
 import getCryptoInfo from '@/functions/getCryptoInfo';
 import GameCategories from './GameCategories';
+import ViewMoreButton from '@/elements/ViewMoreButton';
 
 export default {
 	data() {
 		return {
 			search: '',
-			activeCategory: 'All categories',
+			activeGameCategory: 'All categories',
 			games,
 		};
 	},
 	components: {
 		SelectToggler,
 		GameCategories,
+		ViewMoreButton,
 	},
 	methods: {
 		getCryptoInfo,
-		handleClickCategory(category) {
-			this.activeCategory = category;
+		handleChangeGameCategory(category) {
+			this.activeGameCategory = category;
 		},
-	},
-	mounted() {
-		this.$store.dispatch('dapp/TEST_FERNET');
+		handleClickMoreButton() {
+			console.log('more button clicked');
+		},
 	},
 };
 </script>
@@ -184,19 +187,8 @@ export default {
 		}
 	}
 
-	&-more-btn {
-		width: 100%;
-		height: 48px;
-		border-radius: 8px;
-		border: 1px solid #3d1867;
-		background-color: transparent;
+	&-more-button {
 		margin-top: 40px;
-		text-align: center;
-		line-height: 48px;
-		opacity: 0.55;
-		color: #ffffff;
-		font-size: 14px;
-		font-weight: 600;
 	}
 }
 </style>

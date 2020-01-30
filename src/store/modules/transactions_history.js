@@ -36,59 +36,62 @@ export default {
 	},
 	actions: {
 		GET_CRYPTO_TRANSFER_TRANSACTIONS: async ({ commit, state }, { wallets, singleWallet }) => {
-			const transactions =
-				(
-					await Promise.all(
-						wallets.map(async (wallet) => {
-							const { data } = await Axios({
-								url: BASE_URL,
-								method: 'POST',
-								params: {
-									Comand: `AllTransactions${capitalizeFirstLetter(wallet.currency.toLowerCase())}`,
-									Wallet: wallet.address,
+			let transactions =
+				(await Promise.all(
+					wallets.map(async (wallet) => {
+						const { data } = await Axios({
+							url: BASE_URL,
+							method: 'POST',
+							params: {
+								Comand: `AllTransactions${capitalizeFirstLetter(wallet.currency.toLowerCase())}`,
+								Wallet: wallet.address,
+							},
+						});
+
+						const transactions = Object.values(parsePythonArray(data)[1].return).map((item) => {
+							const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
+							const transaction = {
+								source: {
+									To: item.address,
+									From: item.address,
+									...item,
 								},
-							});
-
-							const transactions = Object.values(parsePythonArray(data)[1].return).map((item) => {
-								const itemDate = new Date(parseInt(item.Timestamp, 10) * 1000);
-								const transaction = {
-									source: {
-										To: item.address,
-										From: item.address,
-										...item,
-									},
+								currency: wallet.currency,
+								address: item.address, // FIXME: Адрес не работает корректно
+								time: itemDate,
+								url: item.Url,
+								value: item.value ? (isNaN(item.value) ? parseInt(item.value) : item.value) : 0,
+								valueUSD:
+									item.valueUSD.toFixed(2) === Number(0).toFixed(2)
+										? 0.01
+										: item.valueUSD.toFixed(2),
+								currentWallet: {
+									address: wallet.address,
 									currency: wallet.currency,
-									address: item.address, // FIXME: Адрес не работает корректно
-									time: itemDate,
-									url: item.Url,
-									value: item.value ? (isNaN(item.value) ? parseInt(item.value) : item.value) : 0,
-									valueUSD: item.valueUSD,
-									currentWallet: {
-										address: wallet.address,
-										currency: wallet.currency,
-									},
-									confirmations: item.Confirmations || 0,
-									fee: item.Fee || 0,
-									feeUSD: item.FeeUsd || 0,
-									type: (item.From
-									? item.From.toLowerCase() === wallet.address.toLowerCase()
-									: item.value < 0)
-										? 'send'
-										: 'receive',
-								};
+								},
+								confirmations: item.Confirmations || 0,
+								fee: item.Fee || 0,
+								feeUSD: item.FeeUsd || 0,
+								type: (item.From
+								? item.From.toLowerCase() === wallet.address.toLowerCase()
+								: item.value < 0)
+									? 'send'
+									: 'receive',
+							};
 
-								return transaction;
-							});
+							return transaction;
+						});
 
-							localStorage.setItem(
-								`StateSingleTransactionsTransfer${wallet.address}`,
-								JSON.stringify(transactions),
-							);
+						localStorage.setItem(
+							`StateSingleTransactionsTransfer${wallet.address}`,
+							JSON.stringify(transactions),
+						);
 
-							return transactions;
-						}),
-					)
-				).flat() || [];
+						return transactions;
+					}),
+				)) || [];
+
+			transactions = transactions.flat();
 
 			singleWallet
 				? commit('SET_ALL_FILTERED_SINGLE_TRANSACTIONS', [
