@@ -137,45 +137,8 @@
             <p class="mb-2">Validity</p>
             <!-- Date picker -->
             <div class="input-validity d-flex flex-row justify-content-between">
+              <smart-date></smart-date>
               <!-- Example -->
-            <v-menu
-              v-model="menu1"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="dates[0]"
-                  readonly
-                  v-on="on"
-                  solo
-                  background-color="#4d3779"
-                  height="56px"
-                />
-              </template>
-              <v-date-picker v-model="dates[0]" @input="menu1"></v-date-picker>
-            </v-menu>
-            <v-menu
-              v-model="menu2"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="dates[1]"
-                  readonly
-                  v-on="on"
-                  solo
-                  background-color="#4d3779"
-                  height="56px"
-                />
-              </template>
-              <v-date-picker v-model="dates[1]" @input="menu2"></v-date-picker>
-            </v-menu>
             </div>
           </div>
           <!-- Cashback -->
@@ -277,10 +240,11 @@
   import LkLayout from '@/layout/LkLayout'
   import FilterSelects from './FilterSelects';
   import MainSelects from './MainSelects';
+  import SmartDate from './DatePicker';
 
     export default {
         name: 'SmartContract',
-        components: { LkLayout, FilterSelects, MainSelects },
+        components: { LkLayout, FilterSelects, MainSelects, SmartDate },
         data: () => ({
           absolute: false,
           opacity: 0.46,
@@ -291,9 +255,6 @@
           slider_decimal: '0.0000',
           slider_cashback: 0,
           dialog: false,
-          dates: ['2019.09.10', '2019.09.20'],
-          menu1: false,
-          menu2: false,
           dropdown_font: ['Arial', 'Calibri', 'Courier', 'Verdana'],
           types: [
             { text: 'The drinks', value: 'drinks', selected: false },
@@ -590,7 +551,7 @@
       margin-left: 0 !important;
     }
   .discount-slider-label{
-    width: 60px;
+    width: 64px;
     color: #af89ff;
     font-family: "Open Sans Semi Bold";
     font-size: 14px;
