@@ -199,82 +199,81 @@ export default {
 			});
 		},
 		GET_WALLETS: async ({ commit, dispatch }) => {
-			Axios({
+			const { data } = await Axios({
 				url: BASE_URL,
 				method: 'POST',
 				params: {
 					Comand: 'AllWalets',
 					...getAuthParams(),
 				},
-			}).then(({ data }) => {
-				const errors = Object.values(parsePythonArray(data)['0'].Errors);
-				const returnData = parsePythonArray(data)['1'].return;
-				if (errors.includes('Wrong password')) {
-					dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
-						() => (window.location.href = `/login`),
-					);
-					return { error: true };
-				} else if (errors.length) {
-					commit(
-						'alerts/setNotification',
-						{
-							message: errors[0],
-							status: 'error-status',
-							icon: 'close',
-						},
-						{ root: true },
-					);
-					return { error: true };
-				} else {
-					const wallets = Object.keys(returnData)
-						.reduce((acc, walletCurrency) => {
-							if (
-								Object.keys(currencyList).some(
-									(currency) => currency === walletCurrency || walletCurrency === 'EOS',
-								)
-							) {
-								acc.push(
-									...Object.values(returnData[walletCurrency]).map((item) => ({
-										address: item.Walet,
-										status: item.Status,
-										currency: walletCurrency,
-										balance: item.Balance || 0,
-										balanceUSD: item.BalanceUsd || 0,
-										isAvailable: returnData[`StatusNode${walletCurrency}`] === 0,
-										group: decodeURI(item.Group) || '',
-									})),
-								);
-							}
-
-							return acc;
-						}, [])
-						.filter(({ status }) => status !== 'Frozen');
-
-					// DEVELOPMENT CODE FOR UNFREEZE WALLETS
-
-					// result.forEach(item => {
-					//   return Axios({
-					//     url: BASE_URL,
-					//     method: 'POST',
-					//     params: {
-					//       Comand: `UnFrozenWalet${item.currency}`,
-					//       Walet: item.address,
-					//       ...getAuthParams()
-					//     }
-					//   })
-					// })
-
-					commit('SET_WALLETS', wallets);
-
-					commit(
-						'group/SET_AND_TRANSFORM_WALLETS_TO_GROUPS',
-						{ group: returnData.Group, wallets },
-						{ root: true },
-					);
-
-					return { wallets };
-				}
 			});
+			const errors = Object.values(parsePythonArray(data)['0'].Errors);
+			const returnData = parsePythonArray(data)['1'].return;
+			if (errors.includes('Wrong password')) {
+				dispatch(`${AUTH_LOGOUT}`, {}, { root: true }).then(
+					() => (window.location.href = `/login`),
+				);
+				return { error: true };
+			} else if (errors.length) {
+				commit(
+					'alerts/setNotification',
+					{
+						message: errors[0],
+						status: 'error-status',
+						icon: 'close',
+					},
+					{ root: true },
+				);
+				return { error: true };
+			} else {
+				const wallets = Object.keys(returnData)
+					.reduce((acc, walletCurrency) => {
+						if (
+							Object.keys(currencyList).some(
+								(currency) => currency === walletCurrency || walletCurrency === 'EOS',
+							)
+						) {
+							acc.push(
+								...Object.values(returnData[walletCurrency]).map((item) => ({
+									address: item.Walet,
+									status: item.Status,
+									currency: walletCurrency,
+									balance: item.Balance || 0,
+									balanceUSD: item.BalanceUsd || 0,
+									isAvailable: returnData[`StatusNode${walletCurrency}`] === 0,
+									group: decodeURI(item.Group) || '',
+								})),
+							);
+						}
+
+						return acc;
+					}, [])
+					.filter(({ status }) => status !== 'Frozen');
+
+				// DEVELOPMENT CODE FOR UNFREEZE WALLETS
+
+				// result.forEach(item => {
+				//   return Axios({
+				//     url: BASE_URL,
+				//     method: 'POST',
+				//     params: {
+				//       Comand: `UnFrozenWalet${item.currency}`,
+				//       Walet: item.address,
+				//       ...getAuthParams()
+				//     }
+				//   })
+				// })
+
+				commit('SET_WALLETS', wallets);
+
+				commit(
+					'group/SET_AND_TRANSFORM_WALLETS_TO_GROUPS',
+					{ group: returnData.Group, wallets },
+					{ root: true },
+				);
+
+				return { wallets };
+			}
 		},
 		UPDATE_WALLETS_AND_TYPES: async ({ commit, state, rootState }) => {
 			let allUsdBalance = 0;
@@ -345,46 +344,45 @@ export default {
 					state.wallets.some((wallet) => wallet.address.toLowerCase() === address.toLowerCase()),
 				);
 
-			commit(
-				'group/SET_GROUP_WALLETS',
-				rootState.group.groupWallets.map((group) => ({
-					...group,
-					wallets: group.wallets
-						.map((wallet) => {
-							const currentWallet = results.find(
-								({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
-							);
-							return currentWallet
-								? {
-										...wallet,
-										balance: currentWallet.balance,
-										balanceUSD: currentWallet.balanceUSD,
-										isAvailable: currentWallet.isAvailable,
-								  }
-								: null;
-						})
-						.filter((item) => item),
-				})),
-				{ root: true },
-			);
-			commit(
-				'SET_WALLETS',
-				state.wallets
-					.map((wallet) => {
-						const currentWallet = results.find(
-							({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
-						);
-						return currentWallet
-							? {
-									...wallet,
-									balance: currentWallet.balance,
-									balanceUSD: currentWallet.balanceUSD,
-									isAvailable: currentWallet.isAvailable,
-							  }
-							: null;
-					})
-					.filter((item) => item),
-			);
+			const groupWallets = rootState.group.groupWallets.map((group) => ({
+				...group,
+				wallets: group.wallets.map((wallet) => {
+					const currentWallet = results.find(
+						({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
+					);
+					return currentWallet
+						? {
+								...wallet,
+								balance: currentWallet.balance,
+								balanceUSD: currentWallet.balanceUSD,
+								isAvailable: currentWallet.isAvailable,
+						  }
+						: null;
+				}),
+			}));
+
+			if (groupWallets.every((item) => item)) {
+				commit('group/SET_GROUP_WALLETS', groupWallets, { root: true });
+			}
+
+			const wallets = state.wallets.map((wallet) => {
+				const currentWallet = results.find(
+					({ address }) => wallet.address.toLowerCase() === address.toLowerCase(),
+				);
+				return currentWallet
+					? {
+							...wallet,
+							balance: currentWallet.balance,
+							balanceUSD: currentWallet.balanceUSD,
+							isAvailable: currentWallet.isAvailable,
+					  }
+					: null;
+			});
+
+			if (wallets.every((item) => item)) {
+				commit('SET_WALLETS', wallets);
+			}
+
 			commit('SET_PERCENTAGE', getPercentage(parsedInfoCryptsData));
 			commit('SET_TYPES', getTypes(parsedInfoCryptsData, parsedStatusNodeData));
 		},

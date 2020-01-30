@@ -28,7 +28,7 @@
 				:class="{ active: activeDapps === 'All Dapps' }"
 				@click="$emit('onChangeDapps', 'All Dapps')"
 			>
-				<span class="dapps-button-text">All Dapps</span>
+				All Dapps
 			</button>
 			<button
 				class="dapps-button"
@@ -46,6 +46,7 @@ import getCryptoInfo from '@/functions/getCryptoInfo';
 
 export default {
 	props: ['activeCategory', 'activeDapps'],
+
 	data() {
 		return {};
 	},
@@ -121,19 +122,36 @@ export default {
 		color: #ffffff;
 		font-size: 12px;
 		font-weight: 600;
-		border-radius: 20px;
+
 		background-color: transparent;
 		padding: 0 10px;
-		transition: 0.3s;
-		&:hover {
+		position: relative;
+		z-index: 5;
+		&:before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			transition: 0.3s;
 			background-image: linear-gradient(270deg, #8e6ee4 0%, #d268bc 100%);
-			opacity: 0.4;
+			opacity: 0;
+			border-radius: 20px;
+			z-index: -100;
+		}
+		&:hover {
+			&:before {
+				opacity: 0.4;
+			}
+		}
+		&.active {
+			&:before {
+				opacity: 1;
+			}
 		}
 		&:not(:last-of-type) {
 			margin-right: 15px;
-		}
-		&.active {
-			background-image: linear-gradient(270deg, #8e6ee4 0%, #d268bc 100%);
 		}
 		&-text {
 			opacity: 1 !important;

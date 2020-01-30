@@ -34,7 +34,7 @@
 							: transaction.type.includes('send') && transaction.value > 0
 							? '-'
 							: ''
-					}}{{ formatCurrency(transaction.valueUSD, '$') }} USD</span
+					}}${{ transaction.valueUSD }} USD</span
 				>
 			</div>
 		</div>
