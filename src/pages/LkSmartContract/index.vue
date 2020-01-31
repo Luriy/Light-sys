@@ -240,13 +240,7 @@
       </div>
     </v-row>
       <!-- Confirm layout -->
-      <v-row class="confirm-layout">
-        <p>By creating a token, you confirm that:
-          <br>I) You will not use it for fraudulent purposes;
-          <br>II) You do not duplicate in the name of the token in full or in part the name of existing cryptocurrencies or the names of well-known
-        </p>
-        <img src="@/assets/images/confirm-icon.svg" />
-      </v-row>
+      <token-terms></token-terms>
       <!-- Deploy button -->
       <v-row class="deploy-btn-layout">
         <v-btn
@@ -291,11 +285,11 @@
 <script>
   import LkLayout from '@/layout/LkLayout'
   import FilterSelects from './FilterSelects';
-
+  import TokenTerms from './TokenTerms';
 
     export default {
         name: 'SmartContract',
-        components: { LkLayout, FilterSelects },
+        components: { LkLayout, FilterSelects, TokenTerms },
         data: () => ({
           absolute: false,
           opacity: 0.46,
@@ -354,7 +348,6 @@
   .smart-contract{
     width: 100%;
     max-width: 2048px;
-    height: 1116px;
   }
   .container {
     padding: 0;
@@ -660,12 +653,11 @@
   // Second block (chose tokens)
 
   .chose-tokens{
-    width: 70%;
+    width: 100%;
     height: 100%;
     border-radius: 14px;
     background-color: #3b2665;
     padding: 20px 20px 25px 20px;
-    position: absolute;
     right: 0;
     margin-bottom: 2%;
   }
@@ -732,33 +724,7 @@
   // -----------------------------------------------
   // Confirm layout, Deploy button & Info layout
   // -----------------------------------------------
-  .confirm-layout{
-    width: 100%;
-    height: 94px;
-    border-radius: 8px;
-    border: 1px solid #4d3779;
-    margin: 0 auto;
-    margin-bottom: 20px;
-    position: relative;
-    img{
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      background-color: #3b2665;
-      position: absolute;
-      cursor: pointer;
-      margin: 32px 32px 33px 95%;
-    }
-    p{
-      width: 774px;
-      height: 65px;
-      opacity: 0.5;
-      font-size: 12px;
-      line-height: 21px;
-      margin: 15px 144px 14px 15px;
-      position: absolute;
-    }
-  }
+  
   .deploy-btn-layout{
     width: 420px;
     height: 50px;
