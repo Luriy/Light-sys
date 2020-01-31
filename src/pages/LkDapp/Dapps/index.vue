@@ -96,36 +96,6 @@ export default {
 .game-categories-wrapper {
 	margin: 20px 0;
 }
-.selects-block {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	grid-column-gap: 20px;
-	.select {
-		height: 56px;
-		border-radius: 14px;
-		background-color: #4d3779;
-		padding: 0 17px;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		&__text {
-			color: #ffffff;
-			font-weight: 600;
-			line-height: 1;
-		}
-		&__informer {
-			height: 25px;
-			margin-left: 9px;
-			line-height: 25px;
-			border-radius: 8px;
-			background-color: #341a51;
-			color: #ffffff;
-			font-size: 14px;
-			font-weight: 600;
-			padding: 0 8px;
-		}
-	}
-}
 .games {
 	border-radius: 47px 47px 0 48px;
 	background-color: #1e0639;
