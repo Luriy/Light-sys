@@ -7,27 +7,7 @@
       <!-- Chose options layout, manual&instruction btn's -->
       <v-row class="chose-option-box d-flex flex-row">
         <div class="d-flex flex-row">
-          <v-overflow-btn
-          :items="['Token','Stablecoin','Smart contract']"
-          label="Choose an option"
-          color="#4c3677"
-          background-color="#3b2665"
-          item-color="grey"
-          solo-inverted
-          height="64"
-          class="chose-option"
-          clear-icon
-        ></v-overflow-btn>
-        <v-overflow-btn
-          :items="['Testnet', 'Mainnet']"
-          label="Choose a network"
-          color="#4c3677"
-          background-color="#3b2665"
-          item-color="grey"
-          solo-inverted
-          height="64"
-          class="chose-network"
-        ></v-overflow-btn>
+          <main-selects></main-selects>
         </div>
         <v-spacer></v-spacer>
           <div class="manual-btn-box">
@@ -60,6 +40,7 @@
                 color="#ffffff"
                 class="input-title"
                 style="margin-right:15px;"
+                autofocus
               />
               <v-text-field
                 label="Enter a short name"
@@ -90,7 +71,7 @@
           <div class="number-tokens-block">
             <div>
               <v-text-field
-                v-model="slider"
+                v-model="sliderFormatted"
                 solo
                 height="60px"
                 background-color="#4d3779"
@@ -116,11 +97,13 @@
               class="discount-slider-label"
               hide-details
               single-line
-              type="number"
+              type="text"
+              readonly
             ></v-text-field>
             <v-slider
-              min="0"
-              max="130"
+              min="0.0000"
+              step="0.0001"
+              max="100.0000"
               color="#a67ff6"
               class="number-tokens-slider"
               track-fill-color="#a67ff6"
@@ -133,6 +116,7 @@
               <v-text-field
                 v-model="slider_discount"
                 class="discount-slider-label"
+                readonly
                 hide-details
                 single-line
                 type="number"
@@ -152,30 +136,12 @@
           <div class="validity-block">
             <p class="mb-2">Validity</p>
             <!-- Date picker -->
-            <div class="input-validity d-flex flex-row">
+            <div class="input-validity d-flex flex-row justify-content-between">
+              <smart-date></smart-date>
               <!-- Example -->
-            <v-menu
-              v-model="menu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="dateRangeText"
-                  readonly
-                  v-on="on"
-                  solo
-                  background-color="#4d3779"
-                  height="56px"
-                />
-              </template>
-              <v-date-picker v-model="dates" range @input="menu"></v-date-picker>
-            </v-menu>
             </div>
           </div>
+          <!-- Cashback -->
           <div class="slider-block mt-5">
             <p>Cashback</p>
               <v-text-field
@@ -185,6 +151,7 @@
                 single-line
                 type="number"
                 suffix="%"
+                readonly
               ></v-text-field>
               <v-slider
                 min="0"
@@ -201,80 +168,8 @@
           <v-spacer></v-spacer>
 
         <div class="chose-tokens">
-            <div class="select-tokens-inside d-flex flex-row">
-              <v-select
-                :items="[1,3,4,5]"
-                label="Burning"
-                color="#F44336"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-first-token"
-              ></v-select>
-                <!-- <v-overflow-btn
-                  :items="[1,3,4,5]"
-                  label="Burning"
-                  color="#F44336"
-                  background-color="#4d3779"
-                  item-color="grey"
-                  solo
-                  height="60"
-                  class="chose-option"
-                  clear-icon
-                ></v-overflow-btn> -->
-                <v-spacer></v-spacer>
-              <v-select
-                :items="[1,3,4,5]"
-                label="Additional issue"
-                color="#F44336"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-last-token"
-              ></v-select>
-            </div>
-            <div class="select-tokens-inside d-flex flex-row">
-              <v-select
-                :items="[1,3,4,5]"
-                label="Loyalty"
-                color="#F44336"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-first-token"
-              ></v-select>
-                <v-spacer></v-spacer>
-              <v-select
-                :items="[1,3,4,5]"
-                label="Escrow"
-                color="#F44336"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-last-token"
-              ></v-select>
-            </div>
-            <div class="select-tokens-inside d-flex flex-row">
-              <v-select
-                :items="[1,3,4,5]"
-                label="Finance"
-                color="#F44336"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-first-token"
-              ></v-select>
-                <v-spacer></v-spacer>
-              <v-select
-                :items="[1,3,4,5]"
-                label="Score"
-                color="#F44336"
-                background-color="#4d3779"
-                solo
-                height="65"
-                class="select-last-token"
-              ></v-select>
-            </div>
+
+        <filter-selects></filter-selects>
             <!-- Checkbox layout ++ -->
         <div class="chose-tokens-scroll">
             <div class="chose-tokens-chechbox">
@@ -308,28 +203,30 @@
           height="50"
           @click="overlay = !overlay"
         >
-          <p>Deploy</p>
+          Deploy
         </v-btn>
-        <v-overlay
-          :absolute="absolute"
-          :opacity="opacity"
-          :value="overlay"
-          :z-index="zIndex"
-        >
-          <div 
-            class="deploy-btn-layout__succes"
+        <div @click="overlay = false" v-on="timeOut">
+          <v-overlay
+            :absolute="absolute"
+            :opacity="opacity"
+            :value="overlay"
+            :z-index="zIndex"
             @click="overlay = false"
           >
-            <div class="deploy-btn-layout__succes__label">
-              <v-row><p>Succes!</p></v-row>
-              <v-row><span>Successful token deployment</span></v-row>
-              <v-row><a href="#">0xfdjikfsdk4327423905ksdfd</a></v-row>
+            <div
+              class="deploy-btn-layout__succes"
+            >
+              <div class="deploy-btn-layout__succes__label">
+                <v-row><p>Succes!</p></v-row>
+                <v-row><span>Successful token deployment</span></v-row>
+                <v-row><a href="#">0xfdjikfsdk4327423905ksdfd</a></v-row>
+              </div>
+              <div class="deploy-btn-layout__succes__icon">
+                <img src="@/assets/images/tick-bigger.svg" />
+              </div>
             </div>
-            <div class="deploy-btn-layout__succes__icon">
-              <img src="@/assets/images/tick-bigger.svg" />
-            </div>
-          </div>
-        </v-overlay>
+          </v-overlay>
+        </div>
       </v-row>
       <!-- Info layout -->
       <v-row class="info-layout">
@@ -341,21 +238,25 @@
 
 <script>
   import LkLayout from '@/layout/LkLayout'
+  import FilterSelects from './FilterSelects';
+  import MainSelects from './MainSelects';
+  import SmartDate from './DatePicker';
 
     export default {
         name: 'SmartContract',
-        components: { LkLayout },
+        components: { LkLayout, FilterSelects, MainSelects, SmartDate },
         data: () => ({
           absolute: false,
           opacity: 0.46,
           overlay: false,
           zIndex: 5,
           slider: 0,
+          sliderFormatted: this.label,
+          isDescriptionOpened: false,
           slider_discount: 0,
-          slider_decimal: 0,
+          slider_decimal: '0.0000',
           slider_cashback: 0,
-          dates: ['2019-09-10', '2019-09-20'],
-          menu: false,
+          dialog: false,
           dropdown_font: ['Arial', 'Calibri', 'Courier', 'Verdana'],
           types: [
             { text: 'The drinks', value: 'drinks', selected: false },
@@ -383,6 +284,11 @@
             { text: 'Alcohol', value: 'life', selected: false },
           ],
         }),
+        watch: {
+          slider (val) {
+            this.sliderFormatted = this.slider
+          }
+        },
         methods: {
           checkLength(index) {
             if (index < this.types.length - 1) {
@@ -391,16 +297,13 @@
             }
           },
         },
-        computed: {
-          dateRangeText () {
-            return this.dates.join(' ~ ')
-          },
+        beforeDestroy() {
+          window.removeEventListener('click', this.windowHandler);
         },
     }
 </script>
 
 <style scoped lang="scss">
-  @import "../assets/scss/common";
 
   .smart-contract{
     width: 100%;
@@ -454,24 +357,16 @@
     margin-top: 30px;
     margin-bottom: 15px;
   }
-  .chose-option{
-    margin-right: 15px;
-    font-weight: 600;
-    line-height: 21px;
-    width: 314px;
-  }
-  .chose-network{
-    font-weight: 600;
-    line-height: 21px;
-    width: 314px;
-  }
   .theme--light.v-card {
     background-color: #3b2665;
     color: rgba(0,0,0,.87);
   }
   .v-select-list[data-v-6472e3c8] {
     border-radius: 17px;
-    box-shadow: 0 2px 19px rgba(0,0,0,0.29);
+    // box-shadow: 0 2px 19px rgba(0,0,0,0.29);
+  }
+  .v-input__icon{
+    background-image: src('@/assets/images/select-icon.svg');
   }
   .manual-btn-box{
     width: 132px;
@@ -578,8 +473,10 @@
     height: 60px;
     font-weight: 600;
     line-height: 21px;
-    opacity: 0.5;
+    // opacity: 0.5;
     color: #ffffff;
+    // padding-bottom: 19px;
+    box-shadow: none;
   }
   .input-description{
     margin: 0 auto;
@@ -636,7 +533,6 @@
     width: 98%;
     font-weight: 600;
     line-height: 21px;
-    opacity: 0.5;
     position: absolute;
   }
   .input-slider-text{
@@ -654,14 +550,15 @@
   .slider-block{
     width: 100%;
     height: 68px;
-    // p{
-    //   margin-bottom: 8%;
-    // }
     margin-bottom: 35px;
     position: relative;
+
   }
+  .slider-block input {
+      margin-left: 0 !important;
+    }
   .discount-slider-label{
-    width: 60px;
+    width: 64px;
     color: #af89ff;
     font-family: "Open Sans Semi Bold";
     font-size: 14px;
@@ -671,9 +568,6 @@
     margin-top: 0;
     right: 0;
     margin-right: 5%;
-    input{
-      text-align: right;
-    }
   }
   .number-tokens-slider{
     width: 98%;
@@ -688,9 +582,13 @@
     height: 82px;
   }
   .input-validity{
-    width: 98%;
+    margin-top: -6px;
+    width: 100%;
     height: 56px;
     position: relative;
+    .v-input {
+      max-width: 48% !important;
+    }
     p{
       margin-bottom: 10px ;
     }
@@ -707,24 +605,6 @@
     position: absolute;
     right: 0;
     margin-bottom: 2%;
-  }
-  .select-tokens-inside{
-    width: 100%;
-    height: 61px;
-    padding-right: 14px;
-    padding-left: 14px;
-    padding: 0;
-    margin-bottom: 2%;
-    font-weight: 600;
-    line-height: 21px;
-  }
-  .select-first-token{
-    width: 45%;
-    height: 65px;
-  }
-  .select-last-token{
-    width: 45%;
-    height: 65px;
   }
 
   // Checkbox Layout
@@ -755,30 +635,15 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
-  .chose-tokens-chechbox::-webkit-scrollbar {
-    margin-top: 15px;
-    width: 2px;
-    border-radius: 3px;
-  }
-  .chose-tokens-chechbox::-webkit-scrollbar-track {
-    background-color: #4d3779;
-    margin-top: 10px;
-  }
-  .chose-tokens-chechbox::-webkit-scrollbar-thumb {
-    width: 2px;
-    height: 47px;
-    border-radius: 3px;
-    background-color: #2e0e52;
-  }
-  .scrollbar, .scrollbar-viewport, .scrollbar-systemscrolls, .scrollbar-contentwrap, .scrollbar-content {
-      bottom: 0px;
-      height: 47px;
-      left: 0px;
-      position: absolute;
-      right: 0px;
-      top: 0px;
-      width: auto;
-  }
+  // .scrollbar, .scrollbar-viewport, .scrollbar-systemscrolls, .scrollbar-contentwrap, .scrollbar-content {
+  //     bottom: 0px;
+  //     height: 47px;
+  //     left: 0px;
+  //     position: absolute;
+  //     right: 0px;
+  //     top: 0px;
+  //     width: auto;
+  // }
   .checkbox-item{
     font-weight: 600;
     line-height: 21px;
