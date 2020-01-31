@@ -4,7 +4,7 @@ import Dapp from '@/pages/LkDapp/index';
 export default [
 	{
 		path: '/dapp',
-		redirect: '/dapp/top-25',
+		redirect: '/dapp/market',
 	},
 	{
 		path: '/dapp/:category',

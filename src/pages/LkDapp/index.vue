@@ -14,7 +14,7 @@ import LkLayout from '@/layout/LkLayout';
 import TopBar from './TopBar';
 import Top25 from './Top25';
 import Market from './Market/index';
-import Dapps from './Dapps';
+import Dapps from './Dapps/index';
 import Community from './Community';
 
 export default {

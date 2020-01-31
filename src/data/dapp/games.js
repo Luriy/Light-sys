@@ -1,6 +1,6 @@
 export default [
 	{
-		name: 'CryptoKitties',
+		name: 'DLive',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Tools',
@@ -24,7 +24,7 @@ export default [
 		},
 	},
 	{
-		name: 'CryptoKitties',
+		name: 'DLive',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Tools',
@@ -48,7 +48,7 @@ export default [
 		},
 	},
 	{
-		name: 'CryptoKitties',
+		name: 'Betfury',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Tools',
@@ -72,7 +72,7 @@ export default [
 		},
 	},
 	{
-		name: 'Lovecoin',
+		name: 'Betfury',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Tools',
@@ -144,7 +144,7 @@ export default [
 		},
 	},
 	{
-		name: 'CryptoKitties',
+		name: 'Betfury',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Tools',
@@ -168,7 +168,7 @@ export default [
 		},
 	},
 	{
-		name: 'CryptoKitties',
+		name: 'Betfury',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Tools',
@@ -192,7 +192,7 @@ export default [
 		},
 	},
 	{
-		name: 'CryptoKitties',
+		name: 'Wink',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Tools',
@@ -216,7 +216,7 @@ export default [
 		},
 	},
 	{
-		name: 'CryptoKitties',
+		name: 'Wink',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Game',
@@ -240,7 +240,7 @@ export default [
 		},
 	},
 	{
-		name: 'CryptoKitties',
+		name: 'Wink',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Game',
@@ -264,7 +264,7 @@ export default [
 		},
 	},
 	{
-		name: 'CryptoKitties',
+		name: 'Wink',
 		description: 'Cryptocollectible kitties on blockchain',
 		image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
 		category: 'Game',

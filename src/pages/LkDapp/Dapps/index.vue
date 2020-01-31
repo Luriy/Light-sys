@@ -1,4 +1,4 @@
-<template>
+x<template>
 	<transition name="fade-medium">
 		<div class="flex flex-column">
 			<div class="search-input-wrapper">
@@ -12,23 +12,7 @@
 				></game-categories>
 			</div>
 
-			<div class="selects-block">
-				<button class="select">
-					<div class="flex align-items-center">
-						<span class="select__text">Categories</span>
-						<span class="select__informer">1200</span>
-					</div>
-					<select-toggler></select-toggler>
-				</button>
-				<button class="select">
-					<span class="select__text">Blockchains</span>
-					<select-toggler></select-toggler>
-				</button>
-				<button class="select">
-					<span class="select__text">Sort by Relevance</span>
-					<select-toggler></select-toggler>
-				</button>
-			</div>
+			<filter-selects></filter-selects>
 			<div class="games">
 				<div class="games-items">
 					<div class="game flex" v-for="(game, index) in games" :key="game.name + index">
@@ -57,11 +41,11 @@
 	</transition>
 </template>
 <script>
-import SelectToggler from '@/elements/SelectToggler';
 import games from '@/data/dapp/games';
 import getCryptoInfo from '@/functions/getCryptoInfo';
-import GameCategories from './GameCategories';
+import GameCategories from '../GameCategories';
 import ViewMoreButton from '@/elements/ViewMoreButton';
+import FilterSelects from './FilterSelects';
 
 export default {
 	data() {
@@ -72,9 +56,9 @@ export default {
 		};
 	},
 	components: {
-		SelectToggler,
 		GameCategories,
 		ViewMoreButton,
+		FilterSelects,
 	},
 	methods: {
 		getCryptoInfo,

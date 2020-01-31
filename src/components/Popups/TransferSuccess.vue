@@ -12,10 +12,10 @@
 			</p>
 			<div class="flex">
 				<p class="from" :class="currency.toLowerCase()">
-					{{ formatCurrency(cryptoCurrencyAmount, '', 5) }}
+					{{ formatMoney(cryptoCurrencyAmount, 'crypto') }}
 					{{ currency }}
 				</p>
-				<p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
+				<p class="payment-usd">${{ formatMoney(currencyAmount, 'currency') }}</p>
 			</div>
 			<img :src="getCryptoInfo(currency).image.arrow" class="send-arrow" />
 			<p class="address">{{ paymentAddress }}</p>
@@ -47,6 +47,7 @@
 <script>
 import LkPopUp from '@/layout/LkPopUp';
 import getCryptoInfo from '@/functions/getCryptoInfo';
+import formatMoney from '@/functions/formatMoney';
 
 export default {
 	components: {
@@ -64,6 +65,7 @@ export default {
 	],
 	methods: {
 		getCryptoInfo,
+		formatMoney,
 	},
 	computed: {
 		sendArrow() {
