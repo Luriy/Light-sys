@@ -25,13 +25,16 @@ html body .card-list-delete-popup {
 		margin-bottom: 30px !important;
 	}
 	&__wrapper {
-		max-width: 250px !important;
 		margin: 0 auto;
+		padding: 0 25px;
 	}
 	.button-wrapper {
 		width: 120px !important;
 		height: 50px !important;
 		border-radius: 28px !important;
+		&:first-of-type {
+			margin-right: 10px;
+		}
 	}
 	.cancel {
 		background-color: #3b2665 !important;

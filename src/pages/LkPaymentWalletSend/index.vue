@@ -164,6 +164,7 @@ import LkTransferConfirmationPopup from '@/components/Popups/TransferConfirmatio
 import LkTransferSuccessPopup from '@/components/Popups/TransferSuccess';
 import { AUTH_LOGOUT } from '@/store/actions/auth';
 import EnterCode from '@/components/EnterCode';
+import formatMoney from '@/functions/formatMoney';
 
 export default {
 	components: {
@@ -178,8 +179,6 @@ export default {
 		return {
 			cryptoCurrencyAmount: null,
 			currencyAmount: null,
-			remainingCurrency: Number(0).toFixed(2),
-			remainingCryptoCurrency: Number(0).toFixed(2),
 			paymentAddress: null,
 			activeButton: null,
 			isSelectWalletOpened: false,
@@ -208,9 +207,6 @@ export default {
 		this.updateTypesTimer = setInterval(() => {
 			this.$store.dispatch('wallet/GET_TYPES');
 		}, 5000);
-
-		this.remainingCurrency = this.currentWallet.balanceUSD.toFixed(2);
-		this.remainingCryptoCurrency = this.currentWallet.balance.toFixed(5);
 	},
 	beforeDestroy() {
 		window.removeEventListener('click', this.windowHandler);
@@ -242,14 +238,30 @@ export default {
 				cryptoCurrency: this.currentWallet.balance,
 			};
 		},
+		remainingCurrency() {
+			const currency = Number(this.initialBalance.currency);
+			const currencyAmount = Number(this.currencyAmount);
+			if (currency - currencyAmount < 0) {
+				return 0;
+			} else {
+				return formatMoney(currency - currencyAmount, 'currency');
+			}
+		},
+		remainingCryptoCurrency() {
+			const cryptoCurrency = Number(this.initialBalance.cryptoCurrency);
+			const cryptoCurrencyAmount = Number(this.cryptoCurrencyAmount);
+			if (cryptoCurrency - cryptoCurrencyAmount < 0) {
+				return 0;
+			} else {
+				return formatMoney(cryptoCurrency - cryptoCurrencyAmount, 'crypto');
+			}
+		},
 	},
 	methods: {
 		getCryptoInfo,
 		clearData() {
 			this.cryptoCurrencyAmount = null;
 			this.currencyAmount = null;
-			this.remainingCurrency = '0.00';
-			this.remainingCryptoCurrency = '0.00';
 			this.paymentAddress = null;
 			this.activeButton = null;
 			this.isSelectWalletOpened = false;
@@ -267,19 +279,6 @@ export default {
 		},
 		handleCurrencyAmount() {
 			this.cryptoCurrencyAmount = this.currencyToCrypto(this.currencyAmount);
-
-			const remainingCryptoCurrency = (
-				this.initialBalance.cryptoCurrency - this.cryptoCurrencyAmount
-			).toFixed(5);
-			this.remainingCryptoCurrency =
-				remainingCryptoCurrency < 0 || isNaN(+remainingCryptoCurrency)
-					? 0
-					: remainingCryptoCurrency;
-
-			const remainingCurrency = (this.initialBalance.currency - this.currencyAmount).toFixed(2);
-			this.remainingCurrency =
-				remainingCurrency < 0 || isNaN(+remainingCurrency) ? 0 : remainingCurrency;
-
 			if (this.currencyAmount == this.initialBalance.currency.toFixed(2)) {
 				this.activeButton = 'All';
 			} else if (this.currencyAmount == (this.initialBalance.currency / 2).toFixed(2)) {
@@ -292,18 +291,6 @@ export default {
 		},
 		handleCryptoCurrencyAmount({ target: { value } }) {
 			this.currencyAmount = this.cryptoToCurrency(this.cryptoCurrencyAmount);
-
-			const remainingCryptoCurrency = (
-				this.initialBalance.cryptoCurrency - this.cryptoCurrencyAmount
-			).toFixed(5);
-			this.remainingCryptoCurrency =
-				remainingCryptoCurrency < 0 || isNaN(+remainingCryptoCurrency)
-					? 0
-					: remainingCryptoCurrency;
-
-			const remainingCurrency = (this.initialBalance.currency - this.currencyAmount).toFixed(2);
-			this.remainingCurrency =
-				remainingCurrency < 0 || isNaN(+remainingCurrency) ? 0 : remainingCurrency;
 
 			if (this.cryptoCurrencyAmount == this.initialBalance.cryptoCurrency) {
 				this.activeButton = 'All';
@@ -325,36 +312,18 @@ export default {
 			if (name === 'All') {
 				this.cryptoCurrencyAmount = this.initialBalance.cryptoCurrency.toFixed(5);
 				this.currencyAmount = this.initialBalance.currency.toFixed(2);
-				this.remainingCryptoCurrency = Number(0).toFixed(5);
-				this.remainingCurrency = Number(0).toFixed(2);
 			} else if (name === 'Half') {
 				this.cryptoCurrencyAmount = (this.initialBalance.cryptoCurrency / 2).toFixed(5);
 				this.currencyAmount = (this.initialBalance.currency / 2).toFixed(2);
-				this.remainingCryptoCurrency = (this.initialBalance.cryptoCurrency / 2).toFixed(5);
-				this.remainingCurrency = (this.initialBalance.currency / 2).toFixed(2);
 			} else if (name === 'Min') {
 				this.cryptoCurrencyAmount = this.minAmount.toFixed(5);
 				this.currencyAmount = this.cryptoToCurrency(this.minAmount);
-				const remainingCryptoCurrency = this.initialBalance.cryptoCurrency - this.minAmount;
-				this.remainingCryptoCurrency =
-					remainingCryptoCurrency < 0 || isNaN(remainingCryptoCurrency)
-						? Number(0).toFixed(5)
-						: remainingCryptoCurrency.toFixed(5);
-
-				const remainingCurrency =
-					this.initialBalance.currency - this.cryptoToCurrency(this.minAmount);
-				this.remainingCurrency =
-					remainingCurrency < 0 || isNaN(remainingCurrency)
-						? Number(0).toFixed(2)
-						: remainingCurrency.toFixed(2);
 			}
 		},
 		handleSelectWallet(currency, address, isAvailable) {
 			if (isAvailable) {
 				this.clearData();
 				this.$router.push(`/payments-and-transfer/send/${currency}/${address}`);
-				this.remainingCurrency = this.currentWallet.balanceUSD.toFixed(2);
-				this.remainingCryptoCurrency = this.currentWallet.balance.toFixed(5);
 			} else return false;
 		},
 		handleSuccessTransfer() {

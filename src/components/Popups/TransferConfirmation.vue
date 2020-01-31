@@ -40,9 +40,9 @@
 			<div class="exchange-popup_info">
 				<div class="flex">
 					<p class="from" :class="currency.toLowerCase()">
-						{{ formatCurrency(cryptoCurrencyAmount, '', 5) }} {{ currency }}
+						{{ formatMoney(cryptoCurrencyAmount, 'crypto') }} {{ currency }}
 					</p>
-					<p class="payment-usd">${{ formatCurrency(currencyAmount) }}</p>
+					<p class="payment-usd">${{ formatMoney(currencyAmount, 'currency') }}</p>
 				</div>
 				<img :src="getCryptoInfo(currency).image.arrow" class="send-arrow" />
 				<p class="payment-address">{{ paymentAddress }}</p>
@@ -53,7 +53,7 @@
 						<span>{{ fullCurrencyName }}</span> Network Fee
 					</p>
 					<div class="flex align-items-center">
-						<p class="btc-value">{{ 0.0005 }} {{ currency }}</p>
+						<p class="btc-value">{{ 0.00005 }} {{ currency }}</p>
 						<p class="fixed-value">${{ 0.12 }}</p>
 					</div>
 				</div>
@@ -77,6 +77,7 @@ import formatPhoneNumber from '@/functions/formatPhoneNumber';
 import EnterCode from '@/components/EnterCode';
 import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
 import getCryptoInfo from '@/functions/getCryptoInfo';
+import formatMoney from '@/functions/formatMoney';
 
 export default {
 	components: {
@@ -103,6 +104,7 @@ export default {
 	methods: {
 		formatPhoneNumber,
 		getCryptoInfo,
+		formatMoney,
 		onSend() {
 			const token = this.smsCodes.map((smsCode, index) => smsCode[index]).join('');
 			this.$store
@@ -110,7 +112,7 @@ export default {
 					currency: capitalizeFirstLetter(this.$route.params.currency.toLowerCase()),
 					from: this.$route.params.address,
 					to: this.paymentAddress,
-					amount: this.cryptoCurrencyAmount,
+					amount: formatMoney(this.cryptoCurrencyAmount, 'crypto'),
 					token,
 				})
 				.then((data) => {

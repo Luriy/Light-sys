@@ -10,10 +10,10 @@
 				<div class="slider-item-big" v-for="(itemBig, index) in slides" :key="index">
 					<div
 						class="slider-item-small d-flex align-items-center justify-content-center"
-						v-for="itemSmall in itemBig"
-						:key="itemSmall"
+						v-for="(itemSmall, index) in itemBig"
+						:key="index"
 					>
-						{{ itemSmall }}
+						<img :src="itemSmall.image" class="slider-image" />
 					</div>
 				</div>
 			</div>
@@ -91,6 +91,10 @@ export default {
 		flex-wrap: nowrap;
 		transition: 0.5s ease-in-out;
 	}
+	&-image {
+		width: 100%;
+		height: 100%;
+	}
 	&-item {
 		&-big {
 			min-width: calc(100% - 20px);
@@ -100,15 +104,6 @@ export default {
 			margin: 0 10px;
 		}
 		&-small {
-			&:nth-of-type(n + 1) {
-				background-color: red;
-			}
-			&:nth-of-type(n + 2) {
-				background-color: green;
-			}
-			&:nth-of-type(n + 3) {
-				background-color: violet;
-			}
 			width: 100%;
 			height: 140px;
 			border-radius: 15px;
