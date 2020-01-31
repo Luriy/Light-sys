@@ -249,7 +249,6 @@ export default {
 }
 .wallet-description-text-wrapper {
 	transition: 0.2s;
-	padding: 0px 10px 0px 15px;
 	border: solid 1px #3b2665;
 	padding: 10px 10px 15px 15px;
 }
