@@ -1,6 +1,8 @@
+import formatMoney from '@/functions/formatMoney';
+
 export const VALIDATE_AMOUNT_TRANSFER_EXCHANGE = (value, balance, minAmount, currencyName) => {
 	if (Number(value).toFixed(5) < Number(minAmount).toFixed(5)) {
-		return `Amount must be more than ${minAmount.toFixed(5)} ${currencyName}`;
+		return `Amount must be more than ${formatMoney(minAmount, 'crypto')} ${currencyName}`;
 	} else if (Number(value).toFixed(5) > Number(balance).toFixed(5)) {
 		return 'Amount must be less than balance of your wallet.';
 	} else return null;

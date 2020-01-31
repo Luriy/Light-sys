@@ -45,9 +45,21 @@ export default {
 	data() {
 		return {
 			slides: [
-				[1, 2, 3],
-				[4, 5, 6],
-				[7, 8, 9],
+				[
+					{ image: require('@/assets/images/temp/slider-1.png') },
+					{ image: require('@/assets/images/temp/slider-2.png') },
+					{ image: require('@/assets/images/temp/slider-3.png') },
+				],
+				[
+					{ image: require('@/assets/images/temp/slider-2.png') },
+					{ image: require('@/assets/images/temp/slider-3.png') },
+					{ image: require('@/assets/images/temp/slider-1.png') },
+				],
+				[
+					{ image: require('@/assets/images/temp/slider-3.png') },
+					{ image: require('@/assets/images/temp/slider-1.png') },
+					{ image: require('@/assets/images/temp/slider-2.png') },
+				],
 			],
 			activeBlockchainCategory: 'All blockchains',
 			activeDapps: 'All Dapps',

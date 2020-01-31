@@ -112,7 +112,7 @@ export default {
 
 .popup-body {
 	position: fixed;
-	z-index: 99;
+	z-index: 10000;
 	top: 0;
 	left: 0;
 	width: 100%;

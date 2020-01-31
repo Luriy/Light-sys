@@ -1,7 +1,7 @@
 <template>
 	<lk-popup
 		v-if="deletePopup.isOpened"
-		:popupSize="{ width: '450px', height: '300px' }"
+		:popupSize="{ width: 'auto', height: '300px' }"
 		class="card-list-delete-popup"
 		@closeModal="$emit('onClose')"
 	>
@@ -17,8 +17,8 @@
 				Are you sure you want to delete the wallet?
 			</p>
 			<p class="card-list-delete-popup__card">{{ deletePopup.address }}</p>
-			<div class="flex justify-content-between full-width">
-				<div class="button-wrapper button-gradient no-margin" @click="$emit('onClose')">
+			<div class="flex full-width justify-content-center">
+				<div class="button-wrapper button-gradient" @click="$emit('onClose')">
 					<button class="add-cart-action-button cancel">
 						No
 					</button>
