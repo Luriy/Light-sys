@@ -479,7 +479,8 @@
                     <span>{{receiveCurrency.name}}</span>
                     Network Fee
                   </p>
-                  <p class="btc-value" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
+                  <div class="flex align-items-center">
+                    <p class="btc-value" v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
                     {{transferInfo.minerFee || 0}}
                     {{receiveCurrency.currency}}
                   </p>
@@ -487,6 +488,8 @@
                     ${{(transferInfo.minerFee * types[receiveCurrency.name].price).toFixed(2)}}
                   </p>
                   <p v-else class="flex-grow-1 mr-4" style="text-align: right">0</p>
+                  </div>
+                  
                 </div>
                 <div class="balance" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {justifyContent: 'flex-end'} : ''">
                   <p class="network-fee__title ml-4" :style="!exchangeCurrency.isWallet && !receiveCurrency.isWallet ? {flexGrow: '1'} : ''">
@@ -495,7 +498,8 @@
                     'Reserve'
                     }}
                    </p>
-                  <p class="btc-value" style="width: 53.3%"  v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
+                   <div class="flex align-items-center">
+                     <p class="btc-value" style="width: 53.3%"  v-if="exchangeCurrency.isWallet && receiveCurrency.isWallet">
                     {{exchangeCurrency.balance}} {{exchangeCurrency.currency}}
                   </p>
                   <p class="flex-grow-1 mr-4" style="text-align: right">
@@ -505,6 +509,8 @@
                       receiveCurrency.reserve
                     }}
                   </p>
+                   </div>
+                  
                 </div>
               </div>
             </div>
@@ -660,7 +666,7 @@
           { 4: '' },
           { 5: '' },
         ],
-        exchangePopup: false,
+        exchangePopup: true,
         exchangeBtn: 0,
         receiveBtn: 0,
         dir: 0,
@@ -1323,6 +1329,25 @@
 </script>
 
 <style scoped lang="scss">
+.btc-value {
+  margin-right: 40px !important;
+  text-align: right;
+  width: auto !important;
+}
+.network-fee {
+	margin-bottom: 4px;
+}
+.network-fee,
+.balance {
+	display: flex;
+	justify-content: space-between;
+	p {
+		opacity: 0.5 !important;
+		color: #ffffff;
+		font-size: 12px !important;
+	}
+}
+
 .v-text-field input {
   margin-left: 0 !important;
 }
