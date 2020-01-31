@@ -119,6 +119,7 @@ export default {
 			isDescriptionOpened: false,
 			windowHandler: null,
 			operationsWithPagination: [],
+			updateTransactionsTimer: null,
 		};
 	},
 	mounted() {
@@ -129,6 +130,14 @@ export default {
 			}
 		};
 		window.addEventListener('click', this.windowHandler);
+		this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
+			wallets: this.wallets,
+		});
+		this.updateTransactionsTimer = setInterval(() => {
+			this.$store.dispatch('transactionsHistory/GET_TRANSACTIONS', {
+				wallets: this.wallets,
+			});
+		}, 15000);
 	},
 	async created() {
 		this.operationsWithPagination = await this.$store.dispatch(
@@ -140,6 +149,7 @@ export default {
 	},
 	beforeDestroy() {
 		window.removeEventListener('click', this.windowHandler);
+		clearInterval(this.updateTransactionsTimer);
 	},
 	computed: {
 		...mapGetters({

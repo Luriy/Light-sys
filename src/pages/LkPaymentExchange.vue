@@ -1323,6 +1323,9 @@
 </script>
 
 <style scoped lang="scss">
+.v-text-field input {
+  margin-left: 0 !important;
+}
   .select-body {
     width:100%;
     top: 66px;

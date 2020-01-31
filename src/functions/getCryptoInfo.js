@@ -97,7 +97,7 @@ export default function getCryptoInfo(currency, address = null) {
 					},
 				],
 				description: `LTN is an architecture to enable large-scale applications. LTN provides developers with accounts, authentication, databases, asynchronous communication and scheduling of applications across the protocol.`,
-				minAmountToTransfer: 0.00001,
+				minAmountToTransfer: 0.01,
 			};
 		default:
 			return {

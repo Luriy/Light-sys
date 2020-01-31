@@ -92,6 +92,7 @@ export default {
 			} else {
 				this.getFiatData();
 				this.getWallets().then(() => {
+					console.log(this.wallets, 'w2');
 					this.getTransactions();
 					this.subscribeUpdateTransactions();
 					this.updateWalletsAndTypes();
