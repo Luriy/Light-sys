@@ -196,6 +196,15 @@ b, strong {
 	left: 0px;
 	top: 0px;
 }
+.v-application .v-input--selection-controls__ripple.accent--text{
+	background-color: #3b2665;
+	border: 2px #a67ff6;
+	width: 7px;
+	height: 7px;
+	border-radius: 2px;
+	left: 0px;
+	top: 0px;
+}
 .v-application--is-ltr .v-input--selection-controls__input{
 	margin-right: 0;
 }
@@ -209,10 +218,6 @@ b, strong {
 .v-list-item:hover{
 	background-color: #4c3677;
 }
-// #list-29, 
-// #list-36 {
-// 	background-color: #3b2665;
-// }
 .v-text-field.v-text-field--solo .v-input__append-inner, 
 .v-text-field.v-text-field--solo .v-input__prepend-inner{
 	visibility: visible;
@@ -256,7 +261,7 @@ b, strong {
 .scrollbar-contentwrap, 
 .scrollbar-content {
 	bottom: 0px;
-	height: 47px;
+	height: 27px !important;
 	left: 0px;
 	position: absolute;
 	right: 0px;

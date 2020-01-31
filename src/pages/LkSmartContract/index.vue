@@ -252,6 +252,7 @@
           zIndex: 5,
           slider: 0,
           sliderFormatted: this.label,
+          isDescriptionOpened: false,
           slider_discount: 0,
           slider_decimal: '0.0000',
           slider_cashback: 0,
@@ -295,7 +296,9 @@
               return index;
             }
           },
-
+        },
+        beforeDestroy() {
+          window.removeEventListener('click', this.windowHandler);
         },
     }
 </script>
@@ -632,21 +635,6 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
-  // .chose-tokens-chechbox::-webkit-scrollbar {
-  //   margin-top: 15px;
-  //   width: 2px;
-  //   border-radius: 3px;
-  // }
-  // .chose-tokens-chechbox::-webkit-scrollbar-track {
-  //   background-color: #4d3779;
-  //   margin-top: 10px;
-  // }
-  // .chose-tokens-chechbox::-webkit-scrollbar-thumb {
-  //   width: 2px;
-  //   height: 47px;
-  //   border-radius: 3px;
-  //   background-color: #2e0e52;
-  // }
   // .scrollbar, .scrollbar-viewport, .scrollbar-systemscrolls, .scrollbar-contentwrap, .scrollbar-content {
   //     bottom: 0px;
   //     height: 47px;
@@ -775,12 +763,4 @@
     line-height: 21px;
     margin: 0 auto;
   }
-  // #hideMe {
-  //   -moz-animation: cssAnimation 0s ease-in 5s forwards;
-  //   -webkit-animation: cssAnimation 0s ease-in 5s forwards;
-  //   -o-animation: cssAnimation 0s ease-in 5s forwards;
-  //   animation: cssAnimation 0s ease-in 5s forwards;
-  //   -webkit-animation-fill-mode: forwards;
-  //   animation-fill-mode: forwards;
-  // }
 </style>
