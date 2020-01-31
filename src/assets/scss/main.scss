@@ -102,10 +102,54 @@ b, strong {
 .theme--light.v-input:not(.v-input--is-disabled) textarea{
 	color: #ffffff;
 }
+
 // Date Picker
 .theme--light.v-picker__body{
-    background: #4c3678;
+	background: #4c3678;
+	box-shadow: 0px 2px 19px rgba(0, 0, 0, 0.289685);
+	border-radius: 17px;
+	height: 252px;
 }
+.v-date-picker-header__value div{
+	font-family: Open Sans;
+	font-size: 14px;
+}
+.theme--light.v-date-picker-header .v-date-picker-header__value:not(.v-date-picker-header__value--disabled) button:not(:hover):not(:focus){
+	font-style: normal;
+	font-weight: normal;
+	color: #ffffff;
+}
+.theme--light.v-date-picker-table th{
+	height: 16px;
+	font-family: Open Sans;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 16px;
+	color: #FFFFFF;
+}
+.v-application .accent{
+	width: 30px;
+	height: 30px;
+	background-color: #745CA3 !important;
+	border-radius: 8px;
+}
+.v-application .accent--text{
+	border: none;
+	color: #ffffff;
+}
+.v-btn.v-btn--active.v-btn--text.v-btn--rounded.theme--light.accent{
+	background-color: #745CA3 !important;
+}
+.v-btn.v-btn--active.v-btn--rounded.theme--light.accent{
+	background-color: #745CA3 !important;
+	opacity: 1;
+}
+.v-date-picker-table .v-btn{
+	color: #ffffff;
+	opacity: 0.3;
+}
+// -----
 .v-menu__content{
 	border-radius: 17px;
 	margin-top: 65px;
@@ -182,6 +226,14 @@ b, strong {
 .v-text-field--full-width .v-label{
 	opacity: 0.5;
 }
+.v-text-field__slot label{
+	opacity: 0.5;
+	color: #ffffff;
+}
+.theme--light.v-label{
+	color: #ffffff;
+}
+
 .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)>.v-input__control>.v-input__slot{
 	box-shadow: none;
 }

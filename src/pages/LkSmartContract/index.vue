@@ -71,7 +71,7 @@
           <div class="number-tokens-block">
             <div>
               <v-text-field
-                v-model="slider"
+                v-model="sliderFormatted"
                 solo
                 height="60px"
                 background-color="#4d3779"
@@ -251,6 +251,7 @@
           overlay: false,
           zIndex: 5,
           slider: 0,
+          sliderFormatted: this.label,
           slider_discount: 0,
           slider_decimal: '0.0000',
           slider_cashback: 0,
@@ -281,8 +282,12 @@
             { text: 'Alcohol', value: 'life', selected: false },
             { text: 'Alcohol', value: 'life', selected: false },
           ],
-
         }),
+        watch: {
+          slider (val) {
+            this.sliderFormatted = this.slider
+          }
+        },
         methods: {
           checkLength(index) {
             if (index < this.types.length - 1) {
@@ -525,7 +530,6 @@
     width: 98%;
     font-weight: 600;
     line-height: 21px;
-    opacity: 0.5;
     position: absolute;
   }
   .input-slider-text{
@@ -575,6 +579,7 @@
     height: 82px;
   }
   .input-validity{
+    margin-top: -6px;
     width: 100%;
     height: 56px;
     position: relative;
