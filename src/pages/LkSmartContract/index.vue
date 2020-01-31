@@ -7,25 +7,7 @@
       <!-- Chose options layout, manual&instruction btn's -->
       <v-row class="chose-option-box d-flex flex-row">
         <div class="d-flex flex-row">
-        <v-select
-          :items="['Token','Stablecoin','Smart contract']"
-          label="Choose an option"
-          background-color="#3b2665"
-          item-color="white"
-          solo
-          height="64"
-          class="chose-option"
-          autofocus
-        ></v-select>
-        <v-select
-          :items="['Testnet', 'Mainnet']"
-          label="Choose an option"
-          background-color="#3b2665"
-           item-color="white"
-          solo-inverted
-          height="64"
-          class="chose-option"
-        ></v-select>
+          <main-selects></main-selects>
         </div>
         <v-spacer></v-spacer>
           <div class="manual-btn-box">
@@ -89,7 +71,7 @@
           <div class="number-tokens-block">
             <div>
               <v-text-field
-                v-model="slider"
+                v-model="sliderFormatted"
                 solo
                 height="60px"
                 background-color="#4d3779"
@@ -116,6 +98,7 @@
               hide-details
               single-line
               type="text"
+              readonly
             ></v-text-field>
             <v-slider
               min="0.0000"
@@ -133,6 +116,7 @@
               <v-text-field
                 v-model="slider_discount"
                 class="discount-slider-label"
+                readonly
                 hide-details
                 single-line
                 type="number"
@@ -153,45 +137,8 @@
             <p class="mb-2">Validity</p>
             <!-- Date picker -->
             <div class="input-validity d-flex flex-row justify-content-between">
+              <smart-date></smart-date>
               <!-- Example -->
-            <v-menu
-              v-model="menu1"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="dates[0]"
-                  readonly
-                  v-on="on"
-                  solo
-                  background-color="#4d3779"
-                  height="56px"
-                />
-              </template>
-              <v-date-picker v-model="dates[0]" @input="menu1"></v-date-picker>
-            </v-menu>
-            <v-menu
-              v-model="menu2"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="dates[1]"
-                  readonly
-                  v-on="on"
-                  solo
-                  background-color="#4d3779"
-                  height="56px"
-                />
-              </template>
-              <v-date-picker v-model="dates[1]" @input="menu2"></v-date-picker>
-            </v-menu>
             </div>
           </div>
           <!-- Cashback -->
@@ -204,6 +151,7 @@
                 single-line
                 type="number"
                 suffix="%"
+                readonly
               ></v-text-field>
               <v-slider
                 min="0"
@@ -218,7 +166,7 @@
         </div>
 
           <v-spacer></v-spacer>
-        
+
         <div class="chose-tokens">
 
         <filter-selects></filter-selects>
@@ -285,24 +233,24 @@
 <script>
   import LkLayout from '@/layout/LkLayout'
   import FilterSelects from './FilterSelects';
-  import TokenTerms from './TokenTerms';
+  import MainSelects from './MainSelects';
+  import SmartDate from './DatePicker';
 
     export default {
         name: 'SmartContract',
-        components: { LkLayout, FilterSelects, TokenTerms },
+        components: { LkLayout, FilterSelects, MainSelects, SmartDate, TokenTerms },
         data: () => ({
           absolute: false,
           opacity: 0.46,
           overlay: false,
           zIndex: 5,
           slider: 0,
+          sliderFormatted: this.label,
+          isDescriptionOpened: false,
           slider_discount: 0,
           slider_decimal: '0.0000',
           slider_cashback: 0,
           dialog: false,
-          dates: ['2019.09.10', '2019.09.20'],
-          menu1: false,
-          menu2: false,
           dropdown_font: ['Arial', 'Calibri', 'Courier', 'Verdana'],
           types: [
             { text: 'The drinks', value: 'drinks', selected: false },
@@ -329,8 +277,12 @@
             { text: 'Alcohol', value: 'life', selected: false },
             { text: 'Alcohol', value: 'life', selected: false },
           ],
-          
         }),
+        watch: {
+          slider (val) {
+            this.sliderFormatted = this.slider
+          }
+        },
         methods: {
           checkLength(index) {
             if (index < this.types.length - 1) {
@@ -338,7 +290,9 @@
               return index;
             }
           },
-          
+        },
+        beforeDestroy() {
+          window.removeEventListener('click', this.windowHandler);
         },
     }
 </script>
@@ -395,17 +349,6 @@
     margin: 0 auto;
     margin-top: 30px;
     margin-bottom: 15px;
-  }
-  .chose-option{
-    margin-right: 15px;
-    font-weight: 600;
-    line-height: 21px;
-    width: 314px;
-  }
-  .chose-network{
-    font-weight: 600;
-    line-height: 21px;
-    width: 314px;
   }
   .theme--light.v-card {
     background-color: #3b2665;
@@ -583,7 +526,6 @@
     width: 98%;
     font-weight: 600;
     line-height: 21px;
-    opacity: 0.5;
     position: absolute;
   }
   .input-slider-text{
@@ -601,18 +543,15 @@
   .slider-block{
     width: 100%;
     height: 68px;
-    // p{
-    //   margin-bottom: 8%;
-    // }
     margin-bottom: 35px;
     position: relative;
-    
+
   }
   .slider-block input {
       margin-left: 0 !important;
     }
   .discount-slider-label{
-    width: 60px;
+    width: 64px;
     color: #af89ff;
     font-family: "Open Sans Semi Bold";
     font-size: 14px;
@@ -622,9 +561,6 @@
     margin-top: 0;
     right: 0;
     margin-right: 5%;
-    input{
-      text-align: right;
-    }
   }
   .number-tokens-slider{
     width: 98%;
@@ -639,6 +575,7 @@
     height: 82px;
   }
   .input-validity{
+    margin-top: -6px;
     width: 100%;
     height: 56px;
     position: relative;
@@ -661,7 +598,6 @@
     right: 0;
     margin-bottom: 2%;
   }
-  
 
   // Checkbox Layout
 
@@ -691,30 +627,15 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
-  .chose-tokens-chechbox::-webkit-scrollbar {
-    margin-top: 15px;
-    width: 2px;
-    border-radius: 3px;
-  }
-  .chose-tokens-chechbox::-webkit-scrollbar-track {
-    background-color: #4d3779;
-    margin-top: 10px;
-  }
-  .chose-tokens-chechbox::-webkit-scrollbar-thumb {
-    width: 2px;
-    height: 47px;
-    border-radius: 3px;
-    background-color: #2e0e52;
-  }
-  .scrollbar, .scrollbar-viewport, .scrollbar-systemscrolls, .scrollbar-contentwrap, .scrollbar-content {
-      bottom: 0px;
-      height: 47px;
-      left: 0px;
-      position: absolute;
-      right: 0px;
-      top: 0px;
-      width: auto;
-  }
+  // .scrollbar, .scrollbar-viewport, .scrollbar-systemscrolls, .scrollbar-contentwrap, .scrollbar-content {
+  //     bottom: 0px;
+  //     height: 47px;
+  //     left: 0px;
+  //     position: absolute;
+  //     right: 0px;
+  //     top: 0px;
+  //     width: auto;
+  // }
   .checkbox-item{
     font-weight: 600;
     line-height: 21px;
@@ -808,12 +729,4 @@
     line-height: 21px;
     margin: 0 auto;
   }
-  // #hideMe {
-  //   -moz-animation: cssAnimation 0s ease-in 5s forwards;
-  //   -webkit-animation: cssAnimation 0s ease-in 5s forwards;
-  //   -o-animation: cssAnimation 0s ease-in 5s forwards;
-  //   animation: cssAnimation 0s ease-in 5s forwards;
-  //   -webkit-animation-fill-mode: forwards;
-  //   animation-fill-mode: forwards;
-  // }
 </style>
