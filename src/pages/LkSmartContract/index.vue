@@ -235,6 +235,7 @@
   import FilterSelects from './FilterSelects';
   import MainSelects from './MainSelects';
   import SmartDate from './DatePicker';
+  import TokenTerms from './TokenTerms';
 
     export default {
         name: 'SmartContract',
