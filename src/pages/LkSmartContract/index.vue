@@ -357,7 +357,6 @@
   }
   .v-select-list[data-v-6472e3c8] {
     border-radius: 17px;
-    // box-shadow: 0 2px 19px rgba(0,0,0,0.29);
   }
   .v-input__icon{
     background-image: src('@/assets/images/select-icon.svg');
@@ -467,9 +466,7 @@
     height: 60px;
     font-weight: 600;
     line-height: 21px;
-    // opacity: 0.5;
     color: #ffffff;
-    // padding-bottom: 19px;
     box-shadow: none;
   }
   .input-description{
@@ -612,7 +609,7 @@
     line-height: 21px;
     margin: 5px 100px 20px 15px;
   }
-  .chose-tokens-scroll{
+  .chose-tokens-scroll {
     border-radius: 17px;
     background-color: #4d3779;
     padding: 11px 10px 61px 20px;
@@ -621,23 +618,14 @@
     width: 100%;
     height: 307px;
   }
-  .chose-tokens-chechbox{
+  .chose-tokens-chechbox {
     margin-top: 1%;
     width: 100%;
     height: 191px;
     overflow-y: auto;
     overflow-x: hidden;
   }
-  // .scrollbar, .scrollbar-viewport, .scrollbar-systemscrolls, .scrollbar-contentwrap, .scrollbar-content {
-  //     bottom: 0px;
-  //     height: 47px;
-  //     left: 0px;
-  //     position: absolute;
-  //     right: 0px;
-  //     top: 0px;
-  //     width: auto;
-  // }
-  .checkbox-item{
+  .checkbox-item {
     font-weight: 600;
     line-height: 21px;
     height: 12px;
@@ -646,31 +634,31 @@
   // -----------------------------------------------
   // Confirm layout, Deploy button & Info layout
   // -----------------------------------------------
-  
-  .deploy-btn-layout{
+
+  .deploy-btn-layout {
     width: 420px;
     height: 50px;
     margin: 0 auto;
     margin-bottom: 13px;
-    &__succes{
+    &__succes {
       width: 346px;
       height: 207px;
       margin-left: 50%;
       position: relative;
-      &__icon{
+      &__icon {
         width: 57px;
         height: 57px;
         border-radius: 22px;
         background-color: #4d3779;
         position: absolute;
         margin: 0px 144px 150px 145px;
-        img{
+        img {
           margin: 21px 17px 19px 18px;
           width: 22px;
           height: 17px;
         }
       }
-      &__label{
+      &__label {
         width: 346px;
         height: 179px;
         background-color: #3b2665;
@@ -681,24 +669,20 @@
         line-height: 21px;
         font-family: "Open Sans Semi Bold";
         color: #ffffff;
-        p{
+        p {
           width: 127px;
           height: 39px;
           font-size: 36px;
-          // margin: 54px 109px 86px 110px;
           margin-top: 54px;
           margin-left: 123px;
         }
-        span{
+        span {
           width: 346px;
           height: 21px;
           font-size: 16px;
-          // margin: 0 auto;
-          // margin-top: 93px;
-          // margin-left: 60px;
           margin-left: 73px;
         }
-        a{
+        a {
           width: 219px;
           height: 21px;
           color: #8898f7;
@@ -710,7 +694,7 @@
       }
     }
   }
-  .deploy-btn{
+  .deploy-btn {
     border-radius: 28px;
     background-image: linear-gradient(270deg, #8e6ee4 0%, #d268bc 100%);
     color: #ffffff;
@@ -720,7 +704,7 @@
     line-height: 21px;
     text-transform: none;
   }
-  .info-layout p{
+  .info-layout p {
     width: 805px;
     height: 21px;
     opacity: 0.5;
