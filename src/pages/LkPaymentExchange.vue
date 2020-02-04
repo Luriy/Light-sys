@@ -448,8 +448,9 @@
                 </div>
               </div>
             </div>
+            
             <div slot='smsNumber' class="exchange-popup_sms-number">
-              <input
+              <!-- <input
                 class="number-input"
                 v-for="(input, index) in smsCodes"
                 :key="index"
@@ -459,7 +460,8 @@
                 type="text"
                 maxLength="1"
                 size="1" min="0" max="9" pattern="[0-9]{1}"
-              />
+              /> -->
+              <enter-code :smsCodes="smsCodes" @onSmsKeyUp="smsChange" style="width: 450px;"></enter-code>
 
               <div class="timer-body">
                 <div class="title">Resend code:</div>
@@ -637,6 +639,7 @@
   import capitalizeFirstLetter from '@/functions/capitalizeFirstLetter';
   import currencyList from '@/settings/currencyList'
   import { getAuthParams } from '@/functions/auth';
+  import EnterCode from '@/components/EnterCode';
   let exchangePrice = null;
   let receivePrice = null;
   export default {
@@ -644,6 +647,7 @@
     components: {
       LkLayout,
       LkPopUp,
+      EnterCode,
     },
     data () {
       return {
@@ -1329,6 +1333,7 @@
 </script>
 
 <style scoped lang="scss">
+
 .btc-value {
   margin-right: 40px !important;
   text-align: right;
@@ -1347,7 +1352,6 @@
 		font-size: 12px !important;
 	}
 }
-
 .v-text-field input {
   margin-left: 0 !important;
 }
