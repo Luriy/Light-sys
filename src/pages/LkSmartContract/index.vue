@@ -195,7 +195,7 @@
           class="deploy-btn"
           width="420"
           height="50"
-          @click="overlay = !overlay"
+          @click="handleClickDeployButton"
         >
           Deploy
         </v-btn>
@@ -291,10 +291,15 @@
               return index;
             }
           },
+          handleClickDeployButton() {
+            this.overlay = true;
+            setTimeout(() => this.overlay = false, 3000);
+          }
         },
         beforeDestroy() {
           window.removeEventListener('click', this.windowHandler);
         },
+        
     }
 </script>
 
