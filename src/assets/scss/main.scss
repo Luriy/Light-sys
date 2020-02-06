@@ -268,6 +268,12 @@ b, strong {
 	top: 0px;
 	width: auto;
 }
+.theme--light.v-text-field>.v-input__control>.v-input__slot:before{
+	border: none;
+}
+.v-text-field>.v-input__control>.v-input__slot:after{
+	border: none;
+}
 
 // responsive breakpoints
 $break-small-portrait: 320px;
