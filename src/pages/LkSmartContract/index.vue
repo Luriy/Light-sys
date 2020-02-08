@@ -82,7 +82,7 @@
               <v-slider
                 v-model="slider"
                 min="0"
-                max="120"
+                max="10000000"
                 color="#a67ff6"
                 class="input-slider-text"
                 track-fill-color="#a67ff6"
@@ -115,7 +115,7 @@
             <p>% Discount</p>
               <v-text-field
                 v-model="slider_discount"
-                class="discount-slider-label"
+                class="persent-slider-label"
                 readonly
                 hide-details
                 single-line
@@ -146,12 +146,12 @@
             <p>Cashback</p>
               <v-text-field
                 v-model="slider_cashback"
-                class="discount-slider-label"
+                class="persent-slider-label"
                 hide-details
                 single-line
                 type="number"
-                suffix="%"
                 readonly
+                suffix="%"
               ></v-text-field>
               <v-slider
                 min="0"
@@ -161,6 +161,7 @@
                 track-fill-color="#a67ff6"
                 track-color="#2b1b4c"
                 v-model="slider_cashback"
+                align-end
               ></v-slider>
           </div>
         </div>
@@ -299,7 +300,7 @@
         beforeDestroy() {
           window.removeEventListener('click', this.windowHandler);
         },
-        
+
     }
 </script>
 
@@ -554,7 +555,8 @@
       margin-left: 0 !important;
     }
   .discount-slider-label{
-    width: 64px;
+    width: 100%;
+    max-width: 85px;
     color: #af89ff;
     font-family: "Open Sans Semi Bold";
     font-size: 14px;
@@ -563,7 +565,19 @@
     position: absolute;
     margin-top: 0;
     right: 0;
-    margin-right: 5%;
+    // margin-right: 5%;
+  }
+  .persent-slider-label{
+    width: 100%;
+    max-width: 60px;
+    color: #af89ff;
+    font-family: "Open Sans Semi Bold";
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 21px;
+    position: absolute;
+    margin-top: 0;
+    right: 0;
   }
   .number-tokens-slider{
     width: 98%;
