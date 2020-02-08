@@ -71,7 +71,7 @@
           <div class="number-tokens-block">
             <div>
               <v-text-field
-                v-model="sliderFormatted"
+                v-model="slider"
                 solo
                 height="60px"
                 background-color="#4d3779"
@@ -200,7 +200,7 @@
         >
           Deploy
         </v-btn>
-        <div @click="overlay = false" v-on="timeOut">
+        <div @click="overlay = false">
           <v-overlay
             :absolute="absolute"
             :opacity="opacity"
@@ -247,7 +247,6 @@
           overlay: false,
           zIndex: 5,
           slider: 0,
-          sliderFormatted: this.label,
           isDescriptionOpened: false,
           slider_discount: 0,
           slider_decimal: '0.0000',
@@ -255,36 +254,31 @@
           dialog: false,
           dropdown_font: ['Arial', 'Calibri', 'Courier', 'Verdana'],
           types: [
-            { text: 'The drinks', value: 'drinks', selected: false },
-            { text: 'The drinks', value: 'drinks', selected: false },
-            { text: 'The drinks', value: 'drinks', selected: false },
+            { text: 'The drinks1', value: 'drinks1', selected: false },
+            { text: 'The drinks2', value: 'drinks2', selected: false },
+            { text: 'The drinks3', value: 'drinks3', selected: false },
+            { text: 'Dessert1', value: 'desserts1', selected: false },
+            { text: 'Dessert2', value: 'desserts2', selected: false },
             { text: 'Dessert', value: 'desserts', selected: false },
-            { text: 'Dessert', value: 'desserts', selected: false },
-            { text: 'Dessert', value: 'desserts', selected: false },
-            { text: 'Snacks', value: 'food', selected: false },
-            { text: 'Snacks', value: 'food', selected: false },
-            { text: 'Snacks', value: 'food', selected: false },
-            { text: 'Salads', value: 'freshfood', selected: false },
-            { text: 'Salads', value: 'freshfood', selected: false },
-            { text: 'Salads', value: 'freshfood', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
-            { text: 'Alcohol', value: 'life', selected: false },
+            { text: 'Snacks1', value: 'food1', selected: false },
+            { text: 'Snacks2', value: 'food2', selected: false },
+            { text: 'Snacks3', value: 'food', selected: false },
+            { text: 'Salads4', value: 'freshfood', selected: false },
+            { text: 'Salads5', value: 'freshfood', selected: false },
+            { text: 'Salads6', value: 'freshfood', selected: false },
+            { text: 'Alcohol1', value: 'life1', selected: false },
+            { text: 'Alcohol2', value: 'life2', selected: false },
+            { text: 'Alcohol3', value: 'life3', selected: false },
+            { text: 'Alcohol4', value: 'life4', selected: false },
+            { text: 'Alcohol5', value: 'life5', selected: false },
+            { text: 'Alcohol6', value: 'life6', selected: false },
+            { text: 'Alcohol7', value: 'life7', selected: false },
+            { text: 'Alcohol8', value: 'life8', selected: false },
+            { text: 'Alcohol9', value: 'life9', selected: false },
+            { text: 'Alcohol10', value: 'life10', selected: false },
+            { text: 'Alcohol11', value: 'life11', selected: false },
           ],
         }),
-        watch: {
-          slider (val) {
-            this.sliderFormatted = this.slider
-          }
-        },
         methods: {
           checkLength(index) {
             if (index < this.types.length - 1) {
@@ -500,6 +494,7 @@
     background-color: #3b2665;;
     padding: 20px;
     position: absolute;
+    
     p{
       height: 21px;
       color: #ffffff;
@@ -518,6 +513,7 @@
       line-height: 21px;
     }
   }
+  
   .number-tokens-block{
     width: 100%;
     height: 70px;
@@ -525,6 +521,7 @@
     margin-bottom: 8%;
     margin-top: 4%;
     position: relative;
+    
   }
   .number-tokens-label{
     width: 98%;

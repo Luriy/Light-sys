@@ -5,7 +5,7 @@
 			:key="select.label"
 			@click.native="handleClickSelect(select.label)"
 			@blur="handleToggleSelect(select.label)"
-			@change="handleToggleSelect(select.label)"
+			@change="handleChangeSelect(select.label, $event)"
 			:items="select.options"
 			:label="select.label"
 			background-color="#4d3779"
@@ -66,6 +66,11 @@ export default {
 		};
 	},
 	methods: {
+		handleChangeSelect(label, value) {
+			const currentSelect = this.selects.find((select) => select.label === label);
+			currentSelect.options = currentSelect.options.map((option) => option);
+			this.handleToggleSelect(label);
+		},
 		handleToggleSelect(label) {
 			const currentSelect = this.selects.find((select) => select.label === label);
 			currentSelect.isSelected = !currentSelect.isSelected;
